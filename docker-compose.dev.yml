@@ -1,0 +1,28 @@
+services:
+    postgres:
+            container_name: bot-postgres
+            image: postgres:latest
+            restart: unless-stopped
+            environment:
+                - POSTGRES_USER=bot
+                - POSTGRES_PASSWORD=991fa522db6ddb9935c7d9b1
+                - POSTGRES_DB=bot
+            ports:
+                - 5432:5432
+            volumes:
+                - postgres_data:/var/lib/postgresql
+        redis:
+            container_name: bot-redis
+            image: redis:latest
+            command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
+            restart: unless-stopped
+            ports:
+                - 6379:6379
+            volumes:
+                - redis_data:/data
+volumes:
+    postgres_data:
+    redis_data:
+    
+networks:
+    default: {}
