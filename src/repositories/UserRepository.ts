@@ -45,12 +45,30 @@ export class UserRepository {
   }
 
   /**
-   * کاربر جدید ایجاد کن
+   * کاربر جدید ایجاد کن یا اگه وجود داشت برگردون (upsert)
    */
-  static async create(user: InsertUser): Promise<User> {
-    const [result] = await db.insert(usersTable).values(user).returning();
+  static async create(
+    user: InsertUser,
+  ): Promise<{ user: User; isNew: boolean }> {
+    const [result] = await db
+      .insert(usersTable)
+      .values(user)
+      .onConflictDoUpdate({
+        target: usersTable.id,
+        set: {
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+      })
+      .returning();
     console.log("result: ", result);
-    return result;
+    // اگه referredBy null بود و توی DB هم null بود، یعنی جدیده
+    // ولی مطمئن‌ترین روش اینه که قبلاً findById کردیم
+    return {
+      user: result,
+      isNew: !user.referredBy && result.createdAt === result.updatedAt,
+    };
   }
 
   /**

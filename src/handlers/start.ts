@@ -36,7 +36,7 @@ export const startComposer = new Composer()
         }
       }
 
-      user = await UserRepository.create({
+      const { user: newUser } = await UserRepository.create({
         id: userId,
         username,
         firstName,
@@ -45,18 +45,10 @@ export const startComposer = new Composer()
         referralCode: generateReferralCode(userId),
         referredBy: referrerId,
       });
-
-      console.log(
-        "[START] New user created, entering language selection scene",
-      );
-      await context.scene.enter(languageSelectionScene);
-      return;
+      user = newUser;
     }
 
     if (!user.languageCode || user.languageCode === "null") {
-      console.log(
-        "[START] User has no language, entering language selection scene",
-      );
       await context.scene.enter(languageSelectionScene);
       return;
     }
