@@ -11,64 +11,64 @@ function generateReferralCode(userId: number): string {
 export const startComposer = new Composer()
   .extend(composer)
   .command("start", async (context) => {
-    // if (!context.from) {
-    //   return context.send("❌ Unable to identify user.");
-    // }
+    if (!context.from) {
+      return context.send("❌ Unable to identify user.");
+    }
 
     const userId = context.from.id;
     const username = context.from.username || null;
     const firstName = context.from.firstName || null;
     const lastName = context.from.lastName || null;
 
-    // let user = await UserRepository.findById(userId);
+    let user = await UserRepository.findById(userId);
 
-    // if (!user) {
-    //   const startPayload = context.args;
-    //   let referrerId: number | null = null;
+    if (!user) {
+      const startPayload = context.args;
+      let referrerId: number | null = null;
 
-    //   if (startPayload && startPayload.startsWith("ref_")) {
-    //     const referralCode = startPayload.replace("ref_", "");
-    //     const referrer = await UserRepository.findByReferralCode(referralCode);
-    //     if (referrer) {
-    //       referrerId = referrer.id;
-    //     }
-    //   }
+      if (startPayload && startPayload.startsWith("ref_")) {
+        const referralCode = startPayload.replace("ref_", "");
+        const referrer = await UserRepository.findByReferralCode(referralCode);
+        if (referrer) {
+          referrerId = referrer.id;
+        }
+      }
 
-    //   user = await UserRepository.create({
-    //     id: userId,
-    //     username,
-    //     firstName,
-    //     lastName,
-    //     languageCode: null,
-    //     referralCode: generateReferralCode(userId),
-    //     referredBy: referrerId,
-    //   });
+      user = await UserRepository.create({
+        id: userId,
+        username,
+        firstName,
+        lastName,
+        languageCode: null,
+        referralCode: generateReferralCode(userId),
+        referredBy: referrerId,
+      });
 
-    //   return context.scene.enter(languageSelectionScene);
-    // }
+      return context.scene.enter(languageSelectionScene);
+    }
 
-    // if (!user.languageCode || user.languageCode === "null") {
-    //   return context.scene.enter(languageSelectionScene);
-    // }
+    if (!user.languageCode || user.languageCode === "null") {
+      return context.scene.enter(languageSelectionScene);
+    }
 
-    // const t = i18n.buildT(user.languageCode);
+    const t = i18n.buildT(user.languageCode);
     const userName = firstName || username || "User";
 
-    return context.send("welcome");
+    await context.send(t("welcome", userName));
 
-    // const mainMenuKeyboard = new InlineKeyboard()
-    //   .text(t("btnProducts"), "products")
-    //   .text(t("btnMyOrders"), "my_orders")
-    //   .row()
-    //   .text(t("btnWallet"), "wallet")
-    //   .text(t("btnInviteFriends"), "invite")
-    //   .row()
-    //   .text(t("btnDiscountCode"), "discount")
-    //   .text(t("btnSupport"), "support")
-    //   .row()
-    //   .text(t("btnSettings"), "settings");
+    const mainMenuKeyboard = new InlineKeyboard()
+      .text(t("btnProducts"), "products")
+      .text(t("btnMyOrders"), "my_orders")
+      .row()
+      .text(t("btnWallet"), "wallet")
+      .text(t("btnInviteFriends"), "invite")
+      .row()
+      .text(t("btnDiscountCode"), "discount")
+      .text(t("btnSupport"), "support")
+      .row()
+      .text(t("btnSettings"), "settings");
 
-    // return context.send(t("mainMenu") + "\n\n" + t("chooseAction"), {
-    //   reply_markup: mainMenuKeyboard,
-    // });
+    return context.send(t("mainMenu") + "\n\n" + t("chooseAction"), {
+      reply_markup: mainMenuKeyboard,
+    });
   });
