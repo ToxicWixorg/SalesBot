@@ -11,15 +11,11 @@ export const redis = new Redis({
   // for bullmq
   maxRetriesPerRequest: null,
   retryStrategy(times) {
-    const delay = Math.min(times * 50, 2000);
+    const delay = Math.min(times * 100, 5000);
     console.error(
       `⚠️ Redis connection attempt ${times} failed, retrying in ${delay}ms...`,
     );
-    if (times > 10) {
-      console.error(`❌ Redis connection failed after ${times} attempts`);
-      return null; // Stop retrying
-    }
-    return delay;
+    return delay; // Always retry
   },
 });
 
