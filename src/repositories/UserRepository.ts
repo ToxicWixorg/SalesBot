@@ -12,7 +12,7 @@ export class UserRepository {
       .from(usersTable)
       .where(eq(usersTable.id, id))
       .limit(1);
-
+    console.log("user by id: ", result);
     return result;
   }
 
@@ -49,7 +49,7 @@ export class UserRepository {
    */
   static async create(user: InsertUser): Promise<User> {
     const [result] = await db.insert(usersTable).values(user).returning();
-
+    console.log("result: ", result);
     return result;
   }
 
