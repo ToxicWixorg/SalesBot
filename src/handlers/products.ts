@@ -63,9 +63,12 @@ productsComposer.callbackQuery("categories", async (context) => {
  * Handle "category_{id}" callback - Show products in category
  */
 productsComposer.callbackQuery(/^category_(\d+)$/, async (context) => {
-  if (!context.from) return;
+  if (!context.from || !context.callbackQuery?.data) return;
 
-  const categoryId = Number.parseInt(context.match[1]);
+  const match = context.callbackQuery.data.match(/^category_(\d+)$/);
+  if (!match) return;
+
+  const categoryId = Number.parseInt(match[1]);
   const user = await UserRepository.findById(context.from.id);
   if (!user) return;
 
@@ -98,9 +101,12 @@ productsComposer.callbackQuery(/^category_(\d+)$/, async (context) => {
  * Handle "product_{id}" callback - Show product details
  */
 productsComposer.callbackQuery(/^product_(\d+)$/, async (context) => {
-  if (!context.from) return;
+  if (!context.from || !context.callbackQuery?.data) return;
 
-  const productId = Number.parseInt(context.match[1]);
+  const match = context.callbackQuery.data.match(/^product_(\d+)$/);
+  if (!match) return;
+
+  const productId = Number.parseInt(match[1]);
   const user = await UserRepository.findById(context.from.id);
   if (!user) return;
 
@@ -142,9 +148,12 @@ productsComposer.callbackQuery(/^product_(\d+)$/, async (context) => {
 });
 
 /**
- * Handle "buy_product_{id}" callback - Show product plans
- */
-productsComposer.callbackQuery(/^buy_product_(\d+)$/, async (context) => {
+ * Handle "buy_prod || !context.callbackQuery?.data) return;
+
+  const match = context.callbackQuery.data.match(/^buy_product_(\d+)$/);
+  if (!match) return;
+
+  const productId = Number.parseInt(_(\d+)$/, async (context) => {
   if (!context.from) return;
 
   const productId = Number.parseInt(context.match[1]);
@@ -183,9 +192,12 @@ productsComposer.callbackQuery(/^buy_product_(\d+)$/, async (context) => {
 });
 
 /**
- * Handle "select_plan_{id}" callback - Show order confirmation
- */
-productsComposer.callbackQuery(/^select_plan_(\d+)$/, async (context) => {
+ * Handle "select_p || !context.callbackQuery?.data) return;
+
+  const match = context.callbackQuery.data.match(/^select_plan_(\d+)$/);
+  if (!match) return;
+
+  const planId = Number.parseInt(lan_(\d+)$/, async (context) => {
   if (!context.from) return;
 
   const planId = Number.parseInt(context.match[1]);
@@ -226,7 +238,10 @@ productsComposer.callbackQuery(/^select_plan_(\d+)$/, async (context) => {
 });
 
 /**
- * Handle "notify_stock_{id}" callback - Notify when product is available
+ * Handle "notify_s || !context.callbackQuery?.data) return;
+
+  const match = context.callbackQuery.data.match(/^notify_stock_(\d+)$/);
+  if (!matchtock_{id}" callback - Notify when product is available
  */
 productsComposer.callbackQuery(/^notify_stock_(\d+)$/, async (context) => {
   if (!context.from) return;

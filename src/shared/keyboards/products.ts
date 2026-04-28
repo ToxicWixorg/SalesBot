@@ -11,7 +11,7 @@ export function categoriesKeyboard(
 ): InlineKeyboard {
   const keyboard = new InlineKeyboard();
 
-  categories.forEach((category, index) => {
+  categories.reverse().forEach((category, index) => {
     const icon = category.icon || "📦";
     keyboard.text(`${icon} ${category.name}`, `category_${category.id}`);
 
