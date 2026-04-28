@@ -14,9 +14,26 @@ import {
   productPlansKeyboard,
   orderConfirmationKeyboard,
   backToMainKeyboard,
+  mainMenuKeyboard,
 } from "../shared/keyboards/index.ts";
 
 export const productsComposer = new Composer().extend(composer);
+
+/**
+ * Handle "main_menu" callback - Return to main menu
+ */
+productsComposer.callbackQuery("main_menu", async (context) => {
+  if (!context.from) return;
+
+  const user = await UserRepository.findById(context.from.id);
+  if (!user) return;
+
+  const t = i18n.buildT(user.languageCode || "en");
+
+  await context.editText(t("mainMenu") + "\n\n" + t("chooseAction"), {
+    reply_markup: mainMenuKeyboard(t),
+  });
+});
 
 /**
  * Handle "products" callback - Show categories
@@ -63,12 +80,9 @@ productsComposer.callbackQuery("categories", async (context) => {
  * Handle "category_{id}" callback - Show products in category
  */
 productsComposer.callbackQuery(/^category_(\d+)$/, async (context) => {
-  if (!context.from || !context.callbackQuery?.data) return;
+  if (!context.from || !context.queryData) return;
 
-  const match = context.callbackQuery.data.match(/^category_(\d+)$/);
-  if (!match) return;
-
-  const categoryId = Number.parseInt(match[1]);
+  const categoryId = Number.parseInt(context.queryData[1]);
   const user = await UserRepository.findById(context.from.id);
   if (!user) return;
 
@@ -101,12 +115,9 @@ productsComposer.callbackQuery(/^category_(\d+)$/, async (context) => {
  * Handle "product_{id}" callback - Show product details
  */
 productsComposer.callbackQuery(/^product_(\d+)$/, async (context) => {
-  if (!context.from || !context.callbackQuery?.data) return;
+  if (!context.from || !context.queryData) return;
 
-  const match = context.callbackQuery.data.match(/^product_(\d+)$/);
-  if (!match) return;
-
-  const productId = Number.parseInt(match[1]);
+  const productId = Number.parseInt(context.queryData[1]);
   const user = await UserRepository.findById(context.from.id);
   if (!user) return;
 
@@ -148,15 +159,12 @@ productsComposer.callbackQuery(/^product_(\d+)$/, async (context) => {
 });
 
 /**
- * Handle "buy_prod || !context.callbackQuery?.data) return;
+ * Handle "buy_product_{id}" callback - Show product plans
+ */
+productsComposer.callbackQuery(/^buy_product_(\d+)$/, async (context) => {
+  if (!context.from || !context.queryData) return;
 
-  const match = context.callbackQuery.data.match(/^buy_product_(\d+)$/);
-  if (!match) return;
-
-  const productId = Number.parseInt(_(\d+)$/, async (context) => {
-  if (!context.from) return;
-
-  const productId = Number.parseInt(context.match[1]);
+  const productId = Number.parseInt(context.queryData[1]);
   const user = await UserRepository.findById(context.from.id);
   if (!user) return;
 
@@ -192,15 +200,12 @@ productsComposer.callbackQuery(/^product_(\d+)$/, async (context) => {
 });
 
 /**
- * Handle "select_p || !context.callbackQuery?.data) return;
+ * Handle "select_plan_{id}" callback - Show order confirmation
+ */
+productsComposer.callbackQuery(/^select_plan_(\d+)$/, async (context) => {
+  if (!context.from || !context.queryData) return;
 
-  const match = context.callbackQuery.data.match(/^select_plan_(\d+)$/);
-  if (!match) return;
-
-  const planId = Number.parseInt(lan_(\d+)$/, async (context) => {
-  if (!context.from) return;
-
-  const planId = Number.parseInt(context.match[1]);
+  const planId = Number.parseInt(context.queryData[1]);
   const user = await UserRepository.findById(context.from.id);
   if (!user) return;
 
@@ -226,7 +231,13 @@ productsComposer.callbackQuery(/^product_(\d+)$/, async (context) => {
   message += `📋 ${plan.name}\n`;
 
   if (plan.duration) {
-    const durationUnit = t(`duration_${plan.durationUnit || "day"}`);
+    const unitKey = plan.durationUnit || "day";
+    let durationUnit = "";
+
+    if (unitKey === "day") durationUnit = t("duration_day");
+    else if (unitKey === "month") durationUnit = t("duration_month");
+    else if (unitKey === "year") durationUnit = t("duration_year");
+
     message += `⏱️ ${plan.duration} ${durationUnit}\n`;
   }
 
@@ -238,13 +249,10 @@ productsComposer.callbackQuery(/^product_(\d+)$/, async (context) => {
 });
 
 /**
- * Handle "notify_s || !context.callbackQuery?.data) return;
-
-  const match = context.callbackQuery.data.match(/^notify_stock_(\d+)$/);
-  if (!matchtock_{id}" callback - Notify when product is available
+ * Handle "notify_stock_{id}" callback - Notify when product is available
  */
 productsComposer.callbackQuery(/^notify_stock_(\d+)$/, async (context) => {
-  if (!context.from) return;
+  if (!context.from || !context.queryData) return;
 
   // TODO: Implement stock notification system
   await context.answerCallbackQuery(

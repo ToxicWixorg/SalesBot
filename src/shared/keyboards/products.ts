@@ -87,9 +87,18 @@ export function productPlansKeyboard(
   const keyboard = new InlineKeyboard();
 
   plans.forEach((plan) => {
-    const duration = plan.duration
-      ? `${plan.duration} ${t(`duration_${plan.durationUnit || "day"}`)}`
-      : t("oneTime");
+    let duration = t("oneTime");
+
+    if (plan.duration) {
+      const unitKey = plan.durationUnit || "day";
+      let durationUnit = "";
+
+      if (unitKey === "day") durationUnit = t("duration_day");
+      else if (unitKey === "month") durationUnit = t("duration_month");
+      else if (unitKey === "year") durationUnit = t("duration_year");
+
+      duration = `${plan.duration} ${durationUnit}`;
+    }
 
     keyboard.text(
       `${plan.name} - ${plan.price} ${t("currency")} (${duration})`,
