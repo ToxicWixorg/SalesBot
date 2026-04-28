@@ -11,6 +11,9 @@ export const baseComposer = new Composer({ name: "base" })
   .extend(autoAnswerCallbackQuery())
   .extend(autoRetry())
   .derive((context) => ({
-    t: i18n.buildT(context.update.from?.language_code ?? "en"),
+    t: i18n.buildT(
+      ((context as any).from || (context as any).update?.from)?.language_code ??
+        "en",
+    ),
   }))
   .as("scoped");

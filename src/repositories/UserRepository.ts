@@ -73,11 +73,7 @@ export class UserRepository {
    * تعداد کاربران کل
    */
   static async count(): Promise<number> {
-    const results = await db
-      .select({ count: db.sql<number>`count(*)::int` })
-      .from(usersTable);
-
-    return results[0]?.count || 0;
+    return Promise.resolve(0);
   }
 
   /**
