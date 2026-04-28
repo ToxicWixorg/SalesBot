@@ -184,7 +184,7 @@ export function setupWalletHandlers(bot: Bot) {
     );
 
     await context.editText(
-      `${t("rechargeCryptoTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10")}\n${t("rechargeMaxAmount", "10000")}`,
+      `${t("rechargeCryptoTitle")}\n\n${t("rechargeEnterAmountUsdt")}\n\n${t("rechargeMinAmountUsdt", "10")}\n${t("rechargeMaxAmountUsdt", "10000")}`,
       {
         reply_markup: keyboard,
       },
@@ -216,7 +216,7 @@ export function setupWalletHandlers(bot: Bot) {
     );
 
     await context.editText(
-      `${t("rechargeCardTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10")}\n${t("rechargeMaxAmount", "10000")}`,
+      `${t("rechargeCardTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10000")}\n${t("rechargeMaxAmount", "1000000")}`,
       {
         reply_markup: keyboard,
       },
@@ -248,7 +248,7 @@ export function setupWalletHandlers(bot: Bot) {
     );
 
     await context.editText(
-      `${t("rechargeZarinpalTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10000")}\n${t("rechargeMaxAmount", "10000000")}`,
+      `${t("rechargeZarinpalTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10000")}\n${t("rechargeMaxAmount", "1000000")}`,
       {
         reply_markup: keyboard,
       },

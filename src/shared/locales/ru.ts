@@ -77,10 +77,15 @@ export const ru = {
   btnRechargeZarinpal: "💰 Zarinpal Gateway",
 
   rechargeEnterAmount: "💵 Пожалуйста, введите сумму пополнения в USD:",
+  rechargeEnterAmountUsdt: "💵 Пожалуйста, введите количество USDT:",
   rechargeMinAmount: (amount: string) =>
     format`Минимальная сумма: ${bold(amount)} USD`,
   rechargeMaxAmount: (amount: string) =>
     format`Максимальная сумма: ${bold(amount)} USD`,
+  rechargeMinAmountUsdt: (amount: string) =>
+    format`Минимальное количество: ${bold(amount)} USDT`,
+  rechargeMaxAmountUsdt: (amount: string) =>
+    format`Максимальное количество: ${bold(amount)} USDT`,
   rechargeInvalidAmount: "❌ Введена неверная сумма",
   rechargeTooLow: (min: string) =>
     format`❌ Сумма пополнения должна быть не менее ${bold(min)} USD`,

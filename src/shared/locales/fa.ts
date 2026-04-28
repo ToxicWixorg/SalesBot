@@ -76,11 +76,16 @@ export const fa = {
   btnRechargeCard: "💳 پرداخت با کارت",
   btnRechargeZarinpal: "💰 درگاه زرین‌پال",
 
-  rechargeEnterAmount: "💵 لطفاً مبلغ شارژ را به تومان وارد کنید:",
+  rechargeEnterAmount: "💵 لطفاً مبلغ شارژ را وارد کنید:",
+  rechargeEnterAmountUsdt: "💵 لطفاً مقدار USDT را وارد کنید:",
   rechargeMinAmount: (amount: string) =>
     format`حداقل مبلغ شارژ: ${bold(amount)} تومان`,
   rechargeMaxAmount: (amount: string) =>
     format`حداکثر مبلغ شارژ: ${bold(amount)} تومان`,
+  rechargeMinAmountUsdt: (amount: string) =>
+    format`حداقل مقدار: ${bold(amount)} USDT`,
+  rechargeMaxAmountUsdt: (amount: string) =>
+    format`حداکثر مقدار: ${bold(amount)} USDT`,
   rechargeInvalidAmount: "❌ مبلغ وارد شده نامعتبر است",
   rechargeTooLow: (min: string) =>
     format`❌ مبلغ شارژ باید حداقل ${bold(min)} تومان باشد`,

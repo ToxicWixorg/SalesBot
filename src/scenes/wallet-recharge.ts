@@ -42,14 +42,25 @@ export function setupWalletRechargeScene(bot: Bot) {
 
     let minAmount = "10";
     let maxAmount = "10000";
+    let enterAmountText = context.t("rechargeEnterAmount");
+    let minAmountText = "rechargeMinAmount";
+    let maxAmountText = "rechargeMaxAmount";
 
-    if (method === "zarinpal") {
+    // برای USDT مقدار به USDT باشد
+    if (method === "crypto") {
+      minAmount = "10";
+      maxAmount = "10000";
+      enterAmountText = context.t("rechargeEnterAmountUsdt");
+      minAmountText = "rechargeMinAmountUsdt";
+      maxAmountText = "rechargeMaxAmountUsdt";
+    } else {
+      // برای کارت و زرین‌پال به تومان
       minAmount = "10000";
-      maxAmount = "10000000";
+      maxAmount = "1000000";
     }
 
     await context.editMessageText(
-      `${method === "crypto" ? context.t("rechargeCryptoTitle") : method === "card" ? context.t("rechargeCardTitle") : context.t("rechargeZarinpalTitle")}\n\n${context.t("rechargeEnterAmount")}\n\n${context.t("rechargeMinAmount", minAmount)}\n${context.t("rechargeMaxAmount", maxAmount)}`,
+      `${method === "crypto" ? context.t("rechargeCryptoTitle") : method === "card" ? context.t("rechargeCardTitle") : context.t("rechargeZarinpalTitle")}\n\n${enterAmountText}\n\n${context.t(minAmountText, minAmount)}\n${context.t(maxAmountText, maxAmount)}`,
       {
         reply_markup: keyboard,
       },
@@ -83,9 +94,14 @@ export function setupWalletRechargeScene(bot: Bot) {
     let minAmount = 10;
     let maxAmount = 10000;
 
-    if (state.method === "zarinpal") {
+    // برای USDT
+    if (state.method === "crypto") {
+      minAmount = 10;
+      maxAmount = 10000;
+    } else {
+      // برای کارت و زرین‌پال (تومان)
       minAmount = 10000;
-      maxAmount = 10000000;
+      maxAmount = 1000000;
     }
 
     if (amount < minAmount) {
