@@ -62,6 +62,80 @@ export const fa = {
   duration_month: "ماه",
   duration_year: "سال",
 
+  // Wallet
+  walletTitle: "💰 کیف پول",
+  walletBalance: (balance: string) => format`موجودی: ${bold(balance)} تومان`,
+  walletEmpty: "کیف پول شما خالی است 📭",
+  btnRechargeWallet: "💳 شارژ کیف پول",
+  btnTransactionHistory: "📊 تاریخچه تراکنش‌ها",
+
+  // Wallet Recharge
+  rechargeWalletTitle: "💳 شارژ کیف پول",
+  rechargeSelectMethod: "لطفاً روش شارژ را انتخاب کنید:",
+  btnRechargeCrypto: "🪙 پرداخت کریپتو (USDT)",
+  btnRechargeCard: "💳 پرداخت با کارت",
+  btnRechargeZarinpal: "💰 درگاه زرین‌پال",
+
+  rechargeEnterAmount: "💵 لطفاً مبلغ شارژ را به تومان وارد کنید:",
+  rechargeMinAmount: (amount: string) =>
+    format`حداقل مبلغ شارژ: ${bold(amount)} تومان`,
+  rechargeMaxAmount: (amount: string) =>
+    format`حداکثر مبلغ شارژ: ${bold(amount)} تومان`,
+  rechargeInvalidAmount: "❌ مبلغ وارد شده نامعتبر است",
+  rechargeTooLow: (min: string) =>
+    format`❌ مبلغ شارژ باید حداقل ${bold(min)} تومان باشد`,
+  rechargeTooHigh: (max: string) =>
+    format`❌ مبلغ شارژ نمی‌تواند بیشتر از ${bold(max)} تومان باشد`,
+
+  // Crypto Payment
+  rechargeCryptoTitle: "🪙 پرداخت کریپتو",
+  rechargeCryptoAddress: (address: string) =>
+    format`آدرس کیف پول:\n\n${bold(address)}`,
+  rechargeCryptoAmount: (amount: string) => format`مبلغ USDT: ${bold(amount)}`,
+  rechargeCryptoNetwork: (network: string) => format`شبکه: ${bold(network)}`,
+  rechargeCryptoInstructions:
+    "📝 دستورالعمل:\n\n1. مبلغ USDT را به آدرس بالا ارسال کنید\n2. TxID (شناسه تراکنش) را ارسال کنید\n3. تا 30 دقیقه صبر کنید تا تأیید شود",
+  rechargeCryptoSendTxId: "لطفاً TxID (شناسه تراکنش) را ارسال کنید:",
+  rechargeCryptoTxIdReceived:
+    "✅ شناسه تراکنش دریافت شد\n\nدر حال بررسی پرداخت...\nاین فرآیند ممکن است تا 30 دقیقه طول بکشد.",
+  rechargeCryptoVerified: (amount: string) =>
+    format`✅ پرداخت تأیید شد!\n\n${bold(amount)} تومان به کیف پول شما اضافه شد.`,
+  rechargeCryptoFailed: "❌ پرداخت تأیید نشد. لطفاً با پشتیبانی تماس بگیرید.",
+
+  // Card/Zarinpal Payment
+  rechargeCardTitle: "💳 پرداخت با کارت",
+  rechargeZarinpalTitle: "💰 درگاه زرین‌پال",
+  rechargePaymentLink: (amount: string) =>
+    format`مبلغ: ${bold(amount)} تومان\n\nروی دکمه زیر کلیک کنید تا به درگاه پرداخت منتقل شوید:`,
+  btnPayNow: "💳 پرداخت",
+  rechargePaymentPending:
+    "⏳ در انتظار پرداخت...\n\nلطفاً پرداخت را در مرورگر تکمیل کنید.",
+  rechargePaymentSuccess: (amount: string) =>
+    format`✅ پرداخت موفق!\n\n${bold(amount)} تومان به کیف پول شما اضافه شد.`,
+  rechargePaymentFailed: "❌ پرداخت ناموفق بود. لطفاً دوباره تلاش کنید.",
+  rechargePaymentCancelled: "⚠️ پرداخت لغو شد.",
+
+  // Transaction History
+  transactionHistoryTitle: "📊 تاریخچه تراکنش‌ها",
+  transactionHistoryEmpty: "تاریخچه تراکنش شما خالی است 📭",
+  transactionType: "نوع:",
+  transactionAmount: "مبلغ:",
+  transactionDate: "تاریخ:",
+  transactionDescription: "توضیحات:",
+
+  // Transaction Types
+  txTypeCredit: "➕ واریز",
+  txTypeDebit: "➖ برداشت",
+
+  // Transaction Sources
+  txSourcePurchase: "🛒 خرید",
+  txSourceRecharge: "💳 شارژ",
+  txSourceRefund: "↩️ بازگشت وجه",
+  txSourceReferral: "👥 پاداش دعوت",
+  txSourceReward: "🎁 جایزه",
+  txSourcePerk: "🎯 پاداش Perk",
+  txSourceAdminAdjustment: "⚙️ تعدیل ادمین",
+
   // Language Names
   langEnglish: "🇬🇧 English",
   langPersian: "🇮🇷 فارسی",

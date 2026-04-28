@@ -9,19 +9,42 @@ import {
   ticketMessagesTable,
   TicketMessage,
   InsertTicketMessage,
+  usersTable,
 } from "../db/schema.ts";
 import { eq, desc, and } from "drizzle-orm";
 
 export class WalletRepository {
   /**
-   * تراکنش جدید ایجاد کن
+   * تراکنش جدید ایجاد کن با ذخیره balance قبل و بعد
    */
   static async createTransaction(
     transaction: InsertWalletTransaction,
   ): Promise<WalletTransaction> {
+    // دریافت موجودی قبل از تراکنش
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, transaction.userId))
+      .limit(1);
+
+    const balanceBefore = parseFloat(user?.walletBalance || "0");
+    const amount = parseFloat(transaction.amount as string);
+
+    // محاسبه موجودی بعد
+    let balanceAfter = balanceBefore;
+    if (transaction.type === "credit") {
+      balanceAfter = balanceBefore + amount;
+    } else if (transaction.type === "debit") {
+      balanceAfter = balanceBefore - amount;
+    }
+
     const [result] = await db
       .insert(walletTransactionsTable)
-      .values(transaction)
+      .values({
+        ...transaction,
+        balanceBefore: balanceBefore.toFixed(2) as any,
+        balanceAfter: balanceAfter.toFixed(2) as any,
+      })
       .returning();
 
     return result;
@@ -35,6 +58,45 @@ export class WalletRepository {
       .select()
       .from(walletTransactionsTable)
       .where(eq(walletTransactionsTable.userId, BigInt(userId) as any))
+      .orderBy(desc(walletTransactionsTable.createdAt));
+  }
+
+  /**
+   * دریافت آخرین تراکنش‌های کاربر (محدود)
+   */
+  static async getRecentTransactions(
+    userId: number,
+    limit: number = 10,
+  ): Promise<WalletTransaction[]> {
+    return db
+      .select()
+      .from(walletTransactionsTable)
+      .where(eq(walletTransactionsTable.userId, BigInt(userId) as any))
+      .orderBy(desc(walletTransactionsTable.createdAt))
+      .limit(limit);
+  }
+
+  /**
+   * دریافت تراکنش بر اساس ID
+   */
+  static async findById(id: number): Promise<WalletTransaction | undefined> {
+    const [result] = await db
+      .select()
+      .from(walletTransactionsTable)
+      .where(eq(walletTransactionsTable.id, id))
+      .limit(1);
+
+    return result;
+  }
+
+  /**
+   * دریافت تراکنش‌های مربوط به یک سفارش
+   */
+  static async findByOrderId(orderId: number): Promise<WalletTransaction[]> {
+    return db
+      .select()
+      .from(walletTransactionsTable)
+      .where(eq(walletTransactionsTable.orderId, orderId))
       .orderBy(desc(walletTransactionsTable.createdAt));
   }
 
@@ -75,6 +137,31 @@ export class WalletRepository {
       description,
     });
   }
+
+  /**
+   * محاسبه مجموع تراکنش‌های credit
+   */
+  static async getTotalCredit(userId: number): Promise<number> {
+    const transactions = await this.findByUserId(userId);
+    const totalCredit = transactions
+      .filter((tx) => tx.type === "credit")
+      .reduce((sum, tx) => sum + parseFloat(tx.amount || "0"), 0);
+
+    return totalCredit;
+  }
+
+  /**
+   * محاسبه مجموع تراکنش‌های debit
+   */
+  static async getTotalDebit(userId: number): Promise<number> {
+    const transactions = await this.findByUserId(userId);
+    const totalDebit = transactions
+      .filter((tx) => tx.type === "debit")
+      .reduce((sum, tx) => sum + parseFloat(tx.amount || "0"), 0);
+
+    return totalDebit;
+  }
+}
 }
 
 export class TicketRepository {

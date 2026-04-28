@@ -3,6 +3,8 @@ import { config } from "./config.ts";
 import { startComposer } from "./handlers/start.ts";
 import { productsComposer } from "./handlers/products.ts";
 import { composer } from "./plugins/index.ts";
+import { setupWalletHandlers } from "./handlers/wallet.ts";
+import { setupWalletRechargeScene } from "./scenes/wallet-recharge.ts";
 
 export const bot = new Bot(config.BOT_TOKEN)
   .extend(composer)
@@ -20,3 +22,7 @@ export const bot = new Bot(config.BOT_TOKEN)
         .catch(() => {});
     }
   });
+
+// Setup wallet handlers
+setupWalletHandlers(bot);
+setupWalletRechargeScene(bot);

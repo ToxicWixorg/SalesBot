@@ -103,15 +103,47 @@ export class UserRepository {
   }
 
   /**
-   * موجودی کیف پول را به روزرسانی کن
+   * موجودی کیف پول را به روزرسانی کن (افزایش یا کاهش)
    */
   static async updateWalletBalance(
     userId: number,
-    newBalance: string,
+    amount: number,
+    operation: "add" | "subtract" | "set" = "set",
   ): Promise<User> {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new Error(`User ${userId} not found`);
+    }
+
+    const currentBalance = parseFloat(user.walletBalance || "0");
+    let newBalance = currentBalance;
+
+    if (operation === "add") {
+      newBalance = currentBalance + amount;
+    } else if (operation === "subtract") {
+      newBalance = currentBalance - amount;
+      // بررسی کنید که موجودی منفی نشود
+      if (newBalance < 0) {
+        throw new Error("Insufficient balance");
+      }
+    } else {
+      newBalance = amount;
+    }
+
     return this.update(userId, {
-      walletBalance: newBalance as any,
+      walletBalance: newBalance.toFixed(2) as any,
     });
+  }
+
+  /**
+   * بررسی موجودی کافی
+   */
+  static async hasEnoughBalance(
+    userId: number,
+    requiredAmount: number,
+  ): Promise<boolean> {
+    const balance = await this.getWalletBalance(userId);
+    return parseFloat(balance) >= requiredAmount;
   }
 
   /**

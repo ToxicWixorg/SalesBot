@@ -77,4 +77,32 @@ export const startComposer = new Composer()
     return context.send(t("mainMenu") + "\n\n" + t("chooseAction"), {
       reply_markup: mainMenuKeyboard(t),
     });
+  })
+  .callbackQuery("main_menu", async (context) => {
+    console.log("[MAIN_MENU] Callback received from user:", context.from?.id);
+
+    if (!context.from) {
+      return context.answerCallbackQuery({
+        text: "❌ Unable to identify user.",
+        show_alert: true,
+      });
+    }
+
+    const userId = context.from.id;
+    const user = await UserRepository.findById(userId);
+
+    if (!user) {
+      return context.answerCallbackQuery({
+        text: "❌ User not found.",
+        show_alert: true,
+      });
+    }
+
+    const t = i18n.buildT(user.languageCode || "en");
+
+    await context.editText(t("mainMenu") + "\n\n" + t("chooseAction"), {
+      reply_markup: mainMenuKeyboard(t),
+    });
+
+    await context.answerCallbackQuery();
   });
