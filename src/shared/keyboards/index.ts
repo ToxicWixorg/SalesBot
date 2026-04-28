@@ -20,3 +20,12 @@ export { settingsKeyboard } from "./settings.ts";
 
 // Pagination & List Keyboards
 export { paginationKeyboard, listItemKeyboard } from "./pagination.ts";
+
+// Products Keyboards
+export {
+  categoriesKeyboard,
+  productsListKeyboard,
+  productDetailsKeyboard,
+  productPlansKeyboard,
+  orderConfirmationKeyboard,
+} from "./products.ts";
