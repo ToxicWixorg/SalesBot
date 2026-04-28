@@ -2,12 +2,13 @@ import { Redis } from "ioredis";
 import { config } from "../config.ts";
 
 console.log(
-  `🔧 Connecting to Redis at ${config.REDIS_HOST}:${config.REDIS_PORT}`,
+  `🔧 Connecting to Redis at ${config.REDIS_HOST}:6379
+`,
 );
 
 export const redis = new Redis({
   host: config.REDIS_HOST,
-  port: config.REDIS_PORT,
+  port: 6379,
   maxRetriesPerRequest: null, // queue commands indefinitely during reconnect
   enableKeepAlive: true,
   keepAliveInitialDelay: 10000, // send keepalive after 10s idle
