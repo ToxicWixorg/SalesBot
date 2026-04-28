@@ -28,6 +28,10 @@ services:
         "128mb",
         "--maxmemory-policy",
         "allkeys-lru",
+        "--tcp-keepalive",
+        "30",
+        "--timeout",
+        "0",
       ]
     restart: unless-stopped
     ports:
