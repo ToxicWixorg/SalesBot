@@ -24,6 +24,13 @@ export const en = {
   btnSupport: "💬 Support",
   btnSettings: "⚙️ Settings",
   btnBack: "🔙 Back",
+  btnCancel: "❌ Cancel",
+  btnMainMenu: "🏠 Main Menu",
+  btnChangeLanguage: "🌐 Change Language",
+  btnNotifications: "🔔 Notifications",
+  btnYes: "✅ Yes",
+  btnNo: "❌ No",
+  btnConfirm: "✅ Confirm",
 
   // Language Names
   langEnglish: "🇬🇧 English",

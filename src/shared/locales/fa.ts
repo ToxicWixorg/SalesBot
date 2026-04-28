@@ -26,6 +26,13 @@ export const fa = {
   btnSupport: "💬 پشتیبانی",
   btnSettings: "⚙️ تنظیمات",
   btnBack: "🔙 بازگشت",
+  btnCancel: "❌ لغو",
+  btnMainMenu: "🏠 منوی اصلی",
+  btnChangeLanguage: "🌐 تغییر زبان",
+  btnNotifications: "🔔 اعلان‌ها",
+  btnYes: "✅ بله",
+  btnNo: "❌ خیر",
+  btnConfirm: "✅ تایید",
 
   // Language Names
   langEnglish: "🇬🇧 English",

@@ -1,8 +1,9 @@
-import { Composer, InlineKeyboard } from "gramio";
+import { Composer } from "gramio";
 import { composer } from "../plugins/index.ts";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { languageSelectionScene } from "../scenes/language-selection.ts";
+import { mainMenuKeyboard } from "../shared/keyboards/index.ts";
 
 function generateReferralCode(userId: number): string {
   return `REF${userId}${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
@@ -73,19 +74,7 @@ export const startComposer = new Composer()
 
     await context.send(t("welcome", userName));
 
-    const mainMenuKeyboard = new InlineKeyboard()
-      .text(t("btnProducts"), "products")
-      .text(t("btnMyOrders"), "my_orders")
-      .row()
-      .text(t("btnWallet"), "wallet")
-      .text(t("btnInviteFriends"), "invite")
-      .row()
-      .text(t("btnDiscountCode"), "discount")
-      .text(t("btnSupport"), "support")
-      .row()
-      .text(t("btnSettings"), "settings");
-
     return context.send(t("mainMenu") + "\n\n" + t("chooseAction"), {
-      reply_markup: mainMenuKeyboard,
+      reply_markup: mainMenuKeyboard(t),
     });
   });

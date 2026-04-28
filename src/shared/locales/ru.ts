@@ -26,6 +26,13 @@ export const ru = {
   btnSupport: "💬 Поддержка",
   btnSettings: "⚙️ Настройки",
   btnBack: "🔙 Назад",
+  btnCancel: "❌ Отмена",
+  btnMainMenu: "🏠 Главное меню",
+  btnChangeLanguage: "🌐 Изменить язык",
+  btnNotifications: "🔔 Уведомления",
+  btnYes: "✅ Да",
+  btnNo: "❌ Нет",
+  btnConfirm: "✅ Подтвердить",
 
   // Language Names
   langEnglish: "🇬🇧 English",
