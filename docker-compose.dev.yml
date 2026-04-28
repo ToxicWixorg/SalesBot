@@ -8,9 +8,14 @@ services:
       - POSTGRES_PASSWORD=991fa522db6ddb9935c7d9b1
       - POSTGRES_DB=bot
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis:
     container_name: bot-redis
@@ -18,9 +23,14 @@ services:
     command: ["redis-server", "--maxmemory-policy", "noeviction"]
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 volumes:
   postgres_data:
   redis_data:
