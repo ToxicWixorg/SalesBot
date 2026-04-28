@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "sales-bot",
       script: "bun",
-      args: "run dev",
+      args: "run start",
       cwd: "/root/bot",
       autorestart: true,
       watch: false,
