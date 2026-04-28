@@ -11,7 +11,8 @@ function generateReferralCode(userId: number): string {
 export const startComposer = new Composer()
   .extend(composer)
   .command("start", async (context) => {
-    await context.send(`welcome ${context.from?.id}`);
+    console.log("[START] Command received from user:", context.from?.id);
+    
     if (!context.from) {
       return context.send("❌ Unable to identify user.");
     }
@@ -45,11 +46,15 @@ export const startComposer = new Composer()
         referredBy: referrerId,
       });
 
-      return context.scene.enter(languageSelectionScene);
+      console.log("[START] New user created, entering language selection scene");
+      await context.scene.enter(languageSelectionScene);
+      return;
     }
 
     if (!user.languageCode || user.languageCode === "null") {
-      return context.scene.enter(languageSelectionScene);
+      console.log("[START] User has no language, entering language selection scene");
+      await context.scene.enter(languageSelectionScene);
+      return;
     }
 
     const t = i18n.buildT(user.languageCode);

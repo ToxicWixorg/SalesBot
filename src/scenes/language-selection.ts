@@ -7,6 +7,11 @@ import { i18n } from "../shared/locales/index.ts";
 export const languageSelectionScene = new Scene("language_selection")
   .extend(baseComposer)
   .step(["message", "callback_query"], async (context) => {
+    console.log(
+      "[LANGUAGE_SCENE] Step triggered, firstTime:",
+      context.scene.step.firstTime,
+    );
+
     if (context.scene.step.firstTime) {
       const keyboard = new InlineKeyboard()
         .text("🇬🇧 English", "lang_en")
@@ -14,6 +19,7 @@ export const languageSelectionScene = new Scene("language_selection")
         .row()
         .text("🇷🇺 Русский", "lang_ru");
 
+      console.log("[LANGUAGE_SCENE] Sending language selection keyboard");
       return context.send(
         "🌍 Please select your language:\n🌍 لطفاً زبان خود را انتخاب کنید:\n🌍 Пожалуйста, выберите ваш язык:",
         {
@@ -34,14 +40,12 @@ export const languageSelectionScene = new Scene("language_selection")
 
     const langCode = data.replace("lang_", "");
 
-
     if (!["en", "fa", "ru"].includes(langCode)) {
       return context.answer({
         text: "Invalid language selected",
         show_alert: true,
       });
     }
-
 
     if (context.from?.id) {
       await UserRepository.update(context.from.id, {

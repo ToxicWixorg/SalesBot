@@ -8,7 +8,10 @@ export const bot = new Bot(config.BOT_TOKEN)
   .extend(startComposer)
   .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`))
   .onError(({ context, error }) => {
-    console.error("[Error Handler]", error);
+    console.error("[Error Handler] Error occurred:", error);
+    console.error("[Error Handler] Context type:", context.constructor.name);
+    console.error("[Error Handler] Stack:", error.stack);
+
     if (context.is("message") && context.chat) {
       context
         .send("⚠️ An internal error occurred. Please try again later.")
