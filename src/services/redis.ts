@@ -28,3 +28,11 @@ redis.on("connect", () => {
 redis.on("error", (err) => {
   console.error("❌ Redis error:", err.message);
 });
+
+// Keep connection alive by pinging every 30 seconds
+// Prevents firewall/NAT from dropping idle TCP connections
+setInterval(() => {
+  redis.ping().catch((err) => {
+    console.error("❌ Redis ping failed:", err.message);
+  });
+}, 30_000);
