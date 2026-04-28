@@ -21,7 +21,14 @@ services:
   redis:
     container_name: bot-redis
     image: redis:latest
-    command: ["redis-server", "--maxmemory-policy", "noeviction"]
+    command:
+      [
+        "redis-server",
+        "--maxmemory",
+        "128mb",
+        "--maxmemory-policy",
+        "allkeys-lru",
+      ]
     restart: unless-stopped
     ports:
       - "6380:6379"
@@ -32,6 +39,10 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 192m
 volumes:
   postgres_data:
   redis_data:
