@@ -13,7 +13,13 @@ export const startComposer = new Composer()
   .command("start", async (context) => {
     console.log("[START] Command received from user:", context.from?.id);
 
+    if (context.scene?.current) {
+      console.log("[START] Exiting active scene:", context.scene.current);
+      await context.scene.exit();
+    }
+
     if (!context.from) {
+      console.log("[START] No user context, returning error");
       return context.send("❌ Unable to identify user.");
     }
 
@@ -22,9 +28,11 @@ export const startComposer = new Composer()
     const firstName = context.from.firstName || null;
     const lastName = context.from.lastName || null;
 
+    console.log("[START] Looking up user in database:", userId);
     let user = await UserRepository.findById(userId);
 
     if (!user) {
+      console.log("[START] User not found, creating new user");
       const startPayload = context.args;
       let referrerId: number | null = null;
 
@@ -33,6 +41,7 @@ export const startComposer = new Composer()
         const referrer = await UserRepository.findByReferralCode(referralCode);
         if (referrer) {
           referrerId = referrer.id;
+          console.log("[START] Referrer found:", referrerId);
         }
       }
 
@@ -46,12 +55,18 @@ export const startComposer = new Composer()
         referredBy: referrerId,
       });
       user = newUser;
+      console.log("[START] New user created successfully");
+    } else {
+      console.log("[START] User found, language:", user.languageCode);
     }
 
     if (!user.languageCode || user.languageCode === "null") {
+      console.log("[START] No language set, entering language selection scene");
       await context.scene.enter(languageSelectionScene);
       return;
     }
+
+    console.log("[START] Sending welcome message and main menu");
 
     const t = i18n.buildT(user.languageCode);
     const userName = firstName || username || "User";

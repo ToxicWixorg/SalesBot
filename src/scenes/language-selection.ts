@@ -11,6 +11,13 @@ export const languageSelectionScene = new Scene("language_selection")
       "[LANGUAGE_SCENE] Step triggered, firstTime:",
       context.scene.step.firstTime,
     );
+    
+    // If user sends a command while in scene, exit and let command handlers process it
+    if (context.is("message") && context.text?.startsWith("/")) {
+      console.log("[LANGUAGE_SCENE] Command detected, exiting scene");
+      await context.scene.exit();
+      return;
+    }
 
     if (context.scene.step.firstTime) {
       const keyboard = new InlineKeyboard()
