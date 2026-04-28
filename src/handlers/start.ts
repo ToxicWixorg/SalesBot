@@ -1,5 +1,5 @@
 import { Composer, InlineKeyboard } from "gramio";
-import { composer } from "../plugins/index.ts";
+import { baseComposer } from "../plugins/base.ts";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { languageSelectionScene } from "../scenes/language-selection.ts";
@@ -9,7 +9,7 @@ function generateReferralCode(userId: number): string {
 }
 
 export const startComposer = new Composer()
-  .extend(composer)
+  .extend(baseComposer)
   .command("start", async (context) => {
     console.log("[START] Command received from user:", context.from?.id);
     
