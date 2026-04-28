@@ -8,8 +8,6 @@ console.log(
 export const redis = new Redis({
   host: config.REDIS_HOST,
   port: config.REDIS_PORT,
-  // for bullmq
-  maxRetriesPerRequest: null,
   retryStrategy(times) {
     const delay = Math.min(times * 100, 5000);
     console.error(
