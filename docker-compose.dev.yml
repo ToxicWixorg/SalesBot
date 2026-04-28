@@ -17,6 +17,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - botnet
 
   redis:
     container_name: bot-redis
@@ -34,8 +36,6 @@ services:
         "0",
       ]
     restart: unless-stopped
-    ports:
-      - "6380:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -43,10 +43,32 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          memory: 192m
+    networks:
+      - botnet
+
+  bot:
+    container_name: sales-bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=bot-redis
+      - REDIS_PORT=6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - botnet
+
+networks:
+  botnet:
+    driver: bridge
+
 volumes:
   postgres_data:
   redis_data:
