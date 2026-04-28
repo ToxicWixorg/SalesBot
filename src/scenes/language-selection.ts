@@ -6,31 +6,35 @@ import { i18n } from "../shared/locales/index.ts";
 
 export const languageSelectionScene = new Scene("language_selection")
   .extend(baseComposer)
-  .onSceneEnter(async (context) => {
-    const keyboard = new InlineKeyboard()
-      .text("🇬🇧 English", "lang_en")
-      .text("🇮🇷 فارسی", "lang_fa")
-      .row()
-      .text("🇷🇺 Русский", "lang_ru");
+  .step(["message", "callback_query"], async (context) => {
+    if (context.scene.step.firstTime) {
+      const keyboard = new InlineKeyboard()
+        .text("🇬🇧 English", "lang_en")
+        .text("🇮🇷 فارسی", "lang_fa")
+        .row()
+        .text("🇷🇺 Русский", "lang_ru");
 
-    return context.send(
-      "🌍 Please select your language:\n🌍 لطفاً زبان خود را انتخاب کنید:\n🌍 Пожалуйста, выберите ваш язык:",
-      {
-        reply_markup: keyboard,
-      },
-    );
-  })
-  .step("callback_query", async (context) => {
+      return context.send(
+        "🌍 Please select your language:\n🌍 لطفاً زبان خود را انتخاب کنید:\n🌍 Пожалуйста, выберите ваш язык:",
+        {
+          reply_markup: keyboard,
+        },
+      );
+    }
+
+    // اگر callback_query نیست، بازگشت
+    if (!context.is("callback_query")) {
+      return;
+    }
     const data = context.data;
 
     if (!data || !data.startsWith("lang_")) {
       return;
     }
 
-    // استخراج کد زبان
     const langCode = data.replace("lang_", "");
 
-    // بررسی اعتبار زبان
+
     if (!["en", "fa", "ru"].includes(langCode)) {
       return context.answer({
         text: "Invalid language selected",
@@ -38,24 +42,20 @@ export const languageSelectionScene = new Scene("language_selection")
       });
     }
 
-    // ذخیره زبان در دیتابیس
+
     if (context.from?.id) {
       await UserRepository.update(context.from.id, {
         languageCode: langCode,
       });
     }
 
-    // ساخت تابع ترجمه با زبان انتخاب شده
     const t = i18n.buildT(langCode);
 
-    // پاسخ به callback query
     await context.answer();
 
-    // ارسال پیام خوش‌آمد
     const userName = context.from?.firstName || "User";
     await context.editText(t("welcome", userName));
 
-    // نمایش منوی اصلی
     const mainMenuKeyboard = new InlineKeyboard()
       .text(t("btnProducts"), "products")
       .text(t("btnMyOrders"), "my_orders")
@@ -72,6 +72,5 @@ export const languageSelectionScene = new Scene("language_selection")
       reply_markup: mainMenuKeyboard,
     });
 
-    // خروج از scene
     return context.scene.exit();
   });
