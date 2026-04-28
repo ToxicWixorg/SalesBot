@@ -18,7 +18,7 @@ services:
 
   postgres:
     container_name: bot-postgres
-    image: postgres:latest
+    image: postgres:16-alpine
     restart: unless-stopped
     environment:
       - POSTGRES_USER=bot
@@ -29,7 +29,7 @@ services:
 
   redis:
     container_name: bot-redis
-    image: redis:latest
+    image: redis:7-alpine
     command: ["redis-server", "--maxmemory-policy", "noeviction"]
     restart: unless-stopped
     ports:
