@@ -8,9 +8,9 @@ import { i18n } from "../shared/locales/index.ts";
 export const storage = redisStorage(redis);
 
 export const baseComposer = new Composer({ name: "base" })
-	.extend(autoAnswerCallbackQuery())
-	.extend(autoRetry())
-	.derive((context) => ({
-		t: i18n.buildT(context.from?.languageCode ?? "en"),
-	}))
-	.as("scoped");
+  .extend(autoAnswerCallbackQuery())
+  .extend(autoRetry())
+  .derive((context) => ({
+    t: i18n.buildT(context.update.from?.language_code ?? "en"),
+  }))
+  .as("scoped");

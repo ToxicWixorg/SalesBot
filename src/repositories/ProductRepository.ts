@@ -1,0 +1,214 @@
+import { db } from "../db/index.ts";
+import {
+  productsTable,
+  Product,
+  InsertProduct,
+  productPlansTable,
+  ProductPlan,
+  InsertProductPlan,
+  categoriesTable,
+  Category,
+  InsertCategory,
+} from "../db/schema.ts";
+import { eq, desc, and } from "drizzle-orm";
+
+export class ProductRepository {
+  /**
+   * محصول را با ID پیدا کن
+   */
+  static async findById(id: number): Promise<Product | undefined> {
+    const [result] = await db
+      .select()
+      .from(productsTable)
+      .where(eq(productsTable.id, id))
+      .limit(1);
+
+    return result;
+  }
+
+  /**
+   * محصول را با Slug پیدا کن
+   */
+  static async findBySlug(slug: string): Promise<Product | undefined> {
+    const [result] = await db
+      .select()
+      .from(productsTable)
+      .where(eq(productsTable.slug, slug))
+      .limit(1);
+
+    return result;
+  }
+
+  /**
+   * تمام محصولات فعال
+   */
+  static async findActive(): Promise<Product[]> {
+    return db
+      .select()
+      .from(productsTable)
+      .where(eq(productsTable.isActive, true))
+      .orderBy(productsTable.name);
+  }
+
+  /**
+   * محصولات یک دسته
+   */
+  static async findByCategory(categoryId: number): Promise<Product[]> {
+    return db
+      .select()
+      .from(productsTable)
+      .where(
+        and(
+          eq(productsTable.categoryId, categoryId),
+          eq(productsTable.isActive, true),
+        ),
+      )
+      .orderBy(productsTable.name);
+  }
+
+  /**
+   * محصول جدید ایجاد کن
+   */
+  static async create(product: InsertProduct): Promise<Product> {
+    const [result] = await db.insert(productsTable).values(product).returning();
+
+    return result;
+  }
+
+  /**
+   * محصول را بروزرسانی کن
+   */
+  static async update(id: number, data: Partial<Product>): Promise<Product> {
+    const [result] = await db
+      .update(productsTable)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(productsTable.id, id))
+      .returning();
+
+    return result;
+  }
+
+  /**
+   * موجودی محصول را کم کن
+   */
+  static async decreaseStock(
+    productId: number,
+    quantity: number = 1,
+  ): Promise<Product> {
+    const product = await this.findById(productId);
+    if (!product) throw new Error("Product not found");
+
+    return this.update(productId, {
+      stock: (product.stock || 0) - quantity,
+    });
+  }
+}
+
+export class ProductPlanRepository {
+  /**
+   * پلن را با ID پیدا کن
+   */
+  static async findById(id: number): Promise<ProductPlan | undefined> {
+    const [result] = await db
+      .select()
+      .from(productPlansTable)
+      .where(eq(productPlansTable.id, id))
+      .limit(1);
+
+    return result;
+  }
+
+  /**
+   * تمام پلن‌های یک محصول
+   */
+  static async findByProductId(productId: number): Promise<ProductPlan[]> {
+    return db
+      .select()
+      .from(productPlansTable)
+      .where(
+        and(
+          eq(productPlansTable.productId, productId),
+          eq(productPlansTable.isActive, true),
+        ),
+      )
+      .orderBy(productPlansTable.order);
+  }
+
+  /**
+   * پلن جدید ایجاد کن
+   */
+  static async create(plan: InsertProductPlan): Promise<ProductPlan> {
+    const [result] = await db
+      .insert(productPlansTable)
+      .values(plan)
+      .returning();
+
+    return result;
+  }
+
+  /**
+   * پلن را بروزرسانی کن
+   */
+  static async update(
+    id: number,
+    data: Partial<ProductPlan>,
+  ): Promise<ProductPlan> {
+    const [result] = await db
+      .update(productPlansTable)
+      .set(data)
+      .where(eq(productPlansTable.id, id))
+      .returning();
+
+    return result;
+  }
+}
+
+export class CategoryRepository {
+  /**
+   * دسته را با ID پیدا کن
+   */
+  static async findById(id: number): Promise<Category | undefined> {
+    const [result] = await db
+      .select()
+      .from(categoriesTable)
+      .where(eq(categoriesTable.id, id))
+      .limit(1);
+
+    return result;
+  }
+
+  /**
+   * دسته را با Slug پیدا کن
+   */
+  static async findBySlug(slug: string): Promise<Category | undefined> {
+    const [result] = await db
+      .select()
+      .from(categoriesTable)
+      .where(eq(categoriesTable.slug, slug))
+      .limit(1);
+
+    return result;
+  }
+
+  /**
+   * تمام دسته‌ها
+   */
+  static async findAll(): Promise<Category[]> {
+    return db.select().from(categoriesTable).orderBy(categoriesTable.name);
+  }
+
+  /**
+   * دسته جدید ایجاد کن
+   */
+  static async create(category: InsertCategory): Promise<Category> {
+    const [result] = await db
+      .insert(categoriesTable)
+      .values(category)
+      .returning();
+
+    return result;
+  }
+}
