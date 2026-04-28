@@ -1,5 +1,5 @@
 import { Composer, InlineKeyboard } from "gramio";
-import { baseComposer } from "../plugins/base.ts";
+import { composer } from "../plugins/index.ts";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { languageSelectionScene } from "../scenes/language-selection.ts";
@@ -9,10 +9,10 @@ function generateReferralCode(userId: number): string {
 }
 
 export const startComposer = new Composer()
-  .extend(baseComposer)
+  .extend(composer)
   .command("start", async (context) => {
     console.log("[START] Command received from user:", context.from?.id);
-    
+
     if (!context.from) {
       return context.send("❌ Unable to identify user.");
     }
@@ -46,13 +46,17 @@ export const startComposer = new Composer()
         referredBy: referrerId,
       });
 
-      console.log("[START] New user created, entering language selection scene");
+      console.log(
+        "[START] New user created, entering language selection scene",
+      );
       await context.scene.enter(languageSelectionScene);
       return;
     }
 
     if (!user.languageCode || user.languageCode === "null") {
-      console.log("[START] User has no language, entering language selection scene");
+      console.log(
+        "[START] User has no language, entering language selection scene",
+      );
       await context.scene.enter(languageSelectionScene);
       return;
     }

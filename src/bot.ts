@@ -4,8 +4,8 @@ import { startComposer } from "./handlers/start.ts";
 import { composer } from "./plugins/index.ts";
 
 export const bot = new Bot(config.BOT_TOKEN)
-  .extend(startComposer)
   .extend(composer)
+  .extend(startComposer)
   .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`))
   .onError(({ context, error }) => {
     console.error("[Error Handler] Error occurred:", error);
