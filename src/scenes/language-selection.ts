@@ -6,22 +6,19 @@ import { i18n } from "../shared/locales/index.ts";
 
 export const languageSelectionScene = new Scene("language_selection")
   .extend(baseComposer)
-  .step("message", async (context) => {
-    if (context.scene.step.firstTime) {
-      // نمایش انتخاب زبان
-      const keyboard = new InlineKeyboard()
-        .text("🇬🇧 English", "lang_en")
-        .text("🇮🇷 فارسی", "lang_fa")
-        .row()
-        .text("🇷🇺 Русский", "lang_ru");
+  .onSceneEnter(async (context) => {
+    const keyboard = new InlineKeyboard()
+      .text("🇬🇧 English", "lang_en")
+      .text("🇮🇷 فارسی", "lang_fa")
+      .row()
+      .text("🇷🇺 Русский", "lang_ru");
 
-      return context.send(
-        "🌍 Please select your language:\n🌍 لطفاً زبان خود را انتخاب کنید:\n🌍 Пожалуйста, выберите ваш язык:",
-        {
-          reply_markup: keyboard,
-        },
-      );
-    }
+    return context.send(
+      "🌍 Please select your language:\n🌍 لطفاً زبان خود را انتخاب کنید:\n🌍 Пожалуйста, выберите ваш язык:",
+      {
+        reply_markup: keyboard,
+      },
+    );
   })
   .step("callback_query", async (context) => {
     const data = context.data;

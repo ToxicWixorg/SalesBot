@@ -11,6 +11,7 @@ function generateReferralCode(userId: number): string {
 export const startComposer = new Composer()
   .extend(composer)
   .command("start", async (context) => {
+    await context.send(`welcome ${context.from?.id}`);
     if (!context.from) {
       return context.send("❌ Unable to identify user.");
     }
