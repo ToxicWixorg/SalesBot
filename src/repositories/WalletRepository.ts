@@ -162,7 +162,6 @@ export class WalletRepository {
     return totalDebit;
   }
 }
-}
 
 export class TicketRepository {
   /**
