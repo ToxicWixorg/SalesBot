@@ -4,9 +4,7 @@ import { UserRepository } from "../repositories/UserRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { languageSelectionScene } from "../scenes/language-selection.ts";
 
-/**
- * تولید کد ریفرال یونیک
- */
+
 function generateReferralCode(userId: number): string {
   return `REF${userId}${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 }
@@ -23,12 +21,9 @@ export const startComposer = new Composer()
     const firstName = context.from.firstName || null;
     const lastName = context.from.lastName || null;
 
-    // بررسی وجود کاربر در دیتابیس
     let user = await UserRepository.findById(userId);
 
-    // اگر کاربر جدید است
     if (!user) {
-      // بررسی پارامتر ریفرال
       const startPayload = context.args;
       let referrerId: number | null = null;
 
@@ -40,34 +35,28 @@ export const startComposer = new Composer()
         }
       }
 
-      // ایجاد کاربر جدید
       user = await UserRepository.create({
         id: userId,
         username,
         firstName,
         lastName,
-        languageCode: null, // زبان هنوز انتخاب نشده
+        languageCode: null, 
         referralCode: generateReferralCode(userId),
         referredBy: referrerId,
       });
 
-      // هدایت به scene انتخاب زبان
       return context.scene.enter(languageSelectionScene);
     }
 
-    // اگر کاربر وجود دارد اما زبان انتخاب نکرده
     if (!user.languageCode || user.languageCode === "null") {
       return context.scene.enter(languageSelectionScene);
     }
 
-    // کاربر موجود با زبان انتخاب شده
     const t = i18n.buildT(user.languageCode);
     const userName = firstName || username || "User";
 
-    // نمایش پیام خوش‌آمد
     await context.send(t("welcome", userName));
 
-    // نمایش منوی اصلی
     const mainMenuKeyboard = new InlineKeyboard()
       .text(t("btnProducts"), "products")
       .text(t("btnMyOrders"), "my_orders")
