@@ -205,4 +205,88 @@ export const fa = {
   discountHistoryTitle: "📊 <b>تاریخچه استفاده از کدهای تخفیف</b>",
   discountAmount: "مقدار تخفیف",
   orderId: "شماره سفارش",
+
+  // Settings
+  settingsTitle: "⚙️ تنظیمات",
+  settingsDescription: "از این بخش می‌توانید تنظیمات حساب خود را مدیریت کنید.",
+  btnAccountInfo: "👤 اطلاعات حساب",
+  btnNotificationSettings: "🔔 تنظیمات اعلان‌ها",
+  btnPrivacy: "🔒 حریم خصوصی",
+  btnAbout: "ℹ️ درباره ما",
+
+  // Account Info
+  accountInfoTitle: "👤 اطلاعات حساب کاربری",
+  accountInfoData: (data: {
+    userId: string;
+    username: string;
+    firstName: string;
+    joinDate: string;
+    totalOrders: number;
+    totalSpent: string;
+    totalReferrals: number;
+  }) =>
+    `👤 <b>اطلاعات حساب شما</b>\n\n` +
+    `🆔 شناسه کاربری: <code>${data.userId}</code>\n` +
+    `👤 نام کاربری: ${data.username ? `@${data.username}` : "ندارد"}\n` +
+    `📝 نام: ${data.firstName}\n` +
+    `📅 تاریخ عضویت: ${data.joinDate}\n\n` +
+    `📊 <b>آمار:</b>\n` +
+    `🛒 تعداد خریدها: <b>${data.totalOrders}</b>\n` +
+    `💰 مجموع خرید: <b>${data.totalSpent}</b> تومان\n` +
+    `👥 تعداد دعوت‌ها: <b>${data.totalReferrals}</b>`,
+
+  // Notification Settings
+  notificationSettingsTitle: "🔔 تنظیمات اعلان‌ها",
+  notificationSettingsDescription:
+    "می‌توانید انواع اعلان‌هایی که می‌خواهید دریافت کنید را انتخاب کنید:",
+  btnToggleOrderNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} اعلان سفارشات`,
+  btnToggleWalletNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} اعلان تراکنش‌های کیف پول`,
+  btnTogglePromotionNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} اعلان تخفیفات و پیشنهادها`,
+  btnToggleReferralNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} اعلان دعوت دوستان`,
+  btnToggleStockNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} اعلان موجودی محصولات`,
+  notificationToggled: (type: string, enabled: boolean) =>
+    `${enabled ? "✅ فعال شد" : "❌ غیرفعال شد"}: ${type}`,
+  allNotificationsEnabled: "✅ همه اعلان‌ها فعال هستند",
+  allNotificationsDisabled: "❌ همه اعلان‌ها غیرفعال هستند",
+
+  // Privacy
+  privacyTitle: "🔒 حریم خصوصی",
+  privacyDescription: "مدیریت داده‌های شخصی و تنظیمات حریم خصوصی خود:",
+  btnClearHistory: "🗑️ پاک کردن تاریخچه",
+  btnDeleteAccount: "❌ حذف حساب کاربری",
+  btnExportData: "📤 دریافت اطلاعات من",
+  clearHistoryConfirm:
+    "⚠️ آیا مطمئن هستید که می‌خواهید تاریخچه خود را پاک کنید؟\n\n" +
+    "این عمل غیرقابل بازگشت است.",
+  clearHistorySuccess: "✅ تاریخچه شما با موفقیت پاک شد.",
+  clearHistoryCancelled: "❌ عملیات لغو شد.",
+  deleteAccountConfirm:
+    "⚠️ <b>هشدار!</b>\n\n" +
+    "آیا مطمئن هستید که می‌خواهید حساب کاربری خود را حذف کنید؟\n\n" +
+    "❌ تمام اطلاعات شما از جمله:\n" +
+    "• سفارشات\n" +
+    "• کیف پول\n" +
+    "• دعوت‌ها\n" +
+    "به طور دائمی حذف خواهند شد.\n\n" +
+    "این عمل <b>غیرقابل بازگشت</b> است!",
+  deleteAccountSuccess:
+    "✅ حساب کاربری شما حذف شد.\n\nامیدواریم دوباره شما را ببینیم!",
+  deleteAccountCancelled: "✅ حساب شما حذف نشد.",
+  exportDataProcessing: "⏳ در حال آماده‌سازی اطلاعات شما...",
+  exportDataReady: "✅ اطلاعات شما آماده است!",
+
+  // About
+  aboutTitle: "ℹ️ درباره ما",
+  aboutDescription:
+    "🤖 <b>ربات فروش محصولات دیجیتال</b>\n\n" +
+    "ما بهترین سرویس‌های دیجیتال را با بهترین قیمت و سریع‌ترین تحویل ارائه می‌دهیم.\n\n" +
+    "📧 <b>ارتباط با ما:</b>\n" +
+    "• پشتیبانی: @YourSupportBot\n" +
+    "• کانال: @YourChannel\n\n" +
+    "💡 نسخه: 1.0.0",
 } satisfies ShouldFollowLanguageStrict<typeof en>;

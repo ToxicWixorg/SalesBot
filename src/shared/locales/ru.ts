@@ -207,4 +207,89 @@ export const ru = {
   discountHistoryTitle: "📊 <b>История использования промокодов</b>",
   discountAmount: "Сумма скидки",
   orderId: "ID заказа",
+
+  // Settings
+  settingsTitle: "⚙️ Настройки",
+  settingsDescription: "Управляйте настройками вашего аккаунта здесь.",
+  btnAccountInfo: "👤 Информация об аккаунте",
+  btnNotificationSettings: "🔔 Настройки уведомлений",
+  btnPrivacy: "🔒 Конфиденциальность",
+  btnAbout: "ℹ️ О нас",
+
+  // Account Info
+  accountInfoTitle: "👤 Информация об аккаунте",
+  accountInfoData: (data: {
+    userId: string;
+    username: string;
+    firstName: string;
+    joinDate: string;
+    totalOrders: number;
+    totalSpent: string;
+    totalReferrals: number;
+  }) =>
+    `👤 <b>Информация о вашем аккаунте</b>\n\n` +
+    `🆔 ID пользователя: <code>${data.userId}</code>\n` +
+    `👤 Имя пользователя: ${data.username ? `@${data.username}` : "Нет"}\n` +
+    `📝 Имя: ${data.firstName}\n` +
+    `📅 Дата регистрации: ${data.joinDate}\n\n` +
+    `📊 <b>Статистика:</b>\n` +
+    `🛒 Всего заказов: <b>${data.totalOrders}</b>\n` +
+    `💰 Всего потрачено: <b>${data.totalSpent}</b> USD\n` +
+    `👥 Всего рефералов: <b>${data.totalReferrals}</b>`,
+
+  // Notification Settings
+  notificationSettingsTitle: "🔔 Настройки уведомлений",
+  notificationSettingsDescription:
+    "Выберите, какие уведомления вы хотите получать:",
+  btnToggleOrderNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} Уведомления о заказах`,
+  btnToggleWalletNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} Уведомления кошелька`,
+  btnTogglePromotionNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} Уведомления об акциях`,
+  btnToggleReferralNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} Реферальные уведомления`,
+  btnToggleStockNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} Уведомления о наличии`,
+  notificationToggled: (type: string, enabled: boolean) =>
+    `${enabled ? "✅ Включено" : "❌ Отключено"}: ${type}`,
+  allNotificationsEnabled: "✅ Все уведомления включены",
+  allNotificationsDisabled: "❌ Все уведомления отключены",
+
+  // Privacy
+  privacyTitle: "🔒 Конфиденциальность",
+  privacyDescription:
+    "Управляйте вашими личными данными и настройками конфиденциальности:",
+  btnClearHistory: "🗑️ Очистить историю",
+  btnDeleteAccount: "❌ Удалить аккаунт",
+  btnExportData: "📤 Экспорт данных",
+  clearHistoryConfirm:
+    "⚠️ Вы уверены, что хотите очистить историю?\n\n" +
+    "Это действие необратимо.",
+  clearHistorySuccess: "✅ Ваша история успешно очищена.",
+  clearHistoryCancelled: "❌ Операция отменена.",
+  deleteAccountConfirm:
+    "⚠️ <b>Внимание!</b>\n\n" +
+    "Вы уверены, что хотите удалить ваш аккаунт?\n\n" +
+    "❌ Все ваши данные, включая:\n" +
+    "• Заказы\n" +
+    "• Кошелек\n" +
+    "• Рефералы\n" +
+    "будут удалены навсегда.\n\n" +
+    "Это действие <b>необратимо</b>!",
+  deleteAccountSuccess:
+    "✅ Ваш аккаунт был удален.\n\nНадеемся увидеть вас снова!",
+  deleteAccountCancelled: "✅ Ваш аккаунт не был удален.",
+  exportDataProcessing: "⏳ Подготовка ваших данных...",
+  exportDataReady: "✅ Ваши данные готовы!",
+
+  // About
+  aboutTitle: "ℹ️ О нас",
+  aboutDescription:
+    "🤖 <b>Бот продажи цифровых товаров</b>\n\n" +
+    "Мы предоставляем лучшие цифровые сервисы по лучшим ценам и с быстрой доставкой.\n\n" +
+    "📧 <b>Связаться с нами:</b>\n" +
+    "• Поддержка: @YourSupportBot\n" +
+    "• Канал: @YourChannel\n\n" +
+    "💡 Версия: 1.0.0",
 } satisfies ShouldFollowLanguageStrict<typeof en>;

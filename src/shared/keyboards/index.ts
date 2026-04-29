@@ -16,7 +16,12 @@ export {
 } from "./confirmation.ts";
 
 // Settings Keyboards
-export { settingsKeyboard } from "./settings.ts";
+export {
+  settingsKeyboard,
+  notificationSettingsKeyboard,
+  privacySettingsKeyboard,
+  confirmationKeyboard,
+} from "./settings.ts";
 
 // Invite (Referral) Keyboards
 export { inviteKeyboard, referralListKeyboard } from "./invite.ts";

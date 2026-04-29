@@ -28,7 +28,7 @@ export const usersTable = pgTable(
     username: text("username"),
     firstName: text("first_name"),
     lastName: text("last_name"),
-    languageCode: text("language_code"), 
+    languageCode: text("language_code"),
 
     // Role & Status
     role: text("role").default("customer"), // customer, support, admin
@@ -44,6 +44,13 @@ export const usersTable = pgTable(
     // Referral
     referralCode: text("referral_code").unique(),
     referredBy: bigint("referred_by", { mode: "number" }),
+
+    // Notification Settings
+    notifyOrders: boolean("notify_orders").default(true), // Order status updates
+    notifyWallet: boolean("notify_wallet").default(true), // Wallet transactions
+    notifyPromotions: boolean("notify_promotions").default(true), // Promotions & offers
+    notifyReferrals: boolean("notify_referrals").default(true), // Referral updates
+    notifyStock: boolean("notify_stock").default(true), // Stock notifications
 
     // Timestamps
     createdAt: timestamp("created_at").defaultNow(),

@@ -207,4 +207,88 @@ export const en = {
   discountHistoryTitle: "📊 <b>Discount Code Usage History</b>",
   discountAmount: "Discount Amount",
   orderId: "Order ID",
+
+  // Settings
+  settingsTitle: "⚙️ Settings",
+  settingsDescription: "Manage your account settings from here.",
+  btnAccountInfo: "👤 Account Info",
+  btnNotificationSettings: "🔔 Notification Settings",
+  btnPrivacy: "🔒 Privacy",
+  btnAbout: "ℹ️ About",
+
+  // Account Info
+  accountInfoTitle: "👤 Account Information",
+  accountInfoData: (data: {
+    userId: string;
+    username: string;
+    firstName: string;
+    joinDate: string;
+    totalOrders: number;
+    totalSpent: string;
+    totalReferrals: number;
+  }) =>
+    `👤 <b>Your Account Information</b>\n\n` +
+    `🆔 User ID: <code>${data.userId}</code>\n` +
+    `👤 Username: ${data.username ? `@${data.username}` : "None"}\n` +
+    `📝 Name: ${data.firstName}\n` +
+    `📅 Join Date: ${data.joinDate}\n\n` +
+    `📊 <b>Statistics:</b>\n` +
+    `🛒 Total Orders: <b>${data.totalOrders}</b>\n` +
+    `💰 Total Spent: <b>${data.totalSpent}</b> USD\n` +
+    `👥 Total Referrals: <b>${data.totalReferrals}</b>`,
+
+  // Notification Settings
+  notificationSettingsTitle: "🔔 Notification Settings",
+  notificationSettingsDescription:
+    "Choose which notifications you want to receive:",
+  btnToggleOrderNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} Order Notifications`,
+  btnToggleWalletNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} Wallet Notifications`,
+  btnTogglePromotionNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} Promotion Notifications`,
+  btnToggleReferralNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} Referral Notifications`,
+  btnToggleStockNotifications: (enabled: boolean) =>
+    `${enabled ? "✅" : "❌"} Stock Notifications`,
+  notificationToggled: (type: string, enabled: boolean) =>
+    `${enabled ? "✅ Enabled" : "❌ Disabled"}: ${type}`,
+  allNotificationsEnabled: "✅ All notifications are enabled",
+  allNotificationsDisabled: "❌ All notifications are disabled",
+
+  // Privacy
+  privacyTitle: "🔒 Privacy",
+  privacyDescription: "Manage your personal data and privacy settings:",
+  btnClearHistory: "🗑️ Clear History",
+  btnDeleteAccount: "❌ Delete Account",
+  btnExportData: "📤 Export My Data",
+  clearHistoryConfirm:
+    "⚠️ Are you sure you want to clear your history?\n\n" +
+    "This action cannot be undone.",
+  clearHistorySuccess: "✅ Your history has been cleared successfully.",
+  clearHistoryCancelled: "❌ Operation cancelled.",
+  deleteAccountConfirm:
+    "⚠️ <b>Warning!</b>\n\n" +
+    "Are you sure you want to delete your account?\n\n" +
+    "❌ All your data including:\n" +
+    "• Orders\n" +
+    "• Wallet\n" +
+    "• Referrals\n" +
+    "will be permanently deleted.\n\n" +
+    "This action is <b>irreversible</b>!",
+  deleteAccountSuccess:
+    "✅ Your account has been deleted.\n\nWe hope to see you again!",
+  deleteAccountCancelled: "✅ Your account was not deleted.",
+  exportDataProcessing: "⏳ Preparing your data...",
+  exportDataReady: "✅ Your data is ready!",
+
+  // About
+  aboutTitle: "ℹ️ About Us",
+  aboutDescription:
+    "🤖 <b>Digital Products Sales Bot</b>\n\n" +
+    "We provide the best digital services with the best prices and fastest delivery.\n\n" +
+    "📧 <b>Contact Us:</b>\n" +
+    "• Support: @YourSupportBot\n" +
+    "• Channel: @YourChannel\n\n" +
+    "💡 Version: 1.0.0",
 } satisfies LanguageMap;
