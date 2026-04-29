@@ -282,7 +282,7 @@ export type InsertWalletTransaction =
   typeof walletTransactionsTable.$inferInsert;
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 🎫 TICKETS ━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🎫 TICKETS (Forum-Based System) ━━━━━━
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 export const ticketsTable = pgTable(
@@ -294,22 +294,42 @@ export const ticketsTable = pgTable(
       .references(() => usersTable.id, { onDelete: "cascade" }),
     orderId: integer("order_id").references(() => ordersTable.id),
 
+    // Telegram Forum Group Info
+    forumGroupId: bigint("forum_group_id", { mode: "number" }), // Support Group Chat ID
+    topicId: integer("topic_id"), // 2=Support, 3=Orders, 4=Reports
+    threadMessageId: bigint("thread_message_id", { mode: "number" }), // First message in thread
+
+    // Ticket Info
+    ticketNumber: text("ticket_number").notNull().unique(), // T-1001, O-5001, R-8001
+    type: text("type").notNull(), // support, order, report
     title: text("title").notNull(),
     description: text("description"),
-    status: text("status").default("open"), // open, waiting_user, waiting_support, closed, blocked
+    
+    status: text("status").default("open"), // open, waiting_user, waiting_support, in_progress, resolved, closed, blocked
     priority: text("priority").default("normal"), // low, normal, high, urgent
 
+    // Assignment
     assignedTo: bigint("assigned_to", { mode: "number" }).references(
       () => usersTable.id,
     ),
+    assignedAt: timestamp("assigned_at"),
 
+    // Timestamps
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
     closedAt: timestamp("closed_at"),
+    firstResponseAt: timestamp("first_response_at"), // SLA tracking
+    
+    // Stats
+    messageCount: integer("message_count").default(0),
+    lastMessageAt: timestamp("last_message_at"),
   },
   (table) => ({
     userIdIdx: index("tickets_user_id_idx").on(table.userId),
     statusIdx: index("tickets_status_idx").on(table.status),
+    typeIdx: index("tickets_type_idx").on(table.type),
+    ticketNumberIdx: uniqueIndex("tickets_ticket_number_idx").on(table.ticketNumber),
+    threadMessageIdIdx: index("tickets_thread_message_id_idx").on(table.threadMessageId),
   }),
 );
 
@@ -327,13 +347,21 @@ export const ticketMessagesTable = pgTable(
       .notNull()
       .references(() => usersTable.id),
 
+    // Telegram Message Info
+    messageId: bigint("message_id", { mode: "number" }), // For syncing with forum
+    
     message: text("message").notNull(),
-    attachments: jsonb("attachments"), // [{url, filename}]
+    attachments: jsonb("attachments"), // [{url, filename, type}]
+    
+    // Message Type
+    isFromUser: boolean("is_from_user").default(true), // true = user, false = support
+    isSystemMessage: boolean("is_system_message").default(false), // Auto messages
 
     createdAt: timestamp("created_at").defaultNow(),
   },
   (table) => ({
     ticketIdIdx: index("ticket_messages_ticket_id_idx").on(table.ticketId),
+    messageIdIdx: index("ticket_messages_message_id_idx").on(table.messageId),
   }),
 );
 

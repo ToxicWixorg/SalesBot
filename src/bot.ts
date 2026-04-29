@@ -9,6 +9,7 @@ import { ordersComposer } from "./handlers/orders.ts";
 import { composer } from "./plugins/index.ts";
 import { setupWalletHandlers } from "./handlers/wallet.ts";
 import { setupWalletRechargeScene } from "./scenes/wallet-recharge.ts";
+import { supportHandler } from "./handlers/support.ts";
 
 // Validate BOT_TOKEN
 if (!config.BOT_TOKEN) {
@@ -41,3 +42,6 @@ export const bot = new Bot(config.BOT_TOKEN)
 // Setup wallet handlers
 setupWalletHandlers(bot);
 setupWalletRechargeScene(bot);
+
+// Setup support/ticket handlers
+supportHandler(bot);

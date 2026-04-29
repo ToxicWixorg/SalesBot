@@ -8,9 +8,9 @@ export {
 } from "./ProductRepository.ts";
 export {
   WalletRepository,
-  TicketRepository,
   TicketMessageRepository,
 } from "./WalletRepository.ts";
+export { TicketRepository } from "./TicketRepository.ts";
 export {
   DiscountRepository,
   ReferralRepository,

@@ -545,11 +545,9 @@ export const ordersComposer = new Composer()
         return;
       }
 
-      // TODO: پیاده‌سازی سیستم تیکت
-      await context.answerCallbackQuery({
-        text: t("orderTicketComingSoon"),
-        show_alert: true,
-      });
+      // Enter scene to create order ticket
+      await context.answerCallbackQuery();
+      await context.scene.enter("create-order-ticket", { arg: orderId });
     } catch (error) {
       console.error("[ORDERS] Error opening ticket:", error);
       await context.answerCallbackQuery({

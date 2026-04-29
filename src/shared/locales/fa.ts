@@ -349,4 +349,93 @@ export const fa = {
   orderCannotReschedule: "این سفارش قابل تغییر زمان نیست",
   orderRescheduleComingSoon: "امکان تغییر زمان به زودی فعال می‌شود",
   orderReportComingSoon: "سیستم گزارش مشکل به زودی فعال می‌شود",
+
+  // Support & Tickets
+  supportMenuText:
+    "💬 <b>مرکز پشتیبانی</b>\n\nچطور می‌تونیم کمکتون کنیم؟\n\n" +
+    "• ارسال تیکت پشتیبانی\n" +
+    "• گزارش مشکل\n" +
+    "• مشاهده تیکت‌های شما",
+
+  btnNewSupportTicket: "🎫 تیکت پشتیبانی جدید",
+  btnNewReportTicket: "⚠️ گزارش مشکل",
+  btnMyTickets: "📋 تیکت‌های من",
+  btnViewMyTickets: "📋 مشاهده تیکت‌ها",
+  btnBackToMain: "🏠 بازگشت به منوی اصلی",
+  btnReplyToTicket: "💬 پاسخ",
+  btnViewMessages: "💬 مشاهده پیام‌ها",
+  btnBackToTickets: "🔙 بازگشت به تیکت‌ها",
+  btnViewTicket: "👁️ مشاهده تیکت",
+  btnViewOrder: "📦 مشاهده سفارش",
+
+  // Ticket Creation
+  ticketSupportPrompt:
+    "🎫 <b>تیکت پشتیبانی جدید</b>\n\n" +
+    "لطفاً سوال یا مشکل خود را به طور کامل توضیح دهید.\n" +
+    "تیم پشتیبانی ما در اسرع وقت پاسخ خواهند داد.",
+
+  ticketOrderPrompt:
+    "📦 <b>مشکل سفارش</b>\n\n" +
+    "لطفاً مشکل مربوط به سفارش خود را به طور کامل توضیح دهید.",
+
+  ticketReportPrompt:
+    "⚠️ <b>گزارش مشکل</b>\n\n" +
+    "لطفاً مشکلی که با آن مواجه شده‌اید را به طور کامل توضیح دهید.",
+
+  ticketMessageTooShort: "❌ لطفاً جزئیات بیشتری ارائه دهید (حداقل ۱۰ کاراکتر)",
+  ticketMessageEmpty: "❌ پیام نمی‌تواند خالی باشد",
+
+  ticketCreatedSuccess: (data: { ticketNumber: string }) =>
+    format`✅ <b>تیکت با موفقیت ایجاد شد!</b>\n\nشماره تیکت: ${bold(data.ticketNumber)}\n\nتیم پشتیبانی ما مطلع شده و به زودی پاسخ خواهند داد.`,
+
+  ticketCreateError:
+    "❌ ایجاد تیکت با خطا مواجه شد. لطفاً دوباره تلاش کنید یا مستقیماً با پشتیبانی تماس بگیرید.",
+
+  ticketOrderNotFound: "❌ سفارش یافت نشد",
+
+  // Ticket List
+  ticketListTitle: "📋 <b>تیکت‌های شما</b>",
+  ticketListEmpty: "📭 شما هنوز هیچ تیکتی ندارید.",
+  ticketListShowingFirst10: "نمایش ۱۰ تیکت اول",
+  ticketListError: "❌ بارگذاری تیکت‌ها با خطا مواجه شد. لطفاً دوباره تلاش کنید.",
+
+  // Ticket Details
+  ticketNotFound: "❌ تیکت یافت نشد",
+  ticketNotYours: "❌ این تیکت متعلق به شما نیست",
+  ticketAlreadyClosed: "🔒 این تیکت بسته شده است",
+  ticketLoadError: "❌ بارگذاری تیکت با خطا مواجه شد. لطفاً دوباره تلاش کنید.",
+
+  status: "وضعیت",
+  created: "تاریخ ایجاد",
+  order: "سفارش",
+  messages: "پیام‌ها",
+  lastMessage: "آخرین پیام",
+
+  // Ticket Statuses
+  ticketStatus_open: "🟢 باز",
+  ticketStatus_waiting_user: "🟡 در انتظار پاسخ شما",
+  ticketStatus_waiting_support: "🟠 در انتظار پشتیبانی",
+  ticketStatus_in_progress: "🔵 در حال بررسی",
+  ticketStatus_resolved: "✅ حل شده",
+  ticketStatus_closed: "🔒 بسته شده",
+  ticketStatus_blocked: "⛔ مسدود شده",
+
+  // Ticket Reply
+  ticketReplyPrompt: (data: { ticketNumber: string }) =>
+    format`💬 <b>پاسخ به ${bold(data.ticketNumber)}</b>\n\nلطفاً پیام خود را تایپ کنید:`,
+
+  ticketReplySent:
+    "✅ پیام شما به پشتیبانی ارسال شد!\n\nزمانی که پاسخ دهند به شما اطلاع داده می‌شود.",
+
+  ticketReplyError: "❌ ارسال پیام با خطا مواجه شد. لطفاً دوباره تلاش کنید.",
+
+  ticketCreationCancelled: "❌ ایجاد تیکت لغو شد",
+
+  // Ticket Messages
+  ticketMessages: "پیام‌ها",
+  ticketNoMessages: "هنوز پیامی در این تیکت وجود ندارد",
+  ticketMessagesError: "❌ بارگذاری پیام‌ها با خطا مواجه شد",
+  ticketShowingLast5Messages: "نمایش ۵ پیام آخر",
+  you: "شما",
+  support: "پشتیبانی",
 } satisfies ShouldFollowLanguageStrict<typeof en>;

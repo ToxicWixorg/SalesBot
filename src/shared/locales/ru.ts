@@ -352,4 +352,93 @@ export const ru = {
   orderCannotReschedule: "Этот заказ нельзя перенести",
   orderRescheduleComingSoon: "Функция переноса скоро будет доступна",
   orderReportComingSoon: "Система сообщения о проблемах скоро будет доступна",
+
+  // Support & Tickets
+  supportMenuText:
+    "💬 <b>Центр поддержки</b>\n\nКак мы можем вам помочь?\n\n" +
+    "• Открыть тикет поддержки\n" +
+    "• Сообщить о проблеме\n" +
+    "• Просмотреть ваши тикеты",
+
+  btnNewSupportTicket: "🎫 Новый тикет поддержки",
+  btnNewReportTicket: "⚠️ Сообщить о проблеме",
+  btnMyTickets: "📋 Мои тикеты",
+  btnViewMyTickets: "📋 Просмотреть тикеты",
+  btnBackToMain: "🏠 Вернуться в главное меню",
+  btnReplyToTicket: "💬 Ответить",
+  btnViewMessages: "💬 Просмотреть сообщения",
+  btnBackToTickets: "🔙 Назад к тикетам",
+  btnViewTicket: "👁️ Просмотреть тикет",
+  btnViewOrder: "📦 Просмотреть заказ",
+
+  // Ticket Creation
+  ticketSupportPrompt:
+    "🎫 <b>Новый тикет поддержки</b>\n\n" +
+    "Пожалуйста, опишите ваш вопрос или проблему подробно.\n" +
+    "Наша служба поддержки ответит как можно скорее.",
+
+  ticketOrderPrompt:
+    "📦 <b>Проблема с заказом</b>\n\n" +
+    "Пожалуйста, опишите проблему с вашим заказом подробно.",
+
+  ticketReportPrompt:
+    "⚠️ <b>Сообщить о проблеме</b>\n\n" +
+    "Пожалуйста, опишите проблему, с которой вы столкнулись, подробно.",
+
+  ticketMessageTooShort: "❌ Пожалуйста, предоставьте больше деталей (минимум 10 символов)",
+  ticketMessageEmpty: "❌ Сообщение не может быть пустым",
+
+  ticketCreatedSuccess: (data: { ticketNumber: string }) =>
+    format`✅ <b>Тикет успешно создан!</b>\n\nНомер тикета: ${bold(data.ticketNumber)}\n\nНаша служба поддержки уведомлена и скоро ответит.`,
+
+  ticketCreateError:
+    "❌ Не удалось создать тикет. Пожалуйста, попробуйте снова или свяжитесь с поддержкой напрямую.",
+
+  ticketOrderNotFound: "❌ Заказ не найден",
+
+  // Ticket List
+  ticketListTitle: "📋 <b>Ваши тикеты</b>",
+  ticketListEmpty: "📭 У вас пока нет тикетов.",
+  ticketListShowingFirst10: "Показаны первые 10 тикетов",
+  ticketListError: "❌ Не удалось загрузить тикеты. Пожалуйста, попробуйте снова.",
+
+  // Ticket Details
+  ticketNotFound: "❌ Тикет не найден",
+  ticketNotYours: "❌ Этот тикет вам не принадлежит",
+  ticketAlreadyClosed: "🔒 Этот тикет закрыт",
+  ticketLoadError: "❌ Не удалось загрузить тикет. Пожалуйста, попробуйте снова.",
+
+  status: "Статус",
+  created: "Создан",
+  order: "Заказ",
+  messages: "Сообщения",
+  lastMessage: "Последнее сообщение",
+
+  // Ticket Statuses
+  ticketStatus_open: "🟢 Открыт",
+  ticketStatus_waiting_user: "🟡 Ожидание вашего ответа",
+  ticketStatus_waiting_support: "🟠 Ожидание поддержки",
+  ticketStatus_in_progress: "🔵 В процессе",
+  ticketStatus_resolved: "✅ Решён",
+  ticketStatus_closed: "🔒 Закрыт",
+  ticketStatus_blocked: "⛔ Заблокирован",
+
+  // Ticket Reply
+  ticketReplyPrompt: (data: { ticketNumber: string }) =>
+    format`💬 <b>Ответ на ${bold(data.ticketNumber)}</b>\n\nПожалуйста, введите ваше сообщение:`,
+
+  ticketReplySent:
+    "✅ Ваше сообщение отправлено в поддержку!\n\nВы получите уведомление, когда они ответят.",
+
+  ticketReplyError: "❌ Не удалось отправить сообщение. Пожалуйста, попробуйте снова.",
+
+  ticketCreationCancelled: "❌ Создание тикета отменено",
+
+  // Ticket Messages
+  ticketMessages: "Сообщения",
+  ticketNoMessages: "В этом тикете пока нет сообщений",
+  ticketMessagesError: "❌ Не удалось загрузить сообщения",
+  ticketShowingLast5Messages: "Показаны последние 5 сообщений",
+  you: "Вы",
+  support: "Поддержка",
 } satisfies ShouldFollowLanguageStrict<typeof en>;

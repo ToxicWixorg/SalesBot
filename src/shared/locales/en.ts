@@ -351,4 +351,93 @@ export const en = {
   orderCannotReschedule: "This order cannot be rescheduled",
   orderRescheduleComingSoon: "Rescheduling feature will be available soon",
   orderReportComingSoon: "Problem reporting system will be available soon",
+
+  // Support & Tickets
+  supportMenuText:
+    "💬 <b>Support Center</b>\n\nHow can we help you today?\n\n" +
+    "• Open a general support ticket\n" +
+    "• Report a problem\n" +
+    "• View your tickets",
+
+  btnNewSupportTicket: "🎫 New Support Ticket",
+  btnNewReportTicket: "⚠️ Report Problem",
+  btnMyTickets: "📋 My Tickets",
+  btnViewMyTickets: "📋 View My Tickets",
+  btnBackToMain: "🏠 Back to Main Menu",
+  btnReplyToTicket: "💬 Reply",
+  btnViewMessages: "💬 View Messages",
+  btnBackToTickets: "🔙 Back to Tickets",
+  btnViewTicket: "👁️ View Ticket",
+  btnViewOrder: "📦 View Order",
+
+  // Ticket Creation
+  ticketSupportPrompt:
+    "🎫 <b>New Support Ticket</b>\n\n" +
+    "Please describe your question or issue in detail.\n" +
+    "Our support team will respond as soon as possible.",
+
+  ticketOrderPrompt:
+    "📦 <b>Order Issue</b>\n\n" +
+    "Please describe the issue with your order in detail.",
+
+  ticketReportPrompt:
+    "⚠️ <b>Report Problem</b>\n\n" +
+    "Please describe the problem you're experiencing in detail.",
+
+  ticketMessageTooShort: "❌ Please provide more details (at least 10 characters)",
+  ticketMessageEmpty: "❌ Message cannot be empty",
+
+  ticketCreatedSuccess: (data: { ticketNumber: string }) =>
+    format`✅ <b>Ticket Created Successfully!</b>\n\nTicket Number: ${bold(data.ticketNumber)}\n\nOur support team has been notified and will respond shortly.`,
+
+  ticketCreateError:
+    "❌ Failed to create ticket. Please try again or contact support directly.",
+
+  ticketOrderNotFound: "❌ Order not found",
+
+  // Ticket List
+  ticketListTitle: "📋 <b>Your Tickets</b>",
+  ticketListEmpty: "📭 You don't have any tickets yet.",
+  ticketListShowingFirst10: "Showing first 10 tickets",
+  ticketListError: "❌ Failed to load tickets. Please try again.",
+
+  // Ticket Details
+  ticketNotFound: "❌ Ticket not found",
+  ticketNotYours: "❌ This ticket doesn't belong to you",
+  ticketAlreadyClosed: "🔒 This ticket has been closed",
+  ticketLoadError: "❌ Failed to load ticket. Please try again.",
+
+  status: "Status",
+  created: "Created",
+  order: "Order",
+  messages: "Messages",
+  lastMessage: "Last Message",
+
+  // Ticket Statuses
+  ticketStatus_open: "🟢 Open",
+  ticketStatus_waiting_user: "🟡 Waiting for your response",
+  ticketStatus_waiting_support: "🟠 Waiting for support",
+  ticketStatus_in_progress: "🔵 In Progress",
+  ticketStatus_resolved: "✅ Resolved",
+  ticketStatus_closed: "🔒 Closed",
+  ticketStatus_blocked: "⛔ Blocked",
+
+  // Ticket Reply
+  ticketReplyPrompt: (data: { ticketNumber: string }) =>
+    format`💬 <b>Reply to ${bold(data.ticketNumber)}</b>\n\nPlease type your message:`,
+
+  ticketReplySent:
+    "✅ Your message has been sent to support!\n\nYou'll receive a notification when they reply.",
+
+  ticketReplyError: "❌ Failed to send message. Please try again.",
+
+  ticketCreationCancelled: "❌ Ticket creation cancelled",
+
+  // Ticket Messages
+  ticketMessages: "Messages",
+  ticketNoMessages: "No messages in this ticket yet",
+  ticketMessagesError: "❌ Failed to load messages",
+  ticketShowingLast5Messages: "Showing last 5 messages",
+  you: "You",
+  support: "Support",
 } satisfies LanguageMap;

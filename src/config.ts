@@ -14,7 +14,24 @@ export const config = {
     .get("LOCK_STORE")
     .default("memory")
     .asEnum(["memory", "redis"]),
+
+  // Support Forum Group (Telegram Forum)
+  SUPPORT_GROUP_ID: env.get("SUPPORT_GROUP_ID").asString(), // e.g., "-1001234567890"
+  
+  // Forum Topics IDs
+  SUPPORT_TOPIC_ID: env.get("SUPPORT_TOPIC_ID").default("2").asInt(), // General support tickets
+  ORDERS_TOPIC_ID: env.get("ORDERS_TOPIC_ID").default("3").asInt(), // Order-related tickets
+  REPORTS_TOPIC_ID: env.get("REPORTS_TOPIC_ID").default("4").asInt(), // Problem reports
 };
+
+// Ticket System Topics Configuration
+export const TICKET_TOPICS = {
+  support: config.SUPPORT_TOPIC_ID,
+  order: config.ORDERS_TOPIC_ID,
+  report: config.REPORTS_TOPIC_ID,
+} as const;
+
+export type TicketType = keyof typeof TICKET_TOPICS;
 
 // console.log("📝 Config loaded:", {
 //   NODE_ENV: config.NODE_ENV,
