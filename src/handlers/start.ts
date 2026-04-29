@@ -98,7 +98,7 @@ export const startComposer = new Composer()
 
     await context.send(t("welcome", userName));
 
-    return context.send(`${t("mainMenu")} :`, {
+    return context.send(`${t("mainMenu")} \n\n${t("chooseAction")}`, {
       reply_markup: mainMenuKeyboard(t),
     });
   })
