@@ -18,3 +18,5 @@ export {
   InviteRepository,
   StockNotificationRepository,
 } from "./ExtraRepositories.ts";
+export { DiscountCodeRepository } from "./DiscountCodeRepository.ts";
+export { ReferralRepository as ReferralRewardRepository } from "./ReferralRepository.ts";

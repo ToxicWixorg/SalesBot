@@ -146,4 +146,63 @@ export const en = {
   langEnglish: "🇬🇧 English",
   langPersian: "🇮🇷 فارسی",
   langRussian: "🇷🇺 Русский",
+
+  // Invite Friends (Referral)
+  inviteBanner: (data: {
+    totalReferrals: number;
+    totalRewards: string;
+    referralLink: string;
+  }) =>
+    `🎁 <b>Invite Friends & Earn!</b>\n\n` +
+    `👥 Your Referrals: <b>${data.totalReferrals}</b>\n` +
+    `💰 Total Rewards: <b>${data.totalRewards}</b> USD\n\n` +
+    `🔗 <b>Your Referral Link:</b>\n` +
+    `<code>${data.referralLink}</code>\n\n` +
+    `📝 <b>How it works:</b>\n` +
+    `1. Share the link above with your friends\n` +
+    `2. When they join, you get rewarded\n` +
+    `3. Rewards are added directly to your wallet\n\n` +
+    `💎 Reward per referral: <b>$10</b>`,
+  btnShareInviteLink: "📤 Share Link",
+  btnCopyLink: "📋 Copy Link",
+  btnViewReferrals: "👥 View Referrals",
+  inviteShareText: "🎁 Join using this link and get a special discount!",
+  inviteLinkCopied: (link: string) =>
+    `✅ Link copied!\n\n${link}\n\nSend this link to your friends.`,
+  noReferralsYet: "You haven't invited anyone yet 📭",
+  referralListTitle: "👥 <b>Referral List</b>",
+  andMore: (count: number) => format`and ${bold(count)} more...`,
+
+  // Discount Codes
+  discountCodeInfo:
+    "🎁 <b>Discount Code</b>\n\n" +
+    "Use discount codes to get discounts on your purchases.\n\n" +
+    "You can enter a discount code during checkout or verify it here.",
+  btnEnterDiscountCode: "✏️ Enter Discount Code",
+  btnDiscountHistory: "📊 Usage History",
+  enterDiscountCodePrompt:
+    "✏️ Please enter your discount code:\n\n" +
+    "Example: <code>SUMMER2024</code>",
+  btnTryAgain: "🔄 Try Again",
+  discountCodeValid: (data: {
+    code: string;
+    type: string;
+    value: string;
+    description: string;
+  }) =>
+    `✅ <b>Valid Discount Code!</b>\n\n` +
+    `🎫 Code: <code>${data.code}</code>\n` +
+    `📝 Type: ${data.type}\n` +
+    `💰 Value: ${data.value}\n` +
+    `📄 Description: ${data.description}\n\n` +
+    `You can use this code during checkout.`,
+  discountCodeInvalid: (reason: string) =>
+    `❌ <b>Invalid Discount Code</b>\n\n${reason}`,
+  discountTypePercentage: "Percentage",
+  discountTypeFixed: "Fixed Amount",
+  noDescription: "No description",
+  noDiscountHistory: "You haven't used any discount codes yet 📭",
+  discountHistoryTitle: "📊 <b>Discount Code Usage History</b>",
+  discountAmount: "Discount Amount",
+  orderId: "Order ID",
 } satisfies LanguageMap;

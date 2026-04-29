@@ -146,4 +146,64 @@ export const ru = {
   langEnglish: "🇬🇧 English",
   langPersian: "🇮🇷 فارسی",
   langRussian: "🇷🇺 Русский",
+
+  // Invite Friends (Referral)
+  inviteBanner: (data: {
+    totalReferrals: number;
+    totalRewards: string;
+    referralLink: string;
+  }) =>
+    `🎁 <b>Приглашайте друзей и зарабатывайте!</b>\n\n` +
+    `👥 Ваши рефералы: <b>${data.totalReferrals}</b>\n` +
+    `💰 Всего наград: <b>${data.totalRewards}</b> USD\n\n` +
+    `🔗 <b>Ваша реферальная ссылка:</b>\n` +
+    `<code>${data.referralLink}</code>\n\n` +
+    `📝 <b>Как это работает:</b>\n` +
+    `1. Поделитесь ссылкой выше с друзьями\n` +
+    `2. Когда они присоединятся, вы получите награду\n` +
+    `3. Награды добавляются прямо на ваш кошелек\n\n` +
+    `💎 Награда за реферала: <b>$10</b>`,
+  btnShareInviteLink: "📤 Поделиться ссылкой",
+  btnCopyLink: "📋 Копировать ссылку",
+  btnViewReferrals: "👥 Просмотр рефералов",
+  inviteShareText:
+    "🎁 Присоединяйтесь по этой ссылке и получите специальную скидку!",
+  inviteLinkCopied: (link: string) =>
+    `✅ Ссылка скопирована!\n\n${link}\n\nОтправьте эту ссылку своим друзьям.`,
+  noReferralsYet: "Вы еще никого не пригласили 📭",
+  referralListTitle: "👥 <b>Список рефералов</b>",
+  andMore: (count: number) => format`и еще ${bold(count)}...`,
+
+  // Discount Codes
+  discountCodeInfo:
+    "🎁 <b>Промокод</b>\n\n" +
+    "Используйте промокоды для получения скидок на ваши покупки.\n\n" +
+    "Вы можете ввести промокод при оформлении заказа или проверить его здесь.",
+  btnEnterDiscountCode: "✏️ Ввести промокод",
+  btnDiscountHistory: "📊 История использования",
+  enterDiscountCodePrompt:
+    "✏️ Пожалуйста, введите ваш промокод:\n\n" +
+    "Пример: <code>SUMMER2024</code>",
+  btnTryAgain: "🔄 Попробовать снова",
+  discountCodeValid: (data: {
+    code: string;
+    type: string;
+    value: string;
+    description: string;
+  }) =>
+    `✅ <b>Действительный промокод!</b>\n\n` +
+    `🎫 Код: <code>${data.code}</code>\n` +
+    `📝 Тип: ${data.type}\n` +
+    `💰 Значение: ${data.value}\n` +
+    `📄 Описание: ${data.description}\n\n` +
+    `Вы можете использовать этот код при оформлении заказа.`,
+  discountCodeInvalid: (reason: string) =>
+    `❌ <b>Недействительный промокод</b>\n\n${reason}`,
+  discountTypePercentage: "Процент",
+  discountTypeFixed: "Фиксированная сумма",
+  noDescription: "Нет описания",
+  noDiscountHistory: "Вы еще не использовали промокоды 📭",
+  discountHistoryTitle: "📊 <b>История использования промокодов</b>",
+  discountAmount: "Сумма скидки",
+  orderId: "ID заказа",
 } satisfies ShouldFollowLanguageStrict<typeof en>;

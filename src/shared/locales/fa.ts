@@ -145,4 +145,62 @@ export const fa = {
   langEnglish: "🇬🇧 English",
   langPersian: "🇮🇷 فارسی",
   langRussian: "🇷🇺 Русский",
+
+  // Invite Friends (Referral)
+  inviteBanner: (data: {
+    totalReferrals: number;
+    totalRewards: string;
+    referralLink: string;
+  }) =>
+    `🎁 <b>دعوت دوستان و کسب درآمد!</b>\n\n` +
+    `👥 تعداد دعوت‌های شما: <b>${data.totalReferrals}</b>\n` +
+    `💰 مجموع پاداش‌ها: <b>${data.totalRewards}</b> تومان\n\n` +
+    `🔗 <b>لینک اختصاصی شما:</b>\n` +
+    `<code>${data.referralLink}</code>\n\n` +
+    `📝 <b>نحوه کار:</b>\n` +
+    `۱. لینک بالا را به دوستان خود بفرستید\n` +
+    `۲. وقتی دوستان شما عضو شوند، پاداش دریافت می‌کنید\n` +
+    `۳. پاداش مستقیماً به کیف پول شما واریز می‌شود\n\n` +
+    `💎 پاداش هر دعوت: <b>10,000</b> تومان`,
+  btnShareInviteLink: "📤 اشتراک‌گذاری لینک",
+  btnCopyLink: "📋 کپی لینک",
+  btnViewReferrals: "👥 مشاهده لیست دعوت‌ها",
+  inviteShareText: "🎁 با استفاده از این لینک عضو شو و تخفیف ویژه بگیر!",
+  inviteLinkCopied: (link: string) =>
+    `✅ لینک کپی شد!\n\n${link}\n\nاین لینک را برای دوستان خود ارسال کنید.`,
+  noReferralsYet: "شما هنوز کسی را دعوت نکرده‌اید 📭",
+  referralListTitle: "👥 <b>لیست کاربران دعوت شده</b>",
+  andMore: (count: number) => format`و ${bold(count)} نفر دیگر...`,
+
+  // Discount Codes
+  discountCodeInfo:
+    "🎁 <b>کد تخفیف</b>\n\n" +
+    "از کدهای تخفیف برای دریافت تخفیف در خریدهای خود استفاده کنید.\n\n" +
+    "می‌توانید کد تخفیف را در زمان خرید وارد کنید یا از اینجا معتبر بودن آن را بررسی کنید.",
+  btnEnterDiscountCode: "✏️ وارد کردن کد تخفیف",
+  btnDiscountHistory: "📊 تاریخچه استفاده",
+  enterDiscountCodePrompt:
+    "✏️ لطفاً کد تخفیف خود را وارد کنید:\n\n" + "مثال: <code>SUMMER2024</code>",
+  btnTryAgain: "🔄 تلاش مجدد",
+  discountCodeValid: (data: {
+    code: string;
+    type: string;
+    value: string;
+    description: string;
+  }) =>
+    `✅ <b>کد تخفیف معتبر است!</b>\n\n` +
+    `🎫 کد: <code>${data.code}</code>\n` +
+    `📝 نوع: ${data.type}\n` +
+    `💰 مقدار: ${data.value}\n` +
+    `📄 توضیحات: ${data.description}\n\n` +
+    `این کد را می‌توانید در زمان خرید استفاده کنید.`,
+  discountCodeInvalid: (reason: string) =>
+    `❌ <b>کد تخفیف نامعتبر است</b>\n\n${reason}`,
+  discountTypePercentage: "درصدی",
+  discountTypeFixed: "مبلغ ثابت",
+  noDescription: "بدون توضیحات",
+  noDiscountHistory: "شما هنوز از کد تخفیفی استفاده نکرده‌اید 📭",
+  discountHistoryTitle: "📊 <b>تاریخچه استفاده از کدهای تخفیف</b>",
+  discountAmount: "مقدار تخفیف",
+  orderId: "شماره سفارش",
 } satisfies ShouldFollowLanguageStrict<typeof en>;
