@@ -15,6 +15,13 @@
       "when": 1777375543213,
       "tag": "0001_massive_selene",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777377000000,
+      "tag": "0002_add_notification_settings",
+      "breakpoints": true
     }
   ]
 }
