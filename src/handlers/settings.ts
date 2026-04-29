@@ -34,9 +34,6 @@ settingsComposer.callbackQuery("change_language", async (context) => {
   // Enter the language selection scene
   await context.scene.enter(languageSelectionScene);
 });
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 👤 Account Information
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 settingsComposer.callbackQuery("settings:account_info", async (context) => {
   const t = context.t;

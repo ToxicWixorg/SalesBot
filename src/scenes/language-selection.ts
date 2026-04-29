@@ -39,7 +39,6 @@ export const languageSelectionScene = new Scene("language_selection")
       );
     }
 
-    // اگر callback_query نیست، بازگشت
     if (!context.is("callback_query")) {
       return;
     }
