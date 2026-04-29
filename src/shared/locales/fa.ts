@@ -289,4 +289,64 @@ export const fa = {
     "• پشتیبانی: @YourSupportBot\n" +
     "• کانال: @YourChannel\n\n" +
     "💡 نسخه: 1.0.0",
+
+  // Orders (سفارشات من)
+  ordersTitle: "📦 سفارشات من",
+  ordersEmpty:
+    "شما هنوز سفارشی ندارید 📭\n\nبرای شروع خرید، به بخش محصولات بروید.",
+  ordersTotal: "📊 تعداد کل سفارشات",
+  ordersActive: "🔵 سفارشات فعال",
+  ordersCompleted: "✅ سفارشات تکمیل شده",
+  ordersSelectFilter: "لطفاً یک فیلتر را انتخاب کنید:",
+
+  // Orders Filter Buttons
+  btnOrdersFilterActive: "🔵 فعال",
+  btnOrdersFilterCompleted: "✅ تکمیل شده",
+  btnOrdersFilterAll: "📋 همه",
+
+  // Orders List
+  ordersActiveTitle: "🔵 سفارشات فعال",
+  ordersCompletedTitle: "✅ سفارشات تکمیل شده",
+  ordersAllTitle: "📋 تمام سفارشات",
+  ordersSelectOne: "👆 روی یک سفارش کلیک کنید تا جزئیات آن را ببینید:",
+  ordersNoActive: "شما سفارش فعالی ندارید",
+  ordersNoCompleted: "شما سفارش تکمیل شده‌ای ندارید",
+
+  // Order Details
+  orderDetailsTitle: "📦 جزئیات سفارش",
+  orderNumber: "شماره سفارش",
+  orderProduct: "محصول",
+  orderStatus: "وضعیت",
+  orderTotalPrice: "قیمت اولیه",
+  orderDiscount: "تخفیف",
+  orderWalletUsed: "استفاده از کیف پول",
+  orderFinalPrice: "قیمت نهایی",
+  orderCreatedAt: "تاریخ ثبت",
+  orderDeliveredAt: "تاریخ تحویل",
+  orderScheduledTime: "زمان‌بندی شده",
+  orderNotes: "یادداشت",
+
+  // Order Delivery Info
+  orderDeliveryInfo: "اطلاعات تحویل",
+  orderDeliveryCode: "کد",
+  orderDeliveryEmail: "ایمیل",
+  orderDeliveryLink: "لینک",
+  orderDeliveryInstructions: "دستورالعمل",
+
+  // Order Buttons
+  btnOrderOpenTicket: "💬 باز کردن تیکت",
+  btnOrderRenew: "🔄 تمدید",
+  btnOrderReschedule: "📅 تغییر زمان",
+  btnOrderReportProblem: "⚠️ گزارش مشکل",
+  btnBackToOrders: "🔙 بازگشت به سفارشات",
+
+  // Order Actions
+  orderNotFound: "سفارش یافت نشد",
+  orderAccessDenied: "شما به این سفارش دسترسی ندارید",
+  orderTicketComingSoon: "سیستم تیکت به زودی فعال می‌شود",
+  orderNotRenewable: "این محصول قابل تمدید نیست",
+  orderRenewComingSoon: "امکان تمدید به زودی فعال می‌شود",
+  orderCannotReschedule: "این سفارش قابل تغییر زمان نیست",
+  orderRescheduleComingSoon: "امکان تغییر زمان به زودی فعال می‌شود",
+  orderReportComingSoon: "سیستم گزارش مشکل به زودی فعال می‌شود",
 } satisfies ShouldFollowLanguageStrict<typeof en>;

@@ -5,6 +5,7 @@ import { productsComposer } from "./handlers/products.ts";
 import { inviteComposer } from "./handlers/invite.ts";
 import { discountComposer } from "./handlers/discount.ts";
 import { settingsComposer } from "./handlers/settings.ts";
+import { ordersComposer } from "./handlers/orders.ts";
 import { composer } from "./plugins/index.ts";
 import { setupWalletHandlers } from "./handlers/wallet.ts";
 import { setupWalletRechargeScene } from "./scenes/wallet-recharge.ts";
@@ -22,6 +23,7 @@ export const bot = new Bot(config.BOT_TOKEN)
   .extend(productsComposer)
   .extend(inviteComposer)
   .extend(discountComposer)
+  .extend(ordersComposer)
   .extend(settingsComposer)
   .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`))
   .onError(({ context, error }) => {

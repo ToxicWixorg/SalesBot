@@ -291,4 +291,64 @@ export const en = {
     "• Support: @YourSupportBot\n" +
     "• Channel: @YourChannel\n\n" +
     "💡 Version: 1.0.0",
+
+  // Orders (My Orders)
+  ordersTitle: "📦 My Orders",
+  ordersEmpty:
+    "You don't have any orders yet 📭\n\nVisit the Products section to start shopping.",
+  ordersTotal: "📊 Total Orders",
+  ordersActive: "🔵 Active Orders",
+  ordersCompleted: "✅ Completed Orders",
+  ordersSelectFilter: "Please select a filter:",
+
+  // Orders Filter Buttons
+  btnOrdersFilterActive: "🔵 Active",
+  btnOrdersFilterCompleted: "✅ Completed",
+  btnOrdersFilterAll: "📋 All",
+
+  // Orders List
+  ordersActiveTitle: "🔵 Active Orders",
+  ordersCompletedTitle: "✅ Completed Orders",
+  ordersAllTitle: "📋 All Orders",
+  ordersSelectOne: "👆 Click on an order to view its details:",
+  ordersNoActive: "You don't have any active orders",
+  ordersNoCompleted: "You don't have any completed orders",
+
+  // Order Details
+  orderDetailsTitle: "📦 Order Details",
+  orderNumber: "Order Number",
+  orderProduct: "Product",
+  orderStatus: "Status",
+  orderTotalPrice: "Original Price",
+  orderDiscount: "Discount",
+  orderWalletUsed: "Wallet Used",
+  orderFinalPrice: "Final Price",
+  orderCreatedAt: "Created At",
+  orderDeliveredAt: "Delivered At",
+  orderScheduledTime: "Scheduled Time",
+  orderNotes: "Notes",
+
+  // Order Delivery Info
+  orderDeliveryInfo: "Delivery Information",
+  orderDeliveryCode: "Code",
+  orderDeliveryEmail: "Email",
+  orderDeliveryLink: "Link",
+  orderDeliveryInstructions: "Instructions",
+
+  // Order Buttons
+  btnOrderOpenTicket: "💬 Open Ticket",
+  btnOrderRenew: "🔄 Renew",
+  btnOrderReschedule: "📅 Reschedule",
+  btnOrderReportProblem: "⚠️ Report Problem",
+  btnBackToOrders: "🔙 Back to Orders",
+
+  // Order Actions
+  orderNotFound: "Order not found",
+  orderAccessDenied: "You don't have access to this order",
+  orderTicketComingSoon: "Ticket system will be available soon",
+  orderNotRenewable: "This product is not renewable",
+  orderRenewComingSoon: "Renewal feature will be available soon",
+  orderCannotReschedule: "This order cannot be rescheduled",
+  orderRescheduleComingSoon: "Rescheduling feature will be available soon",
+  orderReportComingSoon: "Problem reporting system will be available soon",
 } satisfies LanguageMap;

@@ -292,4 +292,64 @@ export const ru = {
     "• Поддержка: @YourSupportBot\n" +
     "• Канал: @YourChannel\n\n" +
     "💡 Версия: 1.0.0",
+
+  // Orders (Мои заказы)
+  ordersTitle: "📦 Мои заказы",
+  ordersEmpty:
+    "У вас пока нет заказов 📭\n\nПерейдите в раздел Товары, чтобы начать покупки.",
+  ordersTotal: "📊 Всего заказов",
+  ordersActive: "🔵 Активные заказы",
+  ordersCompleted: "✅ Завершенные заказы",
+  ordersSelectFilter: "Пожалуйста, выберите фильтр:",
+
+  // Orders Filter Buttons
+  btnOrdersFilterActive: "🔵 Активные",
+  btnOrdersFilterCompleted: "✅ Завершенные",
+  btnOrdersFilterAll: "📋 Все",
+
+  // Orders List
+  ordersActiveTitle: "🔵 Активные заказы",
+  ordersCompletedTitle: "✅ Завершенные заказы",
+  ordersAllTitle: "📋 Все заказы",
+  ordersSelectOne: "👆 Нажмите на заказ, чтобы просмотреть детали:",
+  ordersNoActive: "У вас нет активных заказов",
+  ordersNoCompleted: "У вас нет завершенных заказов",
+
+  // Order Details
+  orderDetailsTitle: "📦 Детали заказа",
+  orderNumber: "Номер заказа",
+  orderProduct: "Товар",
+  orderStatus: "Статус",
+  orderTotalPrice: "Исходная цена",
+  orderDiscount: "Скидка",
+  orderWalletUsed: "Использовано из кошелька",
+  orderFinalPrice: "Итоговая цена",
+  orderCreatedAt: "Создан",
+  orderDeliveredAt: "Доставлен",
+  orderScheduledTime: "Запланировано на",
+  orderNotes: "Заметки",
+
+  // Order Delivery Info
+  orderDeliveryInfo: "Информация о доставке",
+  orderDeliveryCode: "Код",
+  orderDeliveryEmail: "Email",
+  orderDeliveryLink: "Ссылка",
+  orderDeliveryInstructions: "Инструкции",
+
+  // Order Buttons
+  btnOrderOpenTicket: "💬 Открыть тикет",
+  btnOrderRenew: "🔄 Продлить",
+  btnOrderReschedule: "📅 Перенести",
+  btnOrderReportProblem: "⚠️ Сообщить о проблеме",
+  btnBackToOrders: "🔙 Назад к заказам",
+
+  // Order Actions
+  orderNotFound: "Заказ не найден",
+  orderAccessDenied: "У вас нет доступа к этому заказу",
+  orderTicketComingSoon: "Система тикетов скоро будет доступна",
+  orderNotRenewable: "Этот товар не подлежит продлению",
+  orderRenewComingSoon: "Функция продления скоро будет доступна",
+  orderCannotReschedule: "Этот заказ нельзя перенести",
+  orderRescheduleComingSoon: "Функция переноса скоро будет доступна",
+  orderReportComingSoon: "Система сообщения о проблемах скоро будет доступна",
 } satisfies ShouldFollowLanguageStrict<typeof en>;
