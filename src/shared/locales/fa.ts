@@ -171,6 +171,8 @@ export const fa = {
   noReferralsYet: "شما هنوز کسی را دعوت نکرده‌اید 📭",
   referralListTitle: "👥 <b>لیست کاربران دعوت شده</b>",
   andMore: (count: number) => format`و ${bold(count)} نفر دیگر...`,
+  referralRewardNotification: (data: { userName: string; amount: string }) =>
+    `🎉 کاربر جدیدی (${data.userName}) از طریق لینک دعوت شما پیوست!\n💰 مبلغ ${data.amount} تومان به حساب شما اضافه شد.`,
 
   // Discount Codes
   discountCodeInfo:

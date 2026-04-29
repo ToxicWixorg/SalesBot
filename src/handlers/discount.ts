@@ -12,7 +12,7 @@ import {
 export const discountComposer = new Composer()
   .extend(composer)
   .callbackQuery("discount", async (context) => {
-    console.log("[DISCOUNT] Callback received from user:", context.from?.id);
+    // console.log("[DISCOUNT] Callback received from user:", context.from?.id);
 
     if (!context.from) {
       return context.answerCallbackQuery({
@@ -48,7 +48,7 @@ export const discountComposer = new Composer()
     });
   })
   .callbackQuery("enter_discount_code", async (context) => {
-    console.log("[DISCOUNT] Enter code callback");
+    // console.log("[DISCOUNT] Enter code callback");
 
     if (!context.from) {
       return context.answerCallbackQuery({
@@ -86,7 +86,7 @@ export const discountComposer = new Composer()
     });
   })
   .callbackQuery("discount_history", async (context) => {
-    console.log("[DISCOUNT] History callback");
+    // console.log("[DISCOUNT] History callback");
 
     if (!context.from) {
       return context.answerCallbackQuery({

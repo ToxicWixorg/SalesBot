@@ -12,7 +12,6 @@ export class UserRepository {
       .from(usersTable)
       .where(eq(usersTable.id, id))
       .limit(1);
-    console.log("user by id: ", result);
     return result;
   }
 
@@ -62,7 +61,7 @@ export class UserRepository {
         },
       })
       .returning();
-    console.log("result: ", result);
+
     // اگه referredBy null بود و توی DB هم null بود، یعنی جدیده
     // ولی مطمئن‌ترین روش اینه که قبلاً findById کردیم
     return {

@@ -11,7 +11,7 @@ import {
 export const inviteComposer = new Composer()
   .extend(composer)
   .callbackQuery("invite", async (context) => {
-    console.log("[INVITE] Callback received from user:", context.from?.id);
+    // console.log("[INVITE] Callback received from user:", context.from?.id);
 
     if (!context.from) {
       return context.answerCallbackQuery({
@@ -56,7 +56,7 @@ export const inviteComposer = new Composer()
     });
   })
   .callbackQuery(/copy_invite_(.+)/, async (context) => {
-    console.log("[INVITE] Copy link callback");
+    // console.log("[INVITE] Copy link callback");
 
     if (!context.from) {
       return context.answerCallbackQuery({
@@ -93,7 +93,7 @@ export const inviteComposer = new Composer()
     });
   })
   .callbackQuery("view_referrals", async (context) => {
-    console.log("[INVITE] View referrals callback");
+    // console.log("[INVITE] View referrals callback");
 
     if (!context.from) {
       return context.answerCallbackQuery({

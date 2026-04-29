@@ -7,10 +7,10 @@ import { i18n } from "../shared/locales/index.ts";
 export const languageSelectionScene = new Scene("language_selection")
   .extend(baseComposer)
   .step(["message", "callback_query"], async (context) => {
-    console.log(
-      "[LANGUAGE_SCENE] Step triggered, firstTime:",
-      context.scene.step.firstTime,
-    );
+    // console.log(
+    //   "[LANGUAGE_SCENE] Step triggered, firstTime:",
+    //   context.scene.step.firstTime,
+    // );
 
     // If user sends a command while in scene (but not on first entry), exit and let command handlers process it
     if (
@@ -18,7 +18,7 @@ export const languageSelectionScene = new Scene("language_selection")
       context.is("message") &&
       context.text?.startsWith("/")
     ) {
-      console.log("[LANGUAGE_SCENE] Command detected while in scene, exiting");
+      // console.log("[LANGUAGE_SCENE] Command detected while in scene, exiting");
       await context.scene.exit();
       return;
     }
@@ -30,7 +30,7 @@ export const languageSelectionScene = new Scene("language_selection")
         .row()
         .text("🇷🇺 Русский", "lang_ru");
 
-      console.log("[LANGUAGE_SCENE] Sending language selection keyboard");
+      // console.log("[LANGUAGE_SCENE] Sending language selection keyboard");
       return context.send(
         "🌍 Please select your language:\n🌍 لطفاً زبان خود را انتخاب کنید:\n🌍 Пожалуйста, выберите ваш язык:",
         {

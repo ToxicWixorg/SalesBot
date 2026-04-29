@@ -172,6 +172,8 @@ export const en = {
   noReferralsYet: "You haven't invited anyone yet 📭",
   referralListTitle: "👥 <b>Referral List</b>",
   andMore: (count: number) => format`and ${bold(count)} more...`,
+  referralRewardNotification: (data: { userName: string; amount: string }) =>
+    `🎉 A new user (${data.userName}) joined through your referral link!\n💰 ${data.amount} has been added to your account.`,
 
   // Discount Codes
   discountCodeInfo:

@@ -13,15 +13,11 @@ function generateReferralCode(userId: number): string {
 export const startComposer = new Composer()
   .extend(composer)
   .command("start", async (context) => {
-    // console.log("[START] Command received from user:", context.from?.id);
-
     if (context.scene?.current) {
-      // console.log("[START] Exiting active scene:", context.scene.current);
       await context.scene.exit();
     }
 
     if (!context.from) {
-      // console.log("[START] No user context, returning error");
       return context.send("❌ Unable to identify user.");
     }
 
@@ -30,11 +26,9 @@ export const startComposer = new Composer()
     const firstName = context.from.firstName || null;
     const lastName = context.from.lastName || null;
 
-    // console.log("[START] Looking up user in database:", userId);
     let user = await UserRepository.findById(userId);
 
     if (!user) {
-      // console.log("[START] User not found, creating new user");
       const startPayload = context.args;
       let referrerId: number | null = null;
 
@@ -57,13 +51,31 @@ export const startComposer = new Composer()
         referredBy: referrerId,
       });
       user = newUser;
-      console.log("[START] New user created successfully");
 
-      // اگر کاربر توسط شخصی دعوت شده، پاداش بده
       if (referrerId) {
         try {
           await ReferralRepository.autoRewardReferrer(referrerId, userId);
-          console.log("[START] Referral reward granted to:", referrerId);
+
+          try {
+            const referrer = await UserRepository.findById(referrerId);
+            if (referrer) {
+              const referrerT = i18n.buildT(referrer.languageCode || "en");
+              const newUserName = firstName || username || `User ${userId}`;
+              const rewardAmount = "10,000";
+
+              const message = referrerT("referralRewardNotification", {
+                userName: newUserName,
+                amount: rewardAmount,
+              });
+
+              await context.bot.api.sendMessage(referrerId, message);
+            }
+          } catch (msgError) {
+            console.error(
+              "[START] Failed to send message to referrer:",
+              msgError,
+            );
+          }
         } catch (error) {
           console.error("[START] Failed to grant referral reward:", error);
         }
@@ -88,7 +100,7 @@ export const startComposer = new Composer()
     });
   })
   .callbackQuery("main_menu", async (context) => {
-    console.log("[MAIN_MENU] Callback received from user:", context.from?.id);
+    // console.log("[MAIN_MENU] Callback received from user:", context.from?.id);
 
     if (!context.from) {
       return context.answerCallbackQuery({

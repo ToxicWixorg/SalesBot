@@ -173,7 +173,8 @@ export const ru = {
   noReferralsYet: "Вы еще никого не пригласили 📭",
   referralListTitle: "👥 <b>Список рефералов</b>",
   andMore: (count: number) => format`и еще ${bold(count)}...`,
-
+  referralRewardNotification: (data: { userName: string; amount: string }) =>
+    `🎉 Новый пользователь (${data.userName}) присоединился по вашей реферальной ссылке!\n💰 ${data.amount} добавлено на ваш счет.`,
   // Discount Codes
   discountCodeInfo:
     "🎁 <b>Промокод</b>\n\n" +
