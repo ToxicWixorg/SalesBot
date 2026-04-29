@@ -545,9 +545,9 @@ export const ordersComposer = new Composer()
         return;
       }
 
-      // Enter scene to create order ticket
+      // Trigger ticket creation flow
       await context.answerCallbackQuery();
-      await context.scene.enter("create-order-ticket", { arg: orderId });
+      // The callback is already registered in ticket-scenes.ts
     } catch (error) {
       console.error("[ORDERS] Error opening ticket:", error);
       await context.answerCallbackQuery({

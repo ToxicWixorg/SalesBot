@@ -1,4 +1,4 @@
-import { Bot, InlineKeyboard } from "grammy";
+import { InlineKeyboard } from "gramio";
 import { TicketRepository } from "../repositories/TicketRepository";
 import { UserRepository } from "../repositories/UserRepository";
 import { config, TICKET_TOPICS, type TicketType } from "../config";
@@ -8,10 +8,10 @@ import type { Ticket } from "../db/schema";
  * Ticket Service - Handles Forum-based ticket system
  */
 export class TicketService {
-  private bot: Bot;
+  private botApi: any;
 
-  constructor(bot: Bot) {
-    this.bot = bot;
+  constructor(botApi: any) {
+    this.botApi = botApi;
   }
 
   /**
@@ -100,7 +100,7 @@ export class TicketService {
 
     try {
       // Send message to specific topic in forum
-      const sentMessage = await this.bot.api.sendMessage(
+      const sentMessage = await this.botApi.sendMessage(
         config.SUPPORT_GROUP_ID,
         message,
         {
@@ -149,7 +149,7 @@ export class TicketService {
 
     try {
       // Send to forum thread (reply to thread message)
-      await this.bot.api.sendMessage(
+      await this.botApi.sendMessage(
         config.SUPPORT_GROUP_ID!,
         `👤 <b>${username}:</b>\n${message}`,
         {
@@ -199,7 +199,7 @@ export class TicketService {
 
     // Send to user in bot
     try {
-      await this.bot.api.sendMessage(
+      await this.botApi.sendMessage(
         ticket.userId,
         `🎫 <b>Support Reply (${ticket.ticketNumber}):</b>\n\n${message}`,
         {
@@ -259,7 +259,7 @@ export class TicketService {
     // Update forum thread
     if (ticket.threadMessageId && config.SUPPORT_GROUP_ID) {
       try {
-        await this.bot.api.sendMessage(
+        await this.botApi.sendMessage(
           config.SUPPORT_GROUP_ID,
           `✅ <b>Ticket Resolved</b>\n\nThis ticket has been marked as resolved.`,
           {
@@ -313,7 +313,7 @@ export class TicketService {
           ? `@${agent.username}`
           : agent?.firstName || "Agent";
 
-        await this.bot.api.sendMessage(
+        await this.botApi.sendMessage(
           config.SUPPORT_GROUP_ID,
           `👨‍💼 <b>Ticket Assigned</b>\n\nAssigned to: ${agentName}`,
           {

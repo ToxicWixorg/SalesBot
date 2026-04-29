@@ -1,10 +1,9 @@
-import type { BotPlugin } from "../plugins/base";
-import { InlineKeyboard } from "grammy";
+import { Bot, InlineKeyboard } from "gramio";
 import { TicketRepository } from "../repositories/TicketRepository";
 import { TicketService } from "../services/ticket";
 import { config } from "../config";
 
-export const supportHandler: BotPlugin = (bot) => {
+export const supportHandler = (bot: Bot) => {
   /**
    * Main support menu - from main menu
    */
@@ -23,24 +22,11 @@ export const supportHandler: BotPlugin = (bot) => {
 
     await ctx.editMessageText(t("supportMenuText"), {
       reply_markup: keyboard,
+      parse_mode: "HTML",
     });
   });
 
-  /**
-   * Create new support ticket - enter scene
-   */
-  bot.callbackQuery("new_support_ticket", async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await ctx.scene.enter("create-support-ticket");
-  });
-
-  /**
-   * Create new report ticket - enter scene
-   */
-  bot.callbackQuery("new_report_ticket", async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await ctx.scene.enter("create-report-ticket");
-  });
+  // Ticket creation callbacks are handled in ticket-scenes.ts
 
   /**
    * View my tickets
@@ -181,15 +167,7 @@ export const supportHandler: BotPlugin = (bot) => {
     }
   });
 
-  /**
-   * Reply to ticket - enter scene
-   */
-  bot.callbackQuery(/^reply_ticket_(\d+)$/, async (ctx) => {
-    await ctx.answerCallbackQuery();
-    const ticketId = parseInt(ctx.match[1]);
-
-    await ctx.scene.enter("reply-to-ticket", { arg: ticketId });
-  });
+  // Reply to ticket callback is handled in ticket-scenes.ts
 
   /**
    * View ticket messages
@@ -257,22 +235,7 @@ export const supportHandler: BotPlugin = (bot) => {
     }
   });
 
-  /**
-   * Cancel ticket creation
-   */
-  bot.callbackQuery(/^cancel_ticket/, async (ctx) => {
-    await ctx.answerCallbackQuery();
-    const t = ctx.t;
-
-    await ctx.scene.exit();
-    await ctx.reply(t("ticketCreationCancelled"), {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: t("btnBackToMain"), callback_data: "main_menu" }],
-        ],
-      },
-    });
-  });
+  // Cancel ticket callback is handled in ticket-scenes.ts
 
   /**
    * Admin callbacks for managing tickets from forum
