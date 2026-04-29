@@ -18,19 +18,16 @@ export {
 // Settings Keyboards
 export { settingsKeyboard } from "./settings.ts";
 
-// Invite & Referral Keyboards
-export {
-  inviteMainKeyboard,
-  referralListBackKeyboard,
-} from "./invite.ts";
+// Invite (Referral) Keyboards
+export { inviteKeyboard, referralListKeyboard } from "./invite.ts";
 
 // Discount Code Keyboards
 export {
   discountMainKeyboard,
-  enterDiscountCodeKeyboard,
-  discountHistoryBackKeyboard,
-  discountRetryKeyboard,
-  discountValidBackKeyboard,
+  discountEnterKeyboard,
+  discountValidKeyboard,
+  discountInvalidKeyboard,
+  discountHistoryKeyboard,
 } from "./discount.ts";
 
 // Pagination & List Keyboards

@@ -5,8 +5,8 @@ import { DiscountCodeRepository } from "../repositories/DiscountCodeRepository.t
 import { i18n } from "../shared/locales/index.ts";
 import {
   discountMainKeyboard,
-  enterDiscountCodeKeyboard,
-  discountHistoryBackKeyboard,
+  discountEnterKeyboard,
+  discountHistoryKeyboard,
 } from "../shared/keyboards/index.ts";
 
 export const discountComposer = new Composer()
@@ -33,11 +33,11 @@ export const discountComposer = new Composer()
 
     const t = i18n.buildT(user.languageCode || "en");
 
+    // دریافت تاریخچه استفاده از کدهای تخفیف
     const usageHistory =
       await DiscountCodeRepository.getUserUsageHistory(userId);
 
     const message = t("discountCodeInfo");
-
     const keyboard = discountMainKeyboard(t);
 
     await context.answerCallbackQuery();
@@ -71,13 +71,14 @@ export const discountComposer = new Composer()
 
     await context.answerCallbackQuery();
 
+    // ذخیره state برای دریافت کد تخفیف
     if (context.scene) {
       const { enterDiscountCodeScene } =
         await import("../scenes/enter-discount-code.ts");
       await context.scene.enter(enterDiscountCodeScene);
     }
 
-    const keyboard = enterDiscountCodeKeyboard(t);
+    const keyboard = discountEnterKeyboard(t);
 
     return context.editText(t("enterDiscountCodePrompt"), {
       reply_markup: keyboard,
@@ -134,7 +135,7 @@ export const discountComposer = new Composer()
       message += `\n${t("andMore", usageHistory.length - 10)}`;
     }
 
-    const keyboard = discountHistoryBackKeyboard(t);
+    const keyboard = discountHistoryKeyboard(t);
 
     await context.answerCallbackQuery();
 

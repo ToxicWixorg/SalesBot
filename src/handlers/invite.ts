@@ -4,10 +4,9 @@ import { UserRepository } from "../repositories/UserRepository.ts";
 import { ReferralRepository } from "../repositories/ReferralRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import {
-  inviteMainKeyboard,
-  referralListBackKeyboard,
+  inviteKeyboard,
+  referralListKeyboard,
 } from "../shared/keyboards/index.ts";
-import { config } from "../config.ts";
 
 export const inviteComposer = new Composer()
   .extend(composer)
@@ -45,7 +44,8 @@ export const inviteComposer = new Composer()
       referralLink: referralLink,
     });
 
-    const keyboard = inviteMainKeyboard(t, referralLink, user.referralCode);
+    // دکمه‌های عملیات
+    const keyboard = inviteKeyboard(t, referralLink, user.referralCode);
 
     await context.answerCallbackQuery();
 
@@ -53,6 +53,43 @@ export const inviteComposer = new Composer()
       reply_markup: keyboard,
       parse_mode: "HTML",
       link_preview_options: { is_disabled: true },
+    });
+  })
+  .callbackQuery(/copy_invite_(.+)/, async (context) => {
+    console.log("[INVITE] Copy link callback");
+
+    if (!context.from) {
+      return context.answerCallbackQuery({
+        text: "❌ Unable to identify user.",
+        show_alert: true,
+      });
+    }
+
+    const userId = context.from.id;
+    const user = await UserRepository.findById(userId);
+
+    if (!user) {
+      return context.answerCallbackQuery({
+        text: "❌ User not found.",
+        show_alert: true,
+      });
+    }
+
+    const t = i18n.buildT(user.languageCode || "en");
+
+    const botInfo = await context.bot.api.getMe();
+    const botUsername = botInfo.username || "your_bot";
+    const referralLink = `https://t.me/${botUsername}?start=ref_${user.referralCode}`;
+
+    const linkCopiedText = t("inviteLinkCopied", referralLink);
+    const textToSend =
+      typeof linkCopiedText === "string"
+        ? linkCopiedText
+        : String(linkCopiedText);
+
+    return context.answerCallbackQuery({
+      text: textToSend,
+      show_alert: true,
     });
   })
   .callbackQuery("view_referrals", async (context) => {
@@ -111,7 +148,7 @@ export const inviteComposer = new Composer()
       message += `\n${t("andMore", referredUsers.length - 10)}`;
     }
 
-    const keyboard = referralListBackKeyboard(t);
+    const keyboard = referralListKeyboard(t);
 
     await context.answerCallbackQuery();
 
@@ -120,41 +157,3 @@ export const inviteComposer = new Composer()
       parse_mode: "HTML",
     });
   });
-
-//   .callbackQuery(/copy_invite_(.+)/, async (context) => {
-//   console.log("[INVITE] Copy link callback");
-
-//   if (!context.from) {
-//     return context.answerCallbackQuery({
-//       text: "❌ Unable to identify user.",
-//       show_alert: true,
-//     });
-//   }
-
-//   const userId = context.from.id;
-//   const user = await UserRepository.findById(userId);
-
-//   if (!user) {
-//     return context.answerCallbackQuery({
-//       text: "❌ User not found.",
-//       show_alert: true,
-//     });
-//   }
-
-//   const t = i18n.buildT(user.languageCode || "en");
-
-//   const botInfo = await context.bot.api.getMe();
-//   const botUsername = botInfo.username || "your_bot";
-//   const referralLink = `https://t.me/${botUsername}?start=ref_${user.referralCode}`;
-
-//   const linkCopiedText = t("inviteLinkCopied", referralLink);
-//   const textToSend =
-//     typeof linkCopiedText === "string"
-//       ? linkCopiedText
-//       : String(linkCopiedText);
-
-//   return context.answerCallbackQuery({
-//     text: textToSend,
-//     show_alert: true,
-//   });
-// })

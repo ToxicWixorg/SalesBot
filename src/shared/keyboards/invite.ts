@@ -1,10 +1,7 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../locales/index.ts";
 
-/**
- * کیبورد اصلی بخش دعوت دوستان
- */
-export function inviteMainKeyboard(
+export function inviteKeyboard(
   t: TFunction,
   referralLink: string,
   referralCode: string,
@@ -17,14 +14,11 @@ export function inviteMainKeyboard(
     .row()
     .text(t("btnCopyLink"), `copy_invite_${referralCode}`)
     .row()
+    .text(t("btnViewReferrals"), "view_referrals")
+    .row()
     .text(t("btnBack"), "main_menu");
 }
-// .row()
-// .text(t("btnViewReferrals"), "view_referrals")
 
-/**
- * کیبورد لیست کاربران دعوت شده
- */
-export function referralListBackKeyboard(t: TFunction): InlineKeyboard {
+export function referralListKeyboard(t: TFunction): InlineKeyboard {
   return new InlineKeyboard().text(t("btnBack"), "invite");
 }

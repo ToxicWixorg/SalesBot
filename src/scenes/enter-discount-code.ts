@@ -3,8 +3,8 @@ import { UserRepository } from "../repositories/UserRepository.ts";
 import { DiscountCodeRepository } from "../repositories/DiscountCodeRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import {
-  discountRetryKeyboard,
-  discountValidBackKeyboard,
+  discountValidKeyboard,
+  discountInvalidKeyboard,
 } from "../shared/keyboards/index.ts";
 
 export const enterDiscountCodeScene = new Scene("enter-discount-code").on(
@@ -25,6 +25,7 @@ export const enterDiscountCodeScene = new Scene("enter-discount-code").on(
 
     const code = context.text.trim().toUpperCase();
 
+    // بررسی معتبر بودن کد (با مبلغ نمونه 100000)
     const validation = await DiscountCodeRepository.validateCode(
       code,
       userId,
@@ -34,6 +35,7 @@ export const enterDiscountCodeScene = new Scene("enter-discount-code").on(
     await context.scene.exit();
 
     if (validation.valid && validation.discountCode) {
+      // کد معتبر است
       const discountInfo = t("discountCodeValid", {
         code: code,
         type:
@@ -45,12 +47,13 @@ export const enterDiscountCodeScene = new Scene("enter-discount-code").on(
       });
 
       return context.send(discountInfo, {
-        reply_markup: discountValidBackKeyboard(t),
+        reply_markup: discountValidKeyboard(t),
         parse_mode: "HTML",
       });
     } else {
+      // کد نامعتبر است
       return context.send(t("discountCodeInvalid", validation.message), {
-        reply_markup: discountRetryKeyboard(t),
+        reply_markup: discountInvalidKeyboard(t),
         parse_mode: "HTML",
       });
     }
