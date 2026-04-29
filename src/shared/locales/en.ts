@@ -288,8 +288,8 @@ export const en = {
     "🤖 <b>Digital Products Sales Bot</b>\n\n" +
     "We provide the best digital services with the best prices and fastest delivery.\n\n" +
     "📧 <b>Contact Us:</b>\n" +
-    "• Support: @YourSupportBot\n" +
-    "• Channel: @YourChannel\n\n" +
+    "• Support: @TajEzat\n" +
+    "• Channel: @ZendeBadParsi\n\n" +
     "💡 Version: 1.0.0",
 
   // Orders (My Orders)
@@ -384,7 +384,8 @@ export const en = {
     "⚠️ <b>Report Problem</b>\n\n" +
     "Please describe the problem you're experiencing in detail.",
 
-  ticketMessageTooShort: "❌ Please provide more details (at least 10 characters)",
+  ticketMessageTooShort:
+    "❌ Please provide more details (at least 10 characters)",
   ticketMessageEmpty: "❌ Message cannot be empty",
 
   ticketCreatedSuccess: (data: { ticketNumber: string }) =>

@@ -286,8 +286,8 @@ export const fa = {
     "🤖 <b>ربات فروش محصولات دیجیتال</b>\n\n" +
     "ما بهترین سرویس‌های دیجیتال را با بهترین قیمت و سریع‌ترین تحویل ارائه می‌دهیم.\n\n" +
     "📧 <b>ارتباط با ما:</b>\n" +
-    "• پشتیبانی: @YourSupportBot\n" +
-    "• کانال: @YourChannel\n\n" +
+    "• پشتیبانی: @TajEzat\n" +
+    "• کانال: @ZendeBadParsi\n\n" +
     "💡 نسخه: 1.0.0",
 
   // Orders (سفارشات من)
@@ -397,7 +397,8 @@ export const fa = {
   ticketListTitle: "📋 <b>تیکت‌های شما</b>",
   ticketListEmpty: "📭 شما هنوز هیچ تیکتی ندارید.",
   ticketListShowingFirst10: "نمایش ۱۰ تیکت اول",
-  ticketListError: "❌ بارگذاری تیکت‌ها با خطا مواجه شد. لطفاً دوباره تلاش کنید.",
+  ticketListError:
+    "❌ بارگذاری تیکت‌ها با خطا مواجه شد. لطفاً دوباره تلاش کنید.",
 
   // Ticket Details
   ticketNotFound: "❌ تیکت یافت نشد",

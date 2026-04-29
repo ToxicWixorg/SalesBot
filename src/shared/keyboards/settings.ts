@@ -1,9 +1,6 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../locales/index.ts";
 
-/**
- * Generate main settings keyboard
- */
 export function settingsKeyboard(t: TFunction): InlineKeyboard {
   return new InlineKeyboard()
     .text(t("btnAccountInfo"), "settings:account_info")
@@ -19,9 +16,6 @@ export function settingsKeyboard(t: TFunction): InlineKeyboard {
     .text(t("btnMainMenu"), "main_menu");
 }
 
-/**
- * Generate notification settings keyboard
- */
 export function notificationSettingsKeyboard(
   t: TFunction,
   settings: {
@@ -61,23 +55,19 @@ export function notificationSettingsKeyboard(
     .text(t("btnBack"), "settings");
 }
 
-/**
- * Generate privacy settings keyboard
- */
 export function privacySettingsKeyboard(t: TFunction): InlineKeyboard {
-  return new InlineKeyboard()
-    .text(t("btnExportData"), "settings:privacy:export")
-    .row()
-    .text(t("btnClearHistory"), "settings:privacy:clear_history")
-    .row()
-    .text(t("btnDeleteAccount"), "settings:privacy:delete_account")
-    .row()
-    .text(t("btnBack"), "settings");
+  return (
+    new InlineKeyboard()
+      .text(t("btnExportData"), "settings:privacy:export")
+      // .row()
+      // .text(t("btnClearHistory"), "settings:privacy:clear_history")
+      // .row()
+      // .text(t("btnDeleteAccount"), "settings:privacy:delete_account")
+      .row()
+      .text(t("btnBack"), "settings")
+  );
 }
 
-/**
- * Generate settings confirmation keyboard
- */
 export function settingsConfirmationKeyboard(
   t: TFunction,
   action: string,
