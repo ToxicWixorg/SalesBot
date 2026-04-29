@@ -14,26 +14,9 @@ import {
   productPlansKeyboard,
   orderConfirmationKeyboard,
   backToMainKeyboard,
-  mainMenuKeyboard,
 } from "../shared/keyboards/index.ts";
 
 export const productsComposer = new Composer().extend(composer);
-
-/**
- * Handle "main_menu" callback - Return to main menu
- */
-productsComposer.callbackQuery("main_menu", async (context) => {
-  if (!context.from) return;
-
-  const user = await UserRepository.findById(context.from.id);
-  if (!user) return;
-
-  const t = i18n.buildT(user.languageCode || "en");
-
-  await context.editText(t("mainMenu") + "\n\n" + t("chooseAction"), {
-    reply_markup: mainMenuKeyboard(t),
-  });
-});
 
 /**
  * Handle "products" callback - Show categories

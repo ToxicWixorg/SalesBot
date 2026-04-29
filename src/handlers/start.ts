@@ -103,7 +103,6 @@ export const startComposer = new Composer()
     });
   })
   .callbackQuery("main_menu", async (context) => {
-    // console.log("[MAIN_MENU] Callback received from user:", context.from?.id);
 
     if (!context.from) {
       return context.answerCallbackQuery({
@@ -128,9 +127,18 @@ export const startComposer = new Composer()
         : "en";
     const t = i18n.buildT(userLang);
 
-    await context.editText(t("mainMenu") + "\n\n" + t("chooseAction"), {
-      reply_markup: mainMenuKeyboard(t),
-    });
+    try {
+      await context.editText(t("mainMenu") + "\n\n" + t("chooseAction"), {
+        reply_markup: mainMenuKeyboard(t),
+      });
+    } catch (error: any) {
+      // Ignore "message is not modified" error
+      if (error?.message?.includes("message is not modified")) {
+        await context.answerCallbackQuery();
+        return;
+      }
+      throw error;
+    }
 
     await context.answerCallbackQuery();
   });
