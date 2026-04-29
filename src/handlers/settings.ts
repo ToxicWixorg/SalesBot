@@ -17,7 +17,7 @@ export const settingsComposer = new Composer<Context>();
 settingsComposer.callbackQuery("settings", async (context) => {
   const t = context.t;
 
-  await context.editMessageText(
+  await context.editText(
     `${t("settingsTitle")}\n\n${t("settingsDescription")}`,
     {
       reply_markup: settingsKeyboard(t),
@@ -63,7 +63,7 @@ settingsComposer.callbackQuery("settings:account_info", async (context) => {
     totalReferrals,
   });
 
-  await context.editMessageText(accountData, {
+  await context.editText(accountData, {
     reply_markup: settingsKeyboard(t),
     parse_mode: "HTML",
   });
@@ -95,7 +95,7 @@ settingsComposer.callbackQuery("settings:notifications", async (context) => {
     notifyStock: user.notifyStock ?? true,
   };
 
-  await context.editMessageText(
+  await context.editText(
     `${t("notificationSettingsTitle")}\n\n${t("notificationSettingsDescription")}`,
     {
       reply_markup: notificationSettingsKeyboard(t, notificationSettings),
@@ -194,13 +194,10 @@ for (const type of notificationTypes) {
 settingsComposer.callbackQuery("settings:privacy", async (context) => {
   const t = context.t;
 
-  await context.editMessageText(
-    `${t("privacyTitle")}\n\n${t("privacyDescription")}`,
-    {
-      reply_markup: privacySettingsKeyboard(t),
-      parse_mode: "HTML",
-    },
-  );
+  await context.editText(`${t("privacyTitle")}\n\n${t("privacyDescription")}`, {
+    reply_markup: privacySettingsKeyboard(t),
+    parse_mode: "HTML",
+  });
 });
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -259,7 +256,7 @@ settingsComposer.callbackQuery(
   async (context) => {
     const t = context.t;
 
-    await context.editMessageText(t("clearHistoryConfirm"), {
+    await context.editText(t("clearHistoryConfirm"), {
       reply_markup: settingsConfirmationKeyboard(t, "clear_history"),
       parse_mode: "HTML",
     });
@@ -275,7 +272,7 @@ settingsComposer.callbackQuery(
     // TODO: Clear user history (transactions, etc.)
     // await transactionRepo.clearUserHistory(userId);
 
-    await context.editMessageText(t("clearHistorySuccess"), {
+    await context.editText(t("clearHistorySuccess"), {
       reply_markup: settingsKeyboard(t),
     });
   },
@@ -290,7 +287,7 @@ settingsComposer.callbackQuery(
   async (context) => {
     const t = context.t;
 
-    await context.editMessageText(t("deleteAccountConfirm"), {
+    await context.editText(t("deleteAccountConfirm"), {
       reply_markup: settingsConfirmationKeyboard(t, "delete_account"),
       parse_mode: "HTML",
     });
@@ -311,7 +308,7 @@ settingsComposer.callbackQuery(
     // Delete user - Note: You'll need to add a delete method to UserRepository
     // await UserRepository.delete(userId);
 
-    await context.editMessageText(t("deleteAccountSuccess"), {
+    await context.editText(t("deleteAccountSuccess"), {
       parse_mode: "HTML",
     });
   },
@@ -324,11 +321,8 @@ settingsComposer.callbackQuery(
 settingsComposer.callbackQuery("settings:about", async (context) => {
   const t = context.t;
 
-  await context.editMessageText(
-    `${t("aboutTitle")}\n\n${t("aboutDescription")}`,
-    {
-      reply_markup: settingsKeyboard(t),
-      parse_mode: "HTML",
-    },
-  );
+  await context.editText(`${t("aboutTitle")}\n\n${t("aboutDescription")}`, {
+    reply_markup: settingsKeyboard(t),
+    parse_mode: "HTML",
+  });
 });
