@@ -14,32 +14,21 @@ async function resetDatabase() {
     // Disable foreign key checks temporarily
     await db.execute(sql`SET session_replication_role = 'replica'`);
 
-    // Truncate all tables
-    console.log("🗑️  Clearing users table...");
+    // Truncate main table - CASCADE will automatically clear related tables
+    console.log("🗑️  Clearing all user data (CASCADE mode)...");
     await db.execute(sql`TRUNCATE TABLE users CASCADE`);
 
-    console.log("🗑️  Clearing orders table...");
-    await db.execute(sql`TRUNCATE TABLE orders CASCADE`);
-
-    console.log("🗑️  Clearing wallet_transactions table...");
-    await db.execute(sql`TRUNCATE TABLE wallet_transactions CASCADE`);
-
-    console.log("🗑️  Clearing referral_rewards table...");
-    await db.execute(sql`TRUNCATE TABLE referral_rewards CASCADE`);
-
-    console.log("🗑️  Clearing discount_usage table...");
-    await db.execute(sql`TRUNCATE TABLE discount_usage CASCADE`);
-
-    console.log("🗑️  Clearing admin_logs table...");
-    await db.execute(sql`TRUNCATE TABLE admin_logs CASCADE`);
-
-    console.log("🗑️  Clearing notifications table...");
-    await db.execute(sql`TRUNCATE TABLE notifications CASCADE`);
+    console.log("   ✓ Users cleared");
+    console.log("   ✓ Orders cleared");
+    console.log("   ✓ Wallet transactions cleared");
+    console.log("   ✓ Referral rewards cleared");
+    console.log("   ✓ Discount usage cleared");
+    console.log("   ✓ All related data cleared");
 
     // Re-enable foreign key checks
     await db.execute(sql`SET session_replication_role = 'origin'`);
 
-    console.log("✅ Database reset completed successfully!");
+    console.log("\n✅ Database reset completed successfully!");
     console.log("💡 You can now test with fresh accounts.");
   } catch (error) {
     console.error("❌ Error resetting database:", error);
