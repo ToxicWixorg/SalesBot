@@ -12,7 +12,7 @@ export function ordersListKeyboard(t: TFunction): InlineKeyboard {
     .row()
     .text(t("btnOrdersFilterAll"), "orders_filter_all")
     .row()
-    .text(t("btnBack"), "back_to_main");
+    .text(t("btnBack"), "main_menu");
 }
 
 /**
@@ -52,7 +52,7 @@ export function orderDetailsKeyboard(
 
   // دکمه بازگشت
   keyboard.text(t("btnBackToOrders"), "back_to_orders").row();
-  keyboard.text(t("btnMainMenu"), "back_to_main");
+  keyboard.text(t("btnMainMenu"), "main_menu");
 
   return keyboard;
 }
@@ -64,5 +64,5 @@ export function backToOrdersKeyboard(t: TFunction): InlineKeyboard {
   return new InlineKeyboard()
     .text(t("btnBackToOrders"), "back_to_orders")
     .row()
-    .text(t("btnMainMenu"), "back_to_main");
+    .text(t("btnMainMenu"), "main_menu");
 }

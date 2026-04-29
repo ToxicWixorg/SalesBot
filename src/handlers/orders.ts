@@ -1,4 +1,4 @@
-import { Composer } from "gramio";
+import { Composer, InlineKeyboard } from "gramio";
 import { composer } from "../plugins/index.ts";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { OrderRepository } from "../repositories/OrderRepository.ts";
@@ -109,7 +109,10 @@ export const ordersComposer = new Composer()
 
       if (orders.length === 0) {
         await context.editText(t("ordersEmpty"), {
-          reply_markup: backToOrdersKeyboard(t),
+          reply_markup: new InlineKeyboard()
+            .text(t("btnProducts"), "products")
+            .row()
+            .text(t("btnMainMenu"), "main_menu"),
         });
         return;
       }
@@ -472,7 +475,10 @@ export const ordersComposer = new Composer()
 
       if (orders.length === 0) {
         await context.editText(t("ordersEmpty"), {
-          reply_markup: backToOrdersKeyboard(t),
+          reply_markup: new InlineKeyboard()
+            .text(t("btnProducts"), "products")
+            .row()
+            .text(t("btnMainMenu"), "main_menu"),
         });
         return;
       }
