@@ -12,6 +12,9 @@
     "migrate": "bun x drizzle-kit migrate",
     "studio": "bun x drizzle-kit studio",
     "db:reset": "bun src/scripts/reset-database.ts",
+    "seed:c": "bun src/scripts/seed-categories.ts",
+    "seed:p": "bun src/scripts/seed-products.ts",
+    "seed:o": "bun src/scripts/seed-orders.ts",
     "prepare": "husky"
   },
   "dependencies": {
