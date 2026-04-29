@@ -2,6 +2,8 @@ import { Bot, InlineKeyboard } from "gramio";
 import { TicketRepository } from "../repositories/TicketRepository";
 import { TicketService } from "../services/ticket";
 import { config } from "../config";
+import { i18n } from "../shared/locales/index";
+import { UserRepository } from "../repositories/UserRepository";
 
 export const supportHandler = (bot: Bot) => {
   /**
@@ -9,7 +11,10 @@ export const supportHandler = (bot: Bot) => {
    */
   bot.callbackQuery("support", async (ctx) => {
     await ctx.answerCallbackQuery();
-    const t = ctx.t;
+
+    const user = await UserRepository.findById(ctx.from.id);
+    if (!user) return;
+    const t = i18n.buildT(user.languageCode || "en");
 
     const keyboard = new InlineKeyboard()
       .text(t("btnNewSupportTicket"), "new_support_ticket")
@@ -20,7 +25,7 @@ export const supportHandler = (bot: Bot) => {
       .row()
       .text(t("btnBack"), "main_menu");
 
-    await ctx.editMessageText(t("supportMenuText"), {
+    await ctx.editText(t("supportMenuText"), {
       reply_markup: keyboard,
       parse_mode: "HTML",
     });
@@ -33,13 +38,16 @@ export const supportHandler = (bot: Bot) => {
    */
   bot.callbackQuery("my_tickets", async (ctx) => {
     await ctx.answerCallbackQuery();
-    const t = ctx.t;
+
+    const user = await UserRepository.findById(ctx.from.id);
+    if (!user) return;
+    const t = i18n.buildT(user.languageCode || "en");
 
     try {
       const tickets = await TicketRepository.getUserTickets(ctx.from.id);
 
       if (tickets.length === 0) {
-        await ctx.editMessageText(t("ticketListEmpty"), {
+        await ctx.editText(t("ticketListEmpty"), {
           reply_markup: {
             inline_keyboard: [
               [
@@ -88,13 +96,13 @@ export const supportHandler = (bot: Bot) => {
         .row()
         .text(t("btnBack"), "support");
 
-      await ctx.editMessageText(message, {
+      await ctx.editText(message, {
         parse_mode: "HTML",
         reply_markup: keyboard,
       });
     } catch (error) {
       console.error("[SUPPORT] Error loading tickets:", error);
-      await ctx.editMessageText(t("ticketListError"));
+      await ctx.editText(t("ticketListError"));
     }
   });
 
@@ -103,20 +111,25 @@ export const supportHandler = (bot: Bot) => {
    */
   bot.callbackQuery(/^view_ticket_(\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery();
-    const t = ctx.t;
-    const ticketId = parseInt(ctx.match[1]);
+
+    const user = await UserRepository.findById(ctx.from.id);
+    if (!user) return;
+    const t = i18n.buildT(user.languageCode || "en");
+
+    const ticketId = parseInt(ctx.queryData[1]);
 
     try {
       const { ticket, messages } =
         await TicketRepository.getTicketWithMessages(ticketId);
 
       if (!ticket) {
-        await ctx.editMessageText(t("ticketNotFound"));
+        await ctx.editText(t("ticketNotFound"));
         return;
       }
 
       if (ticket.userId !== ctx.from.id) {
-        await ctx.answerCallbackQuery(t("ticketNotYours"), {
+        await ctx.answerCallbackQuery({
+          text: t("ticketNotYours"),
           show_alert: true,
         });
         return;
@@ -127,7 +140,7 @@ export const supportHandler = (bot: Bot) => {
       const typeEmoji = getTypeEmoji(ticket.type);
 
       let message = `${typeEmoji} <b>${ticket.ticketNumber}</b>\n\n`;
-      message += `${statusEmoji} <b>${t("status")}:</b> ${t(`ticketStatus_${ticket.status}`)}\n`;
+      message += `${statusEmoji} <b>${t("status")}:</b> ${ticket.status}\n`;
       message += `📅 <b>${t("created")}:</b> ${new Date(ticket.createdAt).toLocaleString()}\n`;
       if (ticket.orderId) {
         message += `📦 <b>${t("order")}:</b> #${ticket.orderId}\n`;
@@ -157,13 +170,13 @@ export const supportHandler = (bot: Bot) => {
         .row()
         .text(t("btnBackToTickets"), "my_tickets");
 
-      await ctx.editMessageText(message, {
+      await ctx.editText(message, {
         parse_mode: "HTML",
         reply_markup: keyboard,
       });
     } catch (error) {
       console.error("[SUPPORT] Error viewing ticket:", error);
-      await ctx.editMessageText(t("ticketLoadError"));
+      await ctx.editText(t("ticketLoadError"));
     }
   });
 
@@ -174,22 +187,28 @@ export const supportHandler = (bot: Bot) => {
    */
   bot.callbackQuery(/^ticket_messages_(\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery();
-    const t = ctx.t;
-    const ticketId = parseInt(ctx.match[1]);
+
+    const user = await UserRepository.findById(ctx.from.id);
+    if (!user) return;
+    const t = i18n.buildT(user.languageCode || "en");
+
+    const ticketId = parseInt(ctx.queryData[1]);
 
     try {
       const messages = await TicketRepository.getTicketMessages(ticketId);
       const ticket = await TicketRepository.getTicketById(ticketId);
 
       if (!ticket || ticket.userId !== ctx.from.id) {
-        await ctx.answerCallbackQuery(t("ticketNotYours"), {
+        await ctx.answerCallbackQuery({
+          text: t("ticketNotYours"),
           show_alert: true,
         });
         return;
       }
 
       if (messages.length === 0) {
-        await ctx.answerCallbackQuery(t("ticketNoMessages"), {
+        await ctx.answerCallbackQuery({
+          text: t("ticketNoMessages"),
           show_alert: true,
         });
         return;
@@ -214,7 +233,7 @@ export const supportHandler = (bot: Bot) => {
         message += `<i>${t("ticketShowingLast5Messages")}</i>`;
       }
 
-      await ctx.editMessageText(message, {
+      await ctx.editText(message, {
         parse_mode: "HTML",
         reply_markup: {
           inline_keyboard: [
@@ -229,7 +248,8 @@ export const supportHandler = (bot: Bot) => {
       });
     } catch (error) {
       console.error("[SUPPORT] Error viewing messages:", error);
-      await ctx.answerCallbackQuery(t("ticketMessagesError"), {
+      await ctx.answerCallbackQuery({
+        text: t("ticketMessagesError"),
         show_alert: true,
       });
     }
@@ -243,17 +263,21 @@ export const supportHandler = (bot: Bot) => {
 
   // Resolve ticket
   bot.callbackQuery(/^ticket_resolve_(\d+)$/, async (ctx) => {
-    const ticketId = parseInt(ctx.match[1]);
+    const ticketId = parseInt(ctx.queryData[1]);
 
     try {
-      const ticketService = new TicketService(ctx.api);
+      const ticketService = new TicketService(bot.api);
       await ticketService.resolveTicket(ticketId, ctx.from.id);
 
-      await ctx.answerCallbackQuery("✅ Ticket resolved", { show_alert: true });
-      await ctx.editMessageReplyMarkup({ inline_keyboard: [] });
+      await ctx.answerCallbackQuery({
+        text: "✅ Ticket resolved",
+        show_alert: true,
+      });
+      await ctx.editReplyMarkup({ inline_keyboard: [] });
     } catch (error) {
       console.error("[SUPPORT] Error resolving ticket:", error);
-      await ctx.answerCallbackQuery("❌ Failed to resolve ticket", {
+      await ctx.answerCallbackQuery({
+        text: "❌ Failed to resolve ticket",
         show_alert: true,
       });
     }
@@ -261,17 +285,21 @@ export const supportHandler = (bot: Bot) => {
 
   // Close ticket
   bot.callbackQuery(/^ticket_close_(\d+)$/, async (ctx) => {
-    const ticketId = parseInt(ctx.match[1]);
+    const ticketId = parseInt(ctx.queryData[1]);
 
     try {
-      const ticketService = new TicketService(ctx.api);
+      const ticketService = new TicketService(bot.api);
       await ticketService.closeTicket(ticketId, ctx.from.id);
 
-      await ctx.answerCallbackQuery("🔒 Ticket closed", { show_alert: true });
-      await ctx.editMessageReplyMarkup({ inline_keyboard: [] });
+      await ctx.answerCallbackQuery({
+        text: "🔒 Ticket closed",
+        show_alert: true,
+      });
+      await ctx.editReplyMarkup({ inline_keyboard: [] });
     } catch (error) {
       console.error("[SUPPORT] Error closing ticket:", error);
-      await ctx.answerCallbackQuery("❌ Failed to close ticket", {
+      await ctx.answerCallbackQuery({
+        text: "❌ Failed to close ticket",
         show_alert: true,
       });
     }
@@ -279,18 +307,20 @@ export const supportHandler = (bot: Bot) => {
 
   // Assign ticket to support agent
   bot.callbackQuery(/^ticket_assign_(\d+)$/, async (ctx) => {
-    const ticketId = parseInt(ctx.match[1]);
+    const ticketId = parseInt(ctx.queryData[1]);
 
     try {
-      const ticketService = new TicketService(ctx.api);
+      const ticketService = new TicketService(bot.api);
       await ticketService.assignTicket(ticketId, ctx.from.id);
 
-      await ctx.answerCallbackQuery("✅ Ticket assigned to you", {
+      await ctx.answerCallbackQuery({
+        text: "✅ Ticket assigned to you",
         show_alert: true,
       });
     } catch (error) {
       console.error("[SUPPORT] Error assigning ticket:", error);
-      await ctx.answerCallbackQuery("❌ Failed to assign ticket", {
+      await ctx.answerCallbackQuery({
+        text: "❌ Failed to assign ticket",
         show_alert: true,
       });
     }
@@ -298,10 +328,13 @@ export const supportHandler = (bot: Bot) => {
 
   // View user profile (for admins)
   bot.callbackQuery(/^ticket_profile_(\d+)$/, async (ctx) => {
-    const userId = parseInt(ctx.match[1]);
+    const userId = parseInt(ctx.queryData[1]);
 
     // This would show user details to admin
-    await ctx.answerCallbackQuery(`User ID: ${userId}`, { show_alert: true });
+    await ctx.answerCallbackQuery({
+      text: `User ID: ${userId}`,
+      show_alert: true,
+    });
   });
 
   /**
@@ -309,26 +342,27 @@ export const supportHandler = (bot: Bot) => {
    * This listens to messages in the support group and forwards them to users
    */
   if (config.SUPPORT_GROUP_ID) {
-    bot.on("message:text").filter(
-      (ctx) => ctx.chat.id.toString() === config.SUPPORT_GROUP_ID,
-      async (ctx) => {
-        // Check if message is a reply in a thread
-        if (ctx.message.reply_to_message) {
-          const threadMessageId = ctx.message.reply_to_message.message_id;
+    bot.on("message", async (ctx) => {
+      // Only process text messages from support group
+      if (!ctx.text) return;
+      if (ctx.chat?.id.toString() !== config.SUPPORT_GROUP_ID) return;
 
-          try {
-            const ticketService = new TicketService(ctx.api);
-            await ticketService.handleForumMessage(
-              threadMessageId,
-              ctx.from.id,
-              ctx.message.text,
-            );
-          } catch (error) {
-            console.error("[SUPPORT] Error handling forum message:", error);
-          }
+      // Check if message is a reply in a thread
+      if (ctx.update?.message?.reply_to_message) {
+        const threadMessageId = ctx.update.message.reply_to_message.message_id;
+
+        try {
+          const ticketService = new TicketService(bot.api);
+          await ticketService.handleForumMessage(
+            threadMessageId,
+            ctx.from.id,
+            ctx.text,
+          );
+        } catch (error) {
+          console.error("[SUPPORT] Error handling forum message:", error);
         }
-      },
-    );
+      }
+    });
   }
 
   console.log("✅ Support handler registered");

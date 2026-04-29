@@ -1,6 +1,8 @@
 import { Bot, InlineKeyboard } from "gramio";
 import { TicketService } from "../services/ticket";
 import { TicketRepository } from "../repositories/TicketRepository";
+import { i18n } from "../shared/locales/index";
+import { UserRepository } from "../repositories/UserRepository";
 
 /**
  * State management for ticket creation
@@ -22,17 +24,18 @@ export function setupTicketScenes(bot: Bot) {
    * Start creating a support ticket
    */
   bot.callbackQuery("new_support_ticket", async (context) => {
+    const user = await UserRepository.findById(context.from.id);
+    if (!user) return;
+    const t = i18n.buildT(user.languageCode || "en");
+
     ticketState.set(context.from.id, {
       type: "support",
       step: "message",
     });
 
-    const keyboard = new InlineKeyboard().text(
-      context.t("btnCancel"),
-      "cancel_ticket",
-    );
+    const keyboard = new InlineKeyboard().text(t("btnCancel"), "cancel_ticket");
 
-    await context.editMessageText(context.t("ticketSupportPrompt"), {
+    await context.editText(t("ticketSupportPrompt"), {
       reply_markup: keyboard,
       parse_mode: "HTML",
     });
@@ -44,17 +47,18 @@ export function setupTicketScenes(bot: Bot) {
    * Start creating a report ticket
    */
   bot.callbackQuery("new_report_ticket", async (context) => {
+    const user = await UserRepository.findById(context.from.id);
+    if (!user) return;
+    const t = i18n.buildT(user.languageCode || "en");
+
     ticketState.set(context.from.id, {
       type: "report",
       step: "message",
     });
 
-    const keyboard = new InlineKeyboard().text(
-      context.t("btnCancel"),
-      "cancel_ticket",
-    );
+    const keyboard = new InlineKeyboard().text(t("btnCancel"), "cancel_ticket");
 
-    await context.editMessageText(context.t("ticketReportPrompt"), {
+    await context.editText(t("ticketReportPrompt"), {
       reply_markup: keyboard,
       parse_mode: "HTML",
     });
@@ -66,7 +70,11 @@ export function setupTicketScenes(bot: Bot) {
    * Start creating an order ticket
    */
   bot.callbackQuery(/^order_open_ticket_(\d+)$/, async (context) => {
-    const orderId = parseInt(context.match![1]);
+    const user = await UserRepository.findById(context.from.id);
+    if (!user) return;
+    const t = i18n.buildT(user.languageCode || "en");
+
+    const orderId = parseInt(context.queryData[1]);
 
     ticketState.set(context.from.id, {
       type: "order",
@@ -74,12 +82,9 @@ export function setupTicketScenes(bot: Bot) {
       step: "message",
     });
 
-    const keyboard = new InlineKeyboard().text(
-      context.t("btnCancel"),
-      "cancel_ticket",
-    );
+    const keyboard = new InlineKeyboard().text(t("btnCancel"), "cancel_ticket");
 
-    await context.reply(context.t("ticketOrderPrompt"), {
+    await context.send(t("ticketOrderPrompt"), {
       reply_markup: keyboard,
       parse_mode: "HTML",
     });
@@ -91,19 +96,25 @@ export function setupTicketScenes(bot: Bot) {
    * Reply to existing ticket
    */
   bot.callbackQuery(/^reply_ticket_(\d+)$/, async (context) => {
-    const ticketId = parseInt(context.match![1]);
+    const user = await UserRepository.findById(context.from.id);
+    if (!user) return;
+    const t = i18n.buildT(user.languageCode || "en");
+
+    const ticketId = parseInt(context.queryData[1]);
 
     // Check ticket ownership
     const ticket = await TicketRepository.getTicketById(ticketId);
     if (!ticket || ticket.userId !== context.from.id) {
-      await context.answerCallbackQuery(context.t("ticketNotYours"), {
+      await context.answerCallbackQuery({
+        text: t("ticketNotYours"),
         show_alert: true,
       });
       return;
     }
 
     if (ticket.status === "closed") {
-      await context.answerCallbackQuery(context.t("ticketAlreadyClosed"), {
+      await context.answerCallbackQuery({
+        text: t("ticketAlreadyClosed"),
         show_alert: true,
       });
       return;
@@ -113,12 +124,12 @@ export function setupTicketScenes(bot: Bot) {
     ticketReplyState.set(context.from.id, ticketId);
 
     const keyboard = new InlineKeyboard().text(
-      context.t("btnCancel"),
+      t("btnCancel"),
       "cancel_ticket_reply",
     );
 
-    await context.reply(
-      context.t("ticketReplyPrompt", {
+    await context.send(
+      t("ticketReplyPrompt", {
         ticketNumber: ticket.ticketNumber,
       }),
       {
@@ -134,15 +145,16 @@ export function setupTicketScenes(bot: Bot) {
    * Cancel ticket creation
    */
   bot.callbackQuery(/^cancel_ticket/, async (context) => {
+    const user = await UserRepository.findById(context.from.id);
+    if (!user) return;
+    const t = i18n.buildT(user.languageCode || "en");
+
     ticketState.delete(context.from.id);
     ticketReplyState.delete(context.from.id);
 
-    const keyboard = new InlineKeyboard().text(
-      context.t("btnBackToMain"),
-      "main_menu",
-    );
+    const keyboard = new InlineKeyboard().text(t("btnBackToMain"), "main_menu");
 
-    await context.editMessageText(context.t("ticketCreationCancelled"), {
+    await context.editText(t("ticketCreationCancelled"), {
       reply_markup: keyboard,
     });
 
@@ -177,10 +189,14 @@ export function setupTicketScenes(bot: Bot) {
     userId: number,
     state: { type: "support" | "order" | "report"; orderId?: number },
   ) {
+    const user = await UserRepository.findById(userId);
+    if (!user) return;
+    const t = i18n.buildT(user.languageCode || "en");
+
     const message = context.text;
 
     if (!message || message.length < 10) {
-      await context.reply(context.t("ticketMessageTooShort"));
+      await context.reply(t("ticketMessageTooShort"));
       return;
     }
 
@@ -202,19 +218,16 @@ export function setupTicketScenes(bot: Bot) {
       const keyboard = new InlineKeyboard();
 
       if (state.orderId) {
-        keyboard.text(
-          context.t("btnViewOrder"),
-          `order_details_${state.orderId}`,
-        );
+        keyboard.text(t("btnViewOrder"), `order_details_${state.orderId}`);
         keyboard.row();
       }
 
-      keyboard.text(context.t("btnViewMyTickets"), "my_tickets");
+      keyboard.text(t("btnViewMyTickets"), "my_tickets");
       keyboard.row();
-      keyboard.text(context.t("btnBackToMain"), "main_menu");
+      keyboard.text(t("btnBackToMain"), "main_menu");
 
       await context.reply(
-        context.t("ticketCreatedSuccess", {
+        t("ticketCreatedSuccess", {
           ticketNumber: ticket.ticketNumber,
         }),
         {
@@ -226,7 +239,7 @@ export function setupTicketScenes(bot: Bot) {
       ticketState.delete(userId);
     } catch (error) {
       console.error("[TICKET] Error creating ticket:", error);
-      await context.reply(context.t("ticketCreateError"));
+      await context.reply(t("ticketCreateError"));
       ticketState.delete(userId);
     }
   }
@@ -235,13 +248,17 @@ export function setupTicketScenes(bot: Bot) {
    * Handle ticket reply
    */
   async function handleTicketReply(context: any, userId: number) {
+    const user = await UserRepository.findById(userId);
+    if (!user) return;
+    const t = i18n.buildT(user.languageCode || "en");
+
     const ticketId = ticketReplyState.get(userId);
     if (!ticketId) return;
 
     const message = context.text;
 
     if (!message) {
-      await context.reply(context.t("ticketMessageEmpty"));
+      await context.reply(t("ticketMessageEmpty"));
       return;
     }
 
@@ -251,18 +268,18 @@ export function setupTicketScenes(bot: Bot) {
       await ticketService.sendUserMessageToForum(ticketId, userId, message);
 
       const keyboard = new InlineKeyboard()
-        .text(context.t("btnViewTicket"), `view_ticket_${ticketId}`)
+        .text(t("btnViewTicket"), `view_ticket_${ticketId}`)
         .row()
-        .text(context.t("btnBackToMain"), "main_menu");
+        .text(t("btnBackToMain"), "main_menu");
 
-      await context.reply(context.t("ticketReplySent"), {
+      await context.reply(t("ticketReplySent"), {
         reply_markup: keyboard,
       });
 
       ticketReplyState.delete(userId);
     } catch (error) {
       console.error("[TICKET] Error sending reply:", error);
-      await context.reply(context.t("ticketReplyError"));
+      await context.reply(t("ticketReplyError"));
       ticketReplyState.delete(userId);
     }
   }
