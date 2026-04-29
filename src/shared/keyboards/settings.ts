@@ -80,9 +80,9 @@ export function privacySettingsKeyboard(t: TFunction): InlineKeyboard {
 }
 
 /**
- * Generate confirmation keyboard
+ * Generate settings confirmation keyboard
  */
-export function confirmationKeyboard(
+export function settingsConfirmationKeyboard(
   t: TFunction,
   action: string,
 ): InlineKeyboard {

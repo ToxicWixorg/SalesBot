@@ -20,7 +20,7 @@ export {
   settingsKeyboard,
   notificationSettingsKeyboard,
   privacySettingsKeyboard,
-  confirmationKeyboard,
+  settingsConfirmationKeyboard,
 } from "./settings.ts";
 
 // Invite (Referral) Keyboards

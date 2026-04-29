@@ -4,7 +4,7 @@ import {
   settingsKeyboard,
   notificationSettingsKeyboard,
   privacySettingsKeyboard,
-  confirmationKeyboard,
+  settingsConfirmationKeyboard,
 } from "../shared/keyboards/index.ts";
 import { UserRepository } from "../repositories/index.ts";
 
@@ -260,7 +260,7 @@ settingsComposer.callbackQuery(
     const t = context.t;
 
     await context.editMessageText(t("clearHistoryConfirm"), {
-      reply_markup: confirmationKeyboard(t, "clear_history"),
+      reply_markup: settingsConfirmationKeyboard(t, "clear_history"),
       parse_mode: "HTML",
     });
   },
@@ -291,7 +291,7 @@ settingsComposer.callbackQuery(
     const t = context.t;
 
     await context.editMessageText(t("deleteAccountConfirm"), {
-      reply_markup: confirmationKeyboard(t, "delete_account"),
+      reply_markup: settingsConfirmationKeyboard(t, "delete_account"),
       parse_mode: "HTML",
     });
   },
