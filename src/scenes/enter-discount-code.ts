@@ -2,7 +2,10 @@ import { Scene } from "@gramio/scenes";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { DiscountCodeRepository } from "../repositories/DiscountCodeRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
-import { InlineKeyboard } from "gramio";
+import {
+  discountRetryKeyboard,
+  discountValidBackKeyboard,
+} from "../shared/keyboards/index.ts";
 
 export const enterDiscountCodeScene = new Scene("enter-discount-code").on(
   "message",
@@ -30,11 +33,6 @@ export const enterDiscountCodeScene = new Scene("enter-discount-code").on(
 
     await context.scene.exit();
 
-    const keyboard = new InlineKeyboard()
-      .text(t("btnTryAgain"), "enter_discount_code")
-      .row()
-      .text(t("btnBack"), "discount");
-
     if (validation.valid && validation.discountCode) {
       const discountInfo = t("discountCodeValid", {
         code: code,
@@ -47,12 +45,12 @@ export const enterDiscountCodeScene = new Scene("enter-discount-code").on(
       });
 
       return context.send(discountInfo, {
-        reply_markup: new InlineKeyboard().text(t("btnBack"), "discount"),
+        reply_markup: discountValidBackKeyboard(t),
         parse_mode: "HTML",
       });
     } else {
       return context.send(t("discountCodeInvalid", validation.message), {
-        reply_markup: keyboard,
+        reply_markup: discountRetryKeyboard(t),
         parse_mode: "HTML",
       });
     }

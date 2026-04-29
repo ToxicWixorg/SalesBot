@@ -3,7 +3,11 @@ import { composer } from "../plugins/index.ts";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { DiscountCodeRepository } from "../repositories/DiscountCodeRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
-import { InlineKeyboard } from "gramio";
+import {
+  discountMainKeyboard,
+  enterDiscountCodeKeyboard,
+  discountHistoryBackKeyboard,
+} from "../shared/keyboards/index.ts";
 
 export const discountComposer = new Composer()
   .extend(composer)
@@ -34,12 +38,7 @@ export const discountComposer = new Composer()
 
     const message = t("discountCodeInfo");
 
-    const keyboard = new InlineKeyboard()
-      .text(t("btnEnterDiscountCode"), "enter_discount_code")
-      .row()
-      .text(t("btnDiscountHistory"), "discount_history")
-      .row()
-      .text(t("btnBack"), "main_menu");
+    const keyboard = discountMainKeyboard(t);
 
     await context.answerCallbackQuery();
 
@@ -78,7 +77,7 @@ export const discountComposer = new Composer()
       await context.scene.enter(enterDiscountCodeScene);
     }
 
-    const keyboard = new InlineKeyboard().text(t("btnCancel"), "discount");
+    const keyboard = enterDiscountCodeKeyboard(t);
 
     return context.editText(t("enterDiscountCodePrompt"), {
       reply_markup: keyboard,
@@ -135,7 +134,7 @@ export const discountComposer = new Composer()
       message += `\n${t("andMore", usageHistory.length - 10)}`;
     }
 
-    const keyboard = new InlineKeyboard().text(t("btnBack"), "discount");
+    const keyboard = discountHistoryBackKeyboard(t);
 
     await context.answerCallbackQuery();
 

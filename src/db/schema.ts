@@ -28,7 +28,7 @@ export const usersTable = pgTable(
     username: text("username"),
     firstName: text("first_name"),
     lastName: text("last_name"),
-    languageCode: text("language_code"), // حذف default تا کاربر جدید مجبور به انتخاب زبان شود
+    languageCode: text("language_code"), 
 
     // Role & Status
     role: text("role").default("customer"), // customer, support, admin
