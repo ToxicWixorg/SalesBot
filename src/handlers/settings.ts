@@ -1,14 +1,15 @@
 import { Composer } from "gramio";
-import type { Context } from "../bot.ts";
 import {
   settingsKeyboard,
   notificationSettingsKeyboard,
   privacySettingsKeyboard,
-  settingsConfirmationKeyboard,
+  confirmationKeyboard,
 } from "../shared/keyboards/index.ts";
 import { UserRepository } from "../repositories/index.ts";
+import { composer } from "../plugins/index.ts";
+import { languageSelectionScene } from "../scenes/language-selection.ts";
 
-export const settingsComposer = new Composer<Context>();
+export const settingsComposer = new Composer().extend(composer);
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 🏠 Main Settings Menu
@@ -25,7 +26,14 @@ settingsComposer.callbackQuery("settings", async (context) => {
     },
   );
 });
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🌐 Change Language
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+settingsComposer.callbackQuery("change_language", async (context) => {
+  // Enter the language selection scene
+  await context.scene.enter(languageSelectionScene);
+});
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 👤 Account Information
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -151,22 +159,20 @@ for (const type of notificationTypes) {
 
     // Get type name in current language
     const typeNames = {
-      orders: t("btnToggleOrderNotifications", { enabled: true }).substring(2),
-      wallet: t("btnToggleWalletNotifications", { enabled: true }).substring(2),
-      promotions: t("btnTogglePromotionNotifications", {
-        enabled: true,
-      }).substring(2),
-      referrals: t("btnToggleReferralNotifications", {
-        enabled: true,
-      }).substring(2),
-      stock: t("btnToggleStockNotifications", { enabled: true }).substring(2),
+      orders: t("btnToggleOrderNotifications", true).substring(2),
+      wallet: t("btnToggleWalletNotifications", true).substring(2),
+      promotions: t("btnTogglePromotionNotifications", true).substring(2),
+      referrals: t("btnToggleReferralNotifications", true).substring(2),
+      stock: t("btnToggleStockNotifications", true).substring(2),
     };
 
+    const notificationTypeText = typeNames[type];
+    const toggledMessage = newValue
+      ? `✅ فعال شد: ${notificationTypeText}`
+      : `❌ غیرفعال شد: ${notificationTypeText}`;
+
     await context.answerCallbackQuery({
-      text: t("notificationToggled", {
-        type: typeNames[type],
-        enabled: newValue,
-      }),
+      text: toggledMessage,
     });
 
     // Refresh the keyboard
@@ -180,9 +186,9 @@ for (const type of notificationTypes) {
         notifyStock: updatedUser.notifyStock ?? true,
       };
 
-      await context.editMessageReplyMarkup({
-        reply_markup: notificationSettingsKeyboard(t, notificationSettings),
-      });
+      await context.editReplyMarkup(
+        notificationSettingsKeyboard(t, notificationSettings),
+      );
     }
   });
 }
@@ -236,15 +242,15 @@ settingsComposer.callbackQuery("settings:privacy:export", async (context) => {
   const dataJson = JSON.stringify(userData, null, 2);
   const fileName = `user_data_${userId}_${Date.now()}.json`;
 
-  // Send as document
-  await context.sendDocument({
-    filename: fileName,
-    data: Buffer.from(dataJson),
-  });
+  // Send as document using Buffer
+  const fileBuffer = Buffer.from(dataJson, "utf-8");
 
-  await context.send(t("exportDataReady"), {
-    reply_markup: settingsKeyboard(t),
-  });
+  await context.sendDocument(
+    new File([fileBuffer], fileName, { type: "application/json" }),
+    {
+      caption: t("exportDataReady"),
+    },
+  );
 });
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -257,7 +263,7 @@ settingsComposer.callbackQuery(
     const t = context.t;
 
     await context.editText(t("clearHistoryConfirm"), {
-      reply_markup: settingsConfirmationKeyboard(t, "clear_history"),
+      reply_markup: confirmationKeyboard(t, "clear_history"),
       parse_mode: "HTML",
     });
   },
@@ -288,7 +294,7 @@ settingsComposer.callbackQuery(
     const t = context.t;
 
     await context.editText(t("deleteAccountConfirm"), {
-      reply_markup: settingsConfirmationKeyboard(t, "delete_account"),
+      reply_markup: confirmationKeyboard(t, "delete_account"),
       parse_mode: "HTML",
     });
   },

@@ -155,14 +155,14 @@ export const ru = {
   }) =>
     `🎁 <b>Приглашайте друзей и зарабатывайте!</b>\n\n` +
     `👥 Ваши рефералы: <b>${data.totalReferrals}</b>\n` +
-    `💰 Всего наград: <b>${data.totalRewards}</b> USD\n\n` +
+    `💰 Всего наград: <b>${data.totalRewards}</b> Toman\n\n` +
     `🔗 <b>Ваша реферальная ссылка:</b>\n` +
     `<code>${data.referralLink}</code>\n\n` +
     `📝 <b>Как это работает:</b>\n` +
     `1. Поделитесь ссылкой выше с друзьями\n` +
     `2. Когда они присоединятся, вы получите награду\n` +
     `3. Награды добавляются прямо на ваш кошелек\n\n` +
-    `💎 Награда за реферала: <b>$10</b>`,
+    `💎 Награда за реферала: <b>10,000 Toman</b>`,
   btnShareInviteLink: "📤 Поделиться ссылкой",
   btnCopyLink: "📋 Копировать ссылку",
   btnViewReferrals: "👥 Просмотр рефералов",
@@ -234,7 +234,7 @@ export const ru = {
     `📅 Дата регистрации: ${data.joinDate}\n\n` +
     `📊 <b>Статистика:</b>\n` +
     `🛒 Всего заказов: <b>${data.totalOrders}</b>\n` +
-    `💰 Всего потрачено: <b>${data.totalSpent}</b> USD\n` +
+    `💰 Всего потрачено: <b>${data.totalSpent}</b> Toman\n` +
     `👥 Всего рефералов: <b>${data.totalReferrals}</b>`,
 
   // Notification Settings

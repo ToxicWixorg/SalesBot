@@ -34,31 +34,27 @@ export function notificationSettingsKeyboard(
 ): InlineKeyboard {
   return new InlineKeyboard()
     .text(
-      t("btnToggleOrderNotifications", { enabled: settings.notifyOrders }),
+      t("btnToggleOrderNotifications", settings.notifyOrders),
       "settings:toggle:orders",
     )
     .row()
     .text(
-      t("btnToggleWalletNotifications", { enabled: settings.notifyWallet }),
+      t("btnToggleWalletNotifications", settings.notifyWallet),
       "settings:toggle:wallet",
     )
     .row()
     .text(
-      t("btnTogglePromotionNotifications", {
-        enabled: settings.notifyPromotions,
-      }),
+      t("btnTogglePromotionNotifications", settings.notifyPromotions),
       "settings:toggle:promotions",
     )
     .row()
     .text(
-      t("btnToggleReferralNotifications", {
-        enabled: settings.notifyReferrals,
-      }),
+      t("btnToggleReferralNotifications", settings.notifyReferrals),
       "settings:toggle:referrals",
     )
     .row()
     .text(
-      t("btnToggleStockNotifications", { enabled: settings.notifyStock }),
+      t("btnToggleStockNotifications", settings.notifyStock),
       "settings:toggle:stock",
     )
     .row()

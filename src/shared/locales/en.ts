@@ -234,7 +234,7 @@ export const en = {
     `📅 Join Date: ${data.joinDate}\n\n` +
     `📊 <b>Statistics:</b>\n` +
     `🛒 Total Orders: <b>${data.totalOrders}</b>\n` +
-    `💰 Total Spent: <b>${data.totalSpent}</b> USD\n` +
+    `💰 Total Spent: <b>${data.totalSpent}</b> Toman\n` +
     `👥 Total Referrals: <b>${data.totalReferrals}</b>`,
 
   // Notification Settings

@@ -2,9 +2,14 @@ import { scenes, scenesDerives } from "@gramio/scenes";
 import { Composer } from "gramio";
 import { greetingScene } from "../scenes/greeting.ts";
 import { languageSelectionScene } from "../scenes/language-selection.ts";
+import { enterDiscountCodeScene } from "../scenes/enter-discount-code.ts";
 import { baseComposer, storage } from "./base.ts";
 
-const scenesList = [greetingScene, languageSelectionScene];
+const scenesList = [
+  greetingScene,
+  languageSelectionScene,
+  enterDiscountCodeScene,
+];
 
 export const composer = new Composer({ name: "main" })
   .extend(baseComposer)

@@ -8,7 +8,13 @@ import { settingsComposer } from "./handlers/settings.ts";
 import { composer } from "./plugins/index.ts";
 import { setupWalletHandlers } from "./handlers/wallet.ts";
 import { setupWalletRechargeScene } from "./scenes/wallet-recharge.ts";
-import { enterDiscountCodeScene } from "./scenes/enter-discount-code.ts";
+
+// Validate BOT_TOKEN
+if (!config.BOT_TOKEN) {
+  throw new Error(
+    "BOT_TOKEN is required. Please set it in your .env file or environment variables.",
+  );
+}
 
 export const bot = new Bot(config.BOT_TOKEN)
   .extend(composer)
@@ -33,8 +39,3 @@ export const bot = new Bot(config.BOT_TOKEN)
 // Setup wallet handlers
 setupWalletHandlers(bot);
 setupWalletRechargeScene(bot);
-
-// Register discount code scene
-if (bot.scene) {
-  bot.scene.register(enterDiscountCodeScene);
-}
