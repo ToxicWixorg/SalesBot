@@ -68,7 +68,10 @@ export const startComposer = new Composer()
                 amount: rewardAmount,
               });
 
-              await context.bot.api.sendMessage(referrerId, message);
+              await context.bot.api.sendMessage({
+                chat_id: referrerId,
+                text: message,
+              });
             }
           } catch (msgError) {
             console.error(
@@ -119,7 +122,11 @@ export const startComposer = new Composer()
       });
     }
 
-    const t = i18n.buildT(user.languageCode || "en");
+    const userLang =
+      user.languageCode && user.languageCode !== "null"
+        ? user.languageCode
+        : "en";
+    const t = i18n.buildT(userLang);
 
     await context.editText(t("mainMenu") + "\n\n" + t("chooseAction"), {
       reply_markup: mainMenuKeyboard(t),
