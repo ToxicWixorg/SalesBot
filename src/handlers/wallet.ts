@@ -2,11 +2,16 @@ import { Bot, InlineKeyboard } from "gramio";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
+import {
+  rechargeCardKeyboard,
+  rechargeCryptoKeyboard,
+  rechargeZarinpalKeyboard,
+  walletHistoryKeyboard,
+  walletKeyboard,
+  walletRechargeKeyboard,
+} from "../shared/keyboards/wallet.ts";
 
 export function setupWalletHandlers(bot: Bot) {
-  /**
-   * 💰 کیف پول - نمایش موجودی و گزینه‌ها
-   */
   bot.callbackQuery("wallet", async (context) => {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
@@ -22,26 +27,16 @@ export function setupWalletHandlers(bot: Bot) {
     const t = i18n.buildT(user.languageCode || "en");
     const balance = user.walletBalance || "0";
 
-    const keyboard = new InlineKeyboard()
-      .text(t("btnRechargeWallet"), "wallet_recharge")
-      .row()
-      .text(t("btnTransactionHistory"), "wallet_history")
-      .row()
-      .text(t("btnBack"), "main_menu");
-
     await context.editText(
       `${t("walletTitle")}\n\n${t("walletBalance", balance)}\n\n${balance === "0" ? t("walletEmpty") : ""}`,
       {
-        reply_markup: keyboard,
+        reply_markup: walletKeyboard(t),
       },
     );
 
     await context.answerCallbackQuery();
   });
 
-  /**
-   * 💳 شارژ کیف پول - انتخاب روش
-   */
   bot.callbackQuery("wallet_recharge", async (context) => {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
@@ -56,28 +51,16 @@ export function setupWalletHandlers(bot: Bot) {
 
     const t = i18n.buildT(user.languageCode || "en");
 
-    const keyboard = new InlineKeyboard()
-      .text(t("btnRechargeCrypto"), "recharge_crypto")
-      .row()
-      .text(t("btnRechargeCard"), "recharge_card")
-      .row()
-      .text(t("btnRechargeZarinpal"), "recharge_zarinpal")
-      .row()
-      .text(t("btnBack"), "wallet");
-
     await context.editText(
       `${t("rechargeWalletTitle")}\n\n${t("rechargeSelectMethod")}`,
       {
-        reply_markup: keyboard,
+        reply_markup: walletRechargeKeyboard(t),
       },
     );
 
     await context.answerCallbackQuery();
   });
 
-  /**
-   * 📊 تاریخچه تراکنش‌ها
-   */
   bot.callbackQuery("wallet_history", async (context) => {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
@@ -94,12 +77,10 @@ export function setupWalletHandlers(bot: Bot) {
     const transactions = await WalletRepository.findByUserId(userId);
 
     if (!transactions || transactions.length === 0) {
-      const keyboard = new InlineKeyboard().text(t("btnBack"), "wallet");
-
       await context.editText(
         `${t("transactionHistoryTitle")}\n\n${t("transactionHistoryEmpty")}`,
         {
-          reply_markup: keyboard,
+          reply_markup: walletHistoryKeyboard(t),
         },
       );
 
@@ -107,7 +88,6 @@ export function setupWalletHandlers(bot: Bot) {
       return;
     }
 
-    // نمایش آخرین 10 تراکنش
     const recentTransactions = transactions.slice(0, 10);
     let message = `${t("transactionHistoryTitle")}\n\n`;
 
@@ -115,7 +95,6 @@ export function setupWalletHandlers(bot: Bot) {
       const type = tx.type === "credit" ? t("txTypeCredit") : t("txTypeDebit");
       const sign = tx.type === "credit" ? "+" : "-";
 
-      // منبع تراکنش
       let sourceText = "";
       switch (tx.source) {
         case "purchase":
@@ -152,18 +131,13 @@ export function setupWalletHandlers(bot: Bot) {
 
     message += `━━━━━━━━━━━━━━━\n`;
 
-    const keyboard = new InlineKeyboard().text(t("btnBack"), "wallet");
-
     await context.editText(message, {
-      reply_markup: keyboard,
+      reply_markup: walletHistoryKeyboard(t),
     });
 
     await context.answerCallbackQuery();
   });
 
-  /**
-   * 🪙 شارژ با کریپتو - مرحله 1: ورود مبلغ
-   */
   bot.callbackQuery("recharge_crypto", async (context) => {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
@@ -178,24 +152,16 @@ export function setupWalletHandlers(bot: Bot) {
 
     const t = i18n.buildT(user.languageCode || "en");
 
-    const keyboard = new InlineKeyboard().text(
-      t("btnCancel"),
-      "wallet_recharge",
-    );
-
     await context.editText(
       `${t("rechargeCryptoTitle")}\n\n${t("rechargeEnterAmountUsdt")}\n\n${t("rechargeMinAmountUsdt", "10")}\n${t("rechargeMaxAmountUsdt", "10000")}`,
       {
-        reply_markup: keyboard,
+        reply_markup: rechargeCryptoKeyboard(t),
       },
     );
 
     await context.answerCallbackQuery();
   });
 
-  /**
-   * 💳 شارژ با کارت
-   */
   bot.callbackQuery("recharge_card", async (context) => {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
@@ -210,24 +176,16 @@ export function setupWalletHandlers(bot: Bot) {
 
     const t = i18n.buildT(user.languageCode || "en");
 
-    const keyboard = new InlineKeyboard().text(
-      t("btnCancel"),
-      "wallet_recharge",
-    );
-
     await context.editText(
       `${t("rechargeCardTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10000")}\n${t("rechargeMaxAmount", "1000000")}`,
       {
-        reply_markup: keyboard,
+        reply_markup: rechargeCardKeyboard(t),
       },
     );
 
     await context.answerCallbackQuery();
   });
 
-  /**
-   * 💰 شارژ با زرین پال
-   */
   bot.callbackQuery("recharge_zarinpal", async (context) => {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
@@ -242,15 +200,10 @@ export function setupWalletHandlers(bot: Bot) {
 
     const t = i18n.buildT(user.languageCode || "en");
 
-    const keyboard = new InlineKeyboard().text(
-      t("btnCancel"),
-      "wallet_recharge",
-    );
-
     await context.editText(
       `${t("rechargeZarinpalTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10000")}\n${t("rechargeMaxAmount", "1000000")}`,
       {
-        reply_markup: keyboard,
+        reply_markup: rechargeZarinpalKeyboard(t),
       },
     );
 

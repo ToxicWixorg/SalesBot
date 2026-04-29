@@ -112,12 +112,12 @@ export const en = {
   rechargeCardTitle: "💳 Card Payment",
   rechargeZarinpalTitle: "💰 Zarinpal Gateway",
   rechargePaymentLink: (amount: string) =>
-    format`Amount: ${bold(amount)} USD\n\nClick the button below to proceed to the payment gateway:`,
+    format`Amount: ${bold(amount)} Toman\n\nClick the button below to proceed to the payment gateway:`,
   btnPayNow: "💳 Pay Now",
   rechargePaymentPending:
     "⏳ Waiting for payment...\n\nPlease complete the payment in your browser.",
   rechargePaymentSuccess: (amount: string) =>
-    format`✅ Payment successful!\n\n${bold(amount)} USD has been added to your wallet.`,
+    format`✅ Payment successful!\n\n${bold(amount)} Toman has been added to your wallet.`,
   rechargePaymentFailed: "❌ Payment failed. Please try again.",
   rechargePaymentCancelled: "⚠️ Payment was cancelled.",
 
@@ -155,14 +155,14 @@ export const en = {
   }) =>
     `🎁 <b>Invite Friends & Earn!</b>\n\n` +
     `👥 Your Referrals: <b>${data.totalReferrals}</b>\n` +
-    `💰 Total Rewards: <b>${data.totalRewards}</b> USD\n\n` +
+    `💰 Total Rewards: <b>${data.totalRewards}</b> Toman\n\n` +
     `🔗 <b>Your Referral Link:</b>\n` +
     `<code>${data.referralLink}</code>\n\n` +
     `📝 <b>How it works:</b>\n` +
     `1. Share the link above with your friends\n` +
     `2. When they join, you get rewarded\n` +
     `3. Rewards are added directly to your wallet\n\n` +
-    `💎 Reward per referral: <b>$10</b>`,
+    `💎 Reward per referral: <b>10,000 Toman</b>`,
   btnShareInviteLink: "📤 Share Link",
   btnCopyLink: "📋 Copy Link",
   btnViewReferrals: "👥 View Referrals",
