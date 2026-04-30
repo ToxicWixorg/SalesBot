@@ -29,6 +29,13 @@
       "when": 1777378000000,
       "tag": "0003_add_forum_ticket_system",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1777541843446,
+      "tag": "0004_sweet_nightcrawler",
+      "breakpoints": true
     }
   ]
 }

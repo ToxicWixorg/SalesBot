@@ -20,3 +20,8 @@ export {
 } from "./ExtraRepositories.ts";
 export { DiscountCodeRepository } from "./DiscountCodeRepository.ts";
 export { ReferralRepository as ReferralRewardRepository } from "./ReferralRepository.ts";
+export {
+  AdminRepository,
+  AdminLogRepository,
+  AdminSessionRepository,
+} from "./AdminRepository.ts";

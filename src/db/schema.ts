@@ -304,7 +304,7 @@ export const ticketsTable = pgTable(
     type: text("type").notNull(), // support, order, report
     title: text("title").notNull(),
     description: text("description"),
-    
+
     status: text("status").default("open"), // open, waiting_user, waiting_support, in_progress, resolved, closed, blocked
     priority: text("priority").default("normal"), // low, normal, high, urgent
 
@@ -319,7 +319,7 @@ export const ticketsTable = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
     closedAt: timestamp("closed_at"),
     firstResponseAt: timestamp("first_response_at"), // SLA tracking
-    
+
     // Stats
     messageCount: integer("message_count").default(0),
     lastMessageAt: timestamp("last_message_at"),
@@ -328,8 +328,12 @@ export const ticketsTable = pgTable(
     userIdIdx: index("tickets_user_id_idx").on(table.userId),
     statusIdx: index("tickets_status_idx").on(table.status),
     typeIdx: index("tickets_type_idx").on(table.type),
-    ticketNumberIdx: uniqueIndex("tickets_ticket_number_idx").on(table.ticketNumber),
-    threadMessageIdIdx: index("tickets_thread_message_id_idx").on(table.threadMessageId),
+    ticketNumberIdx: uniqueIndex("tickets_ticket_number_idx").on(
+      table.ticketNumber,
+    ),
+    threadMessageIdIdx: index("tickets_thread_message_id_idx").on(
+      table.threadMessageId,
+    ),
   }),
 );
 
@@ -349,10 +353,10 @@ export const ticketMessagesTable = pgTable(
 
     // Telegram Message Info
     messageId: bigint("message_id", { mode: "number" }), // For syncing with forum
-    
+
     message: text("message").notNull(),
     attachments: jsonb("attachments"), // [{url, filename, type}]
-    
+
     // Message Type
     isFromUser: boolean("is_from_user").default(true), // true = user, false = support
     isSystemMessage: boolean("is_system_message").default(false), // Auto messages
@@ -603,23 +607,40 @@ export const adminLogsTable = pgTable(
   "admin_logs",
   {
     id: serial("id").primaryKey(),
-    adminId: bigint("admin_id", { mode: "number" })
+    adminId: integer("admin_id")
       .notNull()
-      .references(() => usersTable.id),
+      .references(() => adminsTable.id, { onDelete: "cascade" }),
+    userId: bigint("user_id", { mode: "number" })
+      .notNull()
+      .references(() => usersTable.id), // Link to user account
 
-    action: text("action").notNull(), // create, update, delete, manual_delivery, etc
-    entityType: text("entity_type").notNull(), // product, order, user, discount, etc
+    // Action Info
+    action: text("action").notNull(), // create, update, delete, approve, reject, manual_delivery, assign_ticket, broadcast, etc
+    entityType: text("entity_type").notNull(), // product, order, user, ticket, discount, wallet, admin, settings, etc
     entityId: text("entity_id"),
 
+    // Changes & Details
     changes: jsonb("changes"), // {field: {from, to}}
+    metadata: jsonb("metadata"), // Additional context data
     ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
     description: text("description"),
+
+    // Severity
+    severity: text("severity").default("info"), // info, warning, critical
+
+    // Status
+    isSuccess: boolean("is_success").default(true),
+    errorMessage: text("error_message"),
 
     createdAt: timestamp("created_at").defaultNow(),
   },
   (table) => ({
     adminIdIdx: index("admin_logs_admin_id_idx").on(table.adminId),
+    userIdIdx: index("admin_logs_user_id_idx").on(table.userId),
     entityTypeIdx: index("admin_logs_entity_type_idx").on(table.entityType),
+    actionIdx: index("admin_logs_action_idx").on(table.action),
+    createdAtIdx: index("admin_logs_created_at_idx").on(table.createdAt),
   }),
 );
 
@@ -656,3 +677,91 @@ export const invitesTable = pgTable(
 
 export type Invite = typeof invitesTable.$inferSelect;
 export type InsertInvite = typeof invitesTable.$inferInsert;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 👑 ADMINS & PERMISSIONS ━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+export const adminsTable = pgTable(
+  "admins",
+  {
+    id: serial("id").primaryKey(),
+    userId: bigint("user_id", { mode: "number" })
+      .notNull()
+      .unique()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+
+    // Admin Info
+    displayName: text("display_name"),
+    email: text("email"),
+    phone: text("phone"),
+
+    // Role & Status
+    role: text("role").notNull().default("support"), // admin, support, manager, operator
+    isActive: boolean("is_active").default(true),
+    isSuperAdmin: boolean("is_super_admin").default(false),
+
+    // Permissions (flexible permission system)
+    permissions: jsonb("permissions").default("{}"), // {"products": true, "orders": true, "tickets": true, etc}
+
+    // Access Control
+    allowedSections: jsonb("allowed_sections"), // ["products", "orders", "tickets", "users", "wallet", "discounts", "referrals", "perks", "schedules", "broadcast", "settings"]
+    restrictedIPs: jsonb("restricted_ips"), // ["192.168.1.1"] - if set, only these IPs
+
+    // Stats & Activity
+    lastLoginAt: timestamp("last_login_at"),
+    lastActivityAt: timestamp("last_activity_at"),
+    loginCount: integer("login_count").default(0),
+
+    // Notes
+    notes: text("notes"), // Internal notes about this admin
+
+    // Timestamps
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+    createdBy: bigint("created_by", { mode: "number" }).references(
+      () => usersTable.id,
+    ),
+  },
+  (table) => ({
+    userIdIdx: uniqueIndex("admins_user_id_idx").on(table.userId),
+    roleIdx: index("admins_role_idx").on(table.role),
+    isActiveIdx: index("admins_is_active_idx").on(table.isActive),
+  }),
+);
+
+export type Admin = typeof adminsTable.$inferSelect;
+export type InsertAdmin = typeof adminsTable.$inferInsert;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🔐 ADMIN SESSIONS (for TMA) ━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+export const adminSessionsTable = pgTable(
+  "admin_sessions",
+  {
+    id: serial("id").primaryKey(),
+    adminId: integer("admin_id")
+      .notNull()
+      .references(() => adminsTable.id, { onDelete: "cascade" }),
+
+    token: text("token").notNull().unique(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+
+    expiresAt: timestamp("expires_at").notNull(),
+    lastActivityAt: timestamp("last_activity_at"),
+
+    isValid: boolean("is_valid").default(true),
+
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    tokenIdx: uniqueIndex("admin_sessions_token_idx").on(table.token),
+    adminIdIdx: index("admin_sessions_admin_id_idx").on(table.adminId),
+    expiresAtIdx: index("admin_sessions_expires_at_idx").on(table.expiresAt),
+  }),
+);
+
+export type AdminSession = typeof adminSessionsTable.$inferSelect;
+export type InsertAdminSession = typeof adminSessionsTable.$inferInsert;
