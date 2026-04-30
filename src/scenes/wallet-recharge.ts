@@ -1,6 +1,7 @@
 import { Bot, InlineKeyboard } from "gramio";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
+import { ticketState, ticketReplyState } from "./support-tickets.ts";
 
 /**
  * Scene برای شارژ کیف پول
@@ -69,13 +70,23 @@ export function setupWalletRechargeScene(bot: Bot) {
     await context.answerCallbackQuery();
   });
 
-  /**
-   * دریافت مبلغ از کاربر
-   */
   bot.on("message", async (context) => {
     console.log("[DEBUG-WALLET] Message handler (amount) triggered");
     const userId = context.from?.id;
     if (!userId) return;
+
+    // Check if user is in a scene - skip if so
+    const inScene = (context as any).scene?.current;
+    if (inScene) {
+      console.log("[DEBUG-WALLET] User is in scene, skipping");
+      return;
+    }
+
+    // Check if user is creating/replying to a ticket - skip if so
+    if (ticketState.has(userId) || ticketReplyState.has(userId)) {
+      console.log("[DEBUG-WALLET] User is in ticket state, skipping");
+      return;
+    }
 
     const state = rechargeState.get(userId);
     if (!state || state.step !== "amount") {
@@ -143,6 +154,19 @@ export function setupWalletRechargeScene(bot: Bot) {
     console.log("[DEBUG-WALLET] Message handler (txid) triggered");
     const userId = context.from?.id;
     if (!userId) return;
+
+    // Check if user is in a scene - skip if so
+    const inScene = (context as any).scene?.current;
+    if (inScene) {
+      console.log("[DEBUG-WALLET] User is in scene, skipping");
+      return;
+    }
+
+    // Check if user is creating/replying to a ticket - skip if so
+    if (ticketState.has(userId) || ticketReplyState.has(userId)) {
+      console.log("[DEBUG-WALLET] User is in ticket state, skipping");
+      return;
+    }
 
     const state = rechargeState.get(userId);
     if (!state || state.step !== "txid" || state.method !== "crypto") {

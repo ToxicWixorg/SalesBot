@@ -7,7 +7,7 @@ import { UserRepository } from "../repositories/UserRepository";
 /**
  * State management for ticket creation
  */
-const ticketState = new Map<
+export const ticketState = new Map<
   number,
   {
     type: "support" | "order" | "report";
@@ -17,7 +17,7 @@ const ticketState = new Map<
 >();
 
 // Separate state for ticket replies
-const ticketReplyState = new Map<number, number>(); // userId -> ticketId
+export const ticketReplyState = new Map<number, number>(); // userId -> ticketId
 
 export function setupTicketScenes(bot: Bot) {
   console.log("🎫 Setting up ticket scenes...");
