@@ -1,6 +1,7 @@
 import { Bot, InlineKeyboard } from "gramio";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
+import { i18n } from "../shared/locales/index.ts";
 import { ticketState, ticketReplyState } from "./support-tickets.ts";
 
 /**
@@ -28,7 +29,7 @@ export function setupWalletRechargeScene(bot: Bot) {
    * ورود به scene شارژ - انتخاب مبلغ
    */
   bot.callbackQuery(/^recharge_(crypto|card|zarinpal)$/, async (context) => {
-    const method = context.match?.[1] as "crypto" | "card" | "zarinpal";
+    const method = context.queryData[1] as "crypto" | "card" | "zarinpal";
 
     // ذخیره state
     rechargeState.set(context.from.id, {
@@ -36,14 +37,17 @@ export function setupWalletRechargeScene(bot: Bot) {
       step: "amount",
     });
 
+    const user = await UserRepository.findById(context.from.id);
+    const t = i18n.buildT(user?.languageCode || "en");
+
     const keyboard = new InlineKeyboard().text(
-      context.t("btnCancel"),
+      t("btnCancel"),
       "wallet_recharge_cancel",
     );
 
     let minAmount = "10";
     let maxAmount = "10000";
-    let enterAmountText = context.t("rechargeEnterAmount");
+    let enterAmountText = t("rechargeEnterAmount");
     let minAmountText = "rechargeMinAmount";
     let maxAmountText = "rechargeMaxAmount";
 
@@ -51,7 +55,7 @@ export function setupWalletRechargeScene(bot: Bot) {
     if (method === "crypto") {
       minAmount = "10";
       maxAmount = "10000";
-      enterAmountText = context.t("rechargeEnterAmountUsdt");
+      enterAmountText = t("rechargeEnterAmountUsdt");
       minAmountText = "rechargeMinAmountUsdt";
       maxAmountText = "rechargeMaxAmountUsdt";
     } else {
@@ -60,11 +64,16 @@ export function setupWalletRechargeScene(bot: Bot) {
       maxAmount = "1000000";
     }
 
-    await context.editMessageText(
-      `${method === "crypto" ? context.t("rechargeCryptoTitle") : method === "card" ? context.t("rechargeCardTitle") : context.t("rechargeZarinpalTitle")}\n\n${enterAmountText}\n\n${context.t(minAmountText, minAmount)}\n${context.t(maxAmountText, maxAmount)}`,
-      {
-        reply_markup: keyboard,
-      },
+    const title =
+      method === "crypto"
+        ? t("rechargeCryptoTitle")
+        : method === "card"
+          ? t("rechargeCardTitle")
+          : t("rechargeZarinpalTitle");
+
+    await context.editText(
+      `${title}\n\n${enterAmountText}\n\n${t(minAmountText as any, minAmount)}\n${t(maxAmountText as any, maxAmount)}`,
+      { reply_markup: keyboard },
     );
 
     await context.answerCallbackQuery();
@@ -101,7 +110,9 @@ export function setupWalletRechargeScene(bot: Bot) {
     const amount = parseFloat(text.replace(/[^0-9.]/g, ""));
 
     if (isNaN(amount) || amount <= 0) {
-      await context.reply(context.t("rechargeInvalidAmount"));
+      const user = await UserRepository.findById(userId);
+      const t = i18n.buildT(user?.languageCode || "en");
+      await context.reply(t("rechargeInvalidAmount"));
       return;
     }
 
@@ -119,13 +130,16 @@ export function setupWalletRechargeScene(bot: Bot) {
       maxAmount = 1000000;
     }
 
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode || "en");
+
     if (amount < minAmount) {
-      await context.reply(context.t("rechargeTooLow", minAmount.toString()));
+      await context.reply(t("rechargeTooLow" as any, minAmount.toString()));
       return;
     }
 
     if (amount > maxAmount) {
-      await context.reply(context.t("rechargeTooHigh", maxAmount.toString()));
+      await context.reply(t("rechargeTooHigh" as any, maxAmount.toString()));
       return;
     }
 
@@ -181,7 +195,9 @@ export function setupWalletRechargeScene(bot: Bot) {
     }
 
     // ذخیره TxID و ارسال پیام تأیید
-    await context.reply(context.t("rechargeCryptoTxIdReceived"));
+    const userForReply = await UserRepository.findById(userId);
+    const tReply = i18n.buildT(userForReply?.languageCode || "en");
+    await context.reply(tReply("rechargeCryptoTxIdReceived" as any));
 
     // TODO: بررسی TxID در blockchain
     // در اینجا باید API blockchain را برای تأیید تراکنش فراخوانی کنید
@@ -192,16 +208,11 @@ export function setupWalletRechargeScene(bot: Bot) {
     // پاک کردن state
     rechargeState.delete(userId);
 
-    const keyboard = new InlineKeyboard().text(
-      context.t("btnWallet"),
-      "wallet",
-    );
+    const keyboard = new InlineKeyboard().text(tReply("btnWallet"), "wallet");
 
     await context.reply(
-      context.t("rechargeCryptoVerified", (state.amount || 0).toString()),
-      {
-        reply_markup: keyboard,
-      },
+      tReply("rechargeCryptoVerified" as any, (state.amount || 0).toString()),
+      { reply_markup: keyboard },
     );
   });
 
@@ -212,24 +223,25 @@ export function setupWalletRechargeScene(bot: Bot) {
     const userId = context.from.id;
     rechargeState.delete(userId);
 
-    const keyboard = new InlineKeyboard()
-      .text(context.t("btnRechargeCrypto"), "recharge_crypto")
-      .row()
-      .text(context.t("btnRechargeCard"), "recharge_card")
-      .row()
-      .text(context.t("btnRechargeZarinpal"), "recharge_zarinpal")
-      .row()
-      .text(context.t("btnBack"), "wallet");
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode || "en");
 
-    await context.editMessageText(
-      `${context.t("rechargeWalletTitle")}\n\n${context.t("rechargeSelectMethod")}`,
-      {
-        reply_markup: keyboard,
-      },
+    const keyboard = new InlineKeyboard()
+      .text(t("btnRechargeCrypto"), "recharge_crypto")
+      .row()
+      .text(t("btnRechargeCard"), "recharge_card")
+      .row()
+      .text(t("btnRechargeZarinpal"), "recharge_zarinpal")
+      .row()
+      .text(t("btnBack"), "wallet");
+
+    await context.editText(
+      `${t("rechargeWalletTitle")}\n\n${t("rechargeSelectMethod")}`,
+      { reply_markup: keyboard },
     );
 
     await context.answerCallbackQuery({
-      text: context.t("rechargePaymentCancelled"),
+      text: t("rechargePaymentCancelled"),
     });
   });
 }
@@ -238,21 +250,23 @@ export function setupWalletRechargeScene(bot: Bot) {
  * پردازش پرداخت کریپتو
  */
 async function handleCryptoPayment(context: any, amount: number) {
+  const userId = context.from?.id;
+  const user = userId ? await UserRepository.findById(userId) : undefined;
+  const t = i18n.buildT(user?.languageCode || "en");
+
   // TODO: اینجا باید آدرس کیف پول کریپتو و اطلاعات پرداخت را از کانفیگ یا دیتابیس بگیریم
   const cryptoAddress = "TYourCryptoWalletAddressHere123456789";
   const network = "TRC20";
   const usdtAmount = (amount / 55000).toFixed(2); // فرضی: نرخ تبدیل تومان به USDT
 
   const keyboard = new InlineKeyboard().text(
-    context.t("btnCancel"),
+    t("btnCancel"),
     "wallet_recharge_cancel",
   );
 
   await context.reply(
-    `${context.t("rechargeCryptoTitle")}\n\n${context.t("rechargeCryptoAddress", cryptoAddress)}\n\n${context.t("rechargeCryptoAmount", usdtAmount)}\n${context.t("rechargeCryptoNetwork", network)}\n\n${context.t("rechargeCryptoInstructions")}\n\n${context.t("rechargeCryptoSendTxId")}`,
-    {
-      reply_markup: keyboard,
-    },
+    `${t("rechargeCryptoTitle")}\n\n${t("rechargeCryptoAddress" as any, cryptoAddress)}\n\n${t("rechargeCryptoAmount" as any, usdtAmount)}\n${t("rechargeCryptoNetwork" as any, network)}\n\n${t("rechargeCryptoInstructions" as any)}\n\n${t("rechargeCryptoSendTxId" as any)}`,
+    { reply_markup: keyboard },
   );
 }
 
@@ -260,46 +274,48 @@ async function handleCryptoPayment(context: any, amount: number) {
  * پردازش پرداخت با زرین پال
  */
 async function handleZarinpalPayment(context: any, amount: number) {
-  // TODO: اینجا باید درگاه زرین پال را فراخوانی کنید و لینک پرداخت را دریافت کنید
+  const userId = context.from?.id;
+  const user = userId ? await UserRepository.findById(userId) : undefined;
+  const t = i18n.buildT(user?.languageCode || "en");
 
+  // TODO: اینجا باید درگاه زرین پال را فراخوانی کنید و لینک پرداخت را دریافت کنید
   const paymentUrl = `https://www.zarinpal.com/pg/StartPay/A1B2C3D4E5F6`; // فرضی
 
   const keyboard = new InlineKeyboard()
-    .url(context.t("btnPayNow"), paymentUrl)
+    .url(t("btnPayNow"), paymentUrl)
     .row()
-    .text(context.t("btnCancel"), "wallet_recharge_cancel");
+    .text(t("btnCancel"), "wallet_recharge_cancel");
 
   await context.reply(
-    `${context.t("rechargeZarinpalTitle")}\n\n${context.t("rechargePaymentLink", amount.toString())}`,
-    {
-      reply_markup: keyboard,
-    },
+    `${t("rechargeZarinpalTitle")}\n\n${t("rechargePaymentLink" as any, amount.toString())}`,
+    { reply_markup: keyboard },
   );
 
-  await context.reply(context.t("rechargePaymentPending"));
+  await context.reply(t("rechargePaymentPending" as any));
 }
 
 /**
  * پردازش پرداخت با کارت
  */
 async function handleCardPayment(context: any, amount: number) {
-  // TODO: اینجا باید درگاه پرداخت کارت را فراخوانی کنید
+  const userId = context.from?.id;
+  const user = userId ? await UserRepository.findById(userId) : undefined;
+  const t = i18n.buildT(user?.languageCode || "en");
 
+  // TODO: اینجا باید درگاه پرداخت کارت را فراخوانی کنید
   const paymentUrl = `https://payment-gateway.example.com/pay/123456`; // فرضی
 
   const keyboard = new InlineKeyboard()
-    .url(context.t("btnPayNow"), paymentUrl)
+    .url(t("btnPayNow"), paymentUrl)
     .row()
-    .text(context.t("btnCancel"), "wallet_recharge_cancel");
+    .text(t("btnCancel"), "wallet_recharge_cancel");
 
   await context.reply(
-    `${context.t("rechargeCardTitle")}\n\n${context.t("rechargePaymentLink", amount.toString())}`,
-    {
-      reply_markup: keyboard,
-    },
+    `${t("rechargeCardTitle")}\n\n${t("rechargePaymentLink" as any, amount.toString())}`,
+    { reply_markup: keyboard },
   );
 
-  await context.reply(context.t("rechargePaymentPending"));
+  await context.reply(t("rechargePaymentPending" as any));
 }
 
 /**

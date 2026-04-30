@@ -1,4 +1,4 @@
-import { Context } from "grammy";
+import { Context } from "gramio";
 import {
   AdminRepository,
   AdminLogRepository,
