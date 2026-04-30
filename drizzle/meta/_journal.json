@@ -22,6 +22,13 @@
       "when": 1777377000000,
       "tag": "0002_add_notification_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1777378000000,
+      "tag": "0003_add_forum_ticket_system",
+      "breakpoints": true
     }
   ]
 }
