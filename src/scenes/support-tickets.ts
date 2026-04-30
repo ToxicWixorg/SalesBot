@@ -176,27 +176,32 @@ export function setupTicketScenes(bot: Bot) {
    * Handle incoming messages for ticket creation
    */
   bot.on("message", async (context) => {
-    console.log("[DEBUG] Message handler in support-tickets.ts triggered!");
-    console.log("[DEBUG] Context type:", context.constructor.name);
-    console.log("[DEBUG] Chat type:", context.chat?.type);
+    console.log("[DEBUG-TICKET] ========== TICKET HANDLER START ==========");
+    console.log(
+      "[DEBUG-TICKET] Message handler in support-tickets.ts triggered!",
+    );
+    console.log("[DEBUG-TICKET] Context type:", context.constructor.name);
+    console.log("[DEBUG-TICKET] Chat type:", context.chat?.type);
 
     const userId = context.from?.id;
     if (!userId || !context.text) {
-      console.log("[DEBUG] No userId or text, returning");
+      console.log("[DEBUG-TICKET] No userId or text, returning");
       return;
     }
+    console.log("[DEBUG-TICKET] UserId:", userId);
 
     // Only handle private chats
     if (context.chat?.type !== "private") {
-      console.log("[DEBUG] Not a private chat, returning");
+      console.log("[DEBUG-TICKET] Not a private chat, returning");
       return;
     }
+    console.log("[DEBUG-TICKET] Is private chat ✓");
 
     // Check if user is in a scene
     const inScene = (context as any).scene?.current;
     if (inScene) {
       console.log(
-        "[DEBUG] User is in scene:",
+        "[DEBUG-TICKET] User is in scene:",
         inScene,
         "- skipping - userId:",
         userId,
@@ -207,18 +212,36 @@ export function setupTicketScenes(bot: Bot) {
       );
       return;
     }
+    console.log("[DEBUG-TICKET] Not in scene ✓");
 
     // Check if replying to existing ticket
+    console.log(
+      "[DEBUG-TICKET] Checking ticketReplyState:",
+      ticketReplyState.has(userId),
+    );
     if (ticketReplyState.has(userId)) {
+      console.log(
+        "[DEBUG-TICKET] User is replying to ticket, calling handleTicketReply",
+      );
       await handleTicketReply(context, userId);
       return;
     }
 
     // Check if creating new ticket
+    console.log(
+      "[DEBUG-TICKET] Checking ticketState:",
+      ticketState.has(userId),
+    );
     const state = ticketState.get(userId);
-    if (!state || state.step !== "message") return;
+    console.log("[DEBUG-TICKET] State:", state);
+    if (!state || state.step !== "message") {
+      console.log("[DEBUG-TICKET] No valid state, returning");
+      return;
+    }
 
+    console.log("[DEBUG-TICKET] Calling handleTicketCreation");
     await handleTicketCreation(context, userId, state);
+    console.log("[DEBUG-TICKET] ========== TICKET HANDLER END ==========");
   });
 
   /**

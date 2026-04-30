@@ -42,10 +42,10 @@ export const bot = new Bot(config.BOT_TOKEN)
     }
   });
 
-// Setup wallet handlers
-setupWalletHandlers(bot);
-setupWalletRechargeScene(bot);
-
-// Setup support/ticket handlers (IMPORTANT: setupTicketScenes MUST be before supportHandler)
+// Setup support/ticket handlers FIRST (higher priority)
 setupTicketScenes(bot);
 supportHandler(bot);
+
+// Setup wallet handlers after tickets
+setupWalletHandlers(bot);
+setupWalletRechargeScene(bot);
