@@ -4,7 +4,10 @@ import { composer } from "../plugins/index.ts";
 export const TopicComposer = new Composer()
   .extend(composer)
   .command("Topics", async (context) => {
-    if (!context.chat) return;
+    if (!context.chat) {
+      console.log("no Chat");
+      return;
+    }
 
     console.log("📍 Chat ID:", context.chat.id);
     console.log("📍 Chat Type:", context.chat.type);
