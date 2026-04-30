@@ -5,6 +5,7 @@ import { ReferralRepository } from "../repositories/ReferralRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { languageSelectionScene } from "../scenes/language-selection.ts";
 import { mainMenuKeyboard } from "../shared/keyboards/index.ts";
+import { sendNewUserNotification } from "../services/forum-notifications.ts";
 
 function generateReferralCode(userId: number): string {
   return `REF${userId}${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
@@ -51,6 +52,8 @@ export const startComposer = new Composer()
         referredBy: referrerId,
       });
       user = newUser;
+
+      sendNewUserNotification(context.bot.api, user).catch(() => {});
 
       if (referrerId) {
         try {
@@ -103,7 +106,6 @@ export const startComposer = new Composer()
     });
   })
   .callbackQuery("main_menu", async (context) => {
-
     if (!context.from) {
       return context.answerCallbackQuery({
         text: "❌ Unable to identify user.",

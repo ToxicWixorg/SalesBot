@@ -19,9 +19,11 @@ export const config = {
   SUPPORT_GROUP_ID: env.get("SUPPORT_GROUP_ID").asString(), // e.g., "-1001234567890"
 
   // Forum Topics IDs
-  SUPPORT_TOPIC_ID: env.get("SUPPORT_TOPIC_ID").default("2").asInt(), // General support tickets
-  ORDERS_TOPIC_ID: env.get("ORDERS_TOPIC_ID").default("3").asInt(), // Order-related tickets
-  REPORTS_TOPIC_ID: env.get("REPORTS_TOPIC_ID").default("4").asInt(), // Problem reports
+  SUPPORT_TOPIC_ID: env.get("SUPPORT_TOPIC_ID").required().asInt(), // General support tickets
+  ORDERS_TOPIC_ID: env.get("ORDERS_TOPIC_ID").required().asInt(), // Order-related tickets
+  REPORTS_TOPIC_ID: env.get("REPORTS_TOPIC_ID").required().asInt(), // Problem reports
+  NEWUSERS_TOPIC_ID: env.get("NEWUSERS_TOPIC_ID").required().asInt(), // New users
+  NEWS_TOPIC_ID: env.get("NEWS_TOPIC_ID").required().asInt(), // Announcements
 
   // اضافه کردن Topics جدید (در صورت نیاز این خطوط را uncomment کنید)
   // PAYMENTS_TOPIC_ID: env.get("PAYMENTS_TOPIC_ID").default("5").asInt(), // Payment issues
@@ -55,3 +57,8 @@ export type TicketType = keyof typeof TICKET_TOPICS;
 //   REDIS_PORT: config.REDIS_PORT,
 //   DATABASE_URL: config.DATABASE_URL.substring(0, 30) + "...",
 // });
+
+export const Bot_Topics = {
+  new_users: config.NEWUSERS_TOPIC_ID,
+  news: config.NEWS_TOPIC_ID,
+};
