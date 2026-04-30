@@ -1,13 +1,7 @@
 import { config } from "../config.ts";
 import type { User } from "../db/schema.ts";
 
-type BotApi = {
-  sendMessage: (
-    chatId: string | number,
-    text: string,
-    options?: Record<string, unknown>,
-  ) => Promise<any>;
-};
+type BotApi = any;
 
 export async function sendNewUserNotification(botApi: BotApi, user: User) {
   if (!config.SUPPORT_GROUP_ID || !config.NEWUSERS_TOPIC_ID) {
@@ -35,7 +29,9 @@ export async function sendNewUserNotification(botApi: BotApi, user: User) {
     `⏰ <b>Time (UTC):</b> ${joinedAt}`;
 
   try {
-    await botApi.sendMessage(config.SUPPORT_GROUP_ID, message, {
+    await botApi.sendMessage({
+      chat_id: config.SUPPORT_GROUP_ID,
+      text: message,
       message_thread_id: config.NEWUSERS_TOPIC_ID,
       parse_mode: "HTML",
     });
@@ -66,7 +62,9 @@ export async function sendNewsMessage(
   }
 
   try {
-    const result = await botApi.sendMessage(config.SUPPORT_GROUP_ID, text, {
+    const result = await botApi.sendMessage({
+      chat_id: config.SUPPORT_GROUP_ID,
+      text,
       message_thread_id: config.NEWS_TOPIC_ID,
       parse_mode: options?.parse_mode ?? "HTML",
       disable_web_page_preview: options?.disable_web_page_preview ?? false,

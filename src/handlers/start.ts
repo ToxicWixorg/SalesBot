@@ -53,7 +53,7 @@ export const startComposer = new Composer()
       });
       user = newUser;
 
-      sendNewUserNotification(context.bot.api, user).catch(() => {});
+      sendNewUserNotification(context.bot.api as any, user).catch(() => {});
 
       if (referrerId) {
         try {
