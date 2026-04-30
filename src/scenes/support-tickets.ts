@@ -3,6 +3,7 @@ import { TicketService } from "../services/ticket";
 import { TicketRepository } from "../repositories/TicketRepository";
 import { i18n } from "../shared/locales/index";
 import { UserRepository } from "../repositories/UserRepository";
+import { config } from "../config";
 
 /**
  * State management for ticket creation
@@ -242,6 +243,99 @@ export function setupTicketScenes(bot: Bot) {
     console.log("[DEBUG-TICKET] Calling handleTicketCreation");
     await handleTicketCreation(context, userId, state);
     console.log("[DEBUG-TICKET] ========== TICKET HANDLER END ==========");
+  });
+
+  /**
+   * Handle messages in forum group (support replies)
+   */
+  bot.on("message", async (context) => {
+    console.log("[DEBUG-FORUM] ========== FORUM HANDLER START ==========");
+    console.log("[DEBUG-FORUM] Chat type:", context.chat?.type);
+
+    // Only handle supergroup (forum) messages
+    if (context.chat?.type !== "supergroup") {
+      console.log("[DEBUG-FORUM] Not a supergroup, skipping");
+      return;
+    }
+
+    // Check if this is the support group
+    const chatId = context.chat.id.toString();
+    const supportGroupId = config.SUPPORT_GROUP_ID?.replace("-100", "");
+    console.log(
+      "[DEBUG-FORUM] Chat ID:",
+      chatId,
+      "Support Group ID:",
+      supportGroupId,
+    );
+
+    if (!config.SUPPORT_GROUP_ID || !chatId.includes(supportGroupId || "")) {
+      console.log("[DEBUG-FORUM] Not the support group, skipping");
+      return;
+    }
+
+    // Check if this is a reply to a thread
+    const replyToMessageId = (context as any).reply_to_message?.message_id;
+    const messageThreadId = (context as any).message_thread_id;
+
+    console.log(
+      "[DEBUG-FORUM] Reply to:",
+      replyToMessageId,
+      "Thread ID:",
+      messageThreadId,
+    );
+
+    if (!replyToMessageId && !messageThreadId) {
+      console.log("[DEBUG-FORUM] Not a thread message, skipping");
+      return;
+    }
+
+    const supportUserId = context.from?.id;
+    const messageText = context.text;
+
+    if (!supportUserId || !messageText) {
+      console.log("[DEBUG-FORUM] No user ID or message text, skipping");
+      return;
+    }
+
+    console.log(
+      "[DEBUG-FORUM] Support reply from:",
+      supportUserId,
+      "Message:",
+      messageText.substring(0, 50),
+    );
+
+    try {
+      // Find ticket by thread message ID
+      const ticket = await TicketRepository.getTicketByThreadMessageId(
+        replyToMessageId || messageThreadId!,
+      );
+      if (!ticket) {
+        console.log(
+          "[DEBUG-FORUM] Ticket not found for thread message ID:",
+          replyToMessageId || messageThreadId,
+        );
+        return;
+      }
+
+      console.log(
+        "[DEBUG-FORUM] Found ticket:",
+        ticket.ticketNumber,
+        "ID:",
+        ticket.id,
+      );
+
+      const ticketService = new TicketService(bot.api);
+      await ticketService.sendSupportMessageToUser(
+        ticket.id,
+        supportUserId,
+        messageText,
+      );
+      console.log("[DEBUG-FORUM] Message sent to user successfully");
+    } catch (error) {
+      console.error("[FORUM] Error handling support reply:", error);
+    }
+
+    console.log("[DEBUG-FORUM] ========== FORUM HANDLER END ==========");
   });
 
   /**
