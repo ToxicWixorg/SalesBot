@@ -116,7 +116,7 @@ export class TicketService {
     try {
       // Send message to specific topic in forum
       const sentMessage = await this.botApi.sendMessage({
-        chat_id: config.SUPPORT_GROUP_ID,
+        chat_id: Number(config.SUPPORT_GROUP_ID),
         text: message,
         message_thread_id: topicId,
         parse_mode: "HTML",
@@ -125,7 +125,7 @@ export class TicketService {
 
       // Update ticket with forum info
       await TicketRepository.updateTicketForumInfo(ticket.id, {
-        forumGroupId: parseInt(config.SUPPORT_GROUP_ID),
+        forumGroupId: Number(config.SUPPORT_GROUP_ID),
         topicId: topicId,
         threadMessageId: sentMessage.message_id,
       });
@@ -163,7 +163,7 @@ export class TicketService {
     try {
       // Send to forum thread (reply to thread message)
       await this.botApi.sendMessage({
-        chat_id: config.SUPPORT_GROUP_ID!,
+        chat_id: Number(config.SUPPORT_GROUP_ID!),
         text: `👤 <b>${username}:</b>\n${message}`,
         message_thread_id: ticket.topicId!,
         reply_to_message_id: ticket.threadMessageId,
@@ -269,7 +269,7 @@ export class TicketService {
     if (ticket.threadMessageId && config.SUPPORT_GROUP_ID) {
       try {
         await this.botApi.sendMessage({
-          chat_id: config.SUPPORT_GROUP_ID,
+          chat_id: Number(config.SUPPORT_GROUP_ID),
           text: `✅ <b>Ticket Resolved</b>\n\nThis ticket has been marked as resolved.`,
           message_thread_id: ticket.topicId!,
           reply_to_message_id: ticket.threadMessageId,
@@ -321,7 +321,7 @@ export class TicketService {
           : agent?.firstName || "Agent";
 
         await this.botApi.sendMessage({
-          chat_id: config.SUPPORT_GROUP_ID,
+          chat_id: Number(config.SUPPORT_GROUP_ID),
           text: `👨‍💼 <b>Ticket Assigned</b>\n\nAssigned to: ${agentName}`,
           message_thread_id: ticket.topicId!,
           reply_to_message_id: ticket.threadMessageId,
