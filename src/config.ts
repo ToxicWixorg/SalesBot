@@ -17,11 +17,16 @@ export const config = {
 
   // Support Forum Group (Telegram Forum)
   SUPPORT_GROUP_ID: env.get("SUPPORT_GROUP_ID").asString(), // e.g., "-1001234567890"
-  
+
   // Forum Topics IDs
   SUPPORT_TOPIC_ID: env.get("SUPPORT_TOPIC_ID").default("2").asInt(), // General support tickets
   ORDERS_TOPIC_ID: env.get("ORDERS_TOPIC_ID").default("3").asInt(), // Order-related tickets
   REPORTS_TOPIC_ID: env.get("REPORTS_TOPIC_ID").default("4").asInt(), // Problem reports
+
+  // اضافه کردن Topics جدید (در صورت نیاز این خطوط را uncomment کنید)
+  // PAYMENTS_TOPIC_ID: env.get("PAYMENTS_TOPIC_ID").default("5").asInt(), // Payment issues
+  // FEEDBACK_TOPIC_ID: env.get("FEEDBACK_TOPIC_ID").default("6").asInt(), // User feedback
+  // TECHNICAL_TOPIC_ID: env.get("TECHNICAL_TOPIC_ID").default("7").asInt(), // Technical issues
 };
 
 // Ticket System Topics Configuration
@@ -29,6 +34,17 @@ export const TICKET_TOPICS = {
   support: config.SUPPORT_TOPIC_ID,
   order: config.ORDERS_TOPIC_ID,
   report: config.REPORTS_TOPIC_ID,
+
+  // برای اضافه کردن Topic جدید:
+  // 1. در .env مقدار Topic ID را اضافه کنید: NEW_TOPIC_ID=123
+  // 2. در بالا config را تعریف کنید: NEW_TOPIC_ID: env.get("NEW_TOPIC_ID").asInt()
+  // 3. اینجا آن را اضافه کنید: new_topic: config.NEW_TOPIC_ID,
+  // 4. در schema.ts به ticketTypeEnum اضافه کنید: "new_topic"
+
+  // مثال (uncomment کنید در صورت نیاز):
+  // payment: config.PAYMENTS_TOPIC_ID,
+  // feedback: config.FEEDBACK_TOPIC_ID,
+  // technical: config.TECHNICAL_TOPIC_ID,
 } as const;
 
 export type TicketType = keyof typeof TICKET_TOPICS;

@@ -24,14 +24,26 @@ export function setupTicketScenes(bot: Bot) {
    * Start creating a support ticket
    */
   bot.callbackQuery("new_support_ticket", async (context) => {
+    console.log(
+      "[DEBUG] new_support_ticket callback triggered for user:",
+      context.from.id,
+    );
     const user = await UserRepository.findById(context.from.id);
-    if (!user) return;
+    if (!user) {
+      console.log("[DEBUG] User not found in database:", context.from.id);
+      return;
+    }
     const t = i18n.buildT(user.languageCode || "en");
 
     ticketState.set(context.from.id, {
       type: "support",
       step: "message",
     });
+    console.log(
+      "[DEBUG] Ticket state set for user:",
+      context.from.id,
+      ticketState.get(context.from.id),
+    );
 
     const keyboard = new InlineKeyboard().text(t("btnCancel"), "cancel_ticket");
 
@@ -168,6 +180,15 @@ export function setupTicketScenes(bot: Bot) {
     const userId = context.from?.id;
     if (!userId || !context.text) return;
 
+    console.log(
+      "[DEBUG] Message received from user:",
+      userId,
+      "- State:",
+      ticketState.has(userId),
+      "- Reply state:",
+      ticketReplyState.has(userId),
+    );
+
     // Check if replying to existing ticket
     if (ticketReplyState.has(userId)) {
       await handleTicketReply(context, userId);
@@ -199,6 +220,13 @@ export function setupTicketScenes(bot: Bot) {
       await context.reply(t("ticketMessageTooShort"));
       return;
     }
+
+    console.log(
+      "[DEBUG] Creating ticket for user:",
+      userId,
+      "Type:",
+      state.type,
+    );
 
     try {
       const ticketService = new TicketService(bot.api);

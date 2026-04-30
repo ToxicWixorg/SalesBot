@@ -11,7 +11,7 @@ import { composer } from "./plugins/index.ts";
 import { setupWalletHandlers } from "./handlers/wallet.ts";
 import { setupWalletRechargeScene } from "./scenes/wallet-recharge.ts";
 import { supportHandler } from "./handlers/support.ts";
-import { setupTicketScenes } from "./handlers/ticket-scenes.ts";
+import { setupTicketScenes } from "./scenes/support-tickets.ts";
 
 // Validate BOT_TOKEN
 if (!config.BOT_TOKEN) {

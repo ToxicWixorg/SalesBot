@@ -25,6 +25,7 @@ export class TicketService {
     orderId?: number;
     priority?: "low" | "normal" | "high" | "urgent";
   }): Promise<Ticket> {
+    console.log("[DEBUG] TicketService.createTicket called:", data);
     // Get user info
     const user = await UserRepository.findById(data.userId);
     if (!user) {
@@ -42,8 +43,14 @@ export class TicketService {
     });
 
     // Send to forum group if configured
+    console.log("[DEBUG] config.SUPPORT_GROUP_ID:", config.SUPPORT_GROUP_ID);
     if (config.SUPPORT_GROUP_ID) {
+      console.log("[DEBUG] Sending ticket to forum...");
       await this.sendTicketToForum(ticket, user);
+    } else {
+      console.warn(
+        "[DEBUG] SUPPORT_GROUP_ID not configured, skipping forum sync",
+      );
     }
 
     return ticket;
@@ -62,6 +69,14 @@ export class TicketService {
     }
 
     const topicId = TICKET_TOPICS[ticket.type as TicketType];
+    console.log(
+      "[DEBUG] sendTicketToForum - Type:",
+      ticket.type,
+      "- TopicID:",
+      topicId,
+      "- GroupID:",
+      config.SUPPORT_GROUP_ID,
+    );
     const username = user.username
       ? `@${user.username}`
       : user.firstName || "User";
@@ -247,7 +262,7 @@ export class TicketService {
 
     // Notify user
     try {
-      await this.bot.api.sendMessage(
+      await this.botApi.sendMessage(
         ticket.userId,
         `✅ Your ticket <b>${ticket.ticketNumber}</b> has been resolved.\n\nIf you have any other questions, feel free to open a new ticket.`,
         { parse_mode: "HTML" },
@@ -287,7 +302,7 @@ export class TicketService {
 
     // Notify user
     try {
-      await this.bot.api.sendMessage(
+      await this.botApi.sendMessage(
         ticket.userId,
         `🔒 Your ticket <b>${ticket.ticketNumber}</b> has been closed.\n\nThank you for contacting support!`,
         { parse_mode: "HTML" },
