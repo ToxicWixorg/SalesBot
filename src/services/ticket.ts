@@ -115,15 +115,13 @@ export class TicketService {
 
     try {
       // Send message to specific topic in forum
-      const sentMessage = await this.botApi.sendMessage(
-        config.SUPPORT_GROUP_ID,
-        message,
-        {
-          message_thread_id: topicId,
-          parse_mode: "HTML",
-          reply_markup: keyboard,
-        },
-      );
+      const sentMessage = await this.botApi.sendMessage({
+        chat_id: config.SUPPORT_GROUP_ID,
+        text: message,
+        message_thread_id: topicId,
+        parse_mode: "HTML",
+        reply_markup: keyboard,
+      });
 
       // Update ticket with forum info
       await TicketRepository.updateTicketForumInfo(ticket.id, {
@@ -164,15 +162,13 @@ export class TicketService {
 
     try {
       // Send to forum thread (reply to thread message)
-      await this.botApi.sendMessage(
-        config.SUPPORT_GROUP_ID!,
-        `👤 <b>${username}:</b>\n${message}`,
-        {
-          message_thread_id: ticket.topicId!,
-          reply_to_message_id: ticket.threadMessageId,
-          parse_mode: "HTML",
-        },
-      );
+      await this.botApi.sendMessage({
+        chat_id: config.SUPPORT_GROUP_ID!,
+        text: `👤 <b>${username}:</b>\n${message}`,
+        message_thread_id: ticket.topicId!,
+        reply_to_message_id: ticket.threadMessageId,
+        parse_mode: "HTML",
+      });
 
       // Save message to database
       await TicketRepository.addMessage({
@@ -214,13 +210,11 @@ export class TicketService {
 
     // Send to user in bot
     try {
-      await this.botApi.sendMessage(
-        ticket.userId,
-        `🎫 <b>Support Reply (${ticket.ticketNumber}):</b>\n\n${message}`,
-        {
-          parse_mode: "HTML",
-        },
-      );
+      await this.botApi.sendMessage({
+        chat_id: ticket.userId,
+        text: `🎫 <b>Support Reply (${ticket.ticketNumber}):</b>\n\n${message}`,
+        parse_mode: "HTML",
+      });
 
       console.log(
         `[TICKET] Support message sent to user ${ticket.userId} for ticket ${ticket.ticketNumber}`,
@@ -262,11 +256,11 @@ export class TicketService {
 
     // Notify user
     try {
-      await this.botApi.sendMessage(
-        ticket.userId,
-        `✅ Your ticket <b>${ticket.ticketNumber}</b> has been resolved.\n\nIf you have any other questions, feel free to open a new ticket.`,
-        { parse_mode: "HTML" },
-      );
+      await this.botApi.sendMessage({
+        chat_id: ticket.userId,
+        text: `✅ Your ticket <b>${ticket.ticketNumber}</b> has been resolved.\n\nIf you have any other questions, feel free to open a new ticket.`,
+        parse_mode: "HTML",
+      });
     } catch (error) {
       console.error("[TICKET] Failed to notify user:", error);
     }
@@ -274,15 +268,13 @@ export class TicketService {
     // Update forum thread
     if (ticket.threadMessageId && config.SUPPORT_GROUP_ID) {
       try {
-        await this.botApi.sendMessage(
-          config.SUPPORT_GROUP_ID,
-          `✅ <b>Ticket Resolved</b>\n\nThis ticket has been marked as resolved.`,
-          {
-            message_thread_id: ticket.topicId!,
-            reply_to_message_id: ticket.threadMessageId,
-            parse_mode: "HTML",
-          },
-        );
+        await this.botApi.sendMessage({
+          chat_id: config.SUPPORT_GROUP_ID,
+          text: `✅ <b>Ticket Resolved</b>\n\nThis ticket has been marked as resolved.`,
+          message_thread_id: ticket.topicId!,
+          reply_to_message_id: ticket.threadMessageId,
+          parse_mode: "HTML",
+        });
       } catch (error) {
         console.error("[TICKET] Failed to update forum:", error);
       }
@@ -302,11 +294,11 @@ export class TicketService {
 
     // Notify user
     try {
-      await this.botApi.sendMessage(
-        ticket.userId,
-        `🔒 Your ticket <b>${ticket.ticketNumber}</b> has been closed.\n\nThank you for contacting support!`,
-        { parse_mode: "HTML" },
-      );
+      await this.botApi.sendMessage({
+        chat_id: ticket.userId,
+        text: `🔒 Your ticket <b>${ticket.ticketNumber}</b> has been closed.\n\nThank you for contacting support!`,
+        parse_mode: "HTML",
+      });
     } catch (error) {
       console.error("[TICKET] Failed to notify user:", error);
     }
@@ -328,15 +320,13 @@ export class TicketService {
           ? `@${agent.username}`
           : agent?.firstName || "Agent";
 
-        await this.botApi.sendMessage(
-          config.SUPPORT_GROUP_ID,
-          `👨‍💼 <b>Ticket Assigned</b>\n\nAssigned to: ${agentName}`,
-          {
-            message_thread_id: ticket.topicId!,
-            reply_to_message_id: ticket.threadMessageId,
-            parse_mode: "HTML",
-          },
-        );
+        await this.botApi.sendMessage({
+          chat_id: config.SUPPORT_GROUP_ID,
+          text: `👨‍💼 <b>Ticket Assigned</b>\n\nAssigned to: ${agentName}`,
+          message_thread_id: ticket.topicId!,
+          reply_to_message_id: ticket.threadMessageId,
+          parse_mode: "HTML",
+        });
       } catch (error) {
         console.error("[TICKET] Failed to update forum:", error);
       }
