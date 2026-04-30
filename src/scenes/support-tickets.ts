@@ -22,7 +22,6 @@ const ticketReplyState = new Map<number, number>(); // userId -> ticketId
 export function setupTicketScenes(bot: Bot) {
   console.log("🎫 Setting up ticket scenes...");
 
-
   bot.callbackQuery("new_support_ticket", async (context) => {
     console.log(
       "[DEBUG] new_support_ticket callback triggered for user:",
@@ -180,29 +179,34 @@ export function setupTicketScenes(bot: Bot) {
     console.log("[DEBUG] Message handler in support-tickets.ts triggered!");
     console.log("[DEBUG] Context type:", context.constructor.name);
     console.log("[DEBUG] Chat type:", context.chat?.type);
-    
+
     const userId = context.from?.id;
     if (!userId || !context.text) {
       console.log("[DEBUG] No userId or text, returning");
       return;
     }
-    
+
     // Only handle private chats
     if (context.chat?.type !== "private") {
       console.log("[DEBUG] Not a private chat, returning");
       return;
     }
-    
+
     // Check if user is in a scene
     const inScene = (context as any).scene?.current;
     if (inScene) {
-      console.log("[DEBUG] User is in scene:", inScene, "- skipping");
-      userId,
-      "- State:",
-      ticketState.has(userId),
-      "- Reply state:",
-      ticketReplyState.has(userId),
-    );
+      console.log(
+        "[DEBUG] User is in scene:",
+        inScene,
+        "- skipping - userId:",
+        userId,
+        "- State:",
+        ticketState.has(userId),
+        "- Reply state:",
+        ticketReplyState.has(userId),
+      );
+      return;
+    }
 
     // Check if replying to existing ticket
     if (ticketReplyState.has(userId)) {
