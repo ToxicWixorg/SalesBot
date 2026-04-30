@@ -207,14 +207,18 @@ export function setupTicketScenes(bot: Bot) {
 
       // Check if this is a reply to a thread
       console.log("[DEBUG-FORUM] Full context keys:", Object.keys(context));
-      console.log("[DEBUG-FORUM] Context.message:", (context as any).message);
-      console.log(
-        "[DEBUG-FORUM] Context raw:",
-        JSON.stringify(context, null, 2).substring(0, 500),
-      );
-
-      const replyToMessageId = (context as any).reply_to_message?.message_id;
-      const messageThreadId = (context as any).message_thread_id;
+      console.log("[DEBUG-FORUM] context.update:", (context as any).update);
+      console.log("[DEBUG-FORUM] context.payload:", (context as any).payload);
+      console.log("[DEBUG-FORUM] context.update?.message:", (context as any).update?.message);
+      
+      // Try different paths to find reply_to_message and message_thread_id
+      const message = (context as any).update?.message || (context as any).payload;
+      console.log("[DEBUG-FORUM] Extracted message:", message);
+      console.log("[DEBUG-FORUM] message.reply_to_message:", message?.reply_to_message);
+      console.log("[DEBUG-FORUM] message.message_thread_id:", message?.message_thread_id);
+      
+      const replyToMessageId = message?.reply_to_message?.message_id;
+      const messageThreadId = message?.message_thread_id;
 
       console.log(
         "[DEBUG-FORUM] Reply to:",
