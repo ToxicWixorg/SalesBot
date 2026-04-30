@@ -73,11 +73,15 @@ export function setupWalletRechargeScene(bot: Bot) {
    * دریافت مبلغ از کاربر
    */
   bot.on("message", async (context) => {
+    console.log("[DEBUG-WALLET] Message handler (amount) triggered");
     const userId = context.from?.id;
     if (!userId) return;
 
     const state = rechargeState.get(userId);
-    if (!state || state.step !== "amount") return;
+    if (!state || state.step !== "amount") {
+      console.log("[DEBUG-WALLET] No recharge state (amount), skipping");
+      return;
+    }
 
     const text = context.text;
     if (!text) return;
@@ -136,11 +140,15 @@ export function setupWalletRechargeScene(bot: Bot) {
    * دریافت TxID برای پرداخت کریپتو
    */
   bot.on("message", async (context) => {
+    console.log("[DEBUG-WALLET] Message handler (txid) triggered");
     const userId = context.from?.id;
     if (!userId) return;
 
     const state = rechargeState.get(userId);
-    if (!state || state.step !== "txid" || state.method !== "crypto") return;
+    if (!state || state.step !== "txid" || state.method !== "crypto") {
+      console.log("[DEBUG-WALLET] No recharge state (txid), skipping");
+      return;
+    }
 
     const txId = context.text;
     if (!txId || txId.length < 10) {

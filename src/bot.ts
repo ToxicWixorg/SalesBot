@@ -46,6 +46,6 @@ export const bot = new Bot(config.BOT_TOKEN)
 setupWalletHandlers(bot);
 setupWalletRechargeScene(bot);
 
-// Setup support/ticket handlers
-supportHandler(bot);
+// Setup support/ticket handlers (IMPORTANT: setupTicketScenes MUST be before supportHandler)
 setupTicketScenes(bot);
+supportHandler(bot);
