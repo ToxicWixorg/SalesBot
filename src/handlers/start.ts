@@ -5,7 +5,7 @@ import { ReferralRepository } from "../repositories/ReferralRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { languageSelectionScene } from "../scenes/language-selection.ts";
 import { mainMenuKeyboard } from "../shared/keyboards/index.ts";
-import { sendNewUserNotification } from "../services/forum-notifications.ts";
+import { sendNewUserNotification } from "../services/bot/notifications/newUser.ts";
 
 function generateReferralCode(userId: number): string {
   return `REF${userId}${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
@@ -89,12 +89,9 @@ export const startComposer = new Composer()
     }
 
     if (!user.languageCode || user.languageCode === "null") {
-      // console.log("[START] No language set, entering language selection scene");
       await context.scene.enter(languageSelectionScene);
       return;
     }
-
-    // console.log("[START] Sending welcome message and main menu");
 
     const t = i18n.buildT(user.languageCode);
     const userName = firstName || username || "User";
@@ -134,7 +131,6 @@ export const startComposer = new Composer()
         reply_markup: mainMenuKeyboard(t),
       });
     } catch (error: any) {
-      // Ignore "message is not modified" error
       if (error?.message?.includes("message is not modified")) {
         await context.answerCallbackQuery();
         return;

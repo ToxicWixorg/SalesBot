@@ -11,7 +11,7 @@
 import { db } from "../db/index.ts";
 import { usersTable, adminsTable } from "../db/schema.ts";
 import { eq } from "drizzle-orm";
-import { AdminRoles, DefaultPermissions } from "../services/admin.ts";
+import { AdminRoles, DefaultPermissions } from "../services/bot/admin.ts";
 
 interface CreateAdminOptions {
   userId: number;

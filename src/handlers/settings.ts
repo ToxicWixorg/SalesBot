@@ -9,109 +9,90 @@ import { UserRepository } from "../repositories/index.ts";
 import { composer } from "../plugins/index.ts";
 import { languageSelectionScene } from "../scenes/language-selection.ts";
 
-export const settingsComposer = new Composer().extend(composer);
+export const settingsComposer = new Composer()
+  .extend(composer)
+  .callbackQuery("settings", async (context) => {
+    const t = context.t;
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 🏠 Main Settings Menu
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    await context.editText(
+      `${t("settingsTitle")}\n\n${t("settingsDescription")}`,
+      {
+        reply_markup: settingsKeyboard(t),
+        parse_mode: "HTML",
+      },
+    );
+  })
+  .callbackQuery("change_language", async (context) => {
+    await context.scene.enter(languageSelectionScene);
+  })
+  .callbackQuery("settings:account_info", async (context) => {
+    const t = context.t;
+    const userId = context.from.id;
 
-settingsComposer.callbackQuery("settings", async (context) => {
-  const t = context.t;
+    const user = await UserRepository.findById(userId);
 
-  await context.editText(
-    `${t("settingsTitle")}\n\n${t("settingsDescription")}`,
-    {
+    if (!user) {
+      await context.answerCallbackQuery({
+        text: "User not found",
+        show_alert: true,
+      });
+      return;
+    }
+
+    // TODO: Get actual statistics from database
+    const totalOrders = 0; // await orderRepo.countUserOrders(userId);
+    const totalSpent = "0"; // await orderRepo.getTotalSpent(userId);
+    const totalReferrals = 0; // await referralRepo.countReferrals(userId);
+
+    const joinDate = user.createdAt
+      ? new Date(user.createdAt).toLocaleDateString("fa-IR")
+      : "N/A";
+
+    const accountData = t("accountInfoData", {
+      userId: userId.toString(),
+      username: user.username || "",
+      firstName: user.firstName || "Unknown",
+      joinDate,
+      totalOrders,
+      totalSpent,
+      totalReferrals,
+    });
+
+    await context.editText(accountData, {
       reply_markup: settingsKeyboard(t),
       parse_mode: "HTML",
-    },
-  );
-});
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 🌐 Change Language
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-settingsComposer.callbackQuery("change_language", async (context) => {
-  // Enter the language selection scene
-  await context.scene.enter(languageSelectionScene);
-});
-
-settingsComposer.callbackQuery("settings:account_info", async (context) => {
-  const t = context.t;
-  const userId = context.from.id;
-
-  const user = await UserRepository.findById(userId);
-
-  if (!user) {
-    await context.answerCallbackQuery({
-      text: "User not found",
-      show_alert: true,
     });
-    return;
-  }
+  })
+  .callbackQuery("settings:notifications", async (context) => {
+    const t = context.t;
+    const userId = context.from.id;
 
-  // TODO: Get actual statistics from database
-  const totalOrders = 0; // await orderRepo.countUserOrders(userId);
-  const totalSpent = "0"; // await orderRepo.getTotalSpent(userId);
-  const totalReferrals = 0; // await referralRepo.countReferrals(userId);
+    const user = await UserRepository.findById(userId);
 
-  const joinDate = user.createdAt
-    ? new Date(user.createdAt).toLocaleDateString("fa-IR")
-    : "N/A";
+    if (!user) {
+      await context.answerCallbackQuery({
+        text: "User not found",
+        show_alert: true,
+      });
+      return;
+    }
 
-  const accountData = t("accountInfoData", {
-    userId: userId.toString(),
-    username: user.username || "",
-    firstName: user.firstName || "Unknown",
-    joinDate,
-    totalOrders,
-    totalSpent,
-    totalReferrals,
+    const notificationSettings = {
+      notifyOrders: user.notifyOrders ?? true,
+      notifyWallet: user.notifyWallet ?? true,
+      notifyPromotions: user.notifyPromotions ?? true,
+      notifyReferrals: user.notifyReferrals ?? true,
+      notifyStock: user.notifyStock ?? true,
+    };
+
+    await context.editText(
+      `${t("notificationSettingsTitle")}\n\n${t("notificationSettingsDescription")}`,
+      {
+        reply_markup: notificationSettingsKeyboard(t, notificationSettings),
+        parse_mode: "HTML",
+      },
+    );
   });
-
-  await context.editText(accountData, {
-    reply_markup: settingsKeyboard(t),
-    parse_mode: "HTML",
-  });
-});
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 🔔 Notification Settings
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-settingsComposer.callbackQuery("settings:notifications", async (context) => {
-  const t = context.t;
-  const userId = context.from.id;
-
-  const user = await UserRepository.findById(userId);
-
-  if (!user) {
-    await context.answerCallbackQuery({
-      text: "User not found",
-      show_alert: true,
-    });
-    return;
-  }
-
-  const notificationSettings = {
-    notifyOrders: user.notifyOrders ?? true,
-    notifyWallet: user.notifyWallet ?? true,
-    notifyPromotions: user.notifyPromotions ?? true,
-    notifyReferrals: user.notifyReferrals ?? true,
-    notifyStock: user.notifyStock ?? true,
-  };
-
-  await context.editText(
-    `${t("notificationSettingsTitle")}\n\n${t("notificationSettingsDescription")}`,
-    {
-      reply_markup: notificationSettingsKeyboard(t, notificationSettings),
-      parse_mode: "HTML",
-    },
-  );
-});
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 🔄 Toggle Notification Settings
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 const notificationTypes = [
   "orders",
@@ -190,10 +171,6 @@ for (const type of notificationTypes) {
   });
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 🔒 Privacy Settings
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 settingsComposer.callbackQuery("settings:privacy", async (context) => {
   const t = context.t;
 
@@ -202,10 +179,6 @@ settingsComposer.callbackQuery("settings:privacy", async (context) => {
     parse_mode: "HTML",
   });
 });
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 📤 Export Data
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 settingsComposer.callbackQuery("settings:privacy:export", async (context) => {
   const t = context.t;
@@ -250,10 +223,6 @@ settingsComposer.callbackQuery("settings:privacy:export", async (context) => {
   );
 });
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 🗑️ Clear History
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 settingsComposer.callbackQuery(
   "settings:privacy:clear_history",
   async (context) => {
@@ -280,10 +249,6 @@ settingsComposer.callbackQuery(
     });
   },
 );
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ❌ Delete Account
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 settingsComposer.callbackQuery(
   "settings:privacy:delete_account",
@@ -316,10 +281,6 @@ settingsComposer.callbackQuery(
     });
   },
 );
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ℹ️ About
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 settingsComposer.callbackQuery("settings:about", async (context) => {
   const t = context.t;

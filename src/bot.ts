@@ -1,11 +1,11 @@
 import { Bot } from "gramio";
 import { config } from "./config.ts";
 import { startComposer } from "./handlers/start.ts";
-import { productsComposer } from "./handlers/products.ts";
-import { inviteComposer } from "./handlers/invite.ts";
-import { discountComposer } from "./handlers/discount.ts";
+import { productsComposer } from "./handlers/products/index.ts";
+import { inviteComposer } from "./handlers/invite/index.ts";
+import { discountComposer } from "./handlers/discount/index.ts";
 import { settingsComposer } from "./handlers/settings.ts";
-import { ordersComposer } from "./handlers/orders.ts";
+import { ordersComposer } from "./handlers/orders/index.ts";
 import { TopicComposer } from "./handlers/Topic.ts";
 import { composer } from "./plugins/index.ts";
 import { setupWalletHandlers } from "./handlers/wallet.ts";

@@ -24,6 +24,7 @@ export const config = {
   REPORTS_TOPIC_ID: env.get("REPORTS_TOPIC_ID").required().asInt(), // Problem reports
   NEWUSERS_TOPIC_ID: env.get("NEWUSERS_TOPIC_ID").required().asInt(), // New users
   NEWS_TOPIC_ID: env.get("NEWS_TOPIC_ID").required().asInt(), // Announcements
+  NEWREFERRAL_TOPIC_ID: env.get("NEWREFERRAL_TOPIC_ID").required().asInt(), // New referrals
 
   // اضافه کردن Topics جدید (در صورت نیاز این خطوط را uncomment کنید)
   // PAYMENTS_TOPIC_ID: env.get("PAYMENTS_TOPIC_ID").default("5").asInt(), // Payment issues
@@ -61,4 +62,5 @@ export type TicketType = keyof typeof TICKET_TOPICS;
 export const Bot_Topics = {
   new_users: config.NEWUSERS_TOPIC_ID,
   news: config.NEWS_TOPIC_ID,
+  new_referral: config.NEWREFERRAL_TOPIC_ID,
 };

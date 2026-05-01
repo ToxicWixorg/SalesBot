@@ -4,6 +4,7 @@ import { TicketService } from "../services/ticket";
 import { config } from "../config";
 import { i18n } from "../shared/locales/index";
 import { UserRepository } from "../repositories/UserRepository";
+import { supportKeyboard } from "../shared/keyboards";
 
 export const supportHandler = (bot: Bot) => {
   /**
@@ -16,22 +17,11 @@ export const supportHandler = (bot: Bot) => {
     if (!user) return;
     const t = i18n.buildT(user.languageCode || "en");
 
-    const keyboard = new InlineKeyboard()
-      .text(t("btnNewSupportTicket"), "new_support_ticket")
-      .row()
-      .text(t("btnNewReportTicket"), "new_report_ticket")
-      .row()
-      .text(t("btnMyTickets"), "my_tickets")
-      .row()
-      .text(t("btnBack"), "main_menu");
-
     await ctx.editText(t("supportMenuText"), {
-      reply_markup: keyboard,
+      reply_markup: supportKeyboard(t),
       parse_mode: "HTML",
     });
   });
-
-  // Ticket creation callbacks are handled in ticket-scenes.ts
 
   /**
    * View my tickets
@@ -78,7 +68,7 @@ export const supportHandler = (bot: Bot) => {
       if (tickets.length > 10) {
         message += `\n<i>${t("ticketListShowingFirst10")}</i>`;
       }
-
+      supportKeyboard;
       const keyboard = new InlineKeyboard();
 
       // Add buttons for recent tickets
