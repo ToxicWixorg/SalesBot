@@ -52,9 +52,8 @@ git commit -m "%msg%" --no-verify
 echo [3/3] Pushing to GitHub...
 git push origin main --force-with-lease
 if errorlevel 1 (
-    echo [WARN] Push rejected. Pulling then pushing...
-    git pull origin main --no-rebase -X ours
-    git push origin main
+    echo [WARN] Push rejected. Force pushing...
+    git push origin main --force
 )
 
 echo.
