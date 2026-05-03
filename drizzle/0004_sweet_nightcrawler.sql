@@ -19,6 +19,7 @@ CREATE TABLE "admins" (
 	"last_activity_at" timestamp,
 	"login_count" integer DEFAULT 0,
 	"notes" text,
+	"password_hash" text,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now(),
 	"created_by" bigint,

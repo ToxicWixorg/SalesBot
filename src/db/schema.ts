@@ -716,6 +716,9 @@ export const adminsTable = pgTable(
     // Notes
     notes: text("notes"), // Internal notes about this admin
 
+    // Auth
+    passwordHash: text("password_hash"),
+
     // Timestamps
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
