@@ -4,8 +4,10 @@ export { sendNewsMessage } from "./notifications/news.ts";
 
 export { TicketService } from "./ticket.ts";
 
-export { AdminRoles, AdminRole } from "./admin/Admin/Roles.ts";
-export { AdminSections, AdminSection } from "./admin/Admin/Section.ts";
+export { AdminRoles } from "./admin/Admin/Roles.ts";
+export type { AdminRole } from "./admin/Admin/Roles.ts";
+export { AdminSections } from "./admin/Admin/Section.ts";
+export type { AdminSection } from "./admin/Admin/Section.ts";
 export { DefaultPermissions } from "./admin/DefaultPermissions.ts";
 
 export { AdminService } from "./admin/Service.ts";

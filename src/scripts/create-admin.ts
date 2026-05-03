@@ -5,7 +5,7 @@
  * Examples:
  * bun src/scripts/create-admin.ts 123456789 admin
  * bun src/scripts/create-admin.ts 123456789 support
- * bun src/scripts/create-admin.ts 123456789 admin --super
+ * bun src/scripts/create-admin.ts 123456789 admin  
  */
 
 import { db } from "../db/index.ts";
