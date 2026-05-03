@@ -24,6 +24,8 @@ services:
       - POSTGRES_USER=bot
       - POSTGRES_PASSWORD=991fa522db6ddb9935c7d9b1
       - POSTGRES_DB=bot
+    ports:
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
