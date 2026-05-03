@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 cls
 echo ===========================================
 echo   SYNC  bot/  TO GITHUB
@@ -17,7 +18,7 @@ if not exist ".git" (
 git remote get-url origin >nul 2>&1
 if errorlevel 1 (
     set /p REMOTE_URL=Enter GitHub repo URL for bot e.g. https://github.com/user/bot.git : 
-    git remote add origin %REMOTE_URL%
+    git remote add origin "!REMOTE_URL!"
     echo [SETUP] Remote set.
 )
 
