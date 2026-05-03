@@ -94,7 +94,7 @@ export class AdminRepository {
       .insert(adminsTable)
       .values({
         ...admin,
-        createdBy: createdBy ? BigInt(createdBy) : null,
+        createdBy: createdBy ? Number(createdBy) : null,
       })
       .returning();
 

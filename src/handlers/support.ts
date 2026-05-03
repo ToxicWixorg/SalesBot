@@ -1,12 +1,12 @@
-import { Bot, InlineKeyboard } from "gramio";
+import { Bot, AnyBot, InlineKeyboard } from "gramio";
 import { TicketRepository } from "../repositories/TicketRepository";
-import { TicketService } from "../services/ticket";
+import { TicketService } from "../services/bot/ticket";
 import { config } from "../config";
 import { i18n } from "../shared/locales/index";
 import { UserRepository } from "../repositories/UserRepository";
 import { supportKeyboard } from "../shared/keyboards";
 
-export const supportHandler = (bot: Bot) => {
+export const supportHandler = (bot: AnyBot) => {
   /**
    * Main support menu - from main menu
    */

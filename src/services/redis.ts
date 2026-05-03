@@ -10,8 +10,7 @@ export const redis = new Redis({
   host: config.REDIS_HOST,
   port: config.REDIS_PORT,
   maxRetriesPerRequest: null, // queue commands indefinitely during reconnect
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 10000, // send keepalive after 10s idle
+  keepAlive: 10000, // send keepalive after 10s idle
   connectTimeout: 10000,
   retryStrategy(times) {
     const delay = Math.min(times * 100, 5000);

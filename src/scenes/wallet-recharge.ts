@@ -1,4 +1,4 @@
-import { Bot, InlineKeyboard } from "gramio";
+import { Bot, AnyBot, InlineKeyboard } from "gramio";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
@@ -24,7 +24,7 @@ const rechargeState = new Map<
   }
 >();
 
-export function setupWalletRechargeScene(bot: Bot) {
+export function setupWalletRechargeScene(bot: AnyBot) {
   /**
    * ورود به scene شارژ - انتخاب مبلغ
    */

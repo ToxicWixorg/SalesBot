@@ -1,4 +1,4 @@
-import { Bot, InlineKeyboard } from "gramio";
+import { Bot, AnyBot, InlineKeyboard } from "gramio";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
@@ -9,9 +9,9 @@ import {
   walletHistoryKeyboard,
   walletKeyboard,
   walletRechargeKeyboard,
-} from "../shared/keyboards/wallet.ts";
+} from "../shared/keyboards";
 
-export function setupWalletHandlers(bot: Bot) {
+export function setupWalletHandlers(bot: AnyBot) {
   bot.callbackQuery("wallet", async (context) => {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);

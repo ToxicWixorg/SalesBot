@@ -1,5 +1,5 @@
-import { Bot, InlineKeyboard } from "gramio";
-import { TicketService } from "../services/ticket";
+import { Bot, AnyBot, InlineKeyboard } from "gramio";
+import { TicketService } from "../services/bot/ticket";
 import { TicketRepository } from "../repositories/TicketRepository";
 import { i18n } from "../shared/locales/index";
 import { UserRepository } from "../repositories/UserRepository";
@@ -20,7 +20,7 @@ export const ticketState = new Map<
 // Separate state for ticket replies
 export const ticketReplyState = new Map<number, number>(); // userId -> ticketId
 
-export function setupTicketScenes(bot: Bot) {
+export function setupTicketScenes(bot: AnyBot) {
   console.log("🎫 Setting up ticket scenes...");
 
   bot.callbackQuery("new_support_ticket", async (context) => {
@@ -209,14 +209,24 @@ export function setupTicketScenes(bot: Bot) {
       console.log("[DEBUG-FORUM] Full context keys:", Object.keys(context));
       console.log("[DEBUG-FORUM] context.update:", (context as any).update);
       console.log("[DEBUG-FORUM] context.payload:", (context as any).payload);
-      console.log("[DEBUG-FORUM] context.update?.message:", (context as any).update?.message);
-      
+      console.log(
+        "[DEBUG-FORUM] context.update?.message:",
+        (context as any).update?.message,
+      );
+
       // Try different paths to find reply_to_message and message_thread_id
-      const message = (context as any).update?.message || (context as any).payload;
+      const message =
+        (context as any).update?.message || (context as any).payload;
       console.log("[DEBUG-FORUM] Extracted message:", message);
-      console.log("[DEBUG-FORUM] message.reply_to_message:", message?.reply_to_message);
-      console.log("[DEBUG-FORUM] message.message_thread_id:", message?.message_thread_id);
-      
+      console.log(
+        "[DEBUG-FORUM] message.reply_to_message:",
+        message?.reply_to_message,
+      );
+      console.log(
+        "[DEBUG-FORUM] message.message_thread_id:",
+        message?.message_thread_id,
+      );
+
       const replyToMessageId = message?.reply_to_message?.message_id;
       const messageThreadId = message?.message_thread_id;
 
