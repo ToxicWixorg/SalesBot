@@ -1,6 +1,7 @@
 import { Composer } from "gramio";
 import { composer } from "../../plugins/index.ts";
 import { ProductCallback } from "./callbacks/Products.ts";
+import { ProductCallback as ProductDetailCallback } from "./callbacks/Product.ts";
 import { CategoriesCallback } from "./callbacks/Categories.ts";
 import { CategoryCallBack } from "./callbacks/Category.ts";
 import { BuyProductCallback } from "./callbacks/BuyProduct.ts";
@@ -20,7 +21,7 @@ export const productsComposer = new Composer()
     return await CategoryCallBack(context);
   })
   .callbackQuery(/^product_(\d+)$/, async (context) => {
-    return await ProductCallback(context);
+    return await ProductDetailCallback(context);
   })
   .callbackQuery(/^buy_product_(\d+)$/, async (context) => {
     return await BuyProductCallback(context);
