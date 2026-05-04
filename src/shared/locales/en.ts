@@ -448,4 +448,29 @@ export const en = {
   btnIJoined: "✅ I Joined — Verify",
   joinChannelNotJoinedAlert:
     "❌ You haven't joined all the required channels yet. Please join and try again.",
+
+  // Purchase / Order Completion
+  insufficientBalance: (data: { required: string; current: string }) =>
+    `❌ <b>Insufficient Balance</b>\n\nRequired: <b>${data.required}</b> Toman\nYour balance: <b>${data.current}</b> Toman\n\nPlease recharge your wallet and try again.`,
+  noConfigAvailable:
+    "❌ No VPN config is currently available for this plan. Please contact support.",
+  orderSuccess: (data: {
+    orderId: number;
+    productName: string;
+    planName: string;
+    amount: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>Purchase Successful!</b>\n\n` +
+    `📦 Product: ${data.productName}\n` +
+    `📋 Plan: ${data.planName}\n` +
+    `💰 Amount paid: <b>${data.amount}</b> Toman\n` +
+    `💳 Remaining balance: <b>${data.remainingBalance}</b> Toman\n` +
+    `🆔 Order ID: #${data.orderId}`,
+  vpnConfigMessage: (data: { configData: string; label?: string }) =>
+    `🔑 <b>Your VPN Config</b>${data.label ? ` (${data.label})` : ""}\n\n` +
+    `<code>${data.configData}</code>\n\n` +
+    `📋 Tap the config above to copy it, then import it into your VPN app.`,
+  btnMyOrders2: "📦 My Orders",
+  btnBackToMenu: "🏠 Main Menu",
 } satisfies LanguageMap;

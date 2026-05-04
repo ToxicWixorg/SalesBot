@@ -9,8 +9,11 @@ import {
   categoriesTable,
   Category,
   InsertCategory,
+  productConfigsTable,
+  ProductConfig,
+  InsertProductConfig,
 } from "../db/schema.ts";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, isNull } from "drizzle-orm";
 
 export class ProductRepository {
   /**
@@ -210,5 +213,103 @@ export class CategoryRepository {
       .returning();
 
     return result;
+  }
+}
+
+export class ProductConfigRepository {
+  /**
+   * اولین کانفیگ استفاده نشده برای یک محصول (بدون توجه به پلن)
+   */
+  static async findAvailableByProductId(
+    productId: number,
+  ): Promise<ProductConfig | undefined> {
+    const [result] = await db
+      .select()
+      .from(productConfigsTable)
+      .where(
+        and(
+          eq(productConfigsTable.productId, productId),
+          eq(productConfigsTable.isUsed, false),
+        ),
+      )
+      .limit(1);
+
+    return result;
+  }
+
+  /**
+   * اولین کانفیگ استفاده نشده برای یک پلن خاص
+   */
+  static async findAvailableByPlanId(
+    planId: number,
+  ): Promise<ProductConfig | undefined> {
+    const [result] = await db
+      .select()
+      .from(productConfigsTable)
+      .where(
+        and(
+          eq(productConfigsTable.planId, planId),
+          eq(productConfigsTable.isUsed, false),
+        ),
+      )
+      .limit(1);
+
+    return result;
+  }
+
+  /**
+   * کانفیگ را به عنوان استفاده شده علامت‌گذاری کن
+   */
+  static async markAsUsed(id: number, orderId: number): Promise<ProductConfig> {
+    const [result] = await db
+      .update(productConfigsTable)
+      .set({
+        isUsed: true,
+        orderId,
+        assignedAt: new Date(),
+      })
+      .where(eq(productConfigsTable.id, id))
+      .returning();
+
+    return result;
+  }
+
+  /**
+   * تعداد کانفیگ‌های موجود برای یک محصول
+   */
+  static async countAvailableByProductId(productId: number): Promise<number> {
+    const results = await db
+      .select()
+      .from(productConfigsTable)
+      .where(
+        and(
+          eq(productConfigsTable.productId, productId),
+          eq(productConfigsTable.isUsed, false),
+        ),
+      );
+
+    return results.length;
+  }
+
+  /**
+   * کانفیگ جدید اضافه کن
+   */
+  static async create(config: InsertProductConfig): Promise<ProductConfig> {
+    const [result] = await db
+      .insert(productConfigsTable)
+      .values(config)
+      .returning();
+
+    return result;
+  }
+
+  /**
+   * کانفیگ‌های یک سفارش
+   */
+  static async findByOrderId(orderId: number): Promise<ProductConfig[]> {
+    return db
+      .select()
+      .from(productConfigsTable)
+      .where(eq(productConfigsTable.orderId, orderId));
   }
 }

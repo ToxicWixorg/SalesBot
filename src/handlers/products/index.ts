@@ -8,6 +8,7 @@ import { BuyProductCallback } from "./callbacks/BuyProduct.ts";
 import { SelectPlanCallback } from "./callbacks/SelectPlan.ts";
 import { NotifyStockCallback } from "./callbacks/NotifyStock.ts";
 import { CancelOrderCallback } from "./callbacks/CancelOrder.ts";
+import { ConfirmOrderCallback } from "./callbacks/ConfirmOrder.ts";
 
 export const productsComposer = new Composer()
   .extend(composer)
@@ -28,6 +29,9 @@ export const productsComposer = new Composer()
   })
   .callbackQuery(/^select_plan_(\d+)$/, async (context) => {
     return await SelectPlanCallback(context);
+  })
+  .callbackQuery(/^confirm_order_(\d+)$/, async (context) => {
+    return await ConfirmOrderCallback(context);
   })
   .callbackQuery(/^notify_stock_(\d+)$/, async (context) => {
     return await NotifyStockCallback(context);

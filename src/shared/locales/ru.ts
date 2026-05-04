@@ -452,4 +452,29 @@ export const ru = {
   btnIJoined: "✅ Я вступил(а) — Проверить",
   joinChannelNotJoinedAlert:
     "❌ Вы ещё не вступили во все необходимые каналы. Вступите и попробуйте снова.",
+
+  // Purchase / Order Completion
+  insufficientBalance: (data: { required: string; current: string }) =>
+    `❌ <b>Недостаточно средств</b>\n\nНеобходимо: <b>${data.required}</b> Томан\nВаш баланс: <b>${data.current}</b> Томан\n\nПожалуйста, пополните кошелёк и попробуйте снова.`,
+  noConfigAvailable:
+    "❌ В данный момент нет доступных VPN-конфигов для этого плана. Обратитесь в поддержку.",
+  orderSuccess: (data: {
+    orderId: number;
+    productName: string;
+    planName: string;
+    amount: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>Покупка прошла успешно!</b>\n\n` +
+    `📦 Продукт: ${data.productName}\n` +
+    `📋 План: ${data.planName}\n` +
+    `💰 Оплачено: <b>${data.amount}</b> Томан\n` +
+    `💳 Остаток на балансе: <b>${data.remainingBalance}</b> Томан\n` +
+    `🆔 Номер заказа: #${data.orderId}`,
+  vpnConfigMessage: (data: { configData: string; label?: string }) =>
+    `🔑 <b>Ваш VPN-конфиг</b>${data.label ? ` (${data.label})` : ""}\n\n` +
+    `<code>${data.configData}</code>\n\n` +
+    `📋 Нажмите на конфиг выше, чтобы скопировать, затем импортируйте его в VPN-приложение.`,
+  btnMyOrders2: "📦 Мои заказы",
+  btnBackToMenu: "🏠 Главное меню",
 } satisfies ShouldFollowLanguageStrict<typeof en>;

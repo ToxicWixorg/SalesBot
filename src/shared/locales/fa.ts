@@ -440,6 +440,31 @@ export const fa = {
   you: "شما",
   support: "پشتیبانی",
 
+  // Purchase / Order Completion
+  insufficientBalance: (data: { required: string; current: string }) =>
+    `❌ <b>موجودی کافی نیست</b>\n\nمبلغ مورد نیاز: <b>${data.required}</b> تومان\nموجودی شما: <b>${data.current}</b> تومان\n\nلطفاً کیف پول خود را شارژ کنید و دوباره تلاش کنید.`,
+  noConfigAvailable:
+    "❌ در حال حاضر کانفیگ VPN برای این پلن موجود نیست. لطفاً با پشتیبانی تماس بگیرید.",
+  orderSuccess: (data: {
+    orderId: number;
+    productName: string;
+    planName: string;
+    amount: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>خرید با موفقیت انجام شد!</b>\n\n` +
+    `📦 محصول: ${data.productName}\n` +
+    `📋 پلن: ${data.planName}\n` +
+    `💰 مبلغ پرداخت شده: <b>${data.amount}</b> تومان\n` +
+    `💳 موجودی باقی‌مانده: <b>${data.remainingBalance}</b> تومان\n` +
+    `🆔 شماره سفارش: #${data.orderId}`,
+  vpnConfigMessage: (data: { configData: string; label?: string }) =>
+    `🔑 <b>کانفیگ VPN شما</b>${data.label ? ` (${data.label})` : ""}\n\n` +
+    `<code>${data.configData}</code>\n\n` +
+    `📋 روی کانفیگ بالا تپ کنید تا کپی شود، سپس آن را در اپلیکیشن VPN وارد کنید.`,
+  btnMyOrders2: "📦 سفارشات من",
+  btnBackToMenu: "🏠 منوی اصلی",
+
   // Force Join Channels/Groups
   joinChannelRequired:
     "📢 <b>عضویت الزامی</b>\n\nبرای استفاده از ربات، لطفاً ابتدا در کانال‌ها/گروه‌های زیر عضو شوید:",
