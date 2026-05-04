@@ -81,7 +81,6 @@ async function seedOwner() {
       console.log(`✓ رمز موجود حفظ شد`);
     }
   } else {
-    // ایجاد رکورد جدید با رمز دیفالت
     const passwordHash = await Bun.password.hash(DEFAULT_PASSWORD);
 
     const [newAdmin] = await db
@@ -105,7 +104,7 @@ async function seedOwner() {
     console.log(
       `✓ admins table — Admin ID: ${newAdmin.id}, isSuperAdmin: ${newAdmin.isSuperAdmin}`,
     );
-    console.log(`✓ رمز دیفالت "${DEFAULT_PASSWORD}" تنظیم شد`);
+    console.log(`✓ default password set. `);
   }
 
   console.log("\n✅ Owner seeded successfully!");
@@ -114,9 +113,6 @@ async function seedOwner() {
   console.log(`   Sections    : ALL (${allSections.length})\n`);
 }
 
-/**
- * برای استفاده در هنگام استارت ربات — در صورت خطا فقط لاگ می‌کند
- */
 export async function seedOwnerOnStartup(): Promise<void> {
   try {
     await seedOwner();
@@ -125,7 +121,6 @@ export async function seedOwnerOnStartup(): Promise<void> {
   }
 }
 
-// اجرای مستقیم (bun src/scripts/seed-owner.ts)
 if (
   import.meta.url === `file://${process.argv[1]}`.replace(/\\/g, "/") ||
   process.argv[1]?.endsWith("seed-owner.ts")
