@@ -45,28 +45,45 @@ async function seedOwner() {
 
   const allSections = Object.values(AdminSections);
 
+  const DEFAULT_PASSWORD = "1234";
+
   if (existing.length > 0) {
-    // به‌روزرسانی رکورد موجود
+    // اگه رمز نداره، رمز دیفالت بزار
+    const needsPassword = !existing[0].passwordHash;
+    const passwordHash = needsPassword
+      ? await Bun.password.hash(DEFAULT_PASSWORD)
+      : undefined;
+
+    const updateData: Record<string, any> = {
+      role: "super_admin",
+      isActive: true,
+      isSuperAdmin: true,
+      allowedSections: allSections,
+      permissions: {},
+      displayName: "Owner",
+      notes: "مالک ربات — ایجاد شده توسط seed-owner.ts",
+      updatedAt: new Date(),
+    };
+    if (passwordHash) updateData.passwordHash = passwordHash;
+
     const [updated] = await db
       .update(adminsTable)
-      .set({
-        role: "super_admin",
-        isActive: true,
-        isSuperAdmin: true,
-        allowedSections: allSections,
-        permissions: {},
-        displayName: "Owner",
-        notes: "مالک ربات — ایجاد شده توسط seed-owner.ts",
-        updatedAt: new Date(),
-      })
+      .set(updateData)
       .where(eq(adminsTable.userId, ownerId as any))
       .returning();
 
     console.log(
       `✓ admins table — Admin ID: ${updated.id}, isSuperAdmin: ${updated.isSuperAdmin}`,
     );
+    if (needsPassword) {
+      console.log(`✓ رمز دیفالت "${DEFAULT_PASSWORD}" تنظیم شد`);
+    } else {
+      console.log(`✓ رمز موجود حفظ شد`);
+    }
   } else {
-    // ایجاد رکورد جدید
+    // ایجاد رکورد جدید با رمز دیفالت
+    const passwordHash = await Bun.password.hash(DEFAULT_PASSWORD);
+
     const [newAdmin] = await db
       .insert(adminsTable)
       .values({
@@ -79,6 +96,7 @@ async function seedOwner() {
         allowedSections: allSections,
         restrictedIPs: null,
         loginCount: 0,
+        passwordHash,
         notes: "مالک ربات — ایجاد شده توسط seed-owner.ts",
         createdBy: null,
       })
@@ -87,6 +105,7 @@ async function seedOwner() {
     console.log(
       `✓ admins table — Admin ID: ${newAdmin.id}, isSuperAdmin: ${newAdmin.isSuperAdmin}`,
     );
+    console.log(`✓ رمز دیفالت "${DEFAULT_PASSWORD}" تنظیم شد`);
   }
 
   console.log("\n✅ Owner seeded successfully!");
