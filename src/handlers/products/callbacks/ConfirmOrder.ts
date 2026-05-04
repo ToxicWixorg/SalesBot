@@ -46,6 +46,7 @@ export async function ConfirmOrderCallback(context: Context) {
         current: currentBalance.toFixed(0),
       }),
       {
+        parse_mode: "HTML",
         reply_markup: new InlineKeyboard()
           .text(t("btnRechargeWallet"), "wallet")
           .row()
