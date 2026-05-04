@@ -31,7 +31,7 @@ export const usersTable = pgTable(
     languageCode: text("language_code"),
 
     // Role & Status
-    role: text("role").default("customer"), // customer, support, admin
+    role: text("role").default("customer"), // customer | support | admin | super_admin
     isBlocked: boolean("is_blocked").default(false),
     blockedReason: text("blocked_reason"),
 
@@ -697,7 +697,7 @@ export const adminsTable = pgTable(
     phone: text("phone"),
 
     // Role & Status
-    role: text("role").notNull().default("support"), // admin, support, manager, operator
+    role: text("role").notNull().default("support"), // super_admin | admin | support
     isActive: boolean("is_active").default(true),
     isSuperAdmin: boolean("is_super_admin").default(false),
 

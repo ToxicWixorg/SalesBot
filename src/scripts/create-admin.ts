@@ -5,7 +5,7 @@
  * Examples:
  * bun src/scripts/create-admin.ts 123456789 admin
  * bun src/scripts/create-admin.ts 123456789 support
- * bun src/scripts/create-admin.ts 123456789 admin  
+ * bun src/scripts/create-admin.ts 123456789 admin
  */
 
 import { db } from "../db/index.ts";
@@ -135,9 +135,7 @@ if (args.length < 2) {
   console.log("  bun src/scripts/create-admin.ts <USER_ID> <ROLE> [OPTIONS]\n");
   console.log("نقش‌های موجود:");
   console.log("  - admin     : دسترسی کامل به همه بخش‌ها");
-  console.log("  - support   : دسترسی به تیکت‌ها و سفارش‌ها");
-  console.log("  - manager   : مدیریت محصولات و سفارش‌ها");
-  console.log("  - operator  : فقط مشاهده\n");
+  console.log("  - support   : دسترسی به تیکت‌ها و سفارش‌ها\n");
   console.log("آپشن‌های اضافی:");
   console.log("  --super             : ساختن SuperAdmin");
   console.log('  --name "نام"        : تعیین نام نمایشی');

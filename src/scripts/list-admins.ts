@@ -144,7 +144,7 @@ for (let i = 0; i < args.length; i++) {
     console.log("  bun src/scripts/list-admins.ts [OPTIONS]\n");
     console.log("آپشن‌ها:");
     console.log(
-      "  --role ROLE    : فیلتر بر اساس نقش (admin, support, manager, operator)",
+      "  --role ROLE    : فیلتر بر اساس نقش (super_admin, admin, support)",
     );
     console.log("  --inactive     : نمایش ادمین‌های غیرفعال هم");
     console.log("  --all          : نمایش همه (فعال و غیرفعال)");

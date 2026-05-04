@@ -1,11 +1,17 @@
 import { Context } from "gramio";
 import { AdminService } from "../Service";
+import { isOwner } from "../../../../config";
 
 export function requireSuperAdmin() {
   return async (ctx: Context, next: () => Promise<void>) => {
     const userId = ctx.from?.id;
     if (!userId) {
       await ctx.reply("❌ دسترسی غیرمجاز");
+      return;
+    }
+
+    if (isOwner(userId)) {
+      await next();
       return;
     }
 

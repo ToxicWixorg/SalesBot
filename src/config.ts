@@ -7,6 +7,9 @@ export const config = {
     .asEnum(["production", "test", "development"]),
   BOT_TOKEN: env.get("BOT_TOKEN").required().asString(),
 
+  // Owner (مالک ربات) — دارای بالاترین سطح دسترسی
+  OWNER_ID: env.get("OWNER_ID").required().asInt(),
+
   DATABASE_URL: env.get("DATABASE_URL").required().asString(),
   REDIS_HOST: env.get("REDIS_HOST").default("localhost").asString(),
   REDIS_PORT: env.get("REDIS_PORT").default(6379).asInt(),
@@ -102,4 +105,9 @@ export function getRequiredChannels(): RequiredChannel[] {
     url: urls[i] || `https://t.me/${id.replace("@", "")}`,
     name: names[i] || id,
   }));
+}
+
+/** آیا این کاربر مالک ربات است؟ */
+export function isOwner(userId: number): boolean {
+  return userId === config.OWNER_ID;
 }

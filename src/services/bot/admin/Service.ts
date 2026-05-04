@@ -7,12 +7,14 @@ import {
 import { AdminRole } from "./Admin/Roles";
 import { AdminSection } from "./Admin/Section";
 import { DefaultPermissions } from "./DefaultPermissions";
+import { isOwner } from "../../../config";
 
 export class AdminService {
   /**
    * چک کردن اینکه آیا کاربر ادمین است
    */
   static async isAdmin(userId: number): Promise<boolean> {
+    if (isOwner(userId)) return true;
     const admin = await AdminRepository.findByUserId(userId);
     return !!admin && admin.isActive;
   }
@@ -21,6 +23,7 @@ export class AdminService {
    * چک کردن اینکه آیا کاربر SuperAdmin است
    */
   static async isSuperAdmin(userId: number): Promise<boolean> {
+    if (isOwner(userId)) return true;
     const admin = await AdminRepository.findByUserId(userId);
     return !!admin && admin.isActive && admin.isSuperAdmin;
   }
@@ -39,6 +42,7 @@ export class AdminService {
     userId: number,
     section: AdminSection,
   ): Promise<boolean> {
+    if (isOwner(userId)) return true;
     const admin = await AdminRepository.findByUserId(userId);
     if (!admin || !admin.isActive) return false;
 

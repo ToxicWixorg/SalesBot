@@ -1,8 +1,7 @@
 export const AdminRoles = {
-  ADMIN: "admin", // دسترسی کامل
-  SUPPORT: "support", // پشتیبانی (تیکت‌ها + سفارش‌ها)
-  MANAGER: "manager", // مدیریت محصولات و سفارش‌ها
-  OPERATOR: "operator", // اپراتور (فقط مشاهده)
+  SUPER_ADMIN: "super_admin", // مالک ربات — بالاترین دسترسی
+  ADMIN: "admin", // ادمین — دسترسی کامل
+  SUPPORT: "support", // پشتیبان — تیکت‌ها و سفارش‌ها
 } as const;
 
 export type AdminRole = (typeof AdminRoles)[keyof typeof AdminRoles];
