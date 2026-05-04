@@ -15,6 +15,23 @@ export const config = {
     .default("memory")
     .asEnum(["memory", "redis"]),
 
+  // Force Join Channels/Groups (comma-separated)
+  // FORCE_JOIN_CHANNEL_IDS: e.g. "@MyChannel,-1001234567890"
+  // FORCE_JOIN_CHANNEL_URLS: e.g. "https://t.me/MyChannel,https://t.me/+inviteHash"
+  // FORCE_JOIN_CHANNEL_NAMES: e.g. "My Channel,My Group"
+  FORCE_JOIN_CHANNEL_IDS: env
+    .get("FORCE_JOIN_CHANNEL_IDS")
+    .default("")
+    .asString(),
+  FORCE_JOIN_CHANNEL_URLS: env
+    .get("FORCE_JOIN_CHANNEL_URLS")
+    .default("")
+    .asString(),
+  FORCE_JOIN_CHANNEL_NAMES: env
+    .get("FORCE_JOIN_CHANNEL_NAMES")
+    .default("")
+    .asString(),
+
   // Support Forum Group (Telegram Forum)
   SUPPORT_GROUP_ID: env.get("SUPPORT_GROUP_ID").asString(), // e.g., "-1001234567890"
 
@@ -64,3 +81,25 @@ export const Bot_Topics = {
   news: config.NEWS_TOPIC_ID,
   new_referral: config.NEWREFERRAL_TOPIC_ID,
 };
+
+export interface RequiredChannel {
+  id: string;
+  url: string;
+  name: string;
+}
+
+export function getRequiredChannels(): RequiredChannel[] {
+  const ids = config.FORCE_JOIN_CHANNEL_IDS.split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (!ids.length) return [];
+
+  const urls = config.FORCE_JOIN_CHANNEL_URLS.split(",").map((s) => s.trim());
+  const names = config.FORCE_JOIN_CHANNEL_NAMES.split(",").map((s) => s.trim());
+
+  return ids.map((id, i) => ({
+    id,
+    url: urls[i] || `https://t.me/${id.replace("@", "")}`,
+    name: names[i] || id,
+  }));
+}

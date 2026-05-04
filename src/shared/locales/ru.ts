@@ -445,4 +445,11 @@ export const ru = {
   ticketShowingLast5Messages: "Показаны последние 5 сообщений",
   you: "Вы",
   support: "Поддержка",
+
+  // Force Join Channels/Groups
+  joinChannelRequired:
+    "📢 <b>Требуется вступление</b>\n\nДля использования бота сначала вступите в следующие каналы/группы:",
+  btnIJoined: "✅ Я вступил(а) — Проверить",
+  joinChannelNotJoinedAlert:
+    "❌ Вы ещё не вступили во все необходимые каналы. Вступите и попробуйте снова.",
 } satisfies ShouldFollowLanguageStrict<typeof en>;

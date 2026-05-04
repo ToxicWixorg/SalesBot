@@ -42,6 +42,16 @@ export class TicketService {
       priority: data.priority || "normal",
     });
 
+    // Save the initial user message to ticket_messages so admin panel can display it
+    if (data.description) {
+      await TicketRepository.addMessage({
+        ticketId: ticket.id,
+        userId: data.userId,
+        message: data.description,
+        isFromUser: true,
+      });
+    }
+
     // Send to forum group if configured
     console.log("[DEBUG] config.SUPPORT_GROUP_ID:", config.SUPPORT_GROUP_ID);
     if (config.SUPPORT_GROUP_ID) {

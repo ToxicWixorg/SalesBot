@@ -439,4 +439,11 @@ export const fa = {
   ticketShowingLast5Messages: "نمایش ۵ پیام آخر",
   you: "شما",
   support: "پشتیبانی",
+
+  // Force Join Channels/Groups
+  joinChannelRequired:
+    "📢 <b>عضویت الزامی</b>\n\nبرای استفاده از ربات، لطفاً ابتدا در کانال‌ها/گروه‌های زیر عضو شوید:",
+  btnIJoined: "✅ عضو شدم — بررسی کن",
+  joinChannelNotJoinedAlert:
+    "❌ هنوز در همه کانال‌های مورد نیاز عضو نشده‌اید. لطفاً عضو شوید و دوباره امتحان کنید.",
 } satisfies ShouldFollowLanguageStrict<typeof en>;

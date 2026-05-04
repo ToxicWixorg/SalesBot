@@ -441,4 +441,11 @@ export const en = {
   ticketShowingLast5Messages: "Showing last 5 messages",
   you: "You",
   support: "Support",
+
+  // Force Join Channels/Groups
+  joinChannelRequired:
+    "📢 <b>Join Required</b>\n\nTo use this bot, please join the following channels/groups first:",
+  btnIJoined: "✅ I Joined — Verify",
+  joinChannelNotJoinedAlert:
+    "❌ You haven't joined all the required channels yet. Please join and try again.",
 } satisfies LanguageMap;
