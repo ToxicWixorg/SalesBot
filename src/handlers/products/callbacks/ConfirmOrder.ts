@@ -133,6 +133,6 @@ export async function ConfirmOrderCallback(context: Context) {
       configData: config.configData,
       label: config.label ?? undefined,
     }),
-    { parseMode: "HTML" },
+    { parse_mode: "HTML" },
   );
 }
