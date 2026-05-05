@@ -12,6 +12,7 @@ import {
   discountEntryState,
   appliedDiscountState,
 } from "../handlers/products/discountOrderState.ts";
+import { emojiIds } from "../shared/locales/emojies.ts";
 
 export const enterDiscountCodeOrderScene = new Scene(
   "enter-discount-code-order",
@@ -58,9 +59,13 @@ export const enterDiscountCodeOrderScene = new Scene(
     return context.send(t("discountCodeInvalid", validation.message), {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard()
-        .text(t("btnTryAgain"), `add_discount_${planId}`)
+        .text(t("btnTryAgain"), `add_discount_${planId}`, {
+          icon_custom_emoji_id: emojiIds.refresh,
+        })
         .row()
-        .text(t("btnSkipDiscount"), `select_plan_${planId}`),
+        .text(t("btnSkipDiscount"), `select_plan_${planId}`, {
+          icon_custom_emoji_id: emojiIds.zap,
+        }),
     });
   }
 
@@ -76,9 +81,13 @@ export const enterDiscountCodeOrderScene = new Scene(
       return context.send(t("discountNotApplicableForProduct"), {
         parse_mode: "HTML",
         reply_markup: new InlineKeyboard()
-          .text(t("btnTryAgain"), `add_discount_${planId}`)
+          .text(t("btnTryAgain"), `add_discount_${planId}`, {
+            icon_custom_emoji_id: emojiIds.refresh,
+          })
           .row()
-          .text(t("btnSkipDiscount"), `select_plan_${planId}`),
+          .text(t("btnSkipDiscount"), `select_plan_${planId}`, {
+            icon_custom_emoji_id: emojiIds.zap,
+          }),
       });
     }
   }
@@ -128,10 +137,16 @@ export const enterDiscountCodeOrderScene = new Scene(
   return context.send(message, {
     parse_mode: "HTML",
     reply_markup: new InlineKeyboard()
-      .text(t("btnConfirmOrder"), `confirm_order_${planId}`)
+      .text(t("btnConfirmOrder"), `confirm_order_${planId}`, {
+        icon_custom_emoji_id: emojiIds.checkBold,
+      })
       .row()
-      .text(t("btnRemoveDiscount"), `select_plan_${planId}`)
+      .text(t("btnRemoveDiscount"), `select_plan_${planId}`, {
+        icon_custom_emoji_id: emojiIds.trash,
+      })
       .row()
-      .text(t("btnCancel"), "cancel_order"),
+      .text(t("btnCancel"), "cancel_order", {
+        icon_custom_emoji_id: emojiIds.cross,
+      }),
   });
 });

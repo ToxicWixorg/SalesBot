@@ -5,6 +5,7 @@ import { config } from "../config";
 import { i18n } from "../shared/locales/index";
 import { UserRepository } from "../repositories/UserRepository";
 import { supportKeyboard } from "../shared/keyboards";
+import { emojiIds } from "../shared/locales/emojies.ts";
 
 export const supportHandler = (bot: AnyBot) => {
   /**
@@ -160,13 +161,21 @@ export const supportHandler = (bot: AnyBot) => {
       const keyboard = new InlineKeyboard();
 
       if (ticket.status !== "closed" && ticket.status !== "resolved") {
-        keyboard.text(t("btnReplyToTicket"), `reply_ticket_${ticket.id}`).row();
+        keyboard
+          .text(t("btnReplyToTicket"), `reply_ticket_${ticket.id}`, {
+            icon_custom_emoji_id: emojiIds.chat,
+          })
+          .row();
       }
 
       keyboard
-        .text(t("btnViewMessages"), `ticket_messages_${ticket.id}`)
+        .text(t("btnViewMessages"), `ticket_messages_${ticket.id}`, {
+          icon_custom_emoji_id: emojiIds.chat,
+        })
         .row()
-        .text(t("btnBackToTickets"), "my_tickets");
+        .text(t("btnBackToTickets"), "my_tickets", {
+          icon_custom_emoji_id: emojiIds.back,
+        });
 
       await ctx.editText(message, {
         parse_mode: "HTML",

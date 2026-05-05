@@ -1,4 +1,4 @@
-import { Context } from "gramio";
+import { Context, InlineKeyboard } from "gramio";
 import { UserRepository } from "../../../repositories/UserRepository.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import {
@@ -6,6 +6,7 @@ import {
   appliedDiscountState,
 } from "../discountOrderState.ts";
 import { enterDiscountCodeOrderScene } from "../../../scenes/enter-discount-code-order.ts";
+import { emojiIds } from "../../../shared/locales/emojies.ts";
 
 export async function AddDiscountCallback(context: Context) {
   if (!context.from || !context.queryData) return;
@@ -31,16 +32,13 @@ export async function AddDiscountCallback(context: Context) {
 
   await context.editText(t("enterDiscountCodeForOrder"), {
     parse_mode: "HTML",
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: t("btnSkipDiscount"),
-            callback_data: `select_plan_${planId}`,
-          },
-        ],
-        [{ text: t("btnCancel"), callback_data: "cancel_order" }],
-      ],
-    },
+    reply_markup: new InlineKeyboard()
+      .text(t("btnSkipDiscount"), `select_plan_${planId}`, {
+        icon_custom_emoji_id: emojiIds.zap,
+      })
+      .row()
+      .text(t("btnCancel"), "cancel_order", {
+        icon_custom_emoji_id: emojiIds.cross,
+      }),
   });
 }

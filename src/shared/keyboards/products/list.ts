@@ -1,6 +1,7 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../locales/index.ts";
 import type { Product } from "../../../db/schema.ts";
+import { emojiIds } from "../../locales/emojies.ts";
 
 export function productsListKeyboard(
   t: TFunction,
@@ -10,7 +11,9 @@ export function productsListKeyboard(
   const keyboard = new InlineKeyboard();
 
   if (products.length === 0) {
-    keyboard.text(t("btnBack"), `categories`);
+    keyboard.text(t("btnBack"), `categories`, {
+      icon_custom_emoji_id: emojiIds.back,
+    });
     return keyboard;
   }
 
@@ -20,7 +23,9 @@ export function productsListKeyboard(
     keyboard.row();
   });
 
-  keyboard.text(t("btnBack"), `categories`);
+  keyboard.text(t("btnBack"), `categories`, {
+    icon_custom_emoji_id: emojiIds.back,
+  });
 
   return keyboard;
 }

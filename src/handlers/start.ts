@@ -7,6 +7,7 @@ import { languageSelectionScene } from "../scenes/language-selection.ts";
 import { mainMenuKeyboard } from "../shared/keyboards/index.ts";
 import { sendNewUserNotification } from "../services/bot/notifications/newUser.ts";
 import { getRequiredChannels, type RequiredChannel } from "../config.ts";
+import { emojiIds } from "../shared/locales/emojies.ts";
 
 function generateReferralCode(userId: number): string {
   return `REF${userId}${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
@@ -42,7 +43,9 @@ function buildJoinKeyboard(
   for (const channel of unjoined) {
     keyboard.url(channel.name, channel.url).row();
   }
-  keyboard.text(t("btnIJoined"), "check_membership");
+  keyboard.text(t("btnIJoined"), "check_membership", {
+    icon_custom_emoji_id: emojiIds.checkBold,
+  });
   return keyboard;
 }
 

@@ -16,6 +16,7 @@ import {
 } from "../pendingOrderInfoState.ts";
 import { createManualOrderDirect } from "../../../scenes/manual-order.ts";
 import { getBotInstance } from "../../../botInstance.ts";
+import { emojiIds } from "../../../shared/locales/emojies.ts";
 
 /** Delivery types that are fulfilled instantly from a pre-loaded config pool */
 const CONFIG_DELIVERY_TYPES = ["automatic", "code", "family_join"] as const;
@@ -215,6 +216,7 @@ export async function ConfirmOrderCallback(context: Context) {
       reply_markup: new InlineKeyboard().text(
         t("btnCancelManualOrder"),
         "cancel_manual_order",
+        { icon_custom_emoji_id: emojiIds.cross },
       ),
     });
   }

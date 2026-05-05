@@ -1,5 +1,6 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../locales/index.ts";
+import { emojiIds } from "../../locales/emojies.ts";
 
 export function inviteKeyboard(
   t: TFunction,
@@ -11,12 +12,15 @@ export function inviteKeyboard(
       .url(
         t("btnShareInviteLink"),
         `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(t("inviteShareText"))}`,
+        { icon_custom_emoji_id: emojiIds.send },
       )
       // .row()
       // .text(t("btnCopyLink"), `copy_invite_${referralCode}`)
       .row()
-      .text(t("btnViewReferrals"), "view_referrals")
+      .text(t("btnViewReferrals"), "view_referrals", {
+        icon_custom_emoji_id: emojiIds.users,
+      })
       .row()
-      .text(t("btnBack"), "main_menu")
+      .text(t("btnBack"), "main_menu", { icon_custom_emoji_id: emojiIds.back })
   );
 }

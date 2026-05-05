@@ -31,6 +31,7 @@ import {
 } from "../handlers/products/pendingOrderInfoState.ts";
 import { appliedDiscountState } from "../handlers/products/discountOrderState.ts";
 import { config } from "../config.ts";
+import { emojiIds } from "../shared/locales/emojies.ts";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -64,6 +65,7 @@ async function sendStepPrompt(
   const keyboard = new InlineKeyboard().text(
     t("btnCancelManualOrder"),
     "cancel_manual_order",
+    { icon_custom_emoji_id: emojiIds.cross },
   );
 
   if (isEdit) {
@@ -254,9 +256,11 @@ async function finishManualOrder(
 
   // Tell user their order was placed
   const keyboard = new InlineKeyboard()
-    .text(t("btnMyOrders"), "orders")
+    .text(t("btnMyOrders"), "orders", { icon_custom_emoji_id: emojiIds.box })
     .row()
-    .text(t("btnBackToMenu"), "categories");
+    .text(t("btnBackToMenu"), "categories", {
+      icon_custom_emoji_id: emojiIds.home,
+    });
 
   await sendFn(
     t("manualOrderPending", {
@@ -310,7 +314,9 @@ async function showSlotPicker(
     kb.text(label, callbackData);
     if (i % 2 === 1) kb.row();
   }
-  kb.row().text(t("btnCancelManualOrder"), "cancel_manual_order");
+  kb.row().text(t("btnCancelManualOrder"), "cancel_manual_order", {
+    icon_custom_emoji_id: emojiIds.cross,
+  });
 
   const dateLabel = new Date(date + "T12:00:00").toLocaleDateString("fa-IR", {
     weekday: "long",
@@ -616,9 +622,11 @@ async function finishManualOrderWithSlot(
   const newBalance = parseFloat(updatedUser?.walletBalance ?? "0");
 
   const keyboard = new InlineKeyboard()
-    .text(t("btnMyOrders"), "orders")
+    .text(t("btnMyOrders"), "orders", { icon_custom_emoji_id: emojiIds.box })
     .row()
-    .text(t("btnBackToMenu"), "categories");
+    .text(t("btnBackToMenu"), "categories", {
+      icon_custom_emoji_id: emojiIds.home,
+    });
   await sendFn(
     t("scheduleBooked", {
       orderId: order.id,

@@ -1,6 +1,7 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../locales/index.ts";
 import type { ProductPlan } from "../../../db/schema.ts";
+import { emojiIds } from "../../locales/emojies.ts";
 
 export function productPlansKeyboard(
   t: TFunction,
@@ -30,7 +31,9 @@ export function productPlansKeyboard(
     keyboard.row();
   });
 
-  keyboard.text(t("btnBack"), `product_${productId}`);
+  keyboard.text(t("btnBack"), `product_${productId}`, {
+    icon_custom_emoji_id: emojiIds.back,
+  });
 
   return keyboard;
 }

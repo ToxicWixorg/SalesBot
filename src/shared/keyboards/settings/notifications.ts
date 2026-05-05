@@ -1,5 +1,6 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../locales/index.ts";
+import { emojiIds } from "../../locales/emojies.ts";
 
 export function notificationSettingsKeyboard(
   t: TFunction,
@@ -37,5 +38,5 @@ export function notificationSettingsKeyboard(
       "settings:toggle:stock",
     )
     .row()
-    .text(t("btnBack"), "settings");
+    .text(t("btnBack"), "settings", { icon_custom_emoji_id: emojiIds.back });
 }

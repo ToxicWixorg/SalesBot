@@ -24,27 +24,27 @@ export const ru = {
     `Выбери действие:`,
 
   // Buttons
-  btnProducts: `${e.bag} Продукты`,
-  btnMyOrders: `${e.box} Мои заказы`,
-  btnWallet: `${e.wallet} Кошелёк`,
-  btnInviteFriends: `${e.users} Пригласить друзей`,
-  btnDiscountCode: `${e.gift} Промокод`,
-  btnSupport: `${e.chat} Поддержка`,
-  btnSettings: `${e.settings} Настройки`,
-  btnBack: `${e.back} Назад`,
-  btnCancel: `${e.cross} Отмена`,
-  btnMainMenu: `${e.home} Главное меню`,
+  btnProducts: `🛍️ Продукты`,
+  btnMyOrders: `📦 Мои заказы`,
+  btnWallet: `💰 Кошелёк`,
+  btnInviteFriends: `👥 Пригласить друзей`,
+  btnDiscountCode: `🎁 Промокод`,
+  btnSupport: `💬 Поддержка`,
+  btnSettings: `⚙️ Настройки`,
+  btnBack: `🔙 Назад`,
+  btnCancel: `❌ Отмена`,
+  btnMainMenu: `🏠 Главное меню`,
   btnChangeLanguage: `🌐 Сменить язык`,
-  btnNotifications: `${e.bell} Уведомления`,
-  btnYes: `${e.checkBold} Да`,
-  btnNo: `${e.cross} Нет`,
-  btnConfirm: `${e.checkBold} Подтвердить`,
+  btnNotifications: `🔔 Уведомления`,
+  btnYes: `✅ Да`,
+  btnNo: `❌ Нет`,
+  btnConfirm: `✅ Подтвердить`,
 
   // Products
-  btnBuyProduct: `${e.bag} Купить`,
-  btnNotifyStock: `${e.bell} Уведомить о наличии`,
-  btnConfirmOrder: `${e.checkBold} Подтвердить заказ`,
-  btnAddDiscountCode: `${e.ticket} Добавить промокод`,
+  btnBuyProduct: `🛍️ Купить`,
+  btnNotifyStock: `🔔 Уведомить о наличии`,
+  btnConfirmOrder: `✅ Подтвердить заказ`,
+  btnAddDiscountCode: `🎫 Добавить промокод`,
   productsTitle: `${e.bag} Продукты`,
   selectCategory: `${e.tag} Выбери категорию:`,
   categoryProducts: (category: string) => `Продукты в <b>${category}</b>:`,
@@ -72,15 +72,15 @@ export const ru = {
   walletTitle: `${e.wallet} Кошелёк`,
   walletBalance: (balance: string) => `Баланс: <b>${balance}</b> USD`,
   walletEmpty: `${e.wallet} Твой кошелёк пуст ${e.sparkles} Пополни его и начинай!`,
-  btnRechargeWallet: `${e.card} Пополнить кошелёк`,
-  btnTransactionHistory: `${e.chart} История транзакций`,
+  btnRechargeWallet: `💳 Пополнить кошелёк`,
+  btnTransactionHistory: `📊 История транзакций`,
 
   // Wallet Recharge
   rechargeWalletTitle: `${e.card} Пополнение кошелька`,
   rechargeSelectMethod: `Выбери способ пополнения:`,
-  btnRechargeCrypto: `${e.coin} Крипто (USDT)`,
-  btnRechargeCard: `${e.card} Банковская карта`,
-  btnRechargeZarinpal: `${e.wallet} Zarinpal`,
+  btnRechargeCrypto: `🪙 Крипто (USDT)`,
+  btnRechargeCard: `💳 Банковская карта`,
+  btnRechargeZarinpal: `💰 Zarinpal`,
 
   rechargeEnterAmount: `${e.wallet} Введи сумму пополнения:`,
   rechargeEnterAmountUsdt: `${e.coin} Введи сумму USDT:`,
@@ -88,10 +88,8 @@ export const ru = {
     `Минимальная сумма: <b>${amount}</b> USD`,
   rechargeMaxAmount: (amount: string) =>
     `Максимальная сумма: <b>${amount}</b> USD`,
-  rechargeMinAmountUsdt: (amount: string) =>
-    `Минимум: <b>${amount}</b> USDT`,
-  rechargeMaxAmountUsdt: (amount: string) =>
-    `Максимум: <b>${amount}</b> USDT`,
+  rechargeMinAmountUsdt: (amount: string) => `Минимум: <b>${amount}</b> USDT`,
+  rechargeMaxAmountUsdt: (amount: string) => `Максимум: <b>${amount}</b> USDT`,
   rechargeInvalidAmount: `${e.cross} Введена некорректная сумма`,
   rechargeTooLow: (min: string) =>
     `${e.cross} Сумма пополнения должна быть не менее <b>${min}</b> USD`,
@@ -120,7 +118,7 @@ export const ru = {
   rechargeZarinpalTitle: `${e.wallet} Zarinpal`,
   rechargePaymentLink: (amount: string) =>
     `Сумма: <b>${amount}</b>\n\nНажми кнопку ниже, чтобы перейти к оплате:`,
-  btnPayNow: `${e.card} Оплатить`,
+  btnPayNow: `💳 Оплатить`,
   rechargePaymentPending: `${e.hourglass} Ожидаем оплату...\n\nПожалуйста, завершить оплату в браузере.`,
   rechargePaymentSuccess: (amount: string) =>
     `${e.party} <b>Оплата прошла!</b>\n\n${e.gem} <b>${amount}</b> зачислено на твой кошелёк.`,
@@ -169,9 +167,9 @@ export const ru = {
     `2. Когда они зарегистрируются, ты получишь вознаграждение\n` +
     `3. Вознаграждение зачисляется прямо на кошелёк\n\n` +
     `${e.gem} Вознаграждение за каждого: <b>10 000</b> Toман`,
-  btnShareInviteLink: `${e.send} Поделиться ссылкой`,
-  btnCopyLink: `${e.clipboard} Скопировать ссылку`,
-  btnViewReferrals: `${e.users} Список рефералов`,
+  btnShareInviteLink: `📤 Поделиться ссылкой`,
+  btnCopyLink: `📋 Скопировать ссылку`,
+  btnViewReferrals: `👥 Список рефералов`,
   inviteShareText: `${e.gift} Зарегистрируйся по этой ссылке и получи скидку!`,
   inviteLinkCopied: (link: string) =>
     `${e.checkBold} Ссылка скопирована!\n\n<code>${link}</code>\n\nОтправь эту ссылку друзьям.`,
@@ -187,10 +185,10 @@ export const ru = {
     `${e.gift} <b>Промокод</b>\n\n` +
     `Используй промокоды для получения скидок на покупки.\n\n` +
     `Можно ввести код при оформлении заказа или проверить здесь.`,
-  btnEnterDiscountCode: `${e.pencil} Ввести промокод`,
-  btnDiscountHistory: `${e.chart} История использования`,
+  btnEnterDiscountCode: `✏️ Ввести промокод`,
+  btnDiscountHistory: `📊 История использования`,
   enterDiscountCodePrompt: `${e.pencil} Введи промокод:\n\nПример: <code>SUMMER2024</code>`,
-  btnTryAgain: `${e.refresh} Попробовать снова`,
+  btnTryAgain: `🔄 Попробовать снова`,
   discountCodeValid: (data: {
     code: string;
     type: string;
@@ -216,10 +214,10 @@ export const ru = {
   // Settings
   settingsTitle: `${e.settings} Настройки`,
   settingsDescription: `${e.info} Управляй своим аккаунтом здесь.`,
-  btnAccountInfo: `${e.person} Информация об аккаунте`,
-  btnNotificationSettings: `${e.bell} Настройки уведомлений`,
-  btnPrivacy: `${e.lock} Конфиденциальность`,
-  btnAbout: `${e.info} О нас`,
+  btnAccountInfo: `👤 Информация об аккаунте`,
+  btnNotificationSettings: `🔔 Настройки уведомлений`,
+  btnPrivacy: `🔒 Конфиденциальность`,
+  btnAbout: `ℹ️ О нас`,
 
   // Account Info
   accountInfoTitle: `${e.person} Информация об аккаунте`,
@@ -246,15 +244,15 @@ export const ru = {
   notificationSettingsTitle: `${e.bell} Настройки уведомлений`,
   notificationSettingsDescription: `${e.info} Выбери, какие уведомления получать:`,
   btnToggleOrderNotifications: (enabled: boolean) =>
-    `${enabled ? e.checkBold : e.cross} Уведомления о заказах`,
+    `${enabled ? "✅" : "❌"} Уведомления о заказах`,
   btnToggleWalletNotifications: (enabled: boolean) =>
-    `${enabled ? e.checkBold : e.cross} Уведомления о кошельке`,
+    `${enabled ? "✅" : "❌"} Уведомления о кошельке`,
   btnTogglePromotionNotifications: (enabled: boolean) =>
-    `${enabled ? e.checkBold : e.cross} Уведомления об акциях`,
+    `${enabled ? "✅" : "❌"} Уведомления об акциях`,
   btnToggleReferralNotifications: (enabled: boolean) =>
-    `${enabled ? e.checkBold : e.cross} Уведомления о рефералах`,
+    `${enabled ? "✅" : "❌"} Уведомления о рефералах`,
   btnToggleStockNotifications: (enabled: boolean) =>
-    `${enabled ? e.checkBold : e.cross} Уведомления о наличии`,
+    `${enabled ? "✅" : "❌"} Уведомления о наличии`,
   notificationToggled: (type: string, enabled: boolean) =>
     `${enabled ? `${e.checkBold} Включено` : `${e.cross} Отключено`}: ${type}`,
   allNotificationsEnabled: `${e.checkBold} Все уведомления включены`,
@@ -263,9 +261,9 @@ export const ru = {
   // Privacy
   privacyTitle: `${e.lock} Конфиденциальность`,
   privacyDescription: `${e.shield} Управление персональными данными:`,
-  btnClearHistory: `${e.trash} Очистить историю`,
-  btnDeleteAccount: `${e.cross} Удалить аккаунт`,
-  btnExportData: `${e.send} Экспортировать данные`,
+  btnClearHistory: `🗑️ Очистить историю`,
+  btnDeleteAccount: `❌ Удалить аккаунт`,
+  btnExportData: `📤 Экспортировать данные`,
   clearHistoryConfirm:
     `${e.warn} <b>Ты уверен?</b>\n\n` +
     `История будет удалена — это действие необратимо.`,
@@ -301,9 +299,9 @@ export const ru = {
   ordersSelectFilter: `Выбери фильтр:`,
 
   // Orders Filter Buttons
-  btnOrdersFilterActive: `${e.blue} Активные`,
-  btnOrdersFilterCompleted: `${e.green} Выполненные`,
-  btnOrdersFilterAll: `${e.clipboard} Все`,
+  btnOrdersFilterActive: `🔵 Активные`,
+  btnOrdersFilterCompleted: `🟢 Выполненные`,
+  btnOrdersFilterAll: `📋 Все`,
 
   // Orders List
   ordersActiveTitle: `${e.blue} Активные заказы`,
@@ -335,11 +333,11 @@ export const ru = {
   orderDeliveryInstructions: "Инструкции",
 
   // Order Buttons
-  btnOrderOpenTicket: `${e.chat} Открыть тикет`,
-  btnOrderRenew: `${e.refresh} Продлить`,
-  btnOrderReschedule: `${e.calendar} Перенести`,
-  btnOrderReportProblem: `${e.warn} Сообщить о проблеме`,
-  btnBackToOrders: `${e.back} Назад к заказам`,
+  btnOrderOpenTicket: `💬 Открыть тикет`,
+  btnOrderRenew: `🔄 Продлить`,
+  btnOrderReschedule: `📅 Перенести`,
+  btnOrderReportProblem: `⚠️ Сообщить о проблеме`,
+  btnBackToOrders: `🔙 Назад к заказам`,
 
   // Order Actions
   orderNotFound: "Заказ не найден",
@@ -358,16 +356,16 @@ export const ru = {
     `- Сообщить о проблеме\n` +
     `- Просмотреть тикеты`,
 
-  btnNewSupportTicket: `${e.ticket} Новый тикет`,
-  btnNewReportTicket: `${e.warn} Сообщить о проблеме`,
-  btnMyTickets: `${e.clipboard} Мои тикеты`,
-  btnViewMyTickets: `${e.eye} Просмотр тикетов`,
-  btnBackToMain: `${e.home} Главное меню`,
-  btnReplyToTicket: `${e.chat} Ответить`,
-  btnViewMessages: `${e.chat} Просмотр сообщений`,
-  btnBackToTickets: `${e.back} Назад к тикетам`,
-  btnViewTicket: `${e.eye} Просмотр тикета`,
-  btnViewOrder: `${e.box} Просмотр заказа`,
+  btnNewSupportTicket: `🎫 Новый тикет`,
+  btnNewReportTicket: `⚠️ Сообщить о проблеме`,
+  btnMyTickets: `📋 Мои тикеты`,
+  btnViewMyTickets: `👁️ Просмотр тикетов`,
+  btnBackToMain: `🏠 Главное меню`,
+  btnReplyToTicket: `💬 Ответить`,
+  btnViewMessages: `💬 Просмотр сообщений`,
+  btnBackToTickets: `🔙 Назад к тикетам`,
+  btnViewTicket: `👁️ Просмотр тикета`,
+  btnViewOrder: `📦 Просмотр заказа`,
 
   // Ticket Creation
   ticketSupportPrompt:
@@ -459,13 +457,13 @@ export const ru = {
     `${e.key} <b>Твой VPN-конфиг</b>${data.label ? ` (${data.label})` : ""}\n\n` +
     `<code>${data.configData}</code>\n\n` +
     `Нажми на конфиг выше, чтобы скопировать, затем вставь в VPN-приложение.`,
-  btnMyOrders2: `${e.box} Мои заказы`,
-  btnBackToMenu: `${e.home} Главное меню`,
+  btnMyOrders2: `📦 Мои заказы`,
+  btnBackToMenu: `🏠 Главное меню`,
 
   // Discount code during order flow
   enterDiscountCodeForOrder: `${e.ticket} <b>Добавить промокод</b>\n\nВведи промокод:\n\nПример: <code>SUMMER2024</code>`,
-  btnSkipDiscount: `${e.zap} Продолжить без промокода`,
-  btnRemoveDiscount: `${e.trash} Убрать скидку`,
+  btnSkipDiscount: `⚡ Продолжить без промокода`,
+  btnRemoveDiscount: `🗑️ Убрать скидку`,
   discountCodeAppliedToOrder: (data: {
     code: string;
     discountAmount: string;
@@ -500,7 +498,7 @@ export const ru = {
 
   // Force Join Channels/Groups
   joinChannelRequired: `${e.flag_ru} <b>Требуется вступление</b>\n\nДля использования бота сначала вступи в следующие каналы/группы:`,
-  btnIJoined: `${e.checkBold} Вступил — проверить`,
+  btnIJoined: `✅ Вступил — проверить`,
   joinChannelNotJoinedAlert: `${e.cross} Ты ещё не вступил во все необходимые каналы. Вступи и попробуй снова.`,
 
   // Manual / Scheduled Order Flow
@@ -512,7 +510,7 @@ export const ru = {
   manualOrderLoginPasswordPrompt: `${e.lock} Введи <b>пароль</b> аккаунта:`,
   manualOrderRegionPrompt: `${e.earth} Введи желаемый <b>регион</b> (например: US, EU, Asia):`,
   manualOrderNeedsLabel: "Необходимые данные",
-  btnCancelManualOrder: `${e.cross} Отменить заказ`,
+  btnCancelManualOrder: `❌ Отменить заказ`,
   manualOrderCancelled: `${e.cross} Заказ отменён.`,
   manualOrderPending: (data: {
     orderId: number;

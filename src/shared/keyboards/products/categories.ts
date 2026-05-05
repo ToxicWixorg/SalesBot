@@ -1,6 +1,7 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../locales/index.ts";
 import type { Category } from "../../../db/schema.ts";
+import { emojiIds } from "../../locales/emojies.ts";
 
 export function categoriesKeyboard(
   t: TFunction,
@@ -19,7 +20,9 @@ export function categoriesKeyboard(
   });
 
   keyboard.row();
-  keyboard.text(t("btnMainMenu"), "main_menu");
+  keyboard.text(t("btnMainMenu"), "main_menu", {
+    icon_custom_emoji_id: emojiIds.home,
+  });
 
   return keyboard;
 }

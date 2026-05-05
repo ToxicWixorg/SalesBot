@@ -4,6 +4,7 @@ import { TicketRepository } from "../repositories/TicketRepository";
 import { i18n } from "../shared/locales/index";
 import { UserRepository } from "../repositories/UserRepository";
 import { config } from "../config";
+import { emojiIds } from "../shared/locales/emojies.ts";
 
 /**
  * State management for ticket creation
@@ -164,7 +165,11 @@ export function setupTicketScenes(bot: AnyBot) {
     ticketState.delete(context.from.id);
     ticketReplyState.delete(context.from.id);
 
-    const keyboard = new InlineKeyboard().text(t("btnBackToMain"), "main_menu");
+    const keyboard = new InlineKeyboard().text(
+      t("btnBackToMain"),
+      "main_menu",
+      { icon_custom_emoji_id: emojiIds.home },
+    );
 
     await context.editText(t("ticketCreationCancelled"), {
       reply_markup: keyboard,
@@ -393,13 +398,19 @@ export function setupTicketScenes(bot: AnyBot) {
       const keyboard = new InlineKeyboard();
 
       if (state.orderId) {
-        keyboard.text(t("btnViewOrder"), `order_details_${state.orderId}`);
+        keyboard.text(t("btnViewOrder"), `order_details_${state.orderId}`, {
+          icon_custom_emoji_id: emojiIds.box,
+        });
         keyboard.row();
       }
 
-      keyboard.text(t("btnViewMyTickets"), "my_tickets");
+      keyboard.text(t("btnViewMyTickets"), "my_tickets", {
+        icon_custom_emoji_id: emojiIds.clipboard,
+      });
       keyboard.row();
-      keyboard.text(t("btnBackToMain"), "main_menu");
+      keyboard.text(t("btnBackToMain"), "main_menu", {
+        icon_custom_emoji_id: emojiIds.home,
+      });
 
       await context.reply(
         t("ticketCreatedSuccess", {
@@ -443,9 +454,13 @@ export function setupTicketScenes(bot: AnyBot) {
       await ticketService.sendUserMessageToForum(ticketId, userId, message);
 
       const keyboard = new InlineKeyboard()
-        .text(t("btnViewTicket"), `view_ticket_${ticketId}`)
+        .text(t("btnViewTicket"), `view_ticket_${ticketId}`, {
+          icon_custom_emoji_id: emojiIds.eye,
+        })
         .row()
-        .text(t("btnBackToMain"), "main_menu");
+        .text(t("btnBackToMain"), "main_menu", {
+          icon_custom_emoji_id: emojiIds.home,
+        });
 
       await context.reply(t("ticketReplySent"), {
         reply_markup: keyboard,

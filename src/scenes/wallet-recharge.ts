@@ -3,6 +3,7 @@ import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { ticketState, ticketReplyState } from "./support-tickets.ts";
+import { emojiIds } from "../shared/locales/emojies.ts";
 
 /**
  * Scene برای شارژ کیف پول
@@ -288,9 +289,11 @@ async function handleZarinpalPayment(context: any, amount: number) {
   const paymentUrl = `https://www.zarinpal.com/pg/StartPay/A1B2C3D4E5F6`; // فرضی
 
   const keyboard = new InlineKeyboard()
-    .url(t("btnPayNow"), paymentUrl)
+    .url(t("btnPayNow"), paymentUrl, { icon_custom_emoji_id: emojiIds.card })
     .row()
-    .text(t("btnCancel"), "wallet_recharge_cancel");
+    .text(t("btnCancel"), "wallet_recharge_cancel", {
+      icon_custom_emoji_id: emojiIds.cross,
+    });
 
   await context.reply(
     `${t("rechargeZarinpalTitle")}\n\n${t("rechargePaymentLink" as any, amount.toString())}`,
@@ -314,9 +317,11 @@ async function handleCardPayment(context: any, amount: number) {
   const paymentUrl = `https://payment-gateway.example.com/pay/123456`; // فرضی
 
   const keyboard = new InlineKeyboard()
-    .url(t("btnPayNow"), paymentUrl)
+    .url(t("btnPayNow"), paymentUrl, { icon_custom_emoji_id: emojiIds.card })
     .row()
-    .text(t("btnCancel"), "wallet_recharge_cancel");
+    .text(t("btnCancel"), "wallet_recharge_cancel", {
+      icon_custom_emoji_id: emojiIds.cross,
+    });
 
   await context.reply(
     `${t("rechargeCardTitle")}\n\n${t("rechargePaymentLink" as any, amount.toString())}`,

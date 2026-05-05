@@ -24,27 +24,27 @@ export const en = {
     `Choose an option:`,
 
   // Buttons
-  btnProducts: `${e.bag} Products`,
-  btnMyOrders: `${e.box} My Orders`,
-  btnWallet: `${e.wallet} Wallet`,
-  btnInviteFriends: `${e.users} Invite Friends`,
-  btnDiscountCode: `${e.gift} Discount Code`,
-  btnSupport: `${e.chat} Support`,
-  btnSettings: `${e.settings} Settings`,
-  btnBack: `${e.back} Back`,
-  btnCancel: `${e.cross} Cancel`,
-  btnMainMenu: `${e.home} Main Menu`,
+  btnProducts: `🛍️ Products`,
+  btnMyOrders: `📦 My Orders`,
+  btnWallet: `💰 Wallet`,
+  btnInviteFriends: `👥 Invite Friends`,
+  btnDiscountCode: `🎁 Discount Code`,
+  btnSupport: `💬 Support`,
+  btnSettings: `⚙️ Settings`,
+  btnBack: `🔙 Back`,
+  btnCancel: `❌ Cancel`,
+  btnMainMenu: `🏠 Main Menu`,
   btnChangeLanguage: `🌐 Change Language`,
-  btnNotifications: `${e.bell} Notifications`,
-  btnYes: `${e.checkBold} Yes`,
-  btnNo: `${e.cross} No`,
-  btnConfirm: `${e.checkBold} Confirm`,
+  btnNotifications: `🔔 Notifications`,
+  btnYes: `✅ Yes`,
+  btnNo: `❌ No`,
+  btnConfirm: `✅ Confirm`,
 
   // Products
-  btnBuyProduct: `${e.bag} Buy`,
-  btnNotifyStock: `${e.bell} Notify Stock`,
-  btnConfirmOrder: `${e.checkBold} Confirm Order`,
-  btnAddDiscountCode: `${e.ticket} Add Discount Code`,
+  btnBuyProduct: `🛍️ Buy`,
+  btnNotifyStock: `🔔 Notify Stock`,
+  btnConfirmOrder: `✅ Confirm Order`,
+  btnAddDiscountCode: `🎫 Add Discount Code`,
   productsTitle: `${e.bag} Products`,
   selectCategory: `${e.tag} Select a category:`,
   categoryProducts: (category: string) => `Products in <b>${category}</b>:`,
@@ -72,22 +72,20 @@ export const en = {
   walletTitle: `${e.wallet} Wallet`,
   walletBalance: (balance: string) => `Balance: <b>${balance}</b> USD`,
   walletEmpty: `${e.wallet} Your wallet is empty ${e.sparkles} Top it up and get started!`,
-  btnRechargeWallet: `${e.card} Top Up Wallet`,
-  btnTransactionHistory: `${e.chart} Transaction History`,
+  btnRechargeWallet: `💳 Top Up Wallet`,
+  btnTransactionHistory: `📊 Transaction History`,
 
   // Wallet Recharge
   rechargeWalletTitle: `${e.card} Top Up Wallet`,
   rechargeSelectMethod: `Select a top-up method:`,
-  btnRechargeCrypto: `${e.coin} Crypto Payment (USDT)`,
-  btnRechargeCard: `${e.card} Card Payment`,
-  btnRechargeZarinpal: `${e.wallet} Zarinpal Gateway`,
+  btnRechargeCrypto: `🪙 Crypto Payment (USDT)`,
+  btnRechargeCard: `💳 Card Payment`,
+  btnRechargeZarinpal: `💰 Zarinpal Gateway`,
 
   rechargeEnterAmount: `${e.wallet} Enter the top-up amount:`,
   rechargeEnterAmountUsdt: `${e.coin} Enter USDT amount:`,
-  rechargeMinAmount: (amount: string) =>
-    `Minimum top-up: <b>${amount}</b> USD`,
-  rechargeMaxAmount: (amount: string) =>
-    `Maximum top-up: <b>${amount}</b> USD`,
+  rechargeMinAmount: (amount: string) => `Minimum top-up: <b>${amount}</b> USD`,
+  rechargeMaxAmount: (amount: string) => `Maximum top-up: <b>${amount}</b> USD`,
   rechargeMinAmountUsdt: (amount: string) =>
     `Minimum amount: <b>${amount}</b> USDT`,
   rechargeMaxAmountUsdt: (amount: string) =>
@@ -120,7 +118,7 @@ export const en = {
   rechargeZarinpalTitle: `${e.wallet} Zarinpal Gateway`,
   rechargePaymentLink: (amount: string) =>
     `Amount: <b>${amount}</b>\n\nClick the button below to go to the payment gateway:`,
-  btnPayNow: `${e.card} Pay Now`,
+  btnPayNow: `💳 Pay Now`,
   rechargePaymentPending: `${e.hourglass} Waiting for payment...\n\nPlease complete the payment in your browser.`,
   rechargePaymentSuccess: (amount: string) =>
     `${e.party} <b>Payment successful!</b>\n\n${e.gem} <b>${amount}</b> has been added to your wallet.`,
@@ -169,9 +167,9 @@ export const en = {
     `2. When they join, you get rewarded\n` +
     `3. Rewards are added directly to your wallet\n\n` +
     `${e.gem} Reward per referral: <b>10,000</b> Toman`,
-  btnShareInviteLink: `${e.send} Share Link`,
-  btnCopyLink: `${e.clipboard} Copy Link`,
-  btnViewReferrals: `${e.users} Referral List`,
+  btnShareInviteLink: `📤 Share Link`,
+  btnCopyLink: `📋 Copy Link`,
+  btnViewReferrals: `👥 Referral List`,
   inviteShareText: `${e.gift} Join using this link and get a special discount!`,
   inviteLinkCopied: (link: string) =>
     `${e.checkBold} Link copied!\n\n<code>${link}</code>\n\nSend this link to your friends.`,
@@ -187,10 +185,10 @@ export const en = {
     `${e.gift} <b>Discount Code</b>\n\n` +
     `Use discount codes to get a lower price on your purchases.\n\n` +
     `You can enter a code during checkout or verify it here.`,
-  btnEnterDiscountCode: `${e.pencil} Enter Discount Code`,
-  btnDiscountHistory: `${e.chart} Usage History`,
+  btnEnterDiscountCode: `✏️ Enter Discount Code`,
+  btnDiscountHistory: `📊 Usage History`,
   enterDiscountCodePrompt: `${e.pencil} Enter your discount code:\n\nExample: <code>SUMMER2024</code>`,
-  btnTryAgain: `${e.refresh} Try Again`,
+  btnTryAgain: `🔄 Try Again`,
   discountCodeValid: (data: {
     code: string;
     type: string;
@@ -216,10 +214,10 @@ export const en = {
   // Settings
   settingsTitle: `${e.settings} Settings`,
   settingsDescription: `${e.info} Manage your account from here.`,
-  btnAccountInfo: `${e.person} Account Info`,
-  btnNotificationSettings: `${e.bell} Notification Settings`,
-  btnPrivacy: `${e.lock} Privacy`,
-  btnAbout: `${e.info} About`,
+  btnAccountInfo: `👤 Account Info`,
+  btnNotificationSettings: `🔔 Notification Settings`,
+  btnPrivacy: `🔒 Privacy`,
+  btnAbout: `ℹ️ About`,
 
   // Account Info
   accountInfoTitle: `${e.person} Account Info`,
@@ -246,15 +244,15 @@ export const en = {
   notificationSettingsTitle: `${e.bell} Notification Settings`,
   notificationSettingsDescription: `${e.info} Choose which notifications to receive:`,
   btnToggleOrderNotifications: (enabled: boolean) =>
-    `${enabled ? e.checkBold : e.cross} Order Notifications`,
+    `${enabled ? "✅" : "❌"} Order Notifications`,
   btnToggleWalletNotifications: (enabled: boolean) =>
-    `${enabled ? e.checkBold : e.cross} Wallet Notifications`,
+    `${enabled ? "✅" : "❌"} Wallet Notifications`,
   btnTogglePromotionNotifications: (enabled: boolean) =>
-    `${enabled ? e.checkBold : e.cross} Promotion Notifications`,
+    `${enabled ? "✅" : "❌"} Promotion Notifications`,
   btnToggleReferralNotifications: (enabled: boolean) =>
-    `${enabled ? e.checkBold : e.cross} Referral Notifications`,
+    `${enabled ? "✅" : "❌"} Referral Notifications`,
   btnToggleStockNotifications: (enabled: boolean) =>
-    `${enabled ? e.checkBold : e.cross} Stock Notifications`,
+    `${enabled ? "✅" : "❌"} Stock Notifications`,
   notificationToggled: (type: string, enabled: boolean) =>
     `${enabled ? `${e.checkBold} Enabled` : `${e.cross} Disabled`}: ${type}`,
   allNotificationsEnabled: `${e.checkBold} All notifications are enabled`,
@@ -263,9 +261,9 @@ export const en = {
   // Privacy
   privacyTitle: `${e.lock} Privacy`,
   privacyDescription: `${e.shield} Manage your personal data:`,
-  btnClearHistory: `${e.trash} Clear History`,
-  btnDeleteAccount: `${e.cross} Delete Account`,
-  btnExportData: `${e.send} Export My Data`,
+  btnClearHistory: `🗑️ Clear History`,
+  btnDeleteAccount: `❌ Delete Account`,
+  btnExportData: `📤 Export My Data`,
   clearHistoryConfirm:
     `${e.warn} <b>Are you sure?</b>\n\n` +
     `Your history will be cleared — this action cannot be undone.`,
@@ -301,9 +299,9 @@ export const en = {
   ordersSelectFilter: `Choose a filter:`,
 
   // Orders Filter Buttons
-  btnOrdersFilterActive: `${e.blue} Active`,
-  btnOrdersFilterCompleted: `${e.green} Completed`,
-  btnOrdersFilterAll: `${e.clipboard} All`,
+  btnOrdersFilterActive: `🔵 Active`,
+  btnOrdersFilterCompleted: `🟢 Completed`,
+  btnOrdersFilterAll: `📋 All`,
 
   // Orders List
   ordersActiveTitle: `${e.blue} Active Orders`,
@@ -335,11 +333,11 @@ export const en = {
   orderDeliveryInstructions: "Instructions",
 
   // Order Buttons
-  btnOrderOpenTicket: `${e.chat} Open Ticket`,
-  btnOrderRenew: `${e.refresh} Renew`,
-  btnOrderReschedule: `${e.calendar} Reschedule`,
-  btnOrderReportProblem: `${e.warn} Report Problem`,
-  btnBackToOrders: `${e.back} Back to Orders`,
+  btnOrderOpenTicket: `💬 Open Ticket`,
+  btnOrderRenew: `🔄 Renew`,
+  btnOrderReschedule: `📅 Reschedule`,
+  btnOrderReportProblem: `⚠️ Report Problem`,
+  btnBackToOrders: `🔙 Back to Orders`,
 
   // Order Actions
   orderNotFound: "Order not found",
@@ -358,16 +356,16 @@ export const en = {
     `- Report a problem\n` +
     `- View tickets`,
 
-  btnNewSupportTicket: `${e.ticket} New Ticket`,
-  btnNewReportTicket: `${e.warn} Report Problem`,
-  btnMyTickets: `${e.clipboard} My Tickets`,
-  btnViewMyTickets: `${e.eye} View Tickets`,
-  btnBackToMain: `${e.home} Main Menu`,
-  btnReplyToTicket: `${e.chat} Reply`,
-  btnViewMessages: `${e.chat} View Messages`,
-  btnBackToTickets: `${e.back} Back to Tickets`,
-  btnViewTicket: `${e.eye} View Ticket`,
-  btnViewOrder: `${e.box} View Order`,
+  btnNewSupportTicket: `🎫 New Ticket`,
+  btnNewReportTicket: `⚠️ Report Problem`,
+  btnMyTickets: `📋 My Tickets`,
+  btnViewMyTickets: `👁️ View Tickets`,
+  btnBackToMain: `🏠 Main Menu`,
+  btnReplyToTicket: `💬 Reply`,
+  btnViewMessages: `💬 View Messages`,
+  btnBackToTickets: `🔙 Back to Tickets`,
+  btnViewTicket: `👁️ View Ticket`,
+  btnViewOrder: `📦 View Order`,
 
   // Ticket Creation
   ticketSupportPrompt:
@@ -459,13 +457,13 @@ export const en = {
     `${e.key} <b>Your VPN Config</b>${data.label ? ` (${data.label})` : ""}\n\n` +
     `<code>${data.configData}</code>\n\n` +
     `Tap the config above to copy it, then paste it into your VPN app.`,
-  btnMyOrders2: `${e.box} My Orders`,
-  btnBackToMenu: `${e.home} Main Menu`,
+  btnMyOrders2: `📦 My Orders`,
+  btnBackToMenu: `🏠 Main Menu`,
 
   // Discount code during order flow
   enterDiscountCodeForOrder: `${e.ticket} <b>Add Discount Code</b>\n\nEnter your discount code:\n\nExample: <code>SUMMER2024</code>`,
-  btnSkipDiscount: `${e.zap} Continue without discount`,
-  btnRemoveDiscount: `${e.trash} Remove Discount`,
+  btnSkipDiscount: `⚡ Continue without discount`,
+  btnRemoveDiscount: `🗑️ Remove Discount`,
   discountCodeAppliedToOrder: (data: {
     code: string;
     discountAmount: string;
@@ -500,7 +498,7 @@ export const en = {
 
   // Force Join Channels/Groups
   joinChannelRequired: `${e.flag_en} <b>Membership Required</b>\n\nTo use the bot, please join the following channels/groups first:`,
-  btnIJoined: `${e.checkBold} I've joined — check`,
+  btnIJoined: `✅ I've joined — check`,
   joinChannelNotJoinedAlert: `${e.cross} You haven't joined all required channels yet. Join them and try again.`,
 
   // Manual / Scheduled Order Flow
@@ -512,7 +510,7 @@ export const en = {
   manualOrderLoginPasswordPrompt: `${e.lock} Enter the account <b>password</b>:`,
   manualOrderRegionPrompt: `${e.earth} Enter the desired <b>region</b> (e.g. US, EU, Asia):`,
   manualOrderNeedsLabel: "Required Information",
-  btnCancelManualOrder: `${e.cross} Cancel Order`,
+  btnCancelManualOrder: `❌ Cancel Order`,
   manualOrderCancelled: `${e.cross} Order cancelled.`,
   manualOrderPending: (data: {
     orderId: number;
