@@ -177,6 +177,11 @@ export class TicketService {
         isFromUser: true,
       });
 
+      // Update ticket status to waiting_support (admin needs to respond)
+      if (ticket.status !== "closed" && ticket.status !== "resolved") {
+        await TicketRepository.updateTicketStatus(ticket.id, "waiting_support");
+      }
+
       console.log(
         `[TICKET] User message sent to forum thread ${ticket.ticketNumber}`,
       );
