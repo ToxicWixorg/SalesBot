@@ -473,4 +473,43 @@ export const en = {
     `📋 Tap the config above to copy it, then import it into your VPN app.`,
   btnMyOrders2: "📦 My Orders",
   btnBackToMenu: "🏠 Main Menu",
+
+  // Discount code during order flow
+  enterDiscountCodeForOrder:
+    "🎫 <b>Add Discount Code</b>\n\nPlease enter your discount code:\n\n" +
+    "Example: <code>SUMMER2024</code>",
+  btnSkipDiscount: "⏭️ Skip — Continue Without Discount",
+  btnRemoveDiscount: "🗑️ Remove Discount",
+  discountCodeAppliedToOrder: (data: {
+    code: string;
+    discountAmount: string;
+    finalPrice: string;
+  }) =>
+    `✅ <b>Discount Applied!</b>\n\n` +
+    `🎫 Code: <code>${data.code}</code>\n` +
+    `💸 Discount: -<b>${data.discountAmount}</b> Toman\n` +
+    `💰 New total: <b>${data.finalPrice}</b> Toman`,
+  orderSummaryWithDiscount: (data: {
+    productName: string;
+    planName: string;
+    duration: string;
+    originalPrice: string;
+    discountAmount: string;
+    finalPrice: string;
+    code: string;
+  }) =>
+    `📝 <b>Order Summary</b>\n\n` +
+    `📦 Product: ${data.productName}\n` +
+    `📋 Plan: ${data.planName}\n` +
+    (data.duration ? `⏱️ Duration: ${data.duration}\n` : "") +
+    `\n💰 Original price: <b>${data.originalPrice}</b> Toman\n` +
+    `🎫 Discount (${data.code}): -<b>${data.discountAmount}</b> Toman\n` +
+    `✅ Final price: <b>${data.finalPrice}</b> Toman`,
+  discountNotApplicableForProduct:
+    "❌ This discount code is not valid for this product.",
+  discountInsufficientBalanceWithDiscount: (data: {
+    required: string;
+    current: string;
+  }) =>
+    `❌ <b>Insufficient Balance</b>\n\nRequired after discount: <b>${data.required}</b> Toman\nYour balance: <b>${data.current}</b> Toman\n\nPlease recharge your wallet and try again.`,
 } satisfies LanguageMap;

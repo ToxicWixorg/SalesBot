@@ -8,6 +8,8 @@ import {
 } from "../../../repositories/ProductRepository.ts";
 import { OrderRepository } from "../../../repositories/OrderRepository.ts";
 import { WalletRepository } from "../../../repositories/WalletRepository.ts";
+import { DiscountCodeRepository } from "../../../repositories/DiscountCodeRepository.ts";
+import { appliedDiscountState } from "../discountOrderState.ts";
 
 export async function ConfirmOrderCallback(context: Context) {
   if (!context.from || !context.queryData) return;
@@ -36,23 +38,34 @@ export async function ConfirmOrderCallback(context: Context) {
 
   const price = parseFloat(plan.price as string);
 
-  // Check wallet balance
+  // Check for a pending discount applied by the user
+  const pendingDiscount = appliedDiscountState.get(userId);
+  const hasDiscount =
+    pendingDiscount !== undefined && pendingDiscount.planId === planId;
+
+  const discountAmount = hasDiscount ? pendingDiscount.discountAmount : 0;
+  const finalPrice = hasDiscount ? pendingDiscount.finalPrice : price;
+
+  // Check wallet balance against the final (after-discount) price
   const currentBalance = parseFloat(user.walletBalance || "0");
-  if (currentBalance < price) {
+  if (currentBalance < finalPrice) {
     await context.answerCallbackQuery("❌ Insufficient balance");
-    await context.editText(
-      t("insufficientBalance", {
-        required: price.toFixed(0),
-        current: currentBalance.toFixed(0),
-      }),
-      {
-        parse_mode: "HTML",
-        reply_markup: new InlineKeyboard()
-          .text(t("btnRechargeWallet"), "wallet")
-          .row()
-          .text(t("btnCancel"), "cancel_order"),
-      },
-    );
+    const insufficientMsg = hasDiscount
+      ? t("discountInsufficientBalanceWithDiscount", {
+          required: finalPrice.toFixed(0),
+          current: currentBalance.toFixed(0),
+        })
+      : t("insufficientBalance", {
+          required: finalPrice.toFixed(0),
+          current: currentBalance.toFixed(0),
+        });
+    await context.editText(insufficientMsg, {
+      parse_mode: "HTML",
+      reply_markup: new InlineKeyboard()
+        .text(t("btnRechargeWallet"), "wallet")
+        .row()
+        .text(t("btnCancel"), "cancel_order"),
+    });
     return;
   }
 
@@ -80,25 +93,37 @@ export async function ConfirmOrderCallback(context: Context) {
     status: "completed",
     quantity: 1,
     totalPrice: plan.price as any,
-    discountAmount: "0" as any,
-    walletUsed: plan.price as any,
-    finalPrice: plan.price as any,
+    discountAmount: discountAmount.toString() as any,
+    walletUsed: finalPrice.toString() as any,
+    finalPrice: finalPrice.toString() as any,
     paymentMethod: "wallet",
+    discountCodeId: hasDiscount ? pendingDiscount.discountCodeId : undefined,
     delivery: { configId: config.id, configData: config.configData },
     deliveredAt: new Date(),
   });
 
-  // Deduct wallet balance
-  await UserRepository.updateWalletBalance(userId, price, "subtract");
+  // Deduct wallet balance (only the final price after discount)
+  await UserRepository.updateWalletBalance(userId, finalPrice, "subtract");
 
   // Record wallet transaction
   await WalletRepository.debitBalance(
     userId,
-    price.toFixed(2),
+    finalPrice.toFixed(2),
     "purchase",
     order.id,
     `خرید ${product.name} - ${plan.name}`,
   );
+
+  // If a discount code was used, record its usage and clear the pending state
+  if (hasDiscount && pendingDiscount) {
+    await DiscountCodeRepository.recordUsage(
+      pendingDiscount.discountCodeId,
+      userId,
+      order.id,
+      pendingDiscount.discountAmount,
+    );
+    appliedDiscountState.delete(userId);
+  }
 
   // Mark config as used
   await ProductConfigRepository.markAsUsed(config.id, order.id);
@@ -116,7 +141,7 @@ export async function ConfirmOrderCallback(context: Context) {
       orderId: order.id,
       productName: product.name,
       planName: plan.name,
-      amount: price.toFixed(0),
+      amount: finalPrice.toFixed(0),
       remainingBalance: newBalance.toFixed(0),
     }),
     {

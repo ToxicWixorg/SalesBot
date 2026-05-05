@@ -477,4 +477,43 @@ export const ru = {
     `📋 Нажмите на конфиг выше, чтобы скопировать, затем импортируйте его в VPN-приложение.`,
   btnMyOrders2: "📦 Мои заказы",
   btnBackToMenu: "🏠 Главное меню",
+
+  // Discount code during order flow
+  enterDiscountCodeForOrder:
+    "🎫 <b>Добавить промокод</b>\n\nВведите ваш промокод:\n\n" +
+    "Пример: <code>SUMMER2024</code>",
+  btnSkipDiscount: "⏭️ Продолжить без скидки",
+  btnRemoveDiscount: "🗑️ Убрать скидку",
+  discountCodeAppliedToOrder: (data: {
+    code: string;
+    discountAmount: string;
+    finalPrice: string;
+  }) =>
+    `✅ <b>Промокод применён!</b>\n\n` +
+    `🎫 Код: <code>${data.code}</code>\n` +
+    `💸 Скидка: -<b>${data.discountAmount}</b> Томан\n` +
+    `💰 Новая сумма: <b>${data.finalPrice}</b> Томан`,
+  orderSummaryWithDiscount: (data: {
+    productName: string;
+    planName: string;
+    duration: string;
+    originalPrice: string;
+    discountAmount: string;
+    finalPrice: string;
+    code: string;
+  }) =>
+    `📝 <b>Итог заказа</b>\n\n` +
+    `📦 Продукт: ${data.productName}\n` +
+    `📋 Тариф: ${data.planName}\n` +
+    (data.duration ? `⏱️ Срок: ${data.duration}\n` : "") +
+    `\n💰 Начальная цена: <b>${data.originalPrice}</b> Томан\n` +
+    `🎫 Скидка (${data.code}): -<b>${data.discountAmount}</b> Томан\n` +
+    `✅ Итоговая цена: <b>${data.finalPrice}</b> Томан`,
+  discountNotApplicableForProduct:
+    "❌ Этот промокод не действителен для данного товара.",
+  discountInsufficientBalanceWithDiscount: (data: {
+    required: string;
+    current: string;
+  }) =>
+    `❌ <b>Недостаточно средств</b>\n\nНеобходимо после скидки: <b>${data.required}</b> Томан\nВаш баланс: <b>${data.current}</b> Томан\n\nПожалуйста, пополните кошелёк и попробуйте снова.`,
 } satisfies ShouldFollowLanguageStrict<typeof en>;

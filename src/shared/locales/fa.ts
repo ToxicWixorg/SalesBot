@@ -465,6 +465,44 @@ export const fa = {
   btnMyOrders2: "📦 سفارشات من",
   btnBackToMenu: "🏠 منوی اصلی",
 
+  // Discount code during order flow
+  enterDiscountCodeForOrder:
+    "🎫 <b>افزودن کد تخفیف</b>\n\nلطفاً کد تخفیف خود را وارد کنید:\n\n" +
+    "مثال: <code>SUMMER2024</code>",
+  btnSkipDiscount: "⏭️ ادامه بدون کد تخفیف",
+  btnRemoveDiscount: "🗑️ حذف تخفیف",
+  discountCodeAppliedToOrder: (data: {
+    code: string;
+    discountAmount: string;
+    finalPrice: string;
+  }) =>
+    `✅ <b>کد تخفیف اعمال شد!</b>\n\n` +
+    `🎫 کد: <code>${data.code}</code>\n` +
+    `💸 تخفیف: -<b>${data.discountAmount}</b> تومان\n` +
+    `💰 مبلغ جدید: <b>${data.finalPrice}</b> تومان`,
+  orderSummaryWithDiscount: (data: {
+    productName: string;
+    planName: string;
+    duration: string;
+    originalPrice: string;
+    discountAmount: string;
+    finalPrice: string;
+    code: string;
+  }) =>
+    `📝 <b>خلاصه سفارش</b>\n\n` +
+    `📦 محصول: ${data.productName}\n` +
+    `📋 پلن: ${data.planName}\n` +
+    (data.duration ? `⏱️ مدت: ${data.duration}\n` : "") +
+    `\n💰 قیمت اصلی: <b>${data.originalPrice}</b> تومان\n` +
+    `🎫 تخفیف (${data.code}): -<b>${data.discountAmount}</b> تومان\n` +
+    `✅ قیمت نهایی: <b>${data.finalPrice}</b> تومان`,
+  discountNotApplicableForProduct: "❌ این کد تخفیف برای این محصول معتبر نیست.",
+  discountInsufficientBalanceWithDiscount: (data: {
+    required: string;
+    current: string;
+  }) =>
+    `❌ <b>موجودی کافی نیست</b>\n\nمبلغ مورد نیاز پس از تخفیف: <b>${data.required}</b> تومان\nموجودی شما: <b>${data.current}</b> تومان\n\nلطفاً کیف پول خود را شارژ کنید و دوباره تلاش کنید.`,
+
   // Force Join Channels/Groups
   joinChannelRequired:
     "📢 <b>عضویت الزامی</b>\n\nبرای استفاده از ربات، لطفاً ابتدا در کانال‌ها/گروه‌های زیر عضو شوید:",
