@@ -1,7 +1,7 @@
 -- Migration: Add time_slot_templates table and update schedules
 -- This enables admin-defined time slots for custom_schedule products (e.g. AI accounts)
 
-CREATE TABLE "time_slot_templates" (
+CREATE TABLE IF NOT EXISTS "time_slot_templates" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"start_time" text NOT NULL,
@@ -15,8 +15,11 @@ CREATE TABLE "time_slot_templates" (
 );
 --> statement-breakpoint
 
-ALTER TABLE "schedules" ADD COLUMN "template_id" integer REFERENCES "time_slot_templates"("id") ON DELETE SET NULL;
+ALTER TABLE "schedules" ADD COLUMN IF NOT EXISTS "template_id" integer REFERENCES "time_slot_templates"("id") ON DELETE SET NULL;
 --> statement-breakpoint
-ALTER TABLE "schedules" ADD COLUMN "user_id" bigint REFERENCES "users"("id") ON DELETE SET NULL;
+ALTER TABLE "schedules" ADD COLUMN IF NOT EXISTS "user_id" bigint REFERENCES "users"("id") ON DELETE SET NULL;
 --> statement-breakpoint
-ALTER TABLE "schedules" ALTER COLUMN "order_id" DROP NOT NULL;
+DO $$ BEGIN
+  ALTER TABLE "schedules" ALTER COLUMN "order_id" DROP NOT NULL;
+EXCEPTION WHEN others THEN NULL;
+END $$;
