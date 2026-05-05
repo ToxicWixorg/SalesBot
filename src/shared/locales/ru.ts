@@ -554,4 +554,39 @@ export const ru = {
     `📦 Продукт: ${data.productName}\n` +
     `🆔 Заказ: #${data.orderId}\n\n` +
     `Данные для доступа доступны в разделе Мои заказы → Детали заказа.`,
+
+  // ── Выбор временного слота ─────────────────────────────────────────────────
+  schedulePickSlot: (data: { date: string }) =>
+    `📅 <b>Выберите временной слот</b>\n\nВыберите доступный сеанс на <b>${data.date}</b>:\n\n✅ = доступно  |  ❌ = занято`,
+  scheduleSlotFree: "свободно",
+  scheduleSlotFullAlert: "❌ Этот слот уже занят. Выберите другой.",
+  scheduleBooked: (data: {
+    orderId: number;
+    productName: string;
+    planName: string;
+    timeSlot: string;
+    date: string;
+    amount: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>Сеанс забронирован!</b>\n\n` +
+    `📦 Продукт: ${data.productName}\n` +
+    `📋 План: ${data.planName}\n` +
+    `📅 Дата: <b>${data.date}</b>\n` +
+    `⏰ Время: <b>${data.timeSlot}</b>\n` +
+    `💰 Оплачено: <b>${data.amount}</b> Томан\n` +
+    `💳 Остаток: <b>${data.remainingBalance}</b> Томан\n` +
+    `🆔 Номер заказа: #${data.orderId}\n\n` +
+    `⚠️ За <b>15 минут</b> до начала сеанса придёт напоминание.\n` +
+    `Следите за статусом в разделе <b>Мои заказы</b>.`,
+  scheduleReminderNotification: (data: {
+    orderId: number;
+    productName: string;
+    timeSlot: string;
+  }) =>
+    `⏰ <b>Напоминание о сеансе!</b>\n\n` +
+    `Ваш сеанс <b>${data.productName}</b> начнётся через <b>15 минут</b>.\n` +
+    `Время: <b>${data.timeSlot}</b>\n` +
+    `Заказ: #${data.orderId}\n\n` +
+    `Пожалуйста, будьте готовы. Наша команда свяжется с вами.`,
 } satisfies ShouldFollowLanguageStrict<typeof en>;

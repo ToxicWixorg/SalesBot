@@ -5,8 +5,15 @@
 
 export type InfoStep = "email" | "loginUsername" | "loginPassword" | "region";
 
+/** Which phase of the order flow we're in */
+export type OrderFlowPhase = "info" | "slot";
+
 export interface PendingOrderInfo {
   planId: number;
+  /** Product delivery type — determines whether slot selection phase runs */
+  deliveryType: string;
+  /** Current phase: collecting info fields, or selecting a time slot */
+  phase: OrderFlowPhase;
   /** Ordered list of fields we still need to collect */
   steps: InfoStep[];
   /** Index into `steps` – which field we're currently asking for */

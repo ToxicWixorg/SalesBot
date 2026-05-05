@@ -552,4 +552,39 @@ export const en = {
     `📦 Product: ${data.productName}\n` +
     `🆔 Order: #${data.orderId}\n\n` +
     `Your access details are available in My Orders → Order Details.`,
+
+  // ── Time Slot Scheduling ─────────────────────────────────────────────────
+  schedulePickSlot: (data: { date: string }) =>
+    `📅 <b>Select Your Time Slot</b>\n\nPlease choose an available session for <b>${data.date}</b>:\n\n✅ = available  |  ❌ = full`,
+  scheduleSlotFree: "left",
+  scheduleSlotFullAlert: "❌ This slot is now full. Please choose another.",
+  scheduleBooked: (data: {
+    orderId: number;
+    productName: string;
+    planName: string;
+    timeSlot: string;
+    date: string;
+    amount: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>Session Booked!</b>\n\n` +
+    `📦 Product: ${data.productName}\n` +
+    `📋 Plan: ${data.planName}\n` +
+    `📅 Date: <b>${data.date}</b>\n` +
+    `⏰ Time: <b>${data.timeSlot}</b>\n` +
+    `💰 Amount paid: <b>${data.amount}</b> Toman\n` +
+    `💳 Remaining balance: <b>${data.remainingBalance}</b> Toman\n` +
+    `🆔 Order ID: #${data.orderId}\n\n` +
+    `⚠️ You will receive a reminder <b>15 minutes</b> before your session.\n` +
+    `Track your session in <b>My Orders</b>.`,
+  scheduleReminderNotification: (data: {
+    orderId: number;
+    productName: string;
+    timeSlot: string;
+  }) =>
+    `⏰ <b>Session Reminder!</b>\n\n` +
+    `Your <b>${data.productName}</b> session starts in <b>15 minutes</b>.\n` +
+    `Time: <b>${data.timeSlot}</b>\n` +
+    `Order: #${data.orderId}\n\n` +
+    `Please be ready. Our team will contact you shortly.`,
 } satisfies LanguageMap;

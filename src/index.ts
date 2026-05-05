@@ -2,6 +2,7 @@ import { bot } from "./bot.ts";
 import { config } from "./config.ts";
 import { seedOwnerOnStartup } from "./scripts/seed-owner.ts";
 import { seedCategoriesOnStartup } from "./scripts/seed-categories.ts";
+import { startReminderService } from "./services/ReminderService.ts";
 
 const signals = ["SIGINT", "SIGTERM"];
 
@@ -25,3 +26,4 @@ await seedOwnerOnStartup();
 await seedCategoriesOnStartup();
 
 await bot.start();
+startReminderService(bot);

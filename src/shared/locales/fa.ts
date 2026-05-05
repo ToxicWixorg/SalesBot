@@ -548,4 +548,39 @@ export const fa = {
     `📦 محصول: ${data.productName}\n` +
     `🆔 سفارش: #${data.orderId}\n\n` +
     `اطلاعات دسترسی شما در بخش سفارشات من ← جزئیات سفارش موجود است.`,
+
+  // ── انتخاب بازه زمانی ────────────────────────────────────────────────────
+  schedulePickSlot: (data: { date: string }) =>
+    `📅 <b>انتخاب بازه زمانی</b>\n\nلطفاً یک بازه آزاد برای <b>${data.date}</b> انتخاب کنید:\n\n✅ = آزاد  |  ❌ = پر`,
+  scheduleSlotFree: "جای خالی",
+  scheduleSlotFullAlert: "❌ این بازه پر شد. بازه دیگری انتخاب کنید.",
+  scheduleBooked: (data: {
+    orderId: number;
+    productName: string;
+    planName: string;
+    timeSlot: string;
+    date: string;
+    amount: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>بازه زمانی رزرو شد!</b>\n\n` +
+    `📦 محصول: ${data.productName}\n` +
+    `📋 پلن: ${data.planName}\n` +
+    `📅 تاریخ: <b>${data.date}</b>\n` +
+    `⏰ ساعت: <b>${data.timeSlot}</b>\n` +
+    `💰 مبلغ پرداختی: <b>${data.amount}</b> تومان\n` +
+    `💳 موجودی باقیمانده: <b>${data.remainingBalance}</b> تومان\n` +
+    `🆔 شماره سفارش: #${data.orderId}\n\n` +
+    `⚠️ <b>۱۵ دقیقه</b> قبل از شروع جلسه اطلاع‌رسانی می‌شود.\n` +
+    `وضعیت جلسه را در <b>سفارشات من</b> پیگیری کنید.`,
+  scheduleReminderNotification: (data: {
+    orderId: number;
+    productName: string;
+    timeSlot: string;
+  }) =>
+    `⏰ <b>یادآوری جلسه!</b>\n\n` +
+    `جلسه <b>${data.productName}</b> شما <b>۱۵ دقیقه</b> دیگر شروع می‌شود.\n` +
+    `ساعت: <b>${data.timeSlot}</b>\n` +
+    `سفارش: #${data.orderId}\n\n` +
+    `لطفاً آماده باشید. تیم ما به زودی با شما تماس می‌گیرد.`,
 } satisfies ShouldFollowLanguageStrict<typeof en>;

@@ -185,6 +185,7 @@ export async function ConfirmOrderCallback(context: Context) {
         getBotInstance(),
         userId,
         planId,
+        product.deliveryType,
         (text, opts) => context.editText(text, opts),
       );
       return;
@@ -193,6 +194,8 @@ export async function ConfirmOrderCallback(context: Context) {
     // Save state and ask for the first field
     pendingOrderInfoState.set(userId, {
       planId,
+      deliveryType: product.deliveryType,
+      phase: "info",
       steps,
       currentStep: 0,
       collected: {},
@@ -204,8 +207,7 @@ export async function ConfirmOrderCallback(context: Context) {
       total: steps.length,
     });
     const firstPromptKey = getPromptKey(steps[0]);
-    const message =
-      `${t("manualOrderInfoRequired")}\n\n${stepIndicator}\n\n${t(firstPromptKey as any)}`;
+    const message = `${t("manualOrderInfoRequired")}\n\n${stepIndicator}\n\n${t(firstPromptKey as any)}`;
 
     await context.editText(message, {
       parse_mode: "HTML",
@@ -226,4 +228,3 @@ function getPromptKey(step: InfoStep): string {
   };
   return map[step];
 }
-
