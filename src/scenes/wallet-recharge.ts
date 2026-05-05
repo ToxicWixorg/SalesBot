@@ -112,7 +112,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     if (isNaN(amount) || amount <= 0) {
       const user = await UserRepository.findById(userId);
       const t = i18n.buildT(user?.languageCode || "en");
-      await context.reply(t("rechargeInvalidAmount"));
+      await context.reply(t("rechargeInvalidAmount"), { parse_mode: "HTML" });
       return;
     }
 
@@ -134,12 +134,16 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     const t = i18n.buildT(user?.languageCode || "en");
 
     if (amount < minAmount) {
-      await context.reply(t("rechargeTooLow" as any, minAmount.toString()));
+      await context.reply(t("rechargeTooLow" as any, minAmount.toString()), {
+        parse_mode: "HTML",
+      });
       return;
     }
 
     if (amount > maxAmount) {
-      await context.reply(t("rechargeTooHigh" as any, maxAmount.toString()));
+      await context.reply(t("rechargeTooHigh" as any, maxAmount.toString()), {
+        parse_mode: "HTML",
+      });
       return;
     }
 
@@ -197,7 +201,9 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     // ذخیره TxID و ارسال پیام تأیید
     const userForReply = await UserRepository.findById(userId);
     const tReply = i18n.buildT(userForReply?.languageCode || "en");
-    await context.reply(tReply("rechargeCryptoTxIdReceived" as any));
+    await context.reply(tReply("rechargeCryptoTxIdReceived" as any), {
+      parse_mode: "HTML",
+    });
 
     // TODO: بررسی TxID در blockchain
     // در اینجا باید API blockchain را برای تأیید تراکنش فراخوانی کنید
@@ -291,7 +297,9 @@ async function handleZarinpalPayment(context: any, amount: number) {
     { reply_markup: keyboard, parse_mode: "HTML" },
   );
 
-  await context.reply(t("rechargePaymentPending" as any));
+  await context.reply(t("rechargePaymentPending" as any), {
+    parse_mode: "HTML",
+  });
 }
 
 /**
@@ -315,7 +323,9 @@ async function handleCardPayment(context: any, amount: number) {
     { reply_markup: keyboard, parse_mode: "HTML" },
   );
 
-  await context.reply(t("rechargePaymentPending" as any));
+  await context.reply(t("rechargePaymentPending" as any), {
+    parse_mode: "HTML",
+  });
 }
 
 /**

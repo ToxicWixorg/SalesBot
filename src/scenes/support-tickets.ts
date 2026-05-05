@@ -364,7 +364,7 @@ export function setupTicketScenes(bot: AnyBot) {
     const message = context.text;
 
     if (!message || message.length < 10) {
-      await context.reply(t("ticketMessageTooShort"));
+      await context.reply(t("ticketMessageTooShort"), { parse_mode: "HTML" });
       return;
     }
 
@@ -414,7 +414,7 @@ export function setupTicketScenes(bot: AnyBot) {
       ticketState.delete(userId);
     } catch (error) {
       console.error("[TICKET] Error creating ticket:", error);
-      await context.reply(t("ticketCreateError"));
+      await context.reply(t("ticketCreateError"), { parse_mode: "HTML" });
       ticketState.delete(userId);
     }
   }
@@ -433,7 +433,7 @@ export function setupTicketScenes(bot: AnyBot) {
     const message = context.text;
 
     if (!message) {
-      await context.reply(t("ticketMessageEmpty"));
+      await context.reply(t("ticketMessageEmpty"), { parse_mode: "HTML" });
       return;
     }
 
@@ -449,12 +449,13 @@ export function setupTicketScenes(bot: AnyBot) {
 
       await context.reply(t("ticketReplySent"), {
         reply_markup: keyboard,
+        parse_mode: "HTML",
       });
 
       ticketReplyState.delete(userId);
     } catch (error) {
       console.error("[TICKET] Error sending reply:", error);
-      await context.reply(t("ticketReplyError"));
+      await context.reply(t("ticketReplyError"), { parse_mode: "HTML" });
       ticketReplyState.delete(userId);
     }
   }

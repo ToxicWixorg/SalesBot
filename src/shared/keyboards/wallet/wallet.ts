@@ -3,7 +3,7 @@ import type { TFunction } from "../../locales/index.ts";
 
 export function walletKeyboard(t: TFunction): InlineKeyboard {
   return new InlineKeyboard()
-    .text(t("btnRechargeWallet"), "wallet_recharge")
+    .text(t("btnRechargeWallet"), "wallet_recharge",)
     .row()
     .text(t("btnTransactionHistory"), "wallet_history")
     .row()

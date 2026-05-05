@@ -21,6 +21,7 @@ export async function MyOrderCallback(context: Context) {
 
     if (orders.length === 0) {
       await context.editText(t("ordersEmpty"), {
+        parse_mode: "HTML",
         reply_markup: new InlineKeyboard()
           .text(t("btnProducts"), "products")
           .row()

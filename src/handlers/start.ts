@@ -109,6 +109,7 @@ export const startComposer = new Composer()
               await context.bot.api.sendMessage({
                 chat_id: referrerId,
                 text: message,
+                parse_mode: "HTML",
               });
             }
           } catch (msgError) {
@@ -147,7 +148,7 @@ export const startComposer = new Composer()
       }
     }
 
-    return context.send(t("main_menu"), {
+    return context.send(t("main_menu", userName), {
       reply_markup: mainMenuKeyboard(t),
       parse_mode: "HTML",
     });
@@ -203,12 +204,12 @@ export const startComposer = new Composer()
     const userName = firstName || username || "User";
 
     try {
-      await context.editText(t("main_menu"), {
+      await context.editText(t("main_menu", userName), {
         reply_markup: mainMenuKeyboard(t),
         parse_mode: "HTML",
       });
     } catch {
-      await context.send(t("main_menu"), {
+      await context.send(t("main_menu", userName), {
         reply_markup: mainMenuKeyboard(t),
         parse_mode: "HTML",
       });
@@ -221,6 +222,9 @@ export const startComposer = new Composer()
         show_alert: true,
       });
     }
+    const firstName = context.from.firstName || null;
+    const username = context.from.username || null;
+    const userName = firstName || username || "User";
 
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
@@ -239,7 +243,7 @@ export const startComposer = new Composer()
     const t = i18n.buildT(userLang);
 
     try {
-      await context.editText(t("main_menu"), {
+      await context.editText(t("main_menu", userName), {
         reply_markup: mainMenuKeyboard(t),
         parse_mode: "HTML",
       });

@@ -74,6 +74,7 @@ export const enterDiscountCodeOrderScene = new Scene(
       discountEntryState.delete(userId);
 
       return context.send(t("discountNotApplicableForProduct"), {
+        parse_mode: "HTML",
         reply_markup: new InlineKeyboard()
           .text(t("btnTryAgain"), `add_discount_${planId}`)
           .row()

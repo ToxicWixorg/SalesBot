@@ -38,15 +38,23 @@ export const supportHandler = (bot: AnyBot) => {
 
       if (tickets.length === 0) {
         await ctx.editText(t("ticketListEmpty"), {
+          parse_mode: "HTML",
           reply_markup: {
             inline_keyboard: [
               [
                 {
                   text: t("btnNewSupportTicket"),
                   callback_data: "new_support_ticket",
+                  parse_mode: "HTML",
                 },
               ],
-              [{ text: t("btnBack"), callback_data: "support" }],
+              [
+                {
+                  text: t("btnBack"),
+                  callback_data: "support",
+                  parse_mode: "HTML",
+                },
+              ],
             ],
           },
         });
