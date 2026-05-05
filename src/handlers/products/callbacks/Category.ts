@@ -36,5 +36,6 @@ export async function CategoryCallBack(context: Context) {
 
   await context.editText(message, {
     reply_markup: productsListKeyboard(t, products, categoryId),
+    parse_mode: "HTML",
   });
 }

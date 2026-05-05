@@ -1,62 +1,68 @@
 import type { LanguageMap } from "@gramio/i18n";
-import { bold, format } from "gramio";
-
+import { e } from "./emojies";
+// ─── Premium Telegram Emoji IDs ────────────────────────────────────────────
+// Usage: <tg-emoji emoji-id="ID">fallback</tg-emoji>
 
 export const fa = {
   // Language Selection
-  selectLanguage: "🌍 لطفاً زبان خود را انتخاب کنید:",
+  selectLanguage: `${e.earth} <b>زبان مورد نظرت رو انتخاب کن:</b>`,
   languageSelected: (lang: string) =>
-    format`✅ زبان به ${bold(lang)} تغییر یافت`,
+    `${e.checkBold} زبان به <b>${lang}</b> تغییر یافت`,
 
   // Greeting & Welcome
-  greeting: (name: string) => format`سلام، ${bold(name)}!`,
+  greeting: (name: string) => `سلام <b>${name}</b>! ${e.sparkles}`,
   welcome: (name: string) =>
-    format`به فروشگاه دیجیتال ما خوش آمدید، ${bold(name)}! 🎉\n\nما انواع اشتراک‌ها و سرویس‌های دیجیتال را ارائه می‌دهیم.\n`,
+    `${e.crown} سلام <b>${name}</b>، خوش اومدی!\n\n` +
+    `${e.gem} بهترین سرویس‌های دیجیتال رو با بهترین قیمت پیدا می‌کنی اینجا.\n`,
 
   // Main Menu
-  mainMenu: "🏠 منوی اصلی",
-  chooseAction: "لطفاً یک گزینه را انتخاب کنید:",
-  main_meun: (name: string) => "",
+  mainMenu: `${e.home} منوی اصلی`,
+  chooseAction: "",
+  main_menu: (name: string) =>
+    `${e.crown} سلام <b>${name}</b>!\n\n` +
+    `${e.sparkles} به فروشگاه دیجیتال ما خوش اومدی!\n\n` +
+    `${e.gem} اشتراک‌های پریمیوم، اکانت‌های هوش مصنوعی و سرویس‌های دیجیتال — همه با بهترین قیمت.\n\n` +
+    `یه گزینه انتخاب کن:`,
 
   // Buttons
-  btnProducts: "🛒 محصولات",
-  btnMyOrders: "📦 سفارشات من",
-  btnWallet: "💰 کیف پول",
-  btnInviteFriends: "👥 دعوت دوستان",
-  btnDiscountCode: "🎁 کد تخفیف",
-  btnSupport: "💬 پشتیبانی",
-  btnSettings: "⚙️ تنظیمات",
-  btnBack: "🔙 بازگشت",
-  btnCancel: "❌ لغو",
-  btnMainMenu: "🏠 منوی اصلی",
-  btnChangeLanguage: "🌐 تغییر زبان",
-  btnNotifications: "🔔 اعلان‌ها",
-  btnYes: "✅ بله",
-  btnNo: "❌ خیر",
-  btnConfirm: "✅ تایید",
+  btnProducts: `${e.bag} محصولات`,
+  btnMyOrders: `${e.box} سفارشات من`,
+  btnWallet: `${e.wallet} کیف پول`,
+  btnInviteFriends: `${e.users} دعوت دوستان`,
+  btnDiscountCode: `${e.gift} کد تخفیف`,
+  btnSupport: `${e.chat} پشتیبانی`,
+  btnSettings: `${e.settings} تنظیمات`,
+  btnBack: `${e.back} بازگشت`,
+  btnCancel: `${e.cross} لغو`,
+  btnMainMenu: `${e.home} منوی اصلی`,
+  btnChangeLanguage: `🌐 تغییر زبان`,
+  btnNotifications: `${e.bell} اعلان‌ها`,
+  btnYes: `${e.checkBold} بله`,
+  btnNo: `${e.cross} خیر`,
+  btnConfirm: `${e.checkBold} تایید`,
 
   // Products
-  btnBuyProduct: "🛍️ خرید",
-  btnNotifyStock: "🔔 اطلاع موجودی",
-  btnConfirmOrder: "✅ تایید سفارش",
-  btnAddDiscountCode: "🎫 افزودن کد تخفیف",
-  productsTitle: "🛍️ محصولات",
-  selectCategory: "🏷️ لطفاً یک دسته‌بندی انتخاب کنید:",
-  categoryProducts: (category: string) => format`محصولات ${bold(category)}:`,
-  noProducts: "❌ محصولی در این دسته موجود نیست.",
-  productDetails: "📦 جزئیات محصول",
-  price: "💵 قیمت:",
-  stock: "📦 موجودی:",
-  available: "✅ موجود",
-  outOfStock: "❌ ناموجود",
-  deliveryTime: "⏰ زمان تحویل:",
-  deliveryType: "🚚 نوع تحویل:",
-  deliveryAutomatic: "⚡ فوری (خودکار)",
-  deliveryManual: "👤 دستی (1-24 ساعت)",
-  deliveryCoordination: "📝 نیاز به هماهنگی",
-  selectPlan: "📋 لطفاً پلن را انتخاب کنید:",
-  orderSummary: "📝 خلاصه سفارش:",
-  total: "💰 جمع کل:",
+  btnBuyProduct: `${e.bag} خرید`,
+  btnNotifyStock: `${e.bell} اطلاع موجودی`,
+  btnConfirmOrder: `${e.checkBold} تایید سفارش`,
+  btnAddDiscountCode: `${e.ticket} افزودن کد تخفیف`,
+  productsTitle: `${e.bag} محصولات`,
+  selectCategory: `${e.tag} یه دسته‌بندی انتخاب کن:`,
+  categoryProducts: (category: string) => `محصولات <b>${category}</b>:`,
+  noProducts: `${e.cross} محصولی در این دسته موجود نیست.`,
+  productDetails: `${e.box} جزئیات محصول`,
+  price: `${e.wallet} قیمت:`,
+  stock: `${e.box} موجودی:`,
+  available: `${e.checkBold} موجود`,
+  outOfStock: `${e.cross} ناموجود`,
+  deliveryTime: `${e.clock} زمان تحویل:`,
+  deliveryType: `${e.truck} نوع تحویل:`,
+  deliveryAutomatic: `${e.zap} فوری (خودکار)`,
+  deliveryManual: `${e.person} دستی (۱ تا ۲۴ ساعت)`,
+  deliveryCoordination: `${e.calendar} نیاز به هماهنگی`,
+  selectPlan: `${e.clipboard} پلن مورد نظرت رو انتخاب کن:`,
+  orderSummary: `${e.clipboard} خلاصه سفارش:`,
+  total: `${e.wallet} جمع کل:`,
   currency: "تومان",
   oneTime: "یک‌بار",
   duration_day: "روز",
@@ -64,66 +70,67 @@ export const fa = {
   duration_year: "سال",
 
   // Wallet
-  walletTitle: "💰 کیف پول",
-  walletBalance: (balance: string) => format`موجودی: ${bold(balance)} تومان`,
-  walletEmpty: "کیف پول شما خالی است 📭",
-  btnRechargeWallet: "💳 شارژ کیف پول",
-  btnTransactionHistory: "📊 تاریخچه تراکنش‌ها",
+  walletTitle: `${e.wallet} کیف پول`,
+  walletBalance: (balance: string) => `موجودی: <b>${balance}</b> تومان`,
+  walletEmpty: `${e.wallet} کیف پولت فعلاً خالیه ${e.sparkles} شارژش کن و شروع کن!`,
+  btnRechargeWallet: `${e.card} شارژ کیف پول`,
+  btnTransactionHistory: `${e.chart} تاریخچه تراکنش‌ها`,
 
   // Wallet Recharge
-  rechargeWalletTitle: "💳 شارژ کیف پول",
-  rechargeSelectMethod: "لطفاً روش شارژ را انتخاب کنید:",
-  btnRechargeCrypto: "🪙 پرداخت کریپتو (USDT)",
-  btnRechargeCard: "💳 پرداخت با کارت",
-  btnRechargeZarinpal: "💰 درگاه زرین‌پال",
+  rechargeWalletTitle: `${e.card} شارژ کیف پول`,
+  rechargeSelectMethod: `روش شارژ رو انتخاب کن:`,
+  btnRechargeCrypto: `${e.coin} پرداخت کریپتو (USDT)`,
+  btnRechargeCard: `${e.card} پرداخت با کارت`,
+  btnRechargeZarinpal: `${e.wallet} درگاه زرین‌پال`,
 
-  rechargeEnterAmount: "💵 لطفاً مبلغ شارژ را وارد کنید:",
-  rechargeEnterAmountUsdt: "💵 لطفاً مقدار USDT را وارد کنید:",
+  rechargeEnterAmount: `${e.wallet} مبلغ شارژ رو وارد کن:`,
+  rechargeEnterAmountUsdt: `${e.coin} مقدار USDT رو وارد کن:`,
   rechargeMinAmount: (amount: string) =>
-    format`حداقل مبلغ شارژ: ${bold(amount)} تومان`,
+    `حداقل مبلغ شارژ: <b>${amount}</b> تومان`,
   rechargeMaxAmount: (amount: string) =>
-    format`حداکثر مبلغ شارژ: ${bold(amount)} تومان`,
+    `حداکثر مبلغ شارژ: <b>${amount}</b> تومان`,
   rechargeMinAmountUsdt: (amount: string) =>
-    format`حداقل مقدار: ${bold(amount)} USDT`,
+    `حداقل مقدار: <b>${amount}</b> USDT`,
   rechargeMaxAmountUsdt: (amount: string) =>
-    format`حداکثر مقدار: ${bold(amount)} USDT`,
-  rechargeInvalidAmount: "❌ مبلغ وارد شده نامعتبر است",
+    `حداکثر مقدار: <b>${amount}</b> USDT`,
+  rechargeInvalidAmount: `${e.cross} مبلغ وارد شده نامعتبره`,
   rechargeTooLow: (min: string) =>
-    format`❌ مبلغ شارژ باید حداقل ${bold(min)} تومان باشد`,
+    `${e.cross} مبلغ شارژ باید حداقل <b>${min}</b> تومان باشه`,
   rechargeTooHigh: (max: string) =>
-    format`❌ مبلغ شارژ نمی‌تواند بیشتر از ${bold(max)} تومان باشد`,
+    `${e.cross} مبلغ شارژ نمی‌تونه بیشتر از <b>${max}</b> تومان باشه`,
 
   // Crypto Payment
-  rechargeCryptoTitle: "🪙 پرداخت کریپتو",
+  rechargeCryptoTitle: `${e.coin} پرداخت کریپتو`,
   rechargeCryptoAddress: (address: string) =>
-    format`آدرس کیف پول:\n\n${bold(address)}`,
-  rechargeCryptoAmount: (amount: string) => format`مبلغ USDT: ${bold(amount)}`,
-  rechargeCryptoNetwork: (network: string) => format`شبکه: ${bold(network)}`,
+    `آدرس کیف پول:\n\n<code>${address}</code>`,
+  rechargeCryptoAmount: (amount: string) => `مبلغ USDT: <b>${amount}</b>`,
+  rechargeCryptoNetwork: (network: string) => `شبکه: <b>${network}</b>`,
   rechargeCryptoInstructions:
-    "📝 دستورالعمل:\n\n1. مبلغ USDT را به آدرس بالا ارسال کنید\n2. TxID (شناسه تراکنش) را ارسال کنید\n3. تا 30 دقیقه صبر کنید تا تأیید شود",
-  rechargeCryptoSendTxId: "لطفاً TxID (شناسه تراکنش) را ارسال کنید:",
-  rechargeCryptoTxIdReceived:
-    "✅ شناسه تراکنش دریافت شد\n\nدر حال بررسی پرداخت...\nاین فرآیند ممکن است تا 30 دقیقه طول بکشد.",
+    `${e.clipboard} <b>دستورالعمل پرداخت:</b>\n\n` +
+    `۱. مبلغ USDT رو به آدرس بالا ارسال کن\n` +
+    `۲. TxID (شناسه تراکنش) رو برام بفرست\n` +
+    `۳. تا ۳۰ دقیقه صبر کن تا تأیید بشه`,
+  rechargeCryptoSendTxId: `TxID (شناسه تراکنش) رو ارسال کن:`,
+  rechargeCryptoTxIdReceived: `${e.checkBold} شناسه تراکنش دریافت شد\n\n${e.hourglass} در حال بررسی پرداخت...\nاین فرآیند ممکنه تا ۳۰ دقیقه طول بکشه.`,
   rechargeCryptoVerified: (amount: string) =>
-    format`✅ پرداخت تأیید شد!\n\n${bold(amount)} تومان به کیف پول شما اضافه شد.`,
-  rechargeCryptoFailed: "❌ پرداخت تأیید نشد. لطفاً با پشتیبانی تماس بگیرید.",
+    `${e.party} <b>پرداخت تأیید شد!</b>\n\n${e.gem} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
+  rechargeCryptoFailed: `${e.cross} پرداخت تأیید نشد. لطفاً با پشتیبانی تماس بگیر.`,
 
   // Card/Zarinpal Payment
-  rechargeCardTitle: "💳 پرداخت با کارت",
-  rechargeZarinpalTitle: "💰 درگاه زرین‌پال",
+  rechargeCardTitle: `${e.card} پرداخت با کارت`,
+  rechargeZarinpalTitle: `${e.wallet} درگاه زرین‌پال`,
   rechargePaymentLink: (amount: string) =>
-    format`مبلغ: ${bold(amount)} تومان\n\nروی دکمه زیر کلیک کنید تا به درگاه پرداخت منتقل شوید:`,
-  btnPayNow: "💳 پرداخت",
-  rechargePaymentPending:
-    "⏳ در انتظار پرداخت...\n\nلطفاً پرداخت را در مرورگر تکمیل کنید.",
+    `مبلغ: <b>${amount}</b> تومان\n\nروی دکمه زیر کلیک کن تا به درگاه پرداخت بری:`,
+  btnPayNow: `${e.card} پرداخت`,
+  rechargePaymentPending: `${e.hourglass} در انتظار پرداخت...\n\nلطفاً پرداخت رو در مرورگر کامل کن.`,
   rechargePaymentSuccess: (amount: string) =>
-    format`✅ پرداخت موفق!\n\n${bold(amount)} تومان به کیف پول شما اضافه شد.`,
-  rechargePaymentFailed: "❌ پرداخت ناموفق بود. لطفاً دوباره تلاش کنید.",
-  rechargePaymentCancelled: "⚠️ پرداخت لغو شد.",
+    `${e.party} <b>پرداخت موفق!</b>\n\n${e.gem} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
+  rechargePaymentFailed: `${e.cross} پرداخت ناموفق بود. دوباره تلاش کن.`,
+  rechargePaymentCancelled: `${e.warn} پرداخت لغو شد.`,
 
   // Transaction History
-  transactionHistoryTitle: "📊 تاریخچه تراکنش‌ها",
-  transactionHistoryEmpty: "تاریخچه تراکنش شما خالی است 📭",
+  transactionHistoryTitle: `${e.chart} تاریخچه تراکنش‌ها`,
+  transactionHistoryEmpty: `${e.chart} هنوز تراکنشی نداری — اولین خریدت رو ثبت کن!`,
   transactionType: "نوع:",
   transactionAmount: "مبلغ:",
   transactionDate: "تاریخ:",
@@ -134,18 +141,18 @@ export const fa = {
   txTypeDebit: "➖ برداشت",
 
   // Transaction Sources
-  txSourcePurchase: "🛒 خرید",
-  txSourceRecharge: "💳 شارژ",
-  txSourceRefund: "↩️ بازگشت وجه",
-  txSourceReferral: "👥 پاداش دعوت",
-  txSourceReward: "🎁 جایزه",
-  txSourcePerk: "🎯 پاداش Perk",
-  txSourceAdminAdjustment: "⚙️ تعدیل ادمین",
+  txSourcePurchase: `${e.bag} خرید`,
+  txSourceRecharge: `${e.card} شارژ`,
+  txSourceRefund: `${e.bounce} بازگشت وجه`,
+  txSourceReferral: `${e.users} پاداش دعوت`,
+  txSourceReward: `${e.gift} جایزه`,
+  txSourcePerk: `${e.target} پاداش Perk`,
+  txSourceAdminAdjustment: `${e.settings} تعدیل ادمین`,
 
   // Language Names
-  langEnglish: "🇬🇧 English",
-  langPersian: "🇮🇷 فارسی",
-  langRussian: "🇷🇺 Русский",
+  langEnglish: `${e.flag_en} English`,
+  langPersian: `${e.flag_ir} فارسی`,
+  langRussian: `${e.flag_ru} Русский`,
 
   // Invite Friends (Referral)
   inviteBanner: (data: {
@@ -153,70 +160,70 @@ export const fa = {
     totalRewards: string;
     referralLink: string;
   }) =>
-    `🎁 <b>دعوت دوستان و کسب درآمد!</b>\n\n` +
-    `👥 تعداد دعوت‌های شما: <b>${data.totalReferrals}</b>\n` +
-    `💰 مجموع پاداش‌ها: <b>${data.totalRewards}</b> تومان\n\n` +
-    `🔗 <b>لینک اختصاصی شما:</b>\n` +
+    `${e.crown} <b>دوستاتو دعوت کن، درآمد داشته باش!</b>\n\n` +
+    `${e.users} دعوت‌های موفق: <b>${data.totalReferrals}</b>\n` +
+    `${e.gem} مجموع پاداش‌ها: <b>${data.totalRewards}</b> تومان\n\n` +
+    `🔗 <b>لینک اختصاصی تو:</b>\n` +
     `<code>${data.referralLink}</code>\n\n` +
-    `📝 <b>نحوه کار:</b>\n` +
-    `۱. لینک بالا را به دوستان خود بفرستید\n` +
-    `۲. وقتی دوستان شما عضو شوند، پاداش دریافت می‌کنید\n` +
-    `۳. پاداش مستقیماً به کیف پول شما واریز می‌شود\n\n` +
-    `💎 پاداش هر دعوت: <b>10,000</b> تومان`,
-  btnShareInviteLink: "📤 اشتراک‌گذاری لینک",
-  btnCopyLink: "📋 کپی لینک",
-  btnViewReferrals: "👥 مشاهده لیست دعوت‌ها",
-  inviteShareText: "🎁 با استفاده از این لینک عضو شو و تخفیف ویژه بگیر!",
+    `${e.sparkles} <b>چطور کار می‌کنه؟</b>\n` +
+    `۱. لینکت رو برای دوستات بفرست\n` +
+    `۲. وقتی عضو شدن، پاداش می‌گیری\n` +
+    `۳. پاداش مستقیم به کیف پولت واریز می‌شه\n\n` +
+    `${e.gem} پاداش هر دعوت: <b>۱۰٬۰۰۰</b> تومان`,
+  btnShareInviteLink: `${e.send} اشتراک‌گذاری لینک`,
+  btnCopyLink: `${e.clipboard} کپی لینک`,
+  btnViewReferrals: `${e.users} لیست دعوت‌شدگان`,
+  inviteShareText: `${e.gift} با این لینک عضو شو و تخفیف ویژه بگیر!`,
   inviteLinkCopied: (link: string) =>
-    `✅ لینک کپی شد!\n\n${link}\n\nاین لینک را برای دوستان خود ارسال کنید.`,
-  noReferralsYet: "شما هنوز کسی را دعوت نکرده‌اید 📭",
-  referralListTitle: "👥 <b>لیست کاربران دعوت شده</b>",
-  andMore: (count: number) => format`و ${bold(count)} نفر دیگر...`,
+    `${e.checkBold} لینک کپی شد!\n\n<code>${link}</code>\n\nاین لینک رو برای دوستات بفرست.`,
+  noReferralsYet: `${e.users} هنوز کسی رو دعوت نکردی — شروع کن و درآمد داشته باش!`,
+  referralListTitle: `${e.users} <b>لیست دعوت‌شدگان</b>`,
+  andMore: (count: number) => `و <b>${count}</b> نفر دیگه...`,
   referralRewardNotification: (data: { userName: string; amount: string }) =>
-    `🎉 کاربر جدیدی (${data.userName}) از طریق لینک دعوت شما پیوست!\n💰 مبلغ ${data.amount} تومان به حساب شما اضافه شد.`,
+    `${e.party} کاربر جدیدی (<b>${data.userName}</b>) از لینک دعوت تو پیوست!\n` +
+    `${e.gem} <b>${data.amount}</b> تومان به حسابت اضافه شد.`,
 
   // Discount Codes
   discountCodeInfo:
-    "🎁 <b>کد تخفیف</b>\n\n" +
-    "از کدهای تخفیف برای دریافت تخفیف در خریدهای خود استفاده کنید.\n\n" +
-    "می‌توانید کد تخفیف را در زمان خرید وارد کنید یا از اینجا معتبر بودن آن را بررسی کنید.",
-  btnEnterDiscountCode: "✏️ وارد کردن کد تخفیف",
-  btnDiscountHistory: "📊 تاریخچه استفاده",
-  enterDiscountCodePrompt:
-    "✏️ لطفاً کد تخفیف خود را وارد کنید:\n\n" + "مثال: <code>SUMMER2024</code>",
-  btnTryAgain: "🔄 تلاش مجدد",
+    `${e.gift} <b>کد تخفیف</b>\n\n` +
+    `با کدهای تخفیف، قیمت خریدت رو پایین بیار.\n\n` +
+    `می‌تونی هنگام خرید کد بزنی یا از اینجا اعتبارش رو چک کنی.`,
+  btnEnterDiscountCode: `${e.pencil} وارد کردن کد تخفیف`,
+  btnDiscountHistory: `${e.chart} تاریخچه استفاده`,
+  enterDiscountCodePrompt: `${e.pencil} کد تخفیفت رو وارد کن:\n\nمثال: <code>SUMMER2024</code>`,
+  btnTryAgain: `${e.refresh} تلاش دوباره`,
   discountCodeValid: (data: {
     code: string;
     type: string;
     value: string;
     description: string;
   }) =>
-    `✅ <b>کد تخفیف معتبر است!</b>\n\n` +
-    `🎫 کد: <code>${data.code}</code>\n` +
-    `📝 نوع: ${data.type}\n` +
-    `💰 مقدار: ${data.value}\n` +
-    `📄 توضیحات: ${data.description}\n\n` +
-    `این کد را می‌توانید در زمان خرید استفاده کنید.`,
+    `${e.checkBold} <b>کد تخفیف معتبره!</b>\n\n` +
+    `${e.ticket} کد: <code>${data.code}</code>\n` +
+    `${e.tag} نوع: ${data.type}\n` +
+    `${e.gem} مقدار: ${data.value}\n` +
+    `${e.clipboard} توضیحات: ${data.description}\n\n` +
+    `این کد رو هنگام خرید استفاده کن.`,
   discountCodeInvalid: (reason: string) =>
-    `❌ <b>کد تخفیف نامعتبر است</b>\n\n${reason}`,
+    `${e.cross} <b>کد تخفیف نامعتبره</b>\n\n${reason}`,
   discountTypePercentage: "درصدی",
   discountTypeFixed: "مبلغ ثابت",
   noDescription: "بدون توضیحات",
-  noDiscountHistory: "شما هنوز از کد تخفیفی استفاده نکرده‌اید 📭",
-  discountHistoryTitle: "📊 <b>تاریخچه استفاده از کدهای تخفیف</b>",
+  noDiscountHistory: `${e.chart} هنوز از هیچ کد تخفیفی استفاده نکردی — اولین باری رو ثبت کن!`,
+  discountHistoryTitle: `${e.chart} <b>تاریخچه کدهای تخفیف</b>`,
   discountAmount: "مقدار تخفیف",
   orderId: "شماره سفارش",
 
   // Settings
-  settingsTitle: "⚙️ تنظیمات",
-  settingsDescription: "از این بخش می‌توانید تنظیمات حساب خود را مدیریت کنید.",
-  btnAccountInfo: "👤 اطلاعات حساب",
-  btnNotificationSettings: "🔔 تنظیمات اعلان‌ها",
-  btnPrivacy: "🔒 حریم خصوصی",
-  btnAbout: "ℹ️ درباره ما",
+  settingsTitle: `${e.settings} تنظیمات`,
+  settingsDescription: `${e.info} از اینجا می‌تونی حسابت رو مدیریت کنی.`,
+  btnAccountInfo: `${e.person} اطلاعات حساب`,
+  btnNotificationSettings: `${e.bell} تنظیمات اعلان‌ها`,
+  btnPrivacy: `${e.lock} حریم خصوصی`,
+  btnAbout: `${e.info} درباره ما`,
 
   // Account Info
-  accountInfoTitle: "👤 اطلاعات حساب کاربری",
+  accountInfoTitle: `${e.person} اطلاعات حساب`,
   accountInfoData: (data: {
     userId: string;
     username: string;
@@ -226,105 +233,99 @@ export const fa = {
     totalSpent: string;
     totalReferrals: number;
   }) =>
-    `👤 <b>اطلاعات حساب شما</b>\n\n` +
-    `🆔 شناسه کاربری: <code>${data.userId}</code>\n` +
-    `👤 نام کاربری: ${data.username ? `@${data.username}` : "ندارد"}\n` +
-    `📝 نام: ${data.firstName}\n` +
-    `📅 تاریخ عضویت: ${data.joinDate}\n\n` +
-    `📊 <b>آمار:</b>\n` +
-    `🛒 تعداد خریدها: <b>${data.totalOrders}</b>\n` +
-    `💰 مجموع خرید: <b>${data.totalSpent}</b> تومان\n` +
-    `👥 تعداد دعوت‌ها: <b>${data.totalReferrals}</b>`,
+    `${e.crown} <b>اطلاعات حساب تو</b>\n\n` +
+    `${e.id} شناسه: <code>${data.userId}</code>\n` +
+    `${e.person} نام‌کاربری: ${data.username ? `@${data.username}` : "ندارد"}\n` +
+    `${e.tag} نام: ${data.firstName}\n` +
+    `${e.calendar} عضویت: ${data.joinDate}\n\n` +
+    `${e.chart} <b>آمار:</b>\n` +
+    `${e.bag} خریدها: <b>${data.totalOrders}</b>\n` +
+    `${e.gem} مجموع خرید: <b>${data.totalSpent}</b> تومان\n` +
+    `${e.users} دعوت‌ها: <b>${data.totalReferrals}</b>`,
 
   // Notification Settings
-  notificationSettingsTitle: "🔔 تنظیمات اعلان‌ها",
-  notificationSettingsDescription:
-    "می‌توانید انواع اعلان‌هایی که می‌خواهید دریافت کنید را انتخاب کنید:",
+  notificationSettingsTitle: `${e.bell} تنظیمات اعلان‌ها`,
+  notificationSettingsDescription: `${e.info} انتخاب کن کدوم اعلان‌ها رو دریافت کنی:`,
   btnToggleOrderNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} اعلان سفارشات`,
+    `${enabled ? e.checkBold : e.cross} اعلان سفارشات`,
   btnToggleWalletNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} اعلان تراکنش‌های کیف پول`,
+    `${enabled ? e.checkBold : e.cross} اعلان کیف پول`,
   btnTogglePromotionNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} اعلان تخفیفات و پیشنهادها`,
+    `${enabled ? e.checkBold : e.cross} اعلان تخفیفات`,
   btnToggleReferralNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} اعلان دعوت دوستان`,
+    `${enabled ? e.checkBold : e.cross} اعلان دعوت دوستان`,
   btnToggleStockNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} اعلان موجودی محصولات`,
+    `${enabled ? e.checkBold : e.cross} اعلان موجودی محصولات`,
   notificationToggled: (type: string, enabled: boolean) =>
-    `${enabled ? "✅ فعال شد" : "❌ غیرفعال شد"}: ${type}`,
-  allNotificationsEnabled: "✅ همه اعلان‌ها فعال هستند",
-  allNotificationsDisabled: "❌ همه اعلان‌ها غیرفعال هستند",
+    `${enabled ? `${e.checkBold} فعال شد` : `${e.cross} غیرفعال شد`}: ${type}`,
+  allNotificationsEnabled: `${e.checkBold} همه اعلان‌ها فعالن`,
+  allNotificationsDisabled: `${e.cross} همه اعلان‌ها غیرفعالن`,
 
   // Privacy
-  privacyTitle: "🔒 حریم خصوصی",
-  privacyDescription: "مدیریت داده‌های شخصی و تنظیمات حریم خصوصی خود:",
-  btnClearHistory: "🗑️ پاک کردن تاریخچه",
-  btnDeleteAccount: "❌ حذف حساب کاربری",
-  btnExportData: "📤 دریافت اطلاعات من",
+  privacyTitle: `${e.lock} حریم خصوصی`,
+  privacyDescription: `${e.shield} مدیریت داده‌های شخصی:`,
+  btnClearHistory: `${e.trash} پاک کردن تاریخچه`,
+  btnDeleteAccount: `${e.cross} حذف حساب`,
+  btnExportData: `${e.send} دریافت اطلاعات من`,
   clearHistoryConfirm:
-    "⚠️ آیا مطمئن هستید که می‌خواهید تاریخچه خود را پاک کنید؟\n\n" +
-    "این عمل غیرقابل بازگشت است.",
-  clearHistorySuccess: "✅ تاریخچه شما با موفقیت پاک شد.",
-  clearHistoryCancelled: "❌ عملیات لغو شد.",
+    `${e.warn} <b>مطمئنی؟</b>\n\n` +
+    `تاریخچه‌ات پاک می‌شه — این عمل برگشت نداره.`,
+  clearHistorySuccess: `${e.checkBold} تاریخچه با موفقیت پاک شد.`,
+  clearHistoryCancelled: `${e.cross} عملیات لغو شد.`,
   deleteAccountConfirm:
-    "⚠️ <b>هشدار!</b>\n\n" +
-    "آیا مطمئن هستید که می‌خواهید حساب کاربری خود را حذف کنید؟\n\n" +
-    "❌ تمام اطلاعات شما از جمله:\n" +
-    "• سفارشات\n" +
-    "• کیف پول\n" +
-    "• دعوت‌ها\n" +
-    "به طور دائمی حذف خواهند شد.\n\n" +
-    "این عمل <b>غیرقابل بازگشت</b> است!",
-  deleteAccountSuccess:
-    "✅ حساب کاربری شما حذف شد.\n\nامیدواریم دوباره شما را ببینیم!",
-  deleteAccountCancelled: "✅ حساب شما حذف نشد.",
-  exportDataProcessing: "⏳ در حال آماده‌سازی اطلاعات شما...",
-  exportDataReady: "✅ اطلاعات شما آماده است!",
+    `${e.warn} <b>هشدار!</b>\n\n` +
+    `مطمئنی می‌خوای حسابت رو حذف کنی؟\n\n` +
+    `${e.cross} تمام موارد زیر <b>برای همیشه</b> پاک می‌شن:\n` +
+    `• سفارشات\n• کیف پول\n• دعوت‌ها\n\n` +
+    `این عمل <b>غیرقابل بازگشته</b>!`,
+  deleteAccountSuccess: `${e.checkBold} حسابت حذف شد.\n\nامیدواریم دوباره ببینیمت!`,
+  deleteAccountCancelled: `${e.checkBold} حسابت حذف نشد.`,
+  exportDataProcessing: `${e.hourglass} در حال آماده‌سازی اطلاعاتت...`,
+  exportDataReady: `${e.checkBold} اطلاعاتت آماده‌ست!`,
 
   // About
-  aboutTitle: "ℹ️ درباره ما",
+  aboutTitle: `${e.info} درباره ما`,
   aboutDescription:
-    "🤖 <b>ربات فروش محصولات دیجیتال</b>\n\n" +
-    "ما بهترین سرویس‌های دیجیتال را با بهترین قیمت و سریع‌ترین تحویل ارائه می‌دهیم.\n\n" +
-    "📧 <b>ارتباط با ما:</b>\n" +
-    "• پشتیبانی: @TajEzat\n" +
-    "• کانال: @ZendeBadParsi\n\n" +
-    "💡 نسخه: 1.0.0",
+    `${e.robot} <b>ربات فروش سرویس‌های دیجیتال</b>\n\n` +
+    `${e.gem} بهترین سرویس‌ها با بهترین قیمت و سریع‌ترین تحویل.\n\n` +
+    `${e.mail} <b>ارتباط با ما:</b>\n` +
+    `• پشتیبانی: @TajEzat\n` +
+    `• کانال: @ZendeBadParsi\n\n` +
+    `${e.tag} نسخه: 1.0.0`,
 
   // Orders (سفارشات من)
-  ordersTitle: "📦 سفارشات من",
-  ordersEmpty:
-    "شما هنوز سفارشی ندارید 📭\n\nبرای شروع خرید، به بخش محصولات بروید.",
-  ordersTotal: "📊 تعداد کل سفارشات",
-  ordersActive: "🔵 سفارشات فعال",
-  ordersCompleted: "✅ سفارشات تکمیل شده",
-  ordersSelectFilter: "لطفاً یک فیلتر را انتخاب کنید:",
+  ordersTitle: `${e.box} سفارشات من`,
+  ordersEmpty: `${e.box} هنوز سفارشی ثبت نکردی!\n\nبرو سراغ محصولات و اولین خریدت رو بزن.`,
+  ordersTotal: `${e.chart} کل سفارشات`,
+  ordersActive: `${e.blue} سفارشات فعال`,
+  ordersCompleted: `${e.green} سفارشات تکمیل‌شده`,
+  ordersSelectFilter: `یه فیلتر انتخاب کن:`,
 
   // Orders Filter Buttons
-  btnOrdersFilterActive: "🔵 فعال",
-  btnOrdersFilterCompleted: "✅ تکمیل شده",
-  btnOrdersFilterAll: "📋 همه",
+  btnOrdersFilterActive: `${e.blue} فعال`,
+  btnOrdersFilterCompleted: `${e.green} تکمیل‌شده`,
+  btnOrdersFilterAll: `${e.clipboard} همه`,
 
   // Orders List
-  ordersActiveTitle: "🔵 سفارشات فعال",
-  ordersCompletedTitle: "✅ سفارشات تکمیل شده",
-  ordersAllTitle: "📋 تمام سفارشات",
-  ordersSelectOne: "👆 روی یک سفارش کلیک کنید تا جزئیات آن را ببینید:",
-  ordersNoActive: "شما سفارش فعالی ندارید",
-  ordersNoCompleted: "شما سفارش تکمیل شده‌ای ندارید",
+  ordersActiveTitle: `${e.blue} سفارشات فعال`,
+  ordersCompletedTitle: `${e.green} سفارشات تکمیل‌شده`,
+  ordersAllTitle: `${e.clipboard} تمام سفارشات`,
+  ordersSelectOne: `${e.pin} روی یه سفارش کلیک کن تا جزئیاتش رو ببینی:`,
+  ordersNoActive: `${e.info} هیچ سفارش فعالی نداری`,
+  ordersNoCompleted: `${e.info} هیچ سفارش تکمیل‌شده‌ای نداری`,
 
   // Order Details
-  orderDetailsTitle: "📦 جزئیات سفارش",
+  orderDetailsTitle: `${e.box} جزئیات سفارش`,
   orderNumber: "شماره سفارش",
   orderProduct: "محصول",
   orderStatus: "وضعیت",
   orderTotalPrice: "قیمت اولیه",
   orderDiscount: "تخفیف",
-  orderWalletUsed: "استفاده از کیف پول",
+  orderWalletUsed: "کیف پول",
   orderFinalPrice: "قیمت نهایی",
   orderCreatedAt: "تاریخ ثبت",
   orderDeliveredAt: "تاریخ تحویل",
-  orderScheduledTime: "زمان‌بندی شده",
+  orderScheduledTime: "زمان‌بندی",
   orderNotes: "یادداشت",
 
   // Order Delivery Info
@@ -335,77 +336,75 @@ export const fa = {
   orderDeliveryInstructions: "دستورالعمل",
 
   // Order Buttons
-  btnOrderOpenTicket: "💬 باز کردن تیکت",
-  btnOrderRenew: "🔄 تمدید",
-  btnOrderReschedule: "📅 تغییر زمان",
-  btnOrderReportProblem: "⚠️ گزارش مشکل",
-  btnBackToOrders: "🔙 بازگشت به سفارشات",
+  btnOrderOpenTicket: `${e.chat} باز کردن تیکت`,
+  btnOrderRenew: `${e.refresh} تمدید`,
+  btnOrderReschedule: `${e.calendar} تغییر زمان`,
+  btnOrderReportProblem: `${e.warn} گزارش مشکل`,
+  btnBackToOrders: `${e.back} بازگشت به سفارشات`,
 
   // Order Actions
-  orderNotFound: "سفارش یافت نشد",
-  orderAccessDenied: "شما به این سفارش دسترسی ندارید",
-  orderTicketComingSoon: "سیستم تیکت به زودی فعال می‌شود",
+  orderNotFound: "سفارش پیدا نشد",
+  orderAccessDenied: "دسترسی به این سفارش مجاز نیست",
+  orderTicketComingSoon: "سیستم تیکت به‌زودی فعال می‌شه",
   orderNotRenewable: "این محصول قابل تمدید نیست",
-  orderRenewComingSoon: "امکان تمدید به زودی فعال می‌شود",
+  orderRenewComingSoon: "امکان تمدید به‌زودی فعال می‌شه",
   orderCannotReschedule: "این سفارش قابل تغییر زمان نیست",
-  orderRescheduleComingSoon: "امکان تغییر زمان به زودی فعال می‌شود",
-  orderReportComingSoon: "سیستم گزارش مشکل به زودی فعال می‌شود",
+  orderRescheduleComingSoon: "امکان تغییر زمان به‌زودی فعال می‌شه",
+  orderReportComingSoon: "سیستم گزارش مشکل به‌زودی فعال می‌شه",
 
   // Support & Tickets
   supportMenuText:
-    "💬 <b>مرکز پشتیبانی</b>\n\nچطور می‌تونیم کمکتون کنیم؟\n\n" +
-    "• ارسال تیکت پشتیبانی\n" +
-    "• گزارش مشکل\n" +
-    "• مشاهده تیکت‌های شما",
+    `${e.chat} <b>مرکز پشتیبانی</b>\n\nچطور می‌تونم کمکت کنم؟\n\n` +
+    `• ارسال تیکت پشتیبانی\n` +
+    `• گزارش مشکل\n` +
+    `• مشاهده تیکت‌ها`,
 
-  btnNewSupportTicket: "🎫 تیکت پشتیبانی جدید",
-  btnNewReportTicket: "⚠️ گزارش مشکل",
-  btnMyTickets: "📋 تیکت‌های من",
-  btnViewMyTickets: "📋 مشاهده تیکت‌ها",
-  btnBackToMain: "🏠 بازگشت به منوی اصلی",
-  btnReplyToTicket: "💬 پاسخ",
-  btnViewMessages: "💬 مشاهده پیام‌ها",
-  btnBackToTickets: "🔙 بازگشت به تیکت‌ها",
-  btnViewTicket: "👁️ مشاهده تیکت",
-  btnViewOrder: "📦 مشاهده سفارش",
+  btnNewSupportTicket: `${e.ticket} تیکت جدید`,
+  btnNewReportTicket: `${e.warn} گزارش مشکل`,
+  btnMyTickets: `${e.clipboard} تیکت‌های من`,
+  btnViewMyTickets: `${e.eye} مشاهده تیکت‌ها`,
+  btnBackToMain: `${e.home} منوی اصلی`,
+  btnReplyToTicket: `${e.chat} پاسخ`,
+  btnViewMessages: `${e.chat} مشاهده پیام‌ها`,
+  btnBackToTickets: `${e.back} بازگشت به تیکت‌ها`,
+  btnViewTicket: `${e.eye} مشاهده تیکت`,
+  btnViewOrder: `${e.box} مشاهده سفارش`,
 
   // Ticket Creation
   ticketSupportPrompt:
-    "🎫 <b>تیکت پشتیبانی جدید</b>\n\n" +
-    "لطفاً سوال یا مشکل خود را به طور کامل توضیح دهید.\n" +
-    "تیم پشتیبانی ما در اسرع وقت پاسخ خواهند داد.",
+    `${e.ticket} <b>تیکت پشتیبانی جدید</b>\n\n` +
+    `سوال یا مشکلت رو کامل توضیح بده.\n` +
+    `تیم ما در اسرع وقت جواب می‌ده.`,
 
   ticketOrderPrompt:
-    "📦 <b>مشکل سفارش</b>\n\n" +
-    "لطفاً مشکل مربوط به سفارش خود را به طور کامل توضیح دهید.",
+    `${e.box} <b>مشکل سفارش</b>\n\n` +
+    `مشکل مربوط به سفارشت رو کامل توضیح بده.`,
 
   ticketReportPrompt:
-    "⚠️ <b>گزارش مشکل</b>\n\n" +
-    "لطفاً مشکلی که با آن مواجه شده‌اید را به طور کامل توضیح دهید.",
+    `${e.warn} <b>گزارش مشکل</b>\n\n` +
+    `مشکلی که باهاش مواجه شدی رو کامل توضیح بده.`,
 
-  ticketMessageTooShort: "❌ لطفاً جزئیات بیشتری ارائه دهید (حداقل ۱۰ کاراکتر)",
-  ticketMessageEmpty: "❌ پیام نمی‌تواند خالی باشد",
+  ticketMessageTooShort: `${e.cross} لطفاً بیشتر توضیح بده (حداقل ۱۰ کاراکتر)`,
+  ticketMessageEmpty: `${e.cross} پیام نمی‌تونه خالی باشه`,
 
   ticketCreatedSuccess: (data: { ticketNumber: string }) =>
-    format`✅ <b>تیکت با موفقیت ایجاد شد!</b>\n\nشماره تیکت: ${bold(data.ticketNumber)}\n\nتیم پشتیبانی ما مطلع شده و به زودی پاسخ خواهند داد.`,
+    `${e.checkBold} <b>تیکت ایجاد شد!</b>\n\nشماره تیکت: <b>${data.ticketNumber}</b>\n\nتیم پشتیبانی ما مطلع شدن و به‌زودی جواب می‌دن.`,
 
-  ticketCreateError:
-    "❌ ایجاد تیکت با خطا مواجه شد. لطفاً دوباره تلاش کنید یا مستقیماً با پشتیبانی تماس بگیرید.",
+  ticketCreateError: `${e.cross} ایجاد تیکت با خطا مواجه شد. دوباره امتحان کن یا مستقیم با پشتیبانی تماس بگیر.`,
 
-  ticketOrderNotFound: "❌ سفارش یافت نشد",
+  ticketOrderNotFound: `${e.cross} سفارش پیدا نشد`,
 
   // Ticket List
-  ticketListTitle: "📋 <b>تیکت‌های شما</b>",
-  ticketListEmpty: "📭 شما هنوز هیچ تیکتی ندارید.",
+  ticketListTitle: `${e.clipboard} <b>تیکت‌های تو</b>`,
+  ticketListEmpty: `${e.chat} هنوز هیچ تیکتی نداری — نگرانی؟ تیکت باز کن!`,
   ticketListShowingFirst10: "نمایش ۱۰ تیکت اول",
-  ticketListError:
-    "❌ بارگذاری تیکت‌ها با خطا مواجه شد. لطفاً دوباره تلاش کنید.",
+  ticketListError: `${e.cross} بارگذاری تیکت‌ها با خطا مواجه شد. دوباره تلاش کن.`,
 
   // Ticket Details
-  ticketNotFound: "❌ تیکت یافت نشد",
-  ticketNotYours: "❌ این تیکت متعلق به شما نیست",
-  ticketAlreadyClosed: "🔒 این تیکت بسته شده است",
-  ticketLoadError: "❌ بارگذاری تیکت با خطا مواجه شد. لطفاً دوباره تلاش کنید.",
+  ticketNotFound: `${e.cross} تیکت پیدا نشد`,
+  ticketNotYours: `${e.cross} این تیکت مال تو نیست`,
+  ticketAlreadyClosed: `${e.lock} این تیکت بسته‌ست`,
+  ticketLoadError: `${e.cross} بارگذاری تیکت با خطا مواجه شد. دوباره تلاش کن.`,
 
   status: "وضعیت",
   created: "تاریخ ایجاد",
@@ -414,38 +413,36 @@ export const fa = {
   lastMessage: "آخرین پیام",
 
   // Ticket Statuses
-  ticketStatus_open: "🟢 باز",
-  ticketStatus_waiting_user: "🟡 در انتظار پاسخ شما",
-  ticketStatus_waiting_support: "🟠 در انتظار پشتیبانی",
-  ticketStatus_in_progress: "🔵 در حال بررسی",
-  ticketStatus_resolved: "✅ حل شده",
-  ticketStatus_closed: "🔒 بسته شده",
-  ticketStatus_blocked: "⛔ مسدود شده",
+  ticketStatus_open: `${e.green} باز`,
+  ticketStatus_waiting_user: `${e.yellow} در انتظار پاسخ تو`,
+  ticketStatus_waiting_support: `${e.orange} در انتظار پشتیبانی`,
+  ticketStatus_in_progress: `${e.blue} در حال بررسی`,
+  ticketStatus_resolved: `${e.checkBold} حل شده`,
+  ticketStatus_closed: `${e.lock} بسته شده`,
+  ticketStatus_blocked: `${e.no} مسدود شده`,
 
   // Ticket Reply
   ticketReplyPrompt: (data: { ticketNumber: string }) =>
-    format`💬 <b>پاسخ به ${bold(data.ticketNumber)}</b>\n\nلطفاً پیام خود را تایپ کنید:`,
+    `${e.chat} <b>پاسخ به ${data.ticketNumber}</b>\n\nپیامت رو تایپ کن:`,
 
-  ticketReplySent:
-    "✅ پیام شما به پشتیبانی ارسال شد!\n\nزمانی که پاسخ دهند به شما اطلاع داده می‌شود.",
+  ticketReplySent: `${e.checkBold} پیامت ارسال شد!\n\nوقتی جواب بیاد بهت اطلاع می‌دم.`,
 
-  ticketReplyError: "❌ ارسال پیام با خطا مواجه شد. لطفاً دوباره تلاش کنید.",
+  ticketReplyError: `${e.cross} ارسال پیام با خطا مواجه شد. دوباره تلاش کن.`,
 
-  ticketCreationCancelled: "❌ ایجاد تیکت لغو شد",
+  ticketCreationCancelled: `${e.cross} ایجاد تیکت لغو شد`,
 
   // Ticket Messages
   ticketMessages: "پیام‌ها",
-  ticketNoMessages: "هنوز پیامی در این تیکت وجود ندارد",
-  ticketMessagesError: "❌ بارگذاری پیام‌ها با خطا مواجه شد",
+  ticketNoMessages: "هنوز پیامی در این تیکت نیست",
+  ticketMessagesError: `${e.cross} بارگذاری پیام‌ها با خطا مواجه شد`,
   ticketShowingLast5Messages: "نمایش ۵ پیام آخر",
-  you: "شما",
+  you: "تو",
   support: "پشتیبانی",
 
   // Purchase / Order Completion
   insufficientBalance: (data: { required: string; current: string }) =>
-    `❌ <b>موجودی کافی نیست</b>\n\nمبلغ مورد نیاز: <b>${data.required}</b> تومان\nموجودی شما: <b>${data.current}</b> تومان\n\nلطفاً کیف پول خود را شارژ کنید و دوباره تلاش کنید.`,
-  noConfigAvailable:
-    "❌ در حال حاضر کانفیگ VPN برای این پلن موجود نیست. لطفاً با پشتیبانی تماس بگیرید.",
+    `${e.cross} <b>موجودی کافی نیست</b>\n\nنیاز: <b>${data.required}</b> تومان\nموجودی تو: <b>${data.current}</b> تومان\n\nکیف پولت رو شارژ کن و دوباره تلاش کن.`,
+  noConfigAvailable: `${e.cross} در حال حاضر کانفیگ VPN برای این پلن موجود نیست. با پشتیبانی تماس بگیر.`,
   orderSuccess: (data: {
     orderId: number;
     productName: string;
@@ -453,34 +450,32 @@ export const fa = {
     amount: string;
     remainingBalance: string;
   }) =>
-    `✅ <b>خرید با موفقیت انجام شد!</b>\n\n` +
-    `📦 محصول: ${data.productName}\n` +
-    `📋 پلن: ${data.planName}\n` +
-    `💰 مبلغ پرداخت شده: <b>${data.amount}</b> تومان\n` +
-    `💳 موجودی باقی‌مانده: <b>${data.remainingBalance}</b> تومان\n` +
-    `🆔 شماره سفارش: #${data.orderId}`,
+    `${e.party} <b>خرید موفق بود!</b>\n\n` +
+    `${e.bag} محصول: ${data.productName}\n` +
+    `${e.clipboard} پلن: ${data.planName}\n` +
+    `${e.gem} مبلغ: <b>${data.amount}</b> تومان\n` +
+    `${e.wallet} موجودی باقی: <b>${data.remainingBalance}</b> تومان\n` +
+    `${e.id} سفارش: #${data.orderId}`,
   vpnConfigMessage: (data: { configData: string; label?: string }) =>
-    `🔑 <b>کانفیگ VPN شما</b>${data.label ? ` (${data.label})` : ""}\n\n` +
+    `${e.key} <b>کانفیگ VPN تو</b>${data.label ? ` (${data.label})` : ""}\n\n` +
     `<code>${data.configData}</code>\n\n` +
-    `📋 روی کانفیگ بالا تپ کنید تا کپی شود، سپس آن را در اپلیکیشن VPN وارد کنید.`,
-  btnMyOrders2: "📦 سفارشات من",
-  btnBackToMenu: "🏠 منوی اصلی",
+    `روی کانفیگ بالا تپ کن تا کپی بشه، بعد توی اپ VPN وارد کن.`,
+  btnMyOrders2: `${e.box} سفارشات من`,
+  btnBackToMenu: `${e.home} منوی اصلی`,
 
   // Discount code during order flow
-  enterDiscountCodeForOrder:
-    "🎫 <b>افزودن کد تخفیف</b>\n\nلطفاً کد تخفیف خود را وارد کنید:\n\n" +
-    "مثال: <code>SUMMER2024</code>",
-  btnSkipDiscount: "⏭️ ادامه بدون کد تخفیف",
-  btnRemoveDiscount: "🗑️ حذف تخفیف",
+  enterDiscountCodeForOrder: `${e.ticket} <b>افزودن کد تخفیف</b>\n\nکد تخفیفت رو وارد کن:\n\nمثال: <code>SUMMER2024</code>`,
+  btnSkipDiscount: `${e.zap} بدون کد تخفیف ادامه بده`,
+  btnRemoveDiscount: `${e.trash} حذف تخفیف`,
   discountCodeAppliedToOrder: (data: {
     code: string;
     discountAmount: string;
     finalPrice: string;
   }) =>
-    `✅ <b>کد تخفیف اعمال شد!</b>\n\n` +
-    `🎫 کد: <code>${data.code}</code>\n` +
-    `💸 تخفیف: -<b>${data.discountAmount}</b> تومان\n` +
-    `💰 مبلغ جدید: <b>${data.finalPrice}</b> تومان`,
+    `${e.checkBold} <b>کد تخفیف اعمال شد!</b>\n\n` +
+    `${e.ticket} کد: <code>${data.code}</code>\n` +
+    `${e.gem} تخفیف: -<b>${data.discountAmount}</b> تومان\n` +
+    `${e.wallet} مبلغ جدید: <b>${data.finalPrice}</b> تومان`,
   orderSummaryWithDiscount: (data: {
     productName: string;
     planName: string;
@@ -490,42 +485,36 @@ export const fa = {
     finalPrice: string;
     code: string;
   }) =>
-    `📝 <b>خلاصه سفارش</b>\n\n` +
-    `📦 محصول: ${data.productName}\n` +
-    `📋 پلن: ${data.planName}\n` +
-    (data.duration ? `⏱️ مدت: ${data.duration}\n` : "") +
-    `\n💰 قیمت اصلی: <b>${data.originalPrice}</b> تومان\n` +
-    `🎫 تخفیف (${data.code}): -<b>${data.discountAmount}</b> تومان\n` +
-    `✅ قیمت نهایی: <b>${data.finalPrice}</b> تومان`,
-  discountNotApplicableForProduct: "❌ این کد تخفیف برای این محصول معتبر نیست.",
+    `${e.clipboard} <b>خلاصه سفارش</b>\n\n` +
+    `${e.bag} محصول: ${data.productName}\n` +
+    `${e.tag} پلن: ${data.planName}\n` +
+    (data.duration ? `${e.clock} مدت: ${data.duration}\n` : "") +
+    `\n${e.wallet} قیمت اصلی: <b>${data.originalPrice}</b> تومان\n` +
+    `${e.ticket} تخفیف (${data.code}): -<b>${data.discountAmount}</b> تومان\n` +
+    `${e.checkBold} قیمت نهایی: <b>${data.finalPrice}</b> تومان`,
+  discountNotApplicableForProduct: `${e.cross} این کد تخفیف برای این محصول معتبر نیست.`,
   discountInsufficientBalanceWithDiscount: (data: {
     required: string;
     current: string;
   }) =>
-    `❌ <b>موجودی کافی نیست</b>\n\nمبلغ مورد نیاز پس از تخفیف: <b>${data.required}</b> تومان\nموجودی شما: <b>${data.current}</b> تومان\n\nلطفاً کیف پول خود را شارژ کنید و دوباره تلاش کنید.`,
+    `${e.cross} <b>موجودی کافی نیست</b>\n\nنیاز (بعد تخفیف): <b>${data.required}</b> تومان\nموجودی تو: <b>${data.current}</b> تومان\n\nکیف پولت رو شارژ کن.`,
 
   // Force Join Channels/Groups
-  joinChannelRequired:
-    "📢 <b>عضویت الزامی</b>\n\nبرای استفاده از ربات، لطفاً ابتدا در کانال‌ها/گروه‌های زیر عضو شوید:",
-  btnIJoined: "✅ عضو شدم — بررسی کن",
-  joinChannelNotJoinedAlert:
-    "❌ هنوز در همه کانال‌های مورد نیاز عضو نشده‌اید. لطفاً عضو شوید و دوباره امتحان کنید.",
+  joinChannelRequired: `${e.flag_ir} <b>عضویت الزامی</b>\n\nبرای استفاده از ربات، اول توی کانال‌ها/گروه‌های زیر عضو بشو:`,
+  btnIJoined: `${e.checkBold} عضو شدم — بررسی کن`,
+  joinChannelNotJoinedAlert: `${e.cross} هنوز توی همه کانال‌های لازم عضو نشدی. عضو بشو و دوباره امتحان کن.`,
 
   // ── فلوی سفارش دستی / زمان‌بندی‌شده ──────────────────────────────────────
-  manualOrderInfoRequired:
-    "📝 <b>اطلاعات مورد نیاز</b>\n\nبرای پردازش سفارش شما، لطفاً اطلاعات زیر را وارد کنید:",
+  manualOrderInfoRequired: `${e.clipboard} <b>اطلاعات مورد نیاز</b>\n\nبرای پردازش سفارشت، اطلاعات زیر رو وارد کن:`,
   manualOrderStep: (data: { current: number; total: number }) =>
-    `📍 مرحله ${data.current} از ${data.total}`,
-  manualOrderEmailPrompt: "📧 لطفاً <b>آدرس ایمیل</b> اکانت را وارد کنید:",
-  manualOrderLoginUsernamePrompt:
-    "👤 لطفاً <b>نام کاربری</b> اکانت را وارد کنید:",
-  manualOrderLoginPasswordPrompt:
-    "🔐 لطفاً <b>رمز عبور</b> اکانت را وارد کنید:",
-  manualOrderRegionPrompt:
-    "🌍 لطفاً <b>منطقه مورد نظر</b> را وارد کنید (مثلاً: US، EU، Asia):",
+    `${e.pin} مرحله ${data.current} از ${data.total}`,
+  manualOrderEmailPrompt: `${e.mail} <b>آدرس ایمیل</b> اکانت رو وارد کن:`,
+  manualOrderLoginUsernamePrompt: `${e.person} <b>نام کاربری</b> اکانت رو وارد کن:`,
+  manualOrderLoginPasswordPrompt: `${e.lock} <b>رمز عبور</b> اکانت رو وارد کن:`,
+  manualOrderRegionPrompt: `${e.earth} <b>منطقه مورد نظر</b> رو وارد کن (مثلاً: US، EU، Asia):`,
   manualOrderNeedsLabel: "اطلاعات مورد نیاز",
-  btnCancelManualOrder: "❌ لغو سفارش",
-  manualOrderCancelled: "❌ سفارش لغو شد.",
+  btnCancelManualOrder: `${e.cross} لغو سفارش`,
+  manualOrderCancelled: `${e.cross} سفارش لغو شد.`,
   manualOrderPending: (data: {
     orderId: number;
     productName: string;
@@ -533,28 +522,28 @@ export const fa = {
     amount: string;
     remainingBalance: string;
   }) =>
-    `✅ <b>سفارش ثبت شد!</b>\n\n` +
-    `📦 محصول: ${data.productName}\n` +
-    `📋 پلن: ${data.planName}\n` +
-    `💰 مبلغ پرداخت شده: <b>${data.amount}</b> تومان\n` +
-    `💳 موجودی باقی‌مانده: <b>${data.remainingBalance}</b> تومان\n` +
-    `🆔 شماره سفارش: #${data.orderId}\n\n` +
-    `⏳ سفارش شما به تیم ما ارسال شد.\n` +
-    `در طی <b>۱ تا ۲۴ ساعت</b> پردازش و به شما اطلاع داده می‌شود.`,
+    `${e.checkBold} <b>سفارش ثبت شد!</b>\n\n` +
+    `${e.bag} محصول: ${data.productName}\n` +
+    `${e.clipboard} پلن: ${data.planName}\n` +
+    `${e.gem} مبلغ: <b>${data.amount}</b> تومان\n` +
+    `${e.wallet} موجودی باقی: <b>${data.remainingBalance}</b> تومان\n` +
+    `${e.id} سفارش: #${data.orderId}\n\n` +
+    `${e.hourglass} سفارشت به تیم ما رسید.\n` +
+    `ظرف <b>۱ تا ۲۴ ساعت</b> پردازش و بهت اطلاع داده می‌شه.`,
   orderDeliveredNotification: (data: {
     orderId: number;
     productName: string;
   }) =>
-    `🎉 <b>سفارش شما آماده است!</b>\n\n` +
-    `📦 محصول: ${data.productName}\n` +
-    `🆔 سفارش: #${data.orderId}\n\n` +
-    `اطلاعات دسترسی شما در بخش سفارشات من ← جزئیات سفارش موجود است.`,
+    `${e.party} <b>سفارشت آماده‌ست!</b>\n\n` +
+    `${e.bag} محصول: ${data.productName}\n` +
+    `${e.id} سفارش: #${data.orderId}\n\n` +
+    `اطلاعات دسترسی توی بخش سفارشات من ← جزئیات سفارش موجوده.`,
 
   // ── انتخاب بازه زمانی ────────────────────────────────────────────────────
   schedulePickSlot: (data: { date: string }) =>
-    `📅 <b>انتخاب بازه زمانی</b>\n\nلطفاً یک بازه آزاد برای <b>${data.date}</b> انتخاب کنید:\n\n✅ = آزاد  |  ❌ = پر`,
+    `${e.calendar} <b>انتخاب بازه زمانی</b>\n\nیه بازه آزاد برای <b>${data.date}</b> انتخاب کن:\n\n${e.checkBold} = آزاد  |  ${e.cross} = پر`,
   scheduleSlotFree: "جای خالی",
-  scheduleSlotFullAlert: "❌ این بازه پر شد. بازه دیگری انتخاب کنید.",
+  scheduleSlotFullAlert: `${e.cross} این بازه پر شد. بازه دیگه‌ای انتخاب کن.`,
   scheduleBooked: (data: {
     orderId: number;
     productName: string;
@@ -564,24 +553,35 @@ export const fa = {
     amount: string;
     remainingBalance: string;
   }) =>
-    `✅ <b>بازه زمانی رزرو شد!</b>\n\n` +
-    `📦 محصول: ${data.productName}\n` +
-    `📋 پلن: ${data.planName}\n` +
-    `📅 تاریخ: <b>${data.date}</b>\n` +
-    `⏰ ساعت: <b>${data.timeSlot}</b>\n` +
-    `💰 مبلغ پرداختی: <b>${data.amount}</b> تومان\n` +
-    `💳 موجودی باقیمانده: <b>${data.remainingBalance}</b> تومان\n` +
-    `🆔 شماره سفارش: #${data.orderId}\n\n` +
-    `⚠️ <b>۱۵ دقیقه</b> قبل از شروع جلسه اطلاع‌رسانی می‌شود.\n` +
-    `وضعیت جلسه را در <b>سفارشات من</b> پیگیری کنید.`,
+    `${e.party} <b>بازه زمانی رزرو شد!</b>\n\n` +
+    `${e.bag} محصول: ${data.productName}\n` +
+    `${e.clipboard} پلن: ${data.planName}\n` +
+    `${e.calendar} تاریخ: <b>${data.date}</b>\n` +
+    `${e.clock} ساعت: <b>${data.timeSlot}</b>\n` +
+    `${e.gem} مبلغ: <b>${data.amount}</b> تومان\n` +
+    `${e.wallet} موجودی باقی: <b>${data.remainingBalance}</b> تومان\n` +
+    `${e.id} سفارش: #${data.orderId}\n\n` +
+    `${e.bell} <b>${e.clock} ۱۵ دقیقه</b> قبل از شروع بهت یادآوری می‌کنم.\n` +
+    `وضعیت جلسه رو توی <b>سفارشات من</b> پیگیری کن.`,
   scheduleReminderNotification: (data: {
     orderId: number;
     productName: string;
     timeSlot: string;
   }) =>
-    `⏰ <b>یادآوری جلسه!</b>\n\n` +
-    `جلسه <b>${data.productName}</b> شما <b>۱۵ دقیقه</b> دیگر شروع می‌شود.\n` +
-    `ساعت: <b>${data.timeSlot}</b>\n` +
-    `سفارش: #${data.orderId}\n\n` +
-    `لطفاً آماده باشید. تیم ما به زودی با شما تماس می‌گیرد.`,
+    `${e.bell} <b>یادآوری جلسه!</b>\n\n` +
+    `جلسه <b>${data.productName}</b> تو <b>۱۵ دقیقه</b> دیگه شروع می‌شه.\n` +
+    `${e.clock} ساعت: <b>${data.timeSlot}</b>\n` +
+    `${e.id} سفارش: #${data.orderId}\n\n` +
+    `${e.rocket} آماده باش — تیم ما به‌زودی با تو تماس می‌گیره.`,
+  sessionStartedUser: (data: {
+    orderId: number;
+    productName: string;
+    timeSlot: string;
+  }) =>
+    `${e.rocket} <b>جلسه‌ات شروع شد!</b>\n\n` +
+    `${e.bag} محصول: <b>${data.productName}</b>\n` +
+    `${e.clock} بازه: <b>${data.timeSlot}</b>\n` +
+    `${e.id} سفارش: #${data.orderId}\n\n` +
+    `${e.key} ادمین از همین چت اطلاعات لاگین رو برات می‌فرسته.\n` +
+    `${e.sparkles} آماده‌ای؟ بپر توش!`,
 } satisfies LanguageMap;

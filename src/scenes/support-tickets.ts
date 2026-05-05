@@ -168,6 +168,7 @@ export function setupTicketScenes(bot: AnyBot) {
 
     await context.editText(t("ticketCreationCancelled"), {
       reply_markup: keyboard,
+      parse_mode: "HTML",
     });
 
     await context.answerCallbackQuery();

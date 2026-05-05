@@ -31,6 +31,7 @@ export function setupWalletHandlers(bot: AnyBot) {
       `${t("walletTitle")}\n\n${t("walletBalance", balance)}\n\n${balance === "0" ? t("walletEmpty") : ""}`,
       {
         reply_markup: walletKeyboard(t),
+        parse_mode: "HTML",
       },
     );
 
@@ -55,6 +56,7 @@ export function setupWalletHandlers(bot: AnyBot) {
       `${t("rechargeWalletTitle")}\n\n${t("rechargeSelectMethod")}`,
       {
         reply_markup: walletRechargeKeyboard(t),
+        parse_mode: "HTML",
       },
     );
 
@@ -81,6 +83,7 @@ export function setupWalletHandlers(bot: AnyBot) {
         `${t("transactionHistoryTitle")}\n\n${t("transactionHistoryEmpty")}`,
         {
           reply_markup: walletHistoryKeyboard(t),
+          parse_mode: "HTML",
         },
       );
 
@@ -133,6 +136,7 @@ export function setupWalletHandlers(bot: AnyBot) {
 
     await context.editText(message, {
       reply_markup: walletHistoryKeyboard(t),
+      parse_mode: "HTML",
     });
 
     await context.answerCallbackQuery();
@@ -156,6 +160,7 @@ export function setupWalletHandlers(bot: AnyBot) {
       `${t("rechargeCryptoTitle")}\n\n${t("rechargeEnterAmountUsdt")}\n\n${t("rechargeMinAmountUsdt", "10")}\n${t("rechargeMaxAmountUsdt", "10000")}`,
       {
         reply_markup: rechargeCryptoKeyboard(t),
+        parse_mode: "HTML",
       },
     );
 
@@ -180,6 +185,7 @@ export function setupWalletHandlers(bot: AnyBot) {
       `${t("rechargeCardTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10000")}\n${t("rechargeMaxAmount", "1000000")}`,
       {
         reply_markup: rechargeCardKeyboard(t),
+        parse_mode: "HTML",
       },
     );
 
@@ -204,6 +210,7 @@ export function setupWalletHandlers(bot: AnyBot) {
       `${t("rechargeZarinpalTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10000")}\n${t("rechargeMaxAmount", "1000000")}`,
       {
         reply_markup: rechargeZarinpalKeyboard(t),
+        parse_mode: "HTML",
       },
     );
 

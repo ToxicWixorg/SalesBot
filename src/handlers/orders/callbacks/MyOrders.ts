@@ -59,6 +59,7 @@ export async function MyOrderCallback(context: Context) {
 
     await context.editText(message, {
       reply_markup: ordersListKeyboard(t),
+      parse_mode: "HTML",
     });
 
     await context.answerCallbackQuery();

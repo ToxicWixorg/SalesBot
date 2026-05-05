@@ -42,5 +42,6 @@ export async function BuyProductCallback(context: Context) {
 
   await context.editText(message, {
     reply_markup: productPlansKeyboard(t, plans, productId),
+    parse_mode: "HTML",
   });
 }

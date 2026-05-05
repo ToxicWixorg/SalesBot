@@ -147,8 +147,9 @@ export const startComposer = new Composer()
       }
     }
 
-    return context.send(`${t("welcome", userName)} \n\n${t("chooseAction")}`, {
+    return context.send(t("main_menu"), {
       reply_markup: mainMenuKeyboard(t),
+      parse_mode: "HTML",
     });
   })
   .callbackQuery("check_membership", async (context) => {
@@ -202,17 +203,15 @@ export const startComposer = new Composer()
     const userName = firstName || username || "User";
 
     try {
-      await context.editText(
-        `${t("welcome", userName)} \n\n\n\n${t("chooseAction")}`,
-        { reply_markup: mainMenuKeyboard(t) },
-      );
+      await context.editText(t("main_menu"), {
+        reply_markup: mainMenuKeyboard(t),
+        parse_mode: "HTML",
+      });
     } catch {
-      await context.send(
-        `${t("welcome", userName)} \n\n\n\n${t("chooseAction")}`,
-        {
-          reply_markup: mainMenuKeyboard(t),
-        },
-      );
+      await context.send(t("main_menu"), {
+        reply_markup: mainMenuKeyboard(t),
+        parse_mode: "HTML",
+      });
     }
   })
   .callbackQuery("main_menu", async (context) => {
@@ -240,8 +239,9 @@ export const startComposer = new Composer()
     const t = i18n.buildT(userLang);
 
     try {
-      await context.editText(t("mainMenu") + "\n\n" + t("chooseAction"), {
+      await context.editText(t("main_menu"), {
         reply_markup: mainMenuKeyboard(t),
+        parse_mode: "HTML",
       });
     } catch (error: any) {
       if (error?.message?.includes("message is not modified")) {

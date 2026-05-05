@@ -246,6 +246,7 @@ settingsComposer.callbackQuery(
 
     await context.editText(t("clearHistorySuccess"), {
       reply_markup: settingsKeyboard(t),
+      parse_mode: "HTML",
     });
   },
 );

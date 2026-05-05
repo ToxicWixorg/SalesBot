@@ -97,6 +97,7 @@ export async function ConfirmOrderCallback(context: Context) {
     if (!config) {
       await context.editText(t("noConfigAvailable"), {
         reply_markup: new InlineKeyboard().text(t("btnCancel"), "cancel_order"),
+        parse_mode: "HTML",
       });
       return;
     }

@@ -13,5 +13,6 @@ export async function CancelOrderCallback(context: Context) {
 
   await context.editText("❌ Order cancelled", {
     reply_markup: backToMainKeyboard(t),
+    parse_mode: "HTML",
   });
 }

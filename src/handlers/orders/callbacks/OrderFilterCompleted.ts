@@ -54,6 +54,7 @@ export async function OrderFilterCompletedCallback(
 
     await context.editText(message, {
       reply_markup: keyboard,
+      parse_mode: "HTML",
     });
 
     await context.answerCallbackQuery();

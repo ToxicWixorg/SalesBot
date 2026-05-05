@@ -98,7 +98,7 @@ export async function OrderCallback(
     }
 
     await context.editText(message, {
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
       reply_markup: orderDetailsKeyboard(t, order, product),
     });
 

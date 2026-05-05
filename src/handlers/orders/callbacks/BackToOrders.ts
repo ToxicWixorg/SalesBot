@@ -21,6 +21,7 @@ export async function BackToOrdersCallback(context: Context) {
 
     if (orders.length === 0) {
       await context.editText(t("ordersEmpty"), {
+        parse_mode: "HTML",
         reply_markup: new InlineKeyboard()
           .text(t("btnProducts"), "products")
           .row()
@@ -56,6 +57,7 @@ export async function BackToOrdersCallback(context: Context) {
 
     await context.editText(message, {
       reply_markup: ordersListKeyboard(t),
+      parse_mode: "HTML",
     });
 
     await context.answerCallbackQuery();

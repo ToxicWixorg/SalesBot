@@ -73,7 +73,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     await context.editText(
       `${title}\n\n${enterAmountText}\n\n${t(minAmountText as any, minAmount)}\n${t(maxAmountText as any, maxAmount)}`,
-      { reply_markup: keyboard },
+      { reply_markup: keyboard, parse_mode: "HTML" },
     );
 
     await context.answerCallbackQuery();
@@ -212,7 +212,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     await context.reply(
       tReply("rechargeCryptoVerified" as any, (state.amount || 0).toString()),
-      { reply_markup: keyboard },
+      { reply_markup: keyboard, parse_mode: "HTML" },
     );
   });
 
@@ -237,7 +237,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     await context.editText(
       `${t("rechargeWalletTitle")}\n\n${t("rechargeSelectMethod")}`,
-      { reply_markup: keyboard },
+      { reply_markup: keyboard, parse_mode: "HTML" },
     );
 
     await context.answerCallbackQuery({
@@ -266,7 +266,7 @@ async function handleCryptoPayment(context: any, amount: number) {
 
   await context.reply(
     `${t("rechargeCryptoTitle")}\n\n${t("rechargeCryptoAddress" as any, cryptoAddress)}\n\n${t("rechargeCryptoAmount" as any, usdtAmount)}\n${t("rechargeCryptoNetwork" as any, network)}\n\n${t("rechargeCryptoInstructions" as any)}\n\n${t("rechargeCryptoSendTxId" as any)}`,
-    { reply_markup: keyboard },
+    { reply_markup: keyboard, parse_mode: "HTML" },
   );
 }
 
@@ -288,7 +288,7 @@ async function handleZarinpalPayment(context: any, amount: number) {
 
   await context.reply(
     `${t("rechargeZarinpalTitle")}\n\n${t("rechargePaymentLink" as any, amount.toString())}`,
-    { reply_markup: keyboard },
+    { reply_markup: keyboard, parse_mode: "HTML" },
   );
 
   await context.reply(t("rechargePaymentPending" as any));
@@ -312,7 +312,7 @@ async function handleCardPayment(context: any, amount: number) {
 
   await context.reply(
     `${t("rechargeCardTitle")}\n\n${t("rechargePaymentLink" as any, amount.toString())}`,
-    { reply_markup: keyboard },
+    { reply_markup: keyboard, parse_mode: "HTML" },
   );
 
   await context.reply(t("rechargePaymentPending" as any));

@@ -21,5 +21,6 @@ export async function ProductCallback(context: Context) {
 
   await context.editText(t("selectCategory"), {
     reply_markup: categoriesKeyboard(t, categories),
+    parse_mode: "HTML",
   });
 }

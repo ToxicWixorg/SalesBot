@@ -81,5 +81,6 @@ export async function SelectPlanCallback(context: Context) {
 
   await context.editText(message, {
     reply_markup: orderConfirmationKeyboard(t, planId),
+    parse_mode: "HTML",
   });
 }

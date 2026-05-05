@@ -68,6 +68,7 @@ export async function OrderFilterActiveCallback(
 
     await context.editText(message, {
       reply_markup: keyboard,
+      parse_mode: "HTML",
     });
 
     await context.answerCallbackQuery();

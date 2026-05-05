@@ -1,8 +1,11 @@
-import { eq, and, count } from "drizzle-orm";
+import { eq, and, count, gte, lte } from "drizzle-orm";
 import { db } from "../db/index.ts";
 import {
   timeSlotTemplatesTable,
   schedulesTable,
+  usersTable,
+  ordersTable,
+  productsTable,
   type TimeSlotTemplate,
 } from "../db/schema.ts";
 
@@ -136,6 +139,187 @@ export const ScheduleRepository = {
       .set({
         status: "completed",
         completedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(schedulesTable.id, id))
+      .returning();
+    return row;
+  },
+
+  /**
+   * Find sessions whose time slot starts at the given time and haven't been
+   * session-start-notified yet. Used by ReminderService to fire T=0 events.
+   */
+  async findSessionsStartingNow(
+    dateStr: string, // YYYY-MM-DD
+    timeStr: string, // "HH:MM"
+  ) {
+    const rows = await db
+      .select({
+        schedule: schedulesTable,
+        user: {
+          id: usersTable.id,
+          username: usersTable.username,
+          firstName: usersTable.firstName,
+          languageCode: usersTable.languageCode,
+        },
+        order: {
+          id: ordersTable.id,
+          productId: ordersTable.productId,
+        },
+        product: {
+          name: productsTable.name,
+        },
+      })
+      .from(schedulesTable)
+      .leftJoin(usersTable, eq(schedulesTable.userId, usersTable.id))
+      .leftJoin(ordersTable, eq(schedulesTable.orderId, ordersTable.id))
+      .leftJoin(productsTable, eq(ordersTable.productId, productsTable.id))
+      .where(
+        and(
+          eq(schedulesTable.date, dateStr),
+          eq(schedulesTable.sessionStartNotified, false),
+        ),
+      );
+
+    // Filter to sessions whose slot starts exactly at timeStr
+    return rows.filter((r) => {
+      const slotStart = r.schedule.timeSlot.split("-")[0]?.trim();
+      return slotStart === timeStr;
+    });
+  },
+
+  /** Mark a schedule as session-started and link its auto-created ticket */
+  async markSessionStartNotified(id: number, ticketId: number) {
+    await db
+      .update(schedulesTable)
+      .set({
+        sessionStartNotified: true,
+        sessionTicketId: ticketId,
+        status: "in_progress",
+        updatedAt: new Date(),
+      })
+      .where(eq(schedulesTable.id, id));
+  },
+
+  // ── New helper methods ───────────────────────────────────────────────────────
+
+  /**
+   * Find a single schedule by ID with full user/order/product joins.
+   * Returns null if not found.
+   */
+  async findById(id: number) {
+    const rows = await db
+      .select({
+        schedule: schedulesTable,
+        user: {
+          id: usersTable.id,
+          username: usersTable.username,
+          firstName: usersTable.firstName,
+          languageCode: usersTable.languageCode,
+        },
+        order: {
+          id: ordersTable.id,
+          productId: ordersTable.productId,
+          status: ordersTable.status,
+        },
+        product: {
+          name: productsTable.name,
+        },
+      })
+      .from(schedulesTable)
+      .leftJoin(usersTable, eq(schedulesTable.userId, usersTable.id))
+      .leftJoin(ordersTable, eq(schedulesTable.orderId, ordersTable.id))
+      .leftJoin(productsTable, eq(ordersTable.productId, productsTable.id))
+      .where(eq(schedulesTable.id, id))
+      .limit(1);
+
+    return rows[0] ?? null;
+  },
+
+  /**
+   * Get all schedules currently in_progress (live sessions).
+   * Used by admin dashboard to show active sessions panel.
+   */
+  async findInProgressSessions() {
+    return db
+      .select({
+        schedule: schedulesTable,
+        user: {
+          id: usersTable.id,
+          username: usersTable.username,
+          firstName: usersTable.firstName,
+          languageCode: usersTable.languageCode,
+        },
+        order: {
+          id: ordersTable.id,
+          productId: ordersTable.productId,
+        },
+        product: {
+          name: productsTable.name,
+        },
+      })
+      .from(schedulesTable)
+      .leftJoin(usersTable, eq(schedulesTable.userId, usersTable.id))
+      .leftJoin(ordersTable, eq(schedulesTable.orderId, ordersTable.id))
+      .leftJoin(productsTable, eq(ordersTable.productId, productsTable.id))
+      .where(eq(schedulesTable.status, "in_progress"));
+  },
+
+  /**
+   * Get sessions scheduled today that start within the next `minutesAhead`
+   * minutes (and haven't been started yet).
+   * Used by admin dashboard "upcoming" section.
+   */
+  async findUpcomingToday(minutesAhead = 60) {
+    const now = new Date();
+    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const fromTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    const future = new Date(now.getTime() + minutesAhead * 60_000);
+    const toTime = `${String(future.getHours()).padStart(2, "0")}:${String(future.getMinutes()).padStart(2, "0")}`;
+
+    const rows = await db
+      .select({
+        schedule: schedulesTable,
+        user: {
+          id: usersTable.id,
+          username: usersTable.username,
+          firstName: usersTable.firstName,
+        },
+        order: {
+          id: ordersTable.id,
+        },
+        product: {
+          name: productsTable.name,
+        },
+      })
+      .from(schedulesTable)
+      .leftJoin(usersTable, eq(schedulesTable.userId, usersTable.id))
+      .leftJoin(ordersTable, eq(schedulesTable.orderId, ordersTable.id))
+      .leftJoin(productsTable, eq(ordersTable.productId, productsTable.id))
+      .where(
+        and(
+          eq(schedulesTable.date, date),
+          eq(schedulesTable.sessionStartNotified, false),
+        ),
+      );
+
+    // Filter to the time window
+    return rows.filter((r) => {
+      const slotStart = r.schedule.timeSlot.split("-")[0]?.trim() ?? "";
+      return slotStart >= fromTime && slotStart <= toTime;
+    });
+  },
+
+  /**
+   * Cancel a schedule (status → cancelled).
+   * Does NOT touch the order — caller is responsible for that.
+   */
+  async cancelSession(id: number) {
+    const [row] = await db
+      .update(schedulesTable)
+      .set({
+        status: "cancelled",
         updatedAt: new Date(),
       })
       .where(eq(schedulesTable.id, id))

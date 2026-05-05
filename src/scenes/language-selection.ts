@@ -35,6 +35,7 @@ export const languageSelectionScene = new Scene("language_selection")
         "🌍 Please select your language:\n🌍 لطفاً زبان خود را انتخاب کنید:\n🌍 Пожалуйста, выберите ваш язык:",
         {
           reply_markup: keyboard,
+          parse_mode: "HTML",
         },
       );
     }
@@ -82,8 +83,9 @@ export const languageSelectionScene = new Scene("language_selection")
       .row()
       .text(t("btnSettings"), "settings");
 
-    await context.send(t("mainMenu") + "\n\n" + t("chooseAction"), {
+    await context.send(t("main_menu"), {
       reply_markup: mainMenuKeyboard,
+      parse_mode: "HTML",
     });
 
     return context.scene.exit();
