@@ -203,13 +203,16 @@ export const startComposer = new Composer()
 
     try {
       await context.editText(
-        `${t("welcome", userName)} \n\n\n\n \n${t("chooseAction")}`,
+        `${t("welcome", userName)} \n\n\n\n${t("chooseAction")}`,
         { reply_markup: mainMenuKeyboard(t) },
       );
     } catch {
-      await context.send(`${t("welcome", userName)} \n\n${t("chooseAction")}`, {
-        reply_markup: mainMenuKeyboard(t),
-      });
+      await context.send(
+        `${t("welcome", userName)} \n\n\n\n${t("chooseAction")}`,
+        {
+          reply_markup: mainMenuKeyboard(t),
+        },
+      );
     }
   })
   .callbackQuery("main_menu", async (context) => {
