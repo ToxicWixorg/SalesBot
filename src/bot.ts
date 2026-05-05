@@ -12,6 +12,8 @@ import { setupWalletHandlers } from "./handlers/wallet.ts";
 import { setupWalletRechargeScene } from "./scenes/wallet-recharge.ts";
 import { supportHandler } from "./handlers/support.ts";
 import { setupTicketScenes } from "./scenes/support-tickets.ts";
+import { setupManualOrderScene } from "./scenes/manual-order.ts";
+import { setBotInstance } from "./botInstance.ts";
 
 // Validate BOT_TOKEN
 if (!config.BOT_TOKEN) {
@@ -41,6 +43,12 @@ export const bot = new Bot(config.BOT_TOKEN)
         .catch(() => {});
     }
   });
+
+// Set bot singleton (must be before scenes that need getBotInstance)
+setBotInstance(bot);
+
+// Setup manual order scene (must run before ticket scenes)
+setupManualOrderScene(bot);
 
 // Setup support/ticket handlers FIRST (higher priority)
 setupTicketScenes(bot);

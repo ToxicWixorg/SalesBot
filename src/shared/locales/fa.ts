@@ -509,4 +509,43 @@ export const fa = {
   btnIJoined: "✅ عضو شدم — بررسی کن",
   joinChannelNotJoinedAlert:
     "❌ هنوز در همه کانال‌های مورد نیاز عضو نشده‌اید. لطفاً عضو شوید و دوباره امتحان کنید.",
+
+  // ── فلوی سفارش دستی / زمان‌بندی‌شده ──────────────────────────────────────
+  manualOrderInfoRequired:
+    "📝 <b>اطلاعات مورد نیاز</b>\n\nبرای پردازش سفارش شما، لطفاً اطلاعات زیر را وارد کنید:",
+  manualOrderStep: (data: { current: number; total: number }) =>
+    `📍 مرحله ${data.current} از ${data.total}`,
+  manualOrderEmailPrompt: "📧 لطفاً <b>آدرس ایمیل</b> اکانت را وارد کنید:",
+  manualOrderLoginUsernamePrompt:
+    "👤 لطفاً <b>نام کاربری</b> اکانت را وارد کنید:",
+  manualOrderLoginPasswordPrompt:
+    "🔐 لطفاً <b>رمز عبور</b> اکانت را وارد کنید:",
+  manualOrderRegionPrompt:
+    "🌍 لطفاً <b>منطقه مورد نظر</b> را وارد کنید (مثلاً: US، EU، Asia):",
+  manualOrderNeedsLabel: "اطلاعات مورد نیاز",
+  btnCancelManualOrder: "❌ لغو سفارش",
+  manualOrderCancelled: "❌ سفارش لغو شد.",
+  manualOrderPending: (data: {
+    orderId: number;
+    productName: string;
+    planName: string;
+    amount: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>سفارش ثبت شد!</b>\n\n` +
+    `📦 محصول: ${data.productName}\n` +
+    `📋 پلن: ${data.planName}\n` +
+    `💰 مبلغ پرداخت شده: <b>${data.amount}</b> تومان\n` +
+    `💳 موجودی باقی‌مانده: <b>${data.remainingBalance}</b> تومان\n` +
+    `🆔 شماره سفارش: #${data.orderId}\n\n` +
+    `⏳ سفارش شما به تیم ما ارسال شد.\n` +
+    `در طی <b>۱ تا ۲۴ ساعت</b> پردازش و به شما اطلاع داده می‌شود.`,
+  orderDeliveredNotification: (data: {
+    orderId: number;
+    productName: string;
+  }) =>
+    `🎉 <b>سفارش شما آماده است!</b>\n\n` +
+    `📦 محصول: ${data.productName}\n` +
+    `🆔 سفارش: #${data.orderId}\n\n` +
+    `اطلاعات دسترسی شما در بخش سفارشات من ← جزئیات سفارش موجود است.`,
 } satisfies ShouldFollowLanguageStrict<typeof en>;

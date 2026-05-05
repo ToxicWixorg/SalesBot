@@ -10,6 +10,15 @@ import { OrderRepository } from "../../../repositories/OrderRepository.ts";
 import { WalletRepository } from "../../../repositories/WalletRepository.ts";
 import { DiscountCodeRepository } from "../../../repositories/DiscountCodeRepository.ts";
 import { appliedDiscountState } from "../discountOrderState.ts";
+import {
+  pendingOrderInfoState,
+  type InfoStep,
+} from "../pendingOrderInfoState.ts";
+import { createManualOrderDirect } from "../../../scenes/manual-order.ts";
+import { getBotInstance } from "../../../botInstance.ts";
+
+/** Delivery types that are fulfilled instantly from a pre-loaded config pool */
+const CONFIG_DELIVERY_TYPES = ["automatic", "code", "family_join"] as const;
 
 export async function ConfirmOrderCallback(context: Context) {
   if (!context.from || !context.queryData) return;
@@ -69,96 +78,152 @@ export async function ConfirmOrderCallback(context: Context) {
     return;
   }
 
-  // Find available config — prefer plan-specific first, then product-wide
-  let config = await ProductConfigRepository.findAvailableByPlanId(planId);
-  if (!config) {
-    config = await ProductConfigRepository.findAvailableByProductId(
-      plan.productId,
-    );
-  }
+  await context.answerCallbackQuery();
 
-  if (!config) {
-    await context.answerCallbackQuery("❌ No config available");
-    await context.editText(t("noConfigAvailable"), {
-      reply_markup: new InlineKeyboard().text(t("btnCancel"), "cancel_order"),
+  // ── Branch by delivery type ──────────────────────────────────────────────
+  const isConfigBased = (CONFIG_DELIVERY_TYPES as readonly string[]).includes(
+    product.deliveryType,
+  );
+
+  if (isConfigBased) {
+    // ── Automatic / instant config delivery ─────────────────────────────
+    let config = await ProductConfigRepository.findAvailableByPlanId(planId);
+    if (!config) {
+      config = await ProductConfigRepository.findAvailableByProductId(
+        plan.productId,
+      );
+    }
+
+    if (!config) {
+      await context.editText(t("noConfigAvailable"), {
+        reply_markup: new InlineKeyboard().text(t("btnCancel"), "cancel_order"),
+      });
+      return;
+    }
+
+    // Create completed order
+    const order = await OrderRepository.create({
+      userId: userId as any,
+      productId: plan.productId,
+      planId,
+      status: "completed",
+      quantity: 1,
+      totalPrice: plan.price as any,
+      discountAmount: discountAmount.toString() as any,
+      walletUsed: finalPrice.toString() as any,
+      finalPrice: finalPrice.toString() as any,
+      paymentMethod: "wallet",
+      discountCodeId: hasDiscount ? pendingDiscount.discountCodeId : undefined,
+      delivery: { configId: config.id, configData: config.configData },
+      deliveredAt: new Date(),
     });
-    return;
-  }
 
-  // Create the order first (pending state)
-  const order = await OrderRepository.create({
-    userId: userId as any,
-    productId: plan.productId,
-    planId,
-    status: "completed",
-    quantity: 1,
-    totalPrice: plan.price as any,
-    discountAmount: discountAmount.toString() as any,
-    walletUsed: finalPrice.toString() as any,
-    finalPrice: finalPrice.toString() as any,
-    paymentMethod: "wallet",
-    discountCodeId: hasDiscount ? pendingDiscount.discountCodeId : undefined,
-    delivery: { configId: config.id, configData: config.configData },
-    deliveredAt: new Date(),
-  });
-
-  // Deduct wallet balance (only the final price after discount)
-  await UserRepository.updateWalletBalance(userId, finalPrice, "subtract");
-
-  // Record wallet transaction
-  await WalletRepository.debitBalance(
-    userId,
-    finalPrice.toFixed(2),
-    "purchase",
-    order.id,
-    `خرید ${product.name} - ${plan.name}`,
-  );
-
-  // If a discount code was used, record its usage and clear the pending state
-  if (hasDiscount && pendingDiscount) {
-    await DiscountCodeRepository.recordUsage(
-      pendingDiscount.discountCodeId,
+    // Deduct wallet
+    await UserRepository.updateWalletBalance(userId, finalPrice, "subtract");
+    await WalletRepository.debitBalance(
       userId,
+      finalPrice.toFixed(2),
+      "purchase",
       order.id,
-      pendingDiscount.discountAmount,
+      `خرید ${product.name} - ${plan.name}`,
     );
-    appliedDiscountState.delete(userId);
-  }
 
-  // Mark config as used
-  await ProductConfigRepository.markAsUsed(config.id, order.id);
+    if (hasDiscount && pendingDiscount) {
+      await DiscountCodeRepository.recordUsage(
+        pendingDiscount.discountCodeId,
+        userId,
+        order.id,
+        pendingDiscount.discountAmount,
+      );
+      appliedDiscountState.delete(userId);
+    }
 
-  // Decrease product stock
-  await ProductRepository.decreaseStock(plan.productId);
+    await ProductConfigRepository.markAsUsed(config.id, order.id);
+    await ProductRepository.decreaseStock(plan.productId);
 
-  // Get updated balance
-  const updatedUser = await UserRepository.findById(userId);
-  const newBalance = parseFloat(updatedUser?.walletBalance || "0");
+    const updatedUser = await UserRepository.findById(userId);
+    const newBalance = parseFloat(updatedUser?.walletBalance || "0");
 
-  // Send success message
-  await context.editText(
-    t("orderSuccess", {
-      orderId: order.id,
-      productName: product.name,
-      planName: plan.name,
-      amount: finalPrice.toFixed(0),
-      remainingBalance: newBalance.toFixed(0),
-    }),
-    {
+    await context.editText(
+      t("orderSuccess", {
+        orderId: order.id,
+        productName: product.name,
+        planName: plan.name,
+        amount: finalPrice.toFixed(0),
+        remainingBalance: newBalance.toFixed(0),
+      }),
+      {
+        parse_mode: "HTML",
+        reply_markup: new InlineKeyboard()
+          .text(t("btnMyOrders"), "orders")
+          .row()
+          .text(t("btnMainMenu"), "main_menu"),
+      },
+    );
+
+    await context.send(
+      t("vpnConfigMessage", {
+        configData: config.configData,
+        label: config.label ?? undefined,
+      }),
+      { parse_mode: "HTML" },
+    );
+  } else {
+    // ── Manual / Custom-schedule / Invite delivery ──────────────────────
+    // Determine which fields to collect from the user (from plan-level requirements)
+    const steps: InfoStep[] = [];
+    if (plan.requiresEmail) steps.push("email");
+    if (plan.requiresLogin) {
+      steps.push("loginUsername");
+      steps.push("loginPassword");
+    }
+    if (plan.requiresRegion) steps.push("region");
+
+    if (steps.length === 0) {
+      // No info needed – create the order immediately
+      await createManualOrderDirect(
+        getBotInstance(),
+        userId,
+        planId,
+        (text, opts) => context.editText(text, opts),
+      );
+      return;
+    }
+
+    // Save state and ask for the first field
+    pendingOrderInfoState.set(userId, {
+      planId,
+      steps,
+      currentStep: 0,
+      collected: {},
+      discount: hasDiscount ? pendingDiscount : undefined,
+    });
+
+    const stepIndicator = t("manualOrderStep", {
+      current: 1,
+      total: steps.length,
+    });
+    const firstPromptKey = getPromptKey(steps[0]);
+    const message =
+      `${t("manualOrderInfoRequired")}\n\n${stepIndicator}\n\n${t(firstPromptKey as any)}`;
+
+    await context.editText(message, {
       parse_mode: "HTML",
-      reply_markup: new InlineKeyboard()
-        .text(t("btnMyOrders"), "orders")
-        .row()
-        .text(t("btnMainMenu"), "main_menu"),
-    },
-  );
-
-  // Send the config in a separate message
-  await context.send(
-    t("vpnConfigMessage", {
-      configData: config.configData,
-      label: config.label ?? undefined,
-    }),
-    { parse_mode: "HTML" },
-  );
+      reply_markup: new InlineKeyboard().text(
+        t("btnCancelManualOrder"),
+        "cancel_manual_order",
+      ),
+    });
+  }
 }
+
+function getPromptKey(step: InfoStep): string {
+  const map: Record<InfoStep, string> = {
+    email: "manualOrderEmailPrompt",
+    loginUsername: "manualOrderLoginUsernamePrompt",
+    loginPassword: "manualOrderLoginPasswordPrompt",
+    region: "manualOrderRegionPrompt",
+  };
+  return map[step];
+}
+

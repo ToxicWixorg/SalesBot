@@ -1,16 +1,14 @@
-
-
 import { db } from "../db/index.ts";
 import { categoriesTable } from "../db/schema.ts";
 import { eq } from "drizzle-orm";
 
 const defaultCategories = [
-  {
-    name: "موزیک",
-    slug: "music",
-    description: "اشتراک‌های موسیقی مثل Spotify, Apple Music, Deezer",
-    icon: "🎵",
-  },
+  // {
+  //   name: "موزیک",
+  //   slug: "music",
+  //   description: "اشتراک‌های موسیقی مثل Spotify, Apple Music, Deezer",
+  //   icon: "🎵",
+  // },
   {
     name: "هوش مصنوعی",
     slug: "ai",
@@ -22,12 +20,6 @@ const defaultCategories = [
     slug: "vpn",
     description: "سرویس‌های VPN مختلف",
     icon: "🌐",
-  },
-  {
-    name: "سایر",
-    slug: "other",
-    description: "سایر محصولات دیجیتال",
-    icon: "🎮",
   },
 ];
 
@@ -42,7 +34,9 @@ export async function seedCategoriesOnStartup() {
       .limit(1);
 
     if (existing) {
-      console.log(`  ⏭️  Category "${category.name}" already exists, skipping...`);
+      console.log(
+        `  ⏭️  Category "${category.name}" already exists, skipping...`,
+      );
       continue;
     }
 

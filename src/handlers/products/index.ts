@@ -6,7 +6,6 @@ import { CategoriesCallback } from "./callbacks/Categories.ts";
 import { CategoryCallBack } from "./callbacks/Category.ts";
 import { BuyProductCallback } from "./callbacks/BuyProduct.ts";
 import { SelectPlanCallback } from "./callbacks/SelectPlan.ts";
-import { NotifyStockCallback } from "./callbacks/NotifyStock.ts";
 import { CancelOrderCallback } from "./callbacks/CancelOrder.ts";
 import { ConfirmOrderCallback } from "./callbacks/ConfirmOrder.ts";
 import { AddDiscountCallback } from "./callbacks/AddDiscount.ts";
@@ -33,9 +32,6 @@ export const productsComposer = new Composer()
   })
   .callbackQuery(/^confirm_order_(\d+)$/, async (context) => {
     return await ConfirmOrderCallback(context);
-  })
-  .callbackQuery(/^notify_stock_(\d+)$/, async (context) => {
-    return await NotifyStockCallback(context);
   })
   .callbackQuery("cancel_order", async (context) => {
     return await CancelOrderCallback(context);

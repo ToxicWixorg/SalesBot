@@ -516,4 +516,42 @@ export const ru = {
     current: string;
   }) =>
     `❌ <b>Недостаточно средств</b>\n\nНеобходимо после скидки: <b>${data.required}</b> Томан\nВаш баланс: <b>${data.current}</b> Томан\n\nПожалуйста, пополните кошелёк и попробуйте снова.`,
+
+  // ── Ручной / запланированный заказ ────────────────────────────────────────
+  manualOrderInfoRequired:
+    "📝 <b>Необходима информация</b>\n\nДля обработки вашего заказа укажите следующие данные:",
+  manualOrderStep: (data: { current: number; total: number }) =>
+    `📍 Шаг ${data.current} из ${data.total}`,
+  manualOrderEmailPrompt: "📧 Введите <b>email-адрес</b> аккаунта:",
+  manualOrderLoginUsernamePrompt:
+    "👤 Введите <b>имя пользователя</b> аккаунта:",
+  manualOrderLoginPasswordPrompt: "🔐 Введите <b>пароль</b> аккаунта:",
+  manualOrderRegionPrompt:
+    "🌍 Введите <b>предпочитаемый регион</b> (например: US, EU, Asia):",
+  manualOrderNeedsLabel: "Необходимые данные",
+  btnCancelManualOrder: "❌ Отменить заказ",
+  manualOrderCancelled: "❌ Заказ отменён.",
+  manualOrderPending: (data: {
+    orderId: number;
+    productName: string;
+    planName: string;
+    amount: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>Заказ оформлен!</b>\n\n` +
+    `📦 Продукт: ${data.productName}\n` +
+    `📋 План: ${data.planName}\n` +
+    `💰 Оплачено: <b>${data.amount}</b> Томан\n` +
+    `💳 Остаток: <b>${data.remainingBalance}</b> Томан\n` +
+    `🆔 Номер заказа: #${data.orderId}\n\n` +
+    `⏳ Заказ передан нашей команде.\n` +
+    `Мы обработаем его в течение <b>1–24 часов</b> и уведомим вас.`,
+  orderDeliveredNotification: (data: {
+    orderId: number;
+    productName: string;
+  }) =>
+    `🎉 <b>Ваш заказ готов!</b>\n\n` +
+    `📦 Продукт: ${data.productName}\n` +
+    `🆔 Заказ: #${data.orderId}\n\n` +
+    `Данные для доступа доступны в разделе Мои заказы → Детали заказа.`,
 } satisfies ShouldFollowLanguageStrict<typeof en>;

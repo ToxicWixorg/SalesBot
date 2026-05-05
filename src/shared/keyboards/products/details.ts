@@ -13,7 +13,6 @@ export function productDetailsKeyboard(
     keyboard.text(t("btnBuyProduct"), `buy_product_${product.id}`);
     keyboard.row();
   } else {
-    keyboard.text(t("btnNotifyStock"), `notify_stock_${product.id}`);
     keyboard.row();
   }
 

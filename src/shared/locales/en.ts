@@ -512,4 +512,44 @@ export const en = {
     current: string;
   }) =>
     `❌ <b>Insufficient Balance</b>\n\nRequired after discount: <b>${data.required}</b> Toman\nYour balance: <b>${data.current}</b> Toman\n\nPlease recharge your wallet and try again.`,
+
+  // ── Manual / Custom-Schedule Order Flow ──────────────────────────────────
+  manualOrderInfoRequired:
+    "📝 <b>Additional Information Required</b>\n\nTo process your order, please provide the following details:",
+  manualOrderStep: (data: { current: number; total: number }) =>
+    `📍 Step ${data.current} of ${data.total}`,
+  manualOrderEmailPrompt:
+    "📧 Please enter the <b>email address</b> for the account:",
+  manualOrderLoginUsernamePrompt:
+    "👤 Please enter the <b>account username</b>:",
+  manualOrderLoginPasswordPrompt:
+    "🔐 Please enter the <b>account password</b>:",
+  manualOrderRegionPrompt:
+    "🌍 Please enter your <b>preferred region</b> (e.g. US, EU, Asia):",
+  manualOrderNeedsLabel: "Required info",
+  btnCancelManualOrder: "❌ Cancel Order",
+  manualOrderCancelled: "❌ Order cancelled.",
+  manualOrderPending: (data: {
+    orderId: number;
+    productName: string;
+    planName: string;
+    amount: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>Order Registered!</b>\n\n` +
+    `📦 Product: ${data.productName}\n` +
+    `📋 Plan: ${data.planName}\n` +
+    `💰 Amount paid: <b>${data.amount}</b> Toman\n` +
+    `💳 Remaining balance: <b>${data.remainingBalance}</b> Toman\n` +
+    `🆔 Order ID: #${data.orderId}\n\n` +
+    `⏳ Your order has been submitted to our team.\n` +
+    `We will process it within <b>1–24 hours</b> and notify you when it's ready.`,
+  orderDeliveredNotification: (data: {
+    orderId: number;
+    productName: string;
+  }) =>
+    `🎉 <b>Your Order is Ready!</b>\n\n` +
+    `📦 Product: ${data.productName}\n` +
+    `🆔 Order: #${data.orderId}\n\n` +
+    `Your access details are available in My Orders → Order Details.`,
 } satisfies LanguageMap;
