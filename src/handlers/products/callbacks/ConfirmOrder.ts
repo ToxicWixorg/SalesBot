@@ -120,6 +120,7 @@ export async function ConfirmOrderCallback(context: Context) {
       remainingBalance: newBalance.toFixed(0),
     }),
     {
+      parse_mode: "HTML",
       reply_markup: new InlineKeyboard()
         .text(t("btnMyOrders"), "orders")
         .row()

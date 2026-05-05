@@ -1,6 +1,7 @@
 import { bot } from "./bot.ts";
 import { config } from "./config.ts";
 import { seedOwnerOnStartup } from "./scripts/seed-owner.ts";
+import { seedCategoriesOnStartup } from "./scripts/seed-categories.ts";
 
 const signals = ["SIGINT", "SIGTERM"];
 
@@ -20,7 +21,7 @@ process.on("unhandledRejection", (error) => {
   console.error("Unhandled rejection:", error);
 });
 
-// ثبت مالک ربات در دیتابیس (در صورت نبود)
 await seedOwnerOnStartup();
+await seedCategoriesOnStartup();
 
 await bot.start();

@@ -1,10 +1,3 @@
-/**
- * Script: seed-owner.ts
- * ثبت مالک ربات به عنوان کاربر + SuperAdmin در دیتابیس
- *
- * Usage: bun src/scripts/seed-owner.ts
- */
-
 import { db } from "../db/index.ts";
 import { usersTable, adminsTable } from "../db/schema.ts";
 import { eq } from "drizzle-orm";
@@ -15,7 +8,6 @@ async function seedOwner() {
   const ownerId = config.OWNER_ID;
   console.log(`\n🔧 Seeding owner (ID: ${ownerId})...\n`);
 
-  // ─── 1. Upsert کاربر در جدول users ───────────────────────────
   const [user] = await db
     .insert(usersTable)
     .values({
@@ -36,7 +28,6 @@ async function seedOwner() {
 
   console.log(`✓ users table — ID: ${user.id}, role: ${user.role}`);
 
-  // ─── 2. Upsert ادمین در جدول admins ──────────────────────────
   const existing = await db
     .select()
     .from(adminsTable)
@@ -48,7 +39,6 @@ async function seedOwner() {
   const DEFAULT_PASSWORD = "1234";
 
   if (existing.length > 0) {
-    // اگه رمز نداره، رمز دیفالت بزار
     const needsPassword = !existing[0].passwordHash;
     const passwordHash = needsPassword
       ? await Bun.password.hash(DEFAULT_PASSWORD)
@@ -61,7 +51,7 @@ async function seedOwner() {
       allowedSections: allSections,
       permissions: {},
       displayName: "Owner",
-      notes: "مالک ربات — ایجاد شده توسط seed-owner.ts",
+      notes: "",
       updatedAt: new Date(),
     };
     if (passwordHash) updateData.passwordHash = passwordHash;
@@ -96,7 +86,7 @@ async function seedOwner() {
         restrictedIPs: null,
         loginCount: 0,
         passwordHash,
-        notes: "مالک ربات — ایجاد شده توسط seed-owner.ts",
+        notes: "",
         createdBy: null,
       })
       .returning();
@@ -109,7 +99,7 @@ async function seedOwner() {
 
   console.log("\n✅ Owner seeded successfully!");
   console.log(`   Telegram ID : ${ownerId}`);
-  console.log(`   Role        : super_admin (users + admins)`);
+  console.log(`   Role        : super_admin `);
   console.log(`   Sections    : ALL (${allSections.length})\n`);
 }
 

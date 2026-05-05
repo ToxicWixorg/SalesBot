@@ -183,7 +183,6 @@ export const startComposer = new Composer()
     );
 
     if (unjoined.length > 0) {
-      // Update keyboard to reflect remaining unjoined channels
       try {
         await context.editText(t("joinChannelRequired"), {
           parse_mode: "HTML",
@@ -204,7 +203,7 @@ export const startComposer = new Composer()
 
     try {
       await context.editText(
-        `${t("welcome", userName)} \n\n${t("chooseAction")}`,
+        `${t("welcome", userName)} \n\n\n\n \n${t("chooseAction")}`,
         { reply_markup: mainMenuKeyboard(t) },
       );
     } catch {
