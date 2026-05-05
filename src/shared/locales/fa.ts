@@ -11,7 +11,7 @@ export const fa = {
   // Greeting & Welcome
   greeting: (name: string) => format`سلام، ${bold(name)}!`,
   welcome: (name: string) =>
-    format`به فروشگاه دیجیتال ما خوش آمدید، ${bold(name)}! 🎉\n\nما انواع اشتراک‌ها و سرویس‌های دیجیتال را ارائه می‌دهیم.`,
+    format`به فروشگاه دیجیتال ما خوش آمدید، ${bold(name)}! 🎉\n\nما انواع اشتراک‌ها و سرویس‌های دیجیتال را ارائه می‌دهیم.\n\n`,
 
   // Main Menu
   mainMenu: "🏠 منوی اصلی",
