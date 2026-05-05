@@ -588,6 +588,13 @@ export const schedulesTable = pgTable(
     reminderSent: boolean("reminder_sent").default(false),
     reminderTime: timestamp("reminder_time"),
 
+    // Session chat tracking (for custom_schedule / ChatGPT delivery sessions)
+    sessionStartNotified: boolean("session_start_notified").default(false), // true after T=0 notifications sent
+    sessionTicketId: integer("session_ticket_id").references(
+      () => ticketsTable.id,
+      { onDelete: "set null" },
+    ),
+
     status: text("status").default("available"), // available, full, in_progress, completed
     completedAt: timestamp("completed_at"),
 

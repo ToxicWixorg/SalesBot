@@ -1,5 +1,6 @@
-import type { LanguageMap } from "@gramio/i18n";
+import type { ShouldFollowLanguageStrict } from "@gramio/i18n";
 import { bold, format } from "gramio";
+import { fa } from "./fa";
 
 export const en = {
   // Language Selection
@@ -587,4 +588,4 @@ export const en = {
     `Time: <b>${data.timeSlot}</b>\n` +
     `Order: #${data.orderId}\n\n` +
     `Please be ready. Our team will contact you shortly.`,
-} satisfies LanguageMap;
+} satisfies ShouldFollowLanguageStrict<typeof fa>;

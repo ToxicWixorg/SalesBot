@@ -1,6 +1,6 @@
-import type { ShouldFollowLanguageStrict } from "@gramio/i18n";
+import type { LanguageMap } from "@gramio/i18n";
 import { bold, format } from "gramio";
-import type { en } from "./en.ts";
+
 
 export const fa = {
   // Language Selection
@@ -16,6 +16,7 @@ export const fa = {
   // Main Menu
   mainMenu: "🏠 منوی اصلی",
   chooseAction: "لطفاً یک گزینه را انتخاب کنید:",
+  main_meun: (name: string) => "",
 
   // Buttons
   btnProducts: "🛒 محصولات",
@@ -583,4 +584,4 @@ export const fa = {
     `ساعت: <b>${data.timeSlot}</b>\n` +
     `سفارش: #${data.orderId}\n\n` +
     `لطفاً آماده باشید. تیم ما به زودی با شما تماس می‌گیرد.`,
-} satisfies ShouldFollowLanguageStrict<typeof en>;
+} satisfies LanguageMap;
