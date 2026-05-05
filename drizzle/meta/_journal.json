@@ -50,6 +50,13 @@
       "when": 1777987720686,
       "tag": "0006_lonely_sheva_callister",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1746460800000,
+      "tag": "0007_time_slot_templates",
+      "breakpoints": true
     }
   ]
 }
