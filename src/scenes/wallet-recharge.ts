@@ -557,6 +557,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
           message_id: msg.message_id,
           caption: original + resultLine,
           parse_mode: "HTML",
+          reply_markup: { inline_keyboard: [] },
         });
       } else if (msg?.text !== undefined) {
         await (ctx.api as any).editMessageText({
@@ -564,6 +565,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
           message_id: msg.message_id,
           text: original + resultLine,
           parse_mode: "HTML",
+          reply_markup: { inline_keyboard: [] },
         });
       }
     } catch {}
