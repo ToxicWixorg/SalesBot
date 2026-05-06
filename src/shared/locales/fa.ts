@@ -552,6 +552,10 @@ export const fa = {
     `${e.calendar} <b>انتخاب بازه زمانی</b>\n\nیه بازه آزاد برای <b>${data.date}</b> انتخاب کن:\n\n${e.checkBold} = آزاد  |  ${e.cross} = پر`,
   scheduleSlotFree: "جای خالی",
   scheduleSlotFullAlert: `${e.cross} این بازه پر شد. بازه دیگه‌ای انتخاب کن.`,
+  scheduleNoSlotsToday:
+    `${e.cross} <b>بازه‌ای موجود نیست</b>\n\n` +
+    `متأسفم، امروز هیچ بازه زمانی آزادی برای این محصول وجود نداره.\n` +
+    `فردا دوباره تلاش کن یا با پشتیبانی تماس بگیر.`,
   scheduleBooked: (data: {
     orderId: number;
     productName: string;

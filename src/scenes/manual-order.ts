@@ -301,7 +301,14 @@ async function showSlotPicker(
   );
 
   if (slots.length === 0) {
-    // No slots configured – fall back to manual pending order flow
+    // No slots available today – inform the user and let them cancel
+    await sendFn(t("scheduleNoSlotsToday"), {
+      parse_mode: "HTML",
+      reply_markup: new InlineKeyboard().text(
+        t("btnCancelManualOrder"),
+        "cancel_manual_order",
+      ),
+    });
     return false;
   }
 
@@ -443,11 +450,8 @@ export function setupManualOrderScene(bot: AnyBot) {
           plan,
         );
         if (!shown) {
-          // No templates configured, fall through to pending_admin
+          // showSlotPicker already sent "no slots" message with cancel button
           pendingOrderInfoState.delete(userId);
-          await finishManualOrder(bot, userId, state, (text, opts) =>
-            ctx.send(text, opts),
-          );
         }
       } else {
         // manual/invite/etc — no slot needed
@@ -491,8 +495,15 @@ export async function createManualOrderDirect(
     if (plan) {
       state.phase = "slot";
       pendingOrderInfoState.set(userId, state);
-      const shown = await showSlotPicker(editFn, t, state, plan);
-      if (shown) return; // wait for slot callback
+      try {
+        const shown = await showSlotPicker(editFn, t, state, plan);
+        if (shown) return; // wait for slot callback
+      } catch (err) {
+        console.error("[createManualOrderDirect] showSlotPicker error:", err);
+      }
+      // No slots shown (empty or error) — clean up state, do NOT create order
+      pendingOrderInfoState.delete(userId);
+      return;
     }
   }
 

@@ -554,6 +554,10 @@ export const ru = {
     `${e.calendar} <b>Выбери временной слот</b>\n\nВыбери доступный слот на <b>${data.date}</b>:\n\n${e.checkBold} = Свободно  |  ${e.cross} = Занято`,
   scheduleSlotFree: "Свободно",
   scheduleSlotFullAlert: `${e.cross} Этот слот занят. Выбери другой.`,
+  scheduleNoSlotsToday:
+    `${e.cross} <b>Слотов нет</b>\n\n` +
+    `К сожалению, сегодня нет доступных временных слотов для этого продукта.\n` +
+    `Попробуй завтра или обратись в поддержку.`,
   scheduleBooked: (data: {
     orderId: number;
     productName: string;

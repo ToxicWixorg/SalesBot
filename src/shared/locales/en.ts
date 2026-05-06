@@ -554,6 +554,10 @@ export const en = {
     `${e.calendar} <b>Select a Time Slot</b>\n\nChoose an available slot for <b>${data.date}</b>:\n\n${e.checkBold} = Available  |  ${e.cross} = Taken`,
   scheduleSlotFree: "Available",
   scheduleSlotFullAlert: `${e.cross} This slot is full. Please choose another.`,
+  scheduleNoSlotsToday:
+    `${e.cross} <b>No slots available</b>\n\n` +
+    `Sorry, there are no available time slots for this product today.\n` +
+    `Please try again tomorrow or contact support.`,
   scheduleBooked: (data: {
     orderId: number;
     productName: string;
