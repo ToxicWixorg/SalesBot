@@ -509,7 +509,7 @@ export const fa = {
 
   // Force Join Channels/Groups
   joinChannelRequired: `${e.flag_ir} <b>عضویت الزامی</b>\n\nبرای استفاده از ربات، اول توی کانال‌ها/گروه‌های زیر عضو بشو:`,
-  btnIJoined: `✅ عضو شدم — بررسی کن`,
+  btnIJoined: `عضو شدم — بررسی کن`,
   joinChannelNotJoinedAlert: ` هنوز توی همه کانال‌های لازم عضو نشدی. عضو بشو و دوباره امتحان کن.`,
 
   // ── فلوی سفارش دستی / زمان‌بندی‌شده ──────────────────────────────────────
@@ -521,7 +521,7 @@ export const fa = {
   manualOrderLoginPasswordPrompt: `${e.lock} <b>رمز عبور</b> اکانت رو وارد کن:`,
   manualOrderRegionPrompt: `${e.earth} <b>منطقه مورد نظر</b> رو وارد کن (مثلاً: US، EU، Asia):`,
   manualOrderNeedsLabel: "اطلاعات مورد نیاز",
-  btnCancelManualOrder: `❌ لغو سفارش`,
+  btnCancelManualOrder: `لغو سفارش`,
   manualOrderCancelled: `${e.cross} سفارش لغو شد.`,
   manualOrderPending: (data: {
     orderId: number;
