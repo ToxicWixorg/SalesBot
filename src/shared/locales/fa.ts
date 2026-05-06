@@ -373,7 +373,7 @@ export const fa = {
   btnViewMyTickets: `مشاهده تیکت‌ها`,
   btnBackToMain: `منوی اصلی`,
   btnReplyToTicket: `پاسخ`,
-  btnViewMessages: `شاهده پیام‌ها`,
+  btnViewMessages: `مشاهده پیام‌ها`,
   btnBackToTickets: `بازگشت به تیکت‌ها`,
   btnViewTicket: `مشاهده تیکت`,
   btnViewOrder: `مشاهده سفارش`,
@@ -449,7 +449,7 @@ export const fa = {
 
   // Purchase / Order Completion
   insufficientBalance: (data: { required: string; current: string }) =>
-    `${e.cross} <b>موجودی کافی نیست</b>\n\nنیاز: <b>${data.required}</b> تومان\nموجودی تو: <b>${data.current}</b> تومان\n\nکیف پولت رو شارژ کن و دوباره تلاش کن.`,
+    `😥 موجودی کافی نیست\n\nنیاز: ${data.required} تومان\nموجودی تو: ${data.current} تومان\n\nکیف پولت رو شارژ کن و دوباره تلاش کن.`,
   noConfigAvailable: `${e.cross} در حال حاضر کانفیگ VPN برای این پلن موجود نیست. با پشتیبانی تماس بگیر.`,
   orderSuccess: (data: {
     orderId: number;

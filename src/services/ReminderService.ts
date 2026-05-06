@@ -6,7 +6,7 @@
  */
 
 import type { AnyBot } from "gramio";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { db } from "../db/index.ts";
 import {
   schedulesTable,
@@ -75,6 +75,8 @@ async function checkAndSendReminders(bot: AnyBot) {
       and(
         eq(schedulesTable.date, date),
         eq(schedulesTable.reminderSent, false),
+        // Only send reminders for active (not yet started/completed) schedules
+        inArray(schedulesTable.status, ["available", "full", "scheduled"]),
       ),
     );
 

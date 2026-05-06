@@ -44,13 +44,20 @@ export const ScheduleRepository = {
     // day 0=Sun … 6=Sat
     const dayOfWeek = new Date(date + "T12:00:00").getDay();
 
+    const nowDate = new Date();
+    const isToday = date === nowDate.toISOString().split("T")[0];
+    const nowTime = isToday
+      ? `${String(nowDate.getHours()).padStart(2, "0")}:${String(nowDate.getMinutes()).padStart(2, "0")}`
+      : null;
+
     const templates = await this.getActiveTemplates(productId);
     const todayTemplates = templates.filter((t) => {
       const days = (t.daysOfWeek ?? [0, 1, 2, 3, 4, 5, 6]) as number[];
-      return days.includes(dayOfWeek);
+      if (!days.includes(dayOfWeek)) return false;
+      if (nowTime && t.startTime <= nowTime) return false;
+      return true;
     });
 
-    // Count bookings per template for this date
     const bookingCounts = await db
       .select({
         templateId: schedulesTable.templateId,
