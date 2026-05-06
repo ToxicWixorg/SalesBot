@@ -596,4 +596,62 @@ export const fa = {
     `${e.id} سفارش: #${data.orderId}\n\n` +
     `${e.key} ادمین از همین چت اطلاعات لاگین رو برات می‌فرسته.\n` +
     `${e.sparkles} آماده‌ای؟ بپر توش!`,
+
+  // ── Stock notification ──────────────────────────────────────────────────────
+  stockSubscribed: `🔔 موجود شد بهت خبر می‌دیم!`,
+  stockAlreadySubscribed: `✅ قبلاً ثبت‌نام کردی. وقتی موجود شه خبر می‌دیم.`,
+  stockRestocked: (data: { productName: string }) =>
+    `🎉 <b>موجودی شارژ شد!</b>\n\n📦 ${data.productName} دوباره موجوده.\n\n🛍 همین الان خرید کن!`,
+
+  // ── Inventory order flow ──────────────────────────────────────────────────
+  enterQuantityPrompt: `📦 تعداد موردنظر را وارد کنید:`,
+  enterQuantityHint: `⚠️ فقط عدد وارد کنید`,
+  quantityInvalid: `${e.cross} تعداد وارد شده معتبر نیست. لطفاً یک عدد مثبت وارد کنید.`,
+  quantityExceedsStock: (data: { stock: number }) =>
+    `${e.cross} موجودی کافی نیست. موجودی فعلی: <b>${data.stock}</b> عدد`,
+  quantityExceedsLimit: (data: { max: number }) =>
+    `${e.cross} حداکثر <b>${data.max}</b> عدد در هر سفارش می‌توانید خریداری کنید.`,
+  warrantyDays: (data: { days: number }) => `گارانتی: <b>${data.days} روز</b>`,
+  termsTitle: `قوانین و شرایط`,
+  btnPayWallet: `💳 پرداخت از کیف پول`,
+  btnChangeQuantity: `✏️ تغییر تعداد`,
+  inventoryOrderSummary: (data: {
+    productName: string;
+    qty: number;
+    unitPrice: string;
+    total: string;
+    currency: string;
+  }) =>
+    `${e.clipboard} <b>خلاصه سفارش</b>\n\n` +
+    `📦 محصول: <b>${data.productName}</b>\n` +
+    `🔢 تعداد: <b>${data.qty}</b>\n` +
+    `💰 قیمت واحد: <b>${data.unitPrice} ${data.currency}</b>\n` +
+    `💵 مبلغ نهایی: <b>${data.total} ${data.currency}</b>`,
+  inventoryOrderSuccess: (data: {
+    orderId: number;
+    productName: string;
+    qty: number;
+    total: string;
+    remainingBalance: string;
+    currency: string;
+  }) =>
+    `${e.party} <b>سفارش با موفقیت انجام شد!</b>\n\n` +
+    `📦 محصول: <b>${data.productName}</b>\n` +
+    `🔢 تعداد: <b>${data.qty}</b>\n` +
+    `💵 مبلغ پرداخت شده: <b>${data.total} ${data.currency}</b>\n` +
+    `${e.wallet} موجودی باقی‌مانده: <b>${data.remainingBalance} ${data.currency}</b>\n` +
+    `${e.id} شماره سفارش: #${data.orderId}`,
+  inventoryDeliveryHeader: (data: { productName: string }) =>
+    `${e.key} <b>تحویل: ${data.productName}</b>`,
+  inventoryDeliveryItem: (data: {
+    index: number;
+    email: string;
+    password: string;
+    extraData: string;
+  }) =>
+    `<b>#${data.index}</b>\n` +
+    `📧 ایمیل: <code>${data.email}</code>\n` +
+    `🔐 پسورد: <code>${data.password}</code>` +
+    (data.extraData ? `\n📝 اطلاعات اضافه: ${data.extraData}` : ``),
+  inventoryDeliveryFooter: `${e.sparkles} این اطلاعات را در جایی امن ذخیره کنید. همچنین در بخش سفارشات من قابل مشاهده است.`,
 } satisfies LanguageMap;

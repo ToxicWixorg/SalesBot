@@ -11,17 +11,15 @@ export function productDetailsKeyboard(
   const keyboard = new InlineKeyboard();
 
   if (hasStock) {
-    keyboard.text(t("btnBuyProduct"), `buy_product_${product.id}`, {
-      icon_custom_emoji_id: undefined, //emojiIds.bag,
-    });
+    keyboard.text(t("btnBuyProduct"), `buy_product_${product.id}`);
     keyboard.row();
   } else {
-    keyboard.row();
+    keyboard
+      .text(t("btnNotifyStock"), `notify_stock_${product.id}`)
+      .row();
   }
 
-  keyboard.text(t("btnBack"), `category_${product.categoryId}`, {
-    icon_custom_emoji_id: undefined, //emojiIds.back,
-  });
+  keyboard.text(t("btnBack"), `category_${product.categoryId}`);
 
   return keyboard;
 }

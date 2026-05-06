@@ -598,4 +598,62 @@ export const en = {
     `${e.id} Order: #${data.orderId}\n\n` +
     `${e.key} The admin will send you the login details in this chat.\n` +
     `${e.sparkles} Ready? Let's go!`,
+
+  // ── Stock notification ──────────────────────────────────────────────────────
+  stockSubscribed: `🔔 We'll notify you when it's back in stock!`,
+  stockAlreadySubscribed: `✅ You're already subscribed. We'll let you know when it's available.`,
+  stockRestocked: (data: { productName: string }) =>
+    `🎉 <b>Back in stock!</b>\n\n📦 <b>${data.productName}</b> is available again.\n\n🛍 Buy now before it sells out!`,
+
+  // ── Inventory order flow ──────────────────────────────────────────────────
+  enterQuantityPrompt: `📦 Enter the desired quantity:`,
+  enterQuantityHint: `⚠️ Please enter a number only`,
+  quantityInvalid: `${e.cross} Invalid quantity. Please enter a positive whole number.`,
+  quantityExceedsStock: (data: { stock: number }) =>
+    `${e.cross} Not enough stock. Available: <b>${data.stock}</b>`,
+  quantityExceedsLimit: (data: { max: number }) =>
+    `${e.cross} You can purchase a maximum of <b>${data.max}</b> items per order.`,
+  warrantyDays: (data: { days: number }) => `Warranty: <b>${data.days} days</b>`,
+  termsTitle: `Terms & Conditions`,
+  btnPayWallet: `💳 Pay with Wallet`,
+  btnChangeQuantity: `✏️ Change Quantity`,
+  inventoryOrderSummary: (data: {
+    productName: string;
+    qty: number;
+    unitPrice: string;
+    total: string;
+    currency: string;
+  }) =>
+    `${e.clipboard} <b>Order Summary</b>\n\n` +
+    `📦 Product: <b>${data.productName}</b>\n` +
+    `🔢 Quantity: <b>${data.qty}</b>\n` +
+    `💰 Unit price: <b>${data.unitPrice} ${data.currency}</b>\n` +
+    `💵 Total: <b>${data.total} ${data.currency}</b>`,
+  inventoryOrderSuccess: (data: {
+    orderId: number;
+    productName: string;
+    qty: number;
+    total: string;
+    remainingBalance: string;
+    currency: string;
+  }) =>
+    `${e.party} <b>Order completed!</b>\n\n` +
+    `📦 Product: <b>${data.productName}</b>\n` +
+    `🔢 Quantity: <b>${data.qty}</b>\n` +
+    `💵 Amount paid: <b>${data.total} ${data.currency}</b>\n` +
+    `${e.wallet} Remaining balance: <b>${data.remainingBalance} ${data.currency}</b>\n` +
+    `${e.id} Order: #${data.orderId}`,
+  inventoryDeliveryHeader: (data: { productName: string }) =>
+    `${e.key} <b>Delivery: ${data.productName}</b>`,
+  inventoryDeliveryItem: (data: {
+    index: number;
+    email: string;
+    password: string;
+    extraData: string;
+  }) =>
+    `<b>#${data.index}</b>\n` +
+    `📧 Email: <code>${data.email}</code>\n` +
+    `🔐 Password: <code>${data.password}</code>` +
+    (data.extraData ? `\n📝 Extra: ${data.extraData}` : ``),
+  inventoryDeliveryFooter: `${e.sparkles} Keep this information safe. You can also view it in My Orders.`,
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

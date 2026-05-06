@@ -25,3 +25,4 @@ export {
   AdminLogRepository,
   AdminSessionRepository,
 } from "./AdminRepository.ts";
+export { InventoryRepository } from "./InventoryRepository.ts";

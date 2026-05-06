@@ -1,4 +1,4 @@
-import {
+﻿import {
   bigint,
   pgTable,
   text,
@@ -111,6 +111,11 @@ export const productsTable = pgTable(
     isActive: boolean("is_active").default(true),
     stock: integer("stock").default(0),
     minStock: integer("min_stock").default(5),
+
+    // Inventory / Sale settings
+    warrantyDays: integer("warranty_days").default(0),
+    terms: text("terms"),
+    maxPerUser: integer("max_per_user").default(0), // 0 = unlimited
 
     customEmojiId: text("custom_emoji_id"),
 
@@ -693,7 +698,47 @@ export type ProductConfig = typeof productConfigsTable.$inferSelect;
 export type InsertProductConfig = typeof productConfigsTable.$inferInsert;
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 📝 ADMIN LOGS ━━━━━━━━━━━━━━━━━━━━━━━
+// � INVENTORY ━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+export const inventoryTable = pgTable(
+  "inventory",
+  {
+    id: serial("id").primaryKey(),
+    productId: integer("product_id")
+      .notNull()
+      .references(() => productsTable.id, { onDelete: "cascade" }),
+
+    // Credentials / delivery data
+    email: text("email"),
+    password: text("password"),
+    extraData: text("extra_data"), // any extra info (e.g. backup codes, notes)
+
+    // Status: available | reserved | used | dead
+    status: text("status").notNull().default("available"),
+
+    reservedAt: timestamp("reserved_at"),
+    usedAt: timestamp("used_at"),
+    usedByOrderId: integer("used_by_order_id").references(
+      () => ordersTable.id,
+      { onDelete: "set null" },
+    ),
+    deadReason: text("dead_reason"),
+
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    productIdIdx: index("inventory_product_id_idx").on(table.productId),
+    statusIdx: index("inventory_status_idx").on(table.status),
+  }),
+);
+
+export type Inventory = typeof inventoryTable.$inferSelect;
+export type InsertInventory = typeof inventoryTable.$inferInsert;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// �📝 ADMIN LOGS ━━━━━━━━━━━━━━━━━━━━━━━
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 export const adminLogsTable = pgTable(

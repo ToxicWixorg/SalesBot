@@ -42,6 +42,10 @@ export { productsListKeyboard } from "./products/list.ts";
 export { productDetailsKeyboard } from "./products/details.ts";
 export { productPlansKeyboard } from "./products/plans.ts";
 export { orderConfirmationKeyboard } from "./products/confirmation.ts";
+export {
+  enterQuantityKeyboard,
+  inventoryOrderSummaryKeyboard,
+} from "./products/inventoryOrder.ts";
 
 // Wallet Keyboards
 export { walletKeyboard } from "./wallet/wallet.ts";

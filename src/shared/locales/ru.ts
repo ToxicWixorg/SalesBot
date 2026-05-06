@@ -598,4 +598,62 @@ export const ru = {
     `${e.id} Заказ: #${data.orderId}\n\n` +
     `${e.key} Администратор пришлёт данные для входа в этот чат.\n` +
     `${e.sparkles} Готов? Начинаем!`,
+
+  // ── Stock notification ──────────────────────────────────────────────────────
+  stockSubscribed: `🔔 Уведомим, когда появится в наличии!`,
+  stockAlreadySubscribed: `✅ Вы уже подписаны. Сообщим, когда появится.`,
+  stockRestocked: (data: { productName: string }) =>
+    `🎉 <b>Снова в наличии!</b>\n\n📦 <b>${data.productName}</b> доступен.\n\n🛍 Покупайте, пока не разобрали!`,
+
+  // ── Inventory order flow ──────────────────────────────────────────────────
+  enterQuantityPrompt: `📦 Введите желаемое количество:`,
+  enterQuantityHint: `⚠️ Введите только число`,
+  quantityInvalid: `${e.cross} Неверное количество. Пожалуйста, введите положительное целое число.`,
+  quantityExceedsStock: (data: { stock: number }) =>
+    `${e.cross} Недостаточно товара. Доступно: <b>${data.stock}</b> шт.`,
+  quantityExceedsLimit: (data: { max: number }) =>
+    `${e.cross} Максимально <b>${data.max}</b> шт. за один заказ.`,
+  warrantyDays: (data: { days: number }) => `Гарантия: <b>${data.days} дней</b>`,
+  termsTitle: `Условия и правила`,
+  btnPayWallet: `💳 Оплатить с кошелька`,
+  btnChangeQuantity: `✏️ Изменить количество`,
+  inventoryOrderSummary: (data: {
+    productName: string;
+    qty: number;
+    unitPrice: string;
+    total: string;
+    currency: string;
+  }) =>
+    `${e.clipboard} <b>Итог заказа</b>\n\n` +
+    `📦 Продукт: <b>${data.productName}</b>\n` +
+    `🔢 Количество: <b>${data.qty}</b>\n` +
+    `💰 Цена за единицу: <b>${data.unitPrice} ${data.currency}</b>\n` +
+    `💵 Итого: <b>${data.total} ${data.currency}</b>`,
+  inventoryOrderSuccess: (data: {
+    orderId: number;
+    productName: string;
+    qty: number;
+    total: string;
+    remainingBalance: string;
+    currency: string;
+  }) =>
+    `${e.party} <b>Заказ выполнен!</b>\n\n` +
+    `📦 Продукт: <b>${data.productName}</b>\n` +
+    `🔢 Количество: <b>${data.qty}</b>\n` +
+    `💵 Оплачено: <b>${data.total} ${data.currency}</b>\n` +
+    `${e.wallet} Остаток: <b>${data.remainingBalance} ${data.currency}</b>\n` +
+    `${e.id} Заказ: #${data.orderId}`,
+  inventoryDeliveryHeader: (data: { productName: string }) =>
+    `${e.key} <b>Доставка: ${data.productName}</b>`,
+  inventoryDeliveryItem: (data: {
+    index: number;
+    email: string;
+    password: string;
+    extraData: string;
+  }) =>
+    `<b>#${data.index}</b>\n` +
+    `📧 Email: <code>${data.email}</code>\n` +
+    `🔐 Пароль: <code>${data.password}</code>` +
+    (data.extraData ? `\n📝 Доп. данные: ${data.extraData}` : ``),
+  inventoryDeliveryFooter: `${e.sparkles} Сохраните эти данные в надёжном месте. Также доступно в разделе «Мои заказы».`,
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

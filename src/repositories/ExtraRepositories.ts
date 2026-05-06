@@ -430,4 +430,14 @@ export class StockNotificationRepository {
       .set({ isActive: false })
       .where(eq(stockNotificationsTable.id, id));
   }
+
+  /**
+   * فعال‌سازی مجدد درخواست قبلی
+   */
+  static async reactivate(id: number): Promise<void> {
+    await db
+      .update(stockNotificationsTable)
+      .set({ isActive: true, notificationSent: false, notificationSentAt: null })
+      .where(eq(stockNotificationsTable.id, id));
+  }
 }

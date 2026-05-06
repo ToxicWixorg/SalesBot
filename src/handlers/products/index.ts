@@ -9,6 +9,13 @@ import { SelectPlanCallback } from "./callbacks/SelectPlan.ts";
 import { CancelOrderCallback } from "./callbacks/CancelOrder.ts";
 import { ConfirmOrderCallback } from "./callbacks/ConfirmOrder.ts";
 import { AddDiscountCallback } from "./callbacks/AddDiscount.ts";
+import { ConfirmInventoryOrderCallback } from "./callbacks/ConfirmInventoryOrder.ts";
+import { NotifyStockCallback } from "./callbacks/NotifyStock.ts";
+import { pendingQuantityState } from "./quantityOrderState.ts";
+import { UserRepository } from "../../repositories/UserRepository.ts";
+import { InventoryRepository } from "../../repositories/InventoryRepository.ts";
+import { i18n } from "../../shared/locales/index.ts";
+import { enterQuantityKeyboard } from "../../shared/keyboards/index.ts";
 
 export const productsComposer = new Composer()
   .extend(composer)
@@ -38,4 +45,35 @@ export const productsComposer = new Composer()
   })
   .callbackQuery(/^add_discount_(\d+)$/, async (context) => {
     return await AddDiscountCallback(context);
+  })
+  // Inventory order: confirm after quantity selected
+  .callbackQuery(/^confirm_inv_(\d+)_(\d+)$/, async (context) => {
+    return await ConfirmInventoryOrderCallback(context);
+  })
+  // Inventory order: user wants to change the quantity
+  .callbackQuery(/^change_qty_(\d+)$/, async (context) => {
+    await context.answerCallbackQuery();
+    const userId = context.from?.id;
+    if (!userId) return;
+
+    const state = pendingQuantityState.get(userId);
+    if (!state) return;
+
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode ?? "en");
+    const liveStock = await InventoryRepository.countAvailable(state.productId);
+
+    pendingQuantityState.set(userId, { ...state, availableStock: liveStock });
+
+    await context.editText(
+      `${t("enterQuantityPrompt")}\n${t("enterQuantityHint")}`,
+      {
+        parse_mode: "HTML",
+        reply_markup: enterQuantityKeyboard(t, state.productId),
+      },
+    );
+  })
+  // Stock notification subscription
+  .callbackQuery(/^notify_stock_(\d+)$/, async (context) => {
+    return await NotifyStockCallback(context);
   });
