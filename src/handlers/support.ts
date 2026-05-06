@@ -360,10 +360,10 @@ export const supportHandler = (bot: AnyBot) => {
    * This listens to messages in the support group and forwards them to users
    */
   if (config.SUPPORT_GROUP_ID) {
-    bot.on("message", async (ctx) => {
+    bot.on("message", async (ctx, next) => {
       // Only process text messages from support group
-      if (!ctx.text) return;
-      if (ctx.chat?.id.toString() !== config.SUPPORT_GROUP_ID) return;
+      if (!ctx.text) return next();
+      if (ctx.chat?.id.toString() !== config.SUPPORT_GROUP_ID) return next();
 
       // Check if message is a reply in a thread
       if (ctx.update?.message?.reply_to_message) {

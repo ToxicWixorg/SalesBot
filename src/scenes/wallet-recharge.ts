@@ -573,9 +573,9 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       "[RECHARGE-MSG] Handler reached. userId:",
       userId,
       "text:",
-      ctx.message?.text,
+      ctx.text,
       "hasPhoto:",
-      !!ctx.message?.photo,
+      !!(ctx as any).photo,
     );
     console.log("[RECHARGE-MSG] rechargeState:", rechargeState.get(userId));
     console.log(
@@ -600,7 +600,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     // ─ 8a. ورود مبلغ ──────────────────────────────────────
     if (state.step === "enter_amount") {
-      const text = ctx.message?.text;
+      const text = ctx.text;
       if (!text) return;
 
       // تبدیل اعداد فارسی و حذف جداکننده‌های هزارگان
@@ -665,7 +665,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     // ─ 8b. رسید کارت (عکس) ────────────────────────────────
     if (state.step === "waiting_receipt") {
-      const photo = ctx.message?.photo;
+      const photo = (ctx as any).photo as { file_id: string }[] | undefined;
       if (!photo || photo.length === 0) {
         await ctx.reply(t("rechargeCardExpectPhoto"), { parse_mode: "HTML" });
         return;
@@ -677,7 +677,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       await notifyAdmin(bot, {
         userId,
         username: ctx.from?.username ?? null,
-        firstName: ctx.from?.first_name ?? null,
+        firstName: ctx.from?.firstName ?? null,
         amount: state.amount,
         method: "card",
         evidence: fileId,
@@ -693,7 +693,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     // ─ 8c. TxID کریپتو ────────────────────────────────────
     if (state.step === "waiting_txid") {
-      const txId = ctx.message?.text?.trim();
+      const txId = ctx.text?.trim();
       if (!txId || txId.length < 10) {
         await ctx.reply(t("rechargeCryptoInvalidTxId"), { parse_mode: "HTML" });
         return;
@@ -704,7 +704,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       await notifyAdmin(bot, {
         userId,
         username: ctx.from?.username ?? null,
-        firstName: ctx.from?.first_name ?? null,
+        firstName: ctx.from?.firstName ?? null,
         amount: state.amount,
         method: "crypto",
         evidence: txId,
