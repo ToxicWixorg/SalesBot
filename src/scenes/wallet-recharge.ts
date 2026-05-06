@@ -505,7 +505,11 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
   // ── 7. تأیید/رد ادمین  format: ra/rr:{userId}:{amount}:{c|z|k} ─
   bot.callbackQuery(/^r[ar]:\d+:\d+:[czk]$/, async (ctx) => {
-    const parts = (ctx.queryData as string).split(":");
+    // When matched with regex, queryData is a RegExpMatchArray; queryData[0] = full match string
+    const raw = Array.isArray(ctx.queryData)
+      ? ctx.queryData[0]
+      : (ctx.queryData as string);
+    const parts = raw.split(":");
     const action = parts[0];
     const targetUserId = parseInt(parts[1]);
     const amount = parseInt(parts[2]);
@@ -540,23 +544,24 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     // حذف دکمه‌ها از پیام ادمین و نشان دادن نتیجه
     try {
-      const original = ctx.message?.caption ?? ctx.message?.text ?? "";
+      const msg = (ctx as any).update?.callback_query?.message;
+      const original = msg?.caption ?? msg?.text ?? "";
       const resultLine =
         action === "ra"
-          ? `\n\n✅ <b>تأیید شد</b> — ${ctx.from.first_name}`
-          : `\n\n❌ <b>رد شد</b> — ${ctx.from.first_name}`;
+          ? `\n\n✅ <b>تأیید شد</b> — ${ctx.from.firstName}`
+          : `\n\n❌ <b>رد شد</b> — ${ctx.from.firstName}`;
 
-      if (ctx.message?.caption !== undefined) {
+      if (msg?.caption !== undefined) {
         await (ctx.api as any).editMessageCaption({
-          chat_id: ctx.message!.chat.id,
-          message_id: ctx.message!.message_id,
+          chat_id: msg.chat.id,
+          message_id: msg.message_id,
           caption: original + resultLine,
           parse_mode: "HTML",
         });
-      } else if (ctx.message?.text !== undefined) {
+      } else if (msg?.text !== undefined) {
         await (ctx.api as any).editMessageText({
-          chat_id: ctx.message!.chat.id,
-          message_id: ctx.message!.message_id,
+          chat_id: msg.chat.id,
+          message_id: msg.message_id,
           text: original + resultLine,
           parse_mode: "HTML",
         });
