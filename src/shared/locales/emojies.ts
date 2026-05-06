@@ -52,12 +52,11 @@ export const e = {
   blue: `<tg-emoji emoji-id="5373767790976807508">🔵</tg-emoji>`,
   truck: `<tg-emoji emoji-id="5373767790976807508">🚚</tg-emoji>`,
   bounce: `<tg-emoji emoji-id="5373767790976807508">↩️</tg-emoji>`,
-  flag_ir: `<tg-emoji emoji-id="5373767790976807508">🇮🇷</tg-emoji>`,
-  flag_en: `<tg-emoji emoji-id="5373767790976807508">🇬🇧</tg-emoji>`,
-  flag_ru: `<tg-emoji emoji-id="5373767790976807508">🇷🇺</tg-emoji>`,
+  flag_ir: `🇮🇷`,
+  flag_en: `🇬🇧`,
+  flag_ru: `🇷🇺`,
 };
 
-/** Custom emoji IDs for use with icon_custom_emoji_id in InlineKeyboard buttons */
 export const emojiIds = {
   star: "5267850926250506294",
   fire: "5373141891321699086",
