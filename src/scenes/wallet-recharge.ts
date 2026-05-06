@@ -17,7 +17,12 @@ type RechargeState =
   | { step: "select_method"; amount: number }
   | { step: "waiting_receipt"; amount: number }
   | { step: "waiting_txid"; amount: number; usdtAmount: number }
-  | { step: "waiting_zarinpal"; amount: number; authority: string; paymentUrl: string };
+  | {
+      step: "waiting_zarinpal";
+      amount: number;
+      authority: string;
+      paymentUrl: string;
+    };
 
 const rechargeState = new Map<number, RechargeState>();
 
@@ -92,7 +97,8 @@ async function notifyAdmin(
   msg += `\n⏰ ${new Date().toLocaleString("en-GB")}`;
 
   // فرمت callback: "ra:{userId}:{amount}:{m}" — max ~30 chars
-  const mc = opts.method === "zarinpal" ? "z" : opts.method === "crypto" ? "k" : "c";
+  const mc =
+    opts.method === "zarinpal" ? "z" : opts.method === "crypto" ? "k" : "c";
   const approveData = `ra:${opts.userId}:${opts.amount}:${mc}`;
   const rejectData = `rr:${opts.userId}:${opts.amount}:${mc}`;
 
@@ -133,7 +139,12 @@ async function applyRecharge(
   description: string,
 ) {
   await UserRepository.updateWalletBalance(userId, amount, "add");
-  await WalletRepository.addCredit(userId, amount.toString(), "recharge", description);
+  await WalletRepository.addCredit(
+    userId,
+    amount.toString(),
+    "recharge",
+    description,
+  );
 
   const user = await UserRepository.findById(userId);
   const t = i18n.buildT(user?.languageCode || "fa");
@@ -155,13 +166,17 @@ async function applyRecharge(
 // ─────────────────────────────────────────────────────────
 
 export function setupWalletRechargeScene(bot: AnyBot) {
-
   // ── 1. Entry: کاربر "شارژ کیف پول" زد ─────────────────
   bot.callbackQuery("wallet_recharge", async (ctx) => {
     const user = await UserRepository.findById(ctx.from.id);
     const t = i18n.buildT(user?.languageCode || "fa");
 
     rechargeState.set(ctx.from.id, { step: "enter_amount" });
+    console.log(
+      "[RECHARGE] State set for userId:",
+      ctx.from.id,
+      "→ enter_amount",
+    );
 
     await ctx.editText(
       `${t("rechargeWalletTitle")}\n\n` +
@@ -184,7 +199,10 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     const t = i18n.buildT(user?.languageCode || "fa");
 
     if (!state || state.step !== "select_method") {
-      await ctx.answerCallbackQuery({ text: t("rechargeSessionExpired"), show_alert: true });
+      await ctx.answerCallbackQuery({
+        text: t("rechargeSessionExpired"),
+        show_alert: true,
+      });
       return;
     }
 
@@ -194,7 +212,10 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     ]);
 
     if (!settings?.cardEnabled || cards.length === 0) {
-      await ctx.answerCallbackQuery({ text: t("rechargeMethodDisabled"), show_alert: true });
+      await ctx.answerCallbackQuery({
+        text: t("rechargeMethodDisabled"),
+        show_alert: true,
+      });
       return;
     }
 
@@ -205,7 +226,10 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       cardsText += "\n";
     }
 
-    rechargeState.set(userId, { step: "waiting_receipt", amount: state.amount });
+    rechargeState.set(userId, {
+      step: "waiting_receipt",
+      amount: state.amount,
+    });
 
     await ctx.editText(
       `${t("rechargeCardTitle")}\n\n` +
@@ -213,7 +237,10 @@ export function setupWalletRechargeScene(bot: AnyBot) {
         `💳 <b>${t("rechargeCardNumbers")}</b>\n${cardsText}\n` +
         `📸 ${t("rechargeCardSendReceipt")}`,
       {
-        reply_markup: new InlineKeyboard().text(t("btnCancel"), "recharge_cancel"),
+        reply_markup: new InlineKeyboard().text(
+          t("btnCancel"),
+          "recharge_cancel",
+        ),
         parse_mode: "HTML",
       },
     );
@@ -228,13 +255,19 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     const t = i18n.buildT(user?.languageCode || "fa");
 
     if (!state || state.step !== "select_method") {
-      await ctx.answerCallbackQuery({ text: t("rechargeSessionExpired"), show_alert: true });
+      await ctx.answerCallbackQuery({
+        text: t("rechargeSessionExpired"),
+        show_alert: true,
+      });
       return;
     }
 
     const settings = await PaymentRepository.getSettings();
     if (!settings?.zarinpalEnabled || !settings.zarinpalMerchantId) {
-      await ctx.answerCallbackQuery({ text: t("rechargeMethodDisabled"), show_alert: true });
+      await ctx.answerCallbackQuery({
+        text: t("rechargeMethodDisabled"),
+        show_alert: true,
+      });
       return;
     }
 
@@ -259,7 +292,8 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       });
 
       const data = (await resp.json()) as any;
-      if (data?.data?.code !== 100) throw new Error(JSON.stringify(data?.errors));
+      if (data?.data?.code !== 100)
+        throw new Error(JSON.stringify(data?.errors));
 
       const authority: string = data.data.authority;
       const gateway = settings.zarinpalSandbox
@@ -306,13 +340,19 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     const t = i18n.buildT(user?.languageCode || "fa");
 
     if (!state || state.step !== "select_method") {
-      await ctx.answerCallbackQuery({ text: t("rechargeSessionExpired"), show_alert: true });
+      await ctx.answerCallbackQuery({
+        text: t("rechargeSessionExpired"),
+        show_alert: true,
+      });
       return;
     }
 
     const settings = await PaymentRepository.getSettings();
     if (!settings?.cryptoEnabled || !settings.cryptoAddress) {
-      await ctx.answerCallbackQuery({ text: t("rechargeMethodDisabled"), show_alert: true });
+      await ctx.answerCallbackQuery({
+        text: t("rechargeMethodDisabled"),
+        show_alert: true,
+      });
       return;
     }
 
@@ -334,7 +374,11 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     const usdtAmount = state.amount / rate;
 
-    rechargeState.set(userId, { step: "waiting_txid", amount: state.amount, usdtAmount });
+    rechargeState.set(userId, {
+      step: "waiting_txid",
+      amount: state.amount,
+      usdtAmount,
+    });
 
     await ctx.editText(
       `${t("rechargeCryptoTitle")}\n\n` +
@@ -346,7 +390,10 @@ export function setupWalletRechargeScene(bot: AnyBot) {
         `${t("rechargeCryptoInstructions")}\n\n` +
         `${t("rechargeCryptoSendTxId")}`,
       {
-        reply_markup: new InlineKeyboard().text(t("btnCancel"), "recharge_cancel"),
+        reply_markup: new InlineKeyboard().text(
+          t("btnCancel"),
+          "recharge_cancel",
+        ),
         parse_mode: "HTML",
       },
     );
@@ -360,7 +407,10 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     const t = i18n.buildT(user?.languageCode || "fa");
 
     if (!state || state.step !== "waiting_zarinpal") {
-      await ctx.answerCallbackQuery({ text: t("rechargeSessionExpired"), show_alert: true });
+      await ctx.answerCallbackQuery({
+        text: t("rechargeSessionExpired"),
+        show_alert: true,
+      });
       return;
     }
 
@@ -394,21 +444,33 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       if (code === 100 || code === 101) {
         const refId: string = String(data?.data?.ref_id ?? state.authority);
         rechargeState.delete(userId);
-        await applyRecharge(bot, userId, state.amount, "zarinpal", `Zarinpal RefId: ${refId}`);
-        await ctx.editText(t("rechargeZarinpalSuccess", formatNum(state.amount)), {
-          reply_markup: new InlineKeyboard().text(t("btnWallet"), "wallet"),
-          parse_mode: "HTML",
-        });
+        await applyRecharge(
+          bot,
+          userId,
+          state.amount,
+          "zarinpal",
+          `Zarinpal RefId: ${refId}`,
+        );
+        await ctx.editText(
+          t("rechargeZarinpalSuccess", formatNum(state.amount)),
+          {
+            reply_markup: new InlineKeyboard().text(t("btnWallet"), "wallet"),
+            parse_mode: "HTML",
+          },
+        );
       } else {
-        await ctx.editText(t("rechargeZarinpalFailed") + "\n\n" + t("rechargeZarinpalRetry"), {
-          reply_markup: new InlineKeyboard()
-            .url(t("btnPayNow"), state.paymentUrl)
-            .row()
-            .text(t("btnVerifyPayment"), "recharge_verify_zarinpal")
-            .row()
-            .text(t("btnCancel"), "recharge_cancel"),
-          parse_mode: "HTML",
-        });
+        await ctx.editText(
+          t("rechargeZarinpalFailed") + "\n\n" + t("rechargeZarinpalRetry"),
+          {
+            reply_markup: new InlineKeyboard()
+              .url(t("btnPayNow"), state.paymentUrl)
+              .row()
+              .text(t("btnVerifyPayment"), "recharge_verify_zarinpal")
+              .row()
+              .text(t("btnCancel"), "recharge_cancel"),
+            parse_mode: "HTML",
+          },
+        );
       }
     } catch (err) {
       console.error("[wallet-recharge] Zarinpal verify error:", err);
@@ -452,8 +514,16 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       mc === "z" ? "zarinpal" : mc === "k" ? "crypto" : "card";
 
     if (action === "ra") {
-      await applyRecharge(bot, targetUserId, amount, method, `Admin-approved ${method} recharge`);
-      await ctx.answerCallbackQuery({ text: `✅ شارژ ${formatNum(amount)} تومان تأیید شد` });
+      await applyRecharge(
+        bot,
+        targetUserId,
+        amount,
+        method,
+        `Admin-approved ${method} recharge`,
+      );
+      await ctx.answerCallbackQuery({
+        text: `✅ شارژ ${formatNum(amount)} تومان تأیید شد`,
+      });
     } else {
       try {
         const targetUser = await UserRepository.findById(targetUserId);
@@ -498,11 +568,32 @@ export function setupWalletRechargeScene(bot: AnyBot) {
   bot.on("message", async (ctx) => {
     const userId = ctx.from?.id;
     if (!userId) return;
+
+    console.log(
+      "[RECHARGE-MSG] Handler reached. userId:",
+      userId,
+      "text:",
+      ctx.message?.text,
+      "hasPhoto:",
+      !!ctx.message?.photo,
+    );
+    console.log("[RECHARGE-MSG] rechargeState:", rechargeState.get(userId));
+    console.log(
+      "[RECHARGE-MSG] ticketState:",
+      ticketState.has(userId),
+      "ticketReplyState:",
+      ticketReplyState.has(userId),
+    );
+
     if (ticketState.has(userId) || ticketReplyState.has(userId)) return;
     if ((ctx as any).scene?.current) return;
 
     const state = rechargeState.get(userId);
-    if (!state) return;
+    if (!state) {
+      console.log("[RECHARGE-MSG] No recharge state for user, ignoring.");
+      return;
+    }
+    console.log("[RECHARGE-MSG] Processing state:", state.step);
 
     const user = await UserRepository.findById(userId);
     const t = i18n.buildT(user?.languageCode || "fa");
@@ -523,11 +614,15 @@ export function setupWalletRechargeScene(bot: AnyBot) {
         return;
       }
       if (amount < MIN_AMOUNT) {
-        await ctx.reply(t("rechargeTooLow", formatNum(MIN_AMOUNT)), { parse_mode: "HTML" });
+        await ctx.reply(t("rechargeTooLow", formatNum(MIN_AMOUNT)), {
+          parse_mode: "HTML",
+        });
         return;
       }
       if (amount > MAX_AMOUNT) {
-        await ctx.reply(t("rechargeTooHigh", formatNum(MAX_AMOUNT)), { parse_mode: "HTML" });
+        await ctx.reply(t("rechargeTooHigh", formatNum(MAX_AMOUNT)), {
+          parse_mode: "HTML",
+        });
         return;
       }
 
@@ -638,7 +733,12 @@ export async function addReferralCredit(
   referredByName: string,
 ) {
   await UserRepository.updateWalletBalance(userId, amount, "add");
-  await WalletRepository.addCredit(userId, amount.toString(), "referral", `Referral reward from ${referredByName}`);
+  await WalletRepository.addCredit(
+    userId,
+    amount.toString(),
+    "referral",
+    `Referral reward from ${referredByName}`,
+  );
 }
 
 /** افزایش موجودی از جایزه */
@@ -648,7 +748,12 @@ export async function addRewardCredit(
   description?: string,
 ) {
   await UserRepository.updateWalletBalance(userId, amount, "add");
-  await WalletRepository.addCredit(userId, amount.toString(), "reward", description);
+  await WalletRepository.addCredit(
+    userId,
+    amount.toString(),
+    "reward",
+    description,
+  );
 }
 
 /** پردازش callback از درگاه خارجی (در صورت وجود webhook) */
@@ -662,6 +767,12 @@ export async function handlePaymentCallback(
 ) {
   rechargeState.delete(userId);
   if (status === "success") {
-    await applyRecharge(bot, userId, amount, method, `${method} recharge - Payment ID: ${paymentId}`);
+    await applyRecharge(
+      bot,
+      userId,
+      amount,
+      method,
+      `${method} recharge - Payment ID: ${paymentId}`,
+    );
   }
 }
