@@ -92,6 +92,34 @@
       "when": 1746892800000,
       "tag": "0012_inventory_content",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1746979200000,
+      "tag": "0013_force_join_channels",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1747065600000,
+      "tag": "0014_payment_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1747152000000,
+      "tag": "0015_backup_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1747238400000,
+      "tag": "0016_bot_settings",
+      "breakpoints": true
     }
   ]
 }
