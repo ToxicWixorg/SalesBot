@@ -120,6 +120,7 @@ export function setupTicketScenes(bot: AnyBot) {
     if (!ticket || ticket.userId !== context.from.id) {
       await context.answerCallbackQuery({
         text: t("ticketNotYours"),
+        parse_mode: "HTML",
         show_alert: true,
       });
       return;
@@ -128,6 +129,7 @@ export function setupTicketScenes(bot: AnyBot) {
     if (ticket.status === "closed") {
       await context.answerCallbackQuery({
         text: t("ticketAlreadyClosed"),
+        parse_mode: "HTML",
         show_alert: true,
       });
       return;

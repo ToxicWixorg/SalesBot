@@ -26,6 +26,7 @@ export async function OrderFilterCompletedCallback(
     if (orders.length === 0) {
       await context.answerCallbackQuery({
         text: t("ordersNoCompleted"),
+        parse_mode: "HTML",
         show_alert: true,
       });
       return;
@@ -62,6 +63,7 @@ export async function OrderFilterCompletedCallback(
     console.error("[ORDERS] Error filtering completed orders:", error);
     await context.answerCallbackQuery({
       text: "❌ خطا در دریافت سفارشات",
+        parse_mode: "HTML",
       show_alert: true,
     });
   }

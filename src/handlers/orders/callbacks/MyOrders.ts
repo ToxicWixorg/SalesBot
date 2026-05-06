@@ -69,6 +69,7 @@ export async function MyOrderCallback(context: Context) {
     await context.answerCallbackQuery({
       text: "❌ خطا در دریافت سفارشات",
       show_alert: true,
+        parse_mode: "HTML",
     });
   }
 }

@@ -7,6 +7,7 @@ export async function CopyInviteCallback(context: Context) {
     return context.answerCallbackQuery({
       text: "❌ Unable to identify user.",
       show_alert: true,
+      parse_mode: "HTML",
     });
   }
 
@@ -17,6 +18,7 @@ export async function CopyInviteCallback(context: Context) {
     return context.answerCallbackQuery({
       text: "❌ User not found.",
       show_alert: true,
+      parse_mode: "HTML",
     });
   }
 
@@ -35,5 +37,6 @@ export async function CopyInviteCallback(context: Context) {
   return context.answerCallbackQuery({
     text: textToSend,
     show_alert: true,
+    parse_mode: "HTML",
   });
 }

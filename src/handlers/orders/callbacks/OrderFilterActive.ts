@@ -40,6 +40,7 @@ export async function OrderFilterActiveCallback(
       await context.answerCallbackQuery({
         text: t("ordersNoActive"),
         show_alert: true,
+        parse_mode: "HTML",
       });
       return;
     }
@@ -76,6 +77,7 @@ export async function OrderFilterActiveCallback(
     console.error("[ORDERS] Error filtering active orders:", error);
     await context.answerCallbackQuery({
       text: "❌ خطا در دریافت سفارشات",
+      parse_mode: "HTML",
       show_alert: true,
     });
   }

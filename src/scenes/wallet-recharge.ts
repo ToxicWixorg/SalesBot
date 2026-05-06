@@ -248,6 +248,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     );
 
     await context.answerCallbackQuery({
+      parse_mode: "HTML",
       text: t("rechargePaymentCancelled"),
     });
   });

@@ -9,6 +9,7 @@ export async function ViewReferralsCallBack(context: Context) {
     return context.answerCallbackQuery({
       text: "❌ Unable to identify user.",
       show_alert: true,
+        parse_mode: "HTML",
     });
   }
 
@@ -19,6 +20,7 @@ export async function ViewReferralsCallBack(context: Context) {
     return context.answerCallbackQuery({
       text: "❌ User not found.",
       show_alert: true,
+        parse_mode: "HTML",
     });
   }
 
@@ -31,6 +33,7 @@ export async function ViewReferralsCallBack(context: Context) {
     await context.answerCallbackQuery({
       text: t("noReferralsYet"),
       show_alert: true,
+      parse_mode: "HTML",
     });
     return;
   }

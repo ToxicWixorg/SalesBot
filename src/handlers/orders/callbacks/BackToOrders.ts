@@ -11,6 +11,7 @@ export async function BackToOrdersCallback(context: Context) {
   if (!user) {
     return context.answerCallbackQuery({
       text: "❌ کاربر یافت نشد",
+        parse_mode: "HTML",
     });
   }
 

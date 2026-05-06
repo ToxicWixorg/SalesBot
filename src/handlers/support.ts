@@ -130,6 +130,7 @@ export const supportHandler = (bot: AnyBot) => {
         await ctx.answerCallbackQuery({
           text: t("ticketNotYours"),
           show_alert: true,
+          parse_mode: "HTML",
         });
         return;
       }
@@ -209,6 +210,7 @@ export const supportHandler = (bot: AnyBot) => {
         await ctx.answerCallbackQuery({
           text: t("ticketNotYours"),
           show_alert: true,
+          parse_mode: "HTML",
         });
         return;
       }
@@ -217,6 +219,7 @@ export const supportHandler = (bot: AnyBot) => {
         await ctx.answerCallbackQuery({
           text: t("ticketNoMessages"),
           show_alert: true,
+          parse_mode: "HTML",
         });
         return;
       }
@@ -258,6 +261,7 @@ export const supportHandler = (bot: AnyBot) => {
       await ctx.answerCallbackQuery({
         text: t("ticketMessagesError"),
         show_alert: true,
+        parse_mode: "HTML",
       });
     }
   });
@@ -279,6 +283,7 @@ export const supportHandler = (bot: AnyBot) => {
       await ctx.answerCallbackQuery({
         text: "✅ Ticket resolved",
         show_alert: true,
+        parse_mode: "HTML",
       });
       await ctx.editReplyMarkup({ inline_keyboard: [] });
     } catch (error) {
@@ -286,6 +291,7 @@ export const supportHandler = (bot: AnyBot) => {
       await ctx.answerCallbackQuery({
         text: "❌ Failed to resolve ticket",
         show_alert: true,
+        parse_mode: "HTML",
       });
     }
   });
@@ -301,6 +307,7 @@ export const supportHandler = (bot: AnyBot) => {
       await ctx.answerCallbackQuery({
         text: "🔒 Ticket closed",
         show_alert: true,
+        parse_mode: "HTML",
       });
       await ctx.editReplyMarkup({ inline_keyboard: [] });
     } catch (error) {
@@ -308,6 +315,7 @@ export const supportHandler = (bot: AnyBot) => {
       await ctx.answerCallbackQuery({
         text: "❌ Failed to close ticket",
         show_alert: true,
+        parse_mode: "HTML",
       });
     }
   });
@@ -323,12 +331,14 @@ export const supportHandler = (bot: AnyBot) => {
       await ctx.answerCallbackQuery({
         text: "✅ Ticket assigned to you",
         show_alert: true,
+        parse_mode: "HTML",
       });
     } catch (error) {
       console.error("[SUPPORT] Error assigning ticket:", error);
       await ctx.answerCallbackQuery({
         text: "❌ Failed to assign ticket",
         show_alert: true,
+        parse_mode: "HTML",
       });
     }
   });
@@ -341,6 +351,7 @@ export const supportHandler = (bot: AnyBot) => {
     await ctx.answerCallbackQuery({
       text: `User ID: ${userId}`,
       show_alert: true,
+      parse_mode: "HTML",
     });
   });
 

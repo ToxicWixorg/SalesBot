@@ -25,6 +25,7 @@ export async function OrderReportPeroblemCallback(context: Context) {
     if (!order || Number(order.userId) !== userId) {
       await context.answerCallbackQuery({
         text: t("orderNotFound"),
+        parse_mode: "HTML",
         show_alert: true,
       });
       return;
@@ -33,12 +34,14 @@ export async function OrderReportPeroblemCallback(context: Context) {
     // TODO: پیاده‌سازی سیستم گزارش مشکل
     await context.answerCallbackQuery({
       text: t("orderReportComingSoon"),
+      parse_mode: "HTML",
       show_alert: true,
     });
   } catch (error) {
     console.error("[ORDERS] Error reporting problem:", error);
     await context.answerCallbackQuery({
       text: "❌ خطا در گزارش مشکل",
+      parse_mode: "HTML",
       show_alert: true,
     });
   }

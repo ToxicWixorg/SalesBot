@@ -20,6 +20,7 @@ export function setupWalletHandlers(bot: AnyBot) {
       await context.answerCallbackQuery({
         text: "❌ User not found",
         show_alert: true,
+        parse_mode: "HTML",
       });
       return;
     }
@@ -46,6 +47,7 @@ export function setupWalletHandlers(bot: AnyBot) {
       await context.answerCallbackQuery({
         text: "❌ User not found",
         show_alert: true,
+        parse_mode: "HTML",
       });
       return;
     }
@@ -71,6 +73,7 @@ export function setupWalletHandlers(bot: AnyBot) {
       await context.answerCallbackQuery({
         text: "❌ User not found",
         show_alert: true,
+        parse_mode: "HTML",
       });
       return;
     }
@@ -150,6 +153,7 @@ export function setupWalletHandlers(bot: AnyBot) {
       await context.answerCallbackQuery({
         text: "❌ User not found",
         show_alert: true,
+        parse_mode: "HTML",
       });
       return;
     }
@@ -175,6 +179,7 @@ export function setupWalletHandlers(bot: AnyBot) {
       await context.answerCallbackQuery({
         text: "❌ User not found",
         show_alert: true,
+        parse_mode: "HTML",
       });
       return;
     }
@@ -200,6 +205,7 @@ export function setupWalletHandlers(bot: AnyBot) {
       await context.answerCallbackQuery({
         text: "❌ User not found",
         show_alert: true,
+        parse_mode: "HTML",
       });
       return;
     }

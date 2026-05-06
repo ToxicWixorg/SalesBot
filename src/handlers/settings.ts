@@ -35,6 +35,7 @@ export const settingsComposer = new Composer()
       await context.answerCallbackQuery({
         text: "User not found",
         show_alert: true,
+        parse_mode: "HTML",
       });
       return;
     }
@@ -73,6 +74,7 @@ export const settingsComposer = new Composer()
       await context.answerCallbackQuery({
         text: "User not found",
         show_alert: true,
+        parse_mode: "HTML",
       });
       return;
     }
@@ -113,6 +115,7 @@ for (const type of notificationTypes) {
       await context.answerCallbackQuery({
         text: "User not found",
         show_alert: true,
+        parse_mode: "HTML",
       });
       return;
     }
@@ -151,6 +154,7 @@ for (const type of notificationTypes) {
 
     await context.answerCallbackQuery({
       text: toggledMessage,
+      parse_mode: "HTML",
     });
 
     // Refresh the keyboard
@@ -186,6 +190,7 @@ settingsComposer.callbackQuery("settings:privacy:export", async (context) => {
 
   await context.answerCallbackQuery({
     text: t("exportDataProcessing"),
+    parse_mode: "HTML",
   });
 
   const user = await UserRepository.findById(userId);
