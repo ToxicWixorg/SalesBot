@@ -10,7 +10,7 @@ export function backKeyboard(
   callbackData = "back",
 ): InlineKeyboard {
   return new InlineKeyboard().text(t("btnBack"), callbackData, {
-    icon_custom_emoji_id: emojiIds.back,
+    icon_custom_emoji_id: null, //emojiIds.back,
   });
 }
 
@@ -22,7 +22,7 @@ export function cancelKeyboard(
   callbackData = "cancel",
 ): InlineKeyboard {
   return new InlineKeyboard().text(t("btnCancel"), callbackData, {
-    icon_custom_emoji_id: emojiIds.cross,
+    icon_custom_emoji_id: null, //emojiIds.cross,
   });
 }
 
@@ -31,6 +31,6 @@ export function cancelKeyboard(
  */
 export function backToMainKeyboard(t: TFunction): InlineKeyboard {
   return new InlineKeyboard().text(t("btnMainMenu"), "main_menu", {
-    icon_custom_emoji_id: emojiIds.home,
+    icon_custom_emoji_id: null, //emojiIds.home,
   });
 }

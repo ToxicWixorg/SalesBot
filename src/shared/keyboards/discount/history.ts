@@ -4,6 +4,6 @@ import { emojiIds } from "../../locales/emojies.ts";
 
 export function discountHistoryKeyboard(t: TFunction): InlineKeyboard {
   return new InlineKeyboard().text(t("btnBack"), "discount", {
-    icon_custom_emoji_id: emojiIds.back,
+    icon_custom_emoji_id: null, //emojiIds.back,
   });
 }

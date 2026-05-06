@@ -60,11 +60,11 @@ export const enterDiscountCodeOrderScene = new Scene(
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard()
         .text(t("btnTryAgain"), `add_discount_${planId}`, {
-          icon_custom_emoji_id: emojiIds.refresh,
+          icon_custom_emoji_id: null, //emojiIds.refresh,
         })
         .row()
         .text(t("btnSkipDiscount"), `select_plan_${planId}`, {
-          icon_custom_emoji_id: emojiIds.zap,
+          icon_custom_emoji_id: null, //emojiIds.zap,
         }),
     });
   }
@@ -82,11 +82,11 @@ export const enterDiscountCodeOrderScene = new Scene(
         parse_mode: "HTML",
         reply_markup: new InlineKeyboard()
           .text(t("btnTryAgain"), `add_discount_${planId}`, {
-            icon_custom_emoji_id: emojiIds.refresh,
+            icon_custom_emoji_id: null, //emojiIds.refresh,
           })
           .row()
           .text(t("btnSkipDiscount"), `select_plan_${planId}`, {
-            icon_custom_emoji_id: emojiIds.zap,
+            icon_custom_emoji_id: null, //emojiIds.zap,
           }),
       });
     }
@@ -138,15 +138,15 @@ export const enterDiscountCodeOrderScene = new Scene(
     parse_mode: "HTML",
     reply_markup: new InlineKeyboard()
       .text(t("btnConfirmOrder"), `confirm_order_${planId}`, {
-        icon_custom_emoji_id: emojiIds.checkBold,
+        icon_custom_emoji_id: null, //emojiIds.checkBold,
       })
       .row()
       .text(t("btnRemoveDiscount"), `select_plan_${planId}`, {
-        icon_custom_emoji_id: emojiIds.trash,
+        icon_custom_emoji_id: null, //emojiIds.trash,
       })
       .row()
       .text(t("btnCancel"), "cancel_order", {
-        icon_custom_emoji_id: emojiIds.cross,
+        icon_custom_emoji_id: null, //emojiIds.cross,
       }),
   });
 });

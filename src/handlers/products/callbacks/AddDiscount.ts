@@ -34,11 +34,11 @@ export async function AddDiscountCallback(context: Context) {
     parse_mode: "HTML",
     reply_markup: new InlineKeyboard()
       .text(t("btnSkipDiscount"), `select_plan_${planId}`, {
-        icon_custom_emoji_id: emojiIds.zap,
+        icon_custom_emoji_id: null, //emojiIds.zap,
       })
       .row()
       .text(t("btnCancel"), "cancel_order", {
-        icon_custom_emoji_id: emojiIds.cross,
+        icon_custom_emoji_id: null, //emojiIds.cross,
       }),
   });
 }
