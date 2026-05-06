@@ -41,20 +41,39 @@ function formatNum(n: number): string {
   return n.toLocaleString("fa-IR");
 }
 
-/** قیمت لحظه‌ای USDT به تومان از Nobitex */
+/** قیمت لحظه‌ای USDT به تومان — Nobitex اول، Wallex fallback */
 async function fetchUsdtRate(): Promise<number | null> {
+  // ── منبع ۱: نوبیتکس ──────────────────────────────────
   try {
     const res = await fetch(
       "https://api.nobitex.ir/market/stats?srcCurrency=usdt&dstCurrency=irt",
-      { signal: AbortSignal.timeout(5000) },
+      { signal: AbortSignal.timeout(6000) },
     );
-    if (!res.ok) return null;
-    const data = (await res.json()) as any;
-    const price = parseFloat(data?.stats?.["usdt-irt"]?.lastTradePrice ?? "0");
-    return price > 0 ? price : null;
-  } catch {
-    return null;
-  }
+    if (res.ok) {
+      const data = (await res.json()) as any;
+      const stat = data?.stats?.["usdt-irt"];
+      // Nobitex fields: latest, mark, bestSell, bestBuy
+      const price = parseFloat(
+        stat?.latest ?? stat?.mark ?? stat?.bestSell ?? "0",
+      );
+      if (price > 0) return price;
+    }
+  } catch {}
+
+  // ── منبع ۲: والکس ────────────────────────────────────
+  try {
+    const res = await fetch("https://api.wallex.ir/v1/markets", {
+      signal: AbortSignal.timeout(6000),
+    });
+    if (res.ok) {
+      const data = (await res.json()) as any;
+      const stat = data?.result?.symbols?.USDTTMN;
+      const price = parseFloat(stat?.stats?.lastPrice ?? "0");
+      if (price > 0) return price;
+    }
+  } catch {}
+
+  return null;
 }
 
 /** ارسال نوتیف به گروه ادمین برای تایید شارژ */
@@ -544,7 +563,22 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     // حذف دکمه‌ها از پیام ادمین و نشان دادن نتیجه
     try {
-      const msg = (ctx as any).update?.callback_query?.message;
+      // GramIO transforms snake_case to camelCase
+      const cbq =
+        (ctx as any).update?.callbackQuery ??
+        (ctx as any).update?.callback_query;
+      const msg = cbq?.message;
+      console.log(
+        "[RECHARGE-ADMIN] cbq:",
+        !!cbq,
+        "msg:",
+        !!msg,
+        "caption:",
+        msg?.caption !== undefined,
+        "text:",
+        msg?.text !== undefined,
+      );
+
       const original = msg?.caption ?? msg?.text ?? "";
       const resultLine =
         action === "ra"
@@ -568,7 +602,9 @@ export function setupWalletRechargeScene(bot: AnyBot) {
           reply_markup: { inline_keyboard: [] },
         });
       }
-    } catch {}
+    } catch (err) {
+      console.error("[RECHARGE-ADMIN] edit message error:", err);
+    }
   });
 
   // ── 8. Message Handler ─────────────────────────────────
