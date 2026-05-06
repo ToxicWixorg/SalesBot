@@ -1,223 +1,83 @@
-import { Bot, AnyBot, InlineKeyboard } from "gramio";
+import { type AnyBot, InlineKeyboard } from "gramio";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
-import {
-  rechargeCardKeyboard,
-  rechargeCryptoKeyboard,
-  rechargeZarinpalKeyboard,
-  walletHistoryKeyboard,
-  walletKeyboard,
-  walletRechargeKeyboard,
-} from "../shared/keyboards";
+import { walletKeyboard, walletHistoryKeyboard } from "../shared/keyboards";
 
 export function setupWalletHandlers(bot: AnyBot) {
-  bot.callbackQuery("wallet", async (context) => {
-    const userId = context.from.id;
+  // ── نمایش کیف پول ────────────────────────────────────
+  bot.callbackQuery("wallet", async (ctx) => {
+    const userId = ctx.from.id;
     const user = await UserRepository.findById(userId);
-
-    const t = i18n.buildT(user?.languageCode || "en");
+    const t = i18n.buildT(user?.languageCode || "fa");
 
     if (!user) {
-      await context.answerCallbackQuery({
-        text: t("userNotFound"),
-        show_alert: true,
-      });
+      await ctx.answerCallbackQuery({ text: t("userNotFound"), show_alert: true });
       return;
     }
 
     const balance = user.walletBalance || "0";
 
-    await context.editText(
-      `${t("walletTitle")}\n\n${t("walletBalance", balance)}\n\n${balance === "0" ? t("walletEmpty") : ""}`,
-      {
-        reply_markup: walletKeyboard(t),
-        parse_mode: "HTML",
-      },
+    await ctx.editText(
+      `${t("walletTitle")}\n\n${t("walletBalance", balance)}` +
+        (balance === "0" ? `\n\n${t("walletEmpty")}` : ""),
+      { reply_markup: walletKeyboard(t), parse_mode: "HTML" },
     );
-
-    await context.answerCallbackQuery();
+    await ctx.answerCallbackQuery();
   });
 
-  bot.callbackQuery("wallet_recharge", async (context) => {
-    const userId = context.from.id;
+  // ── تاریخچه تراکنش‌ها ────────────────────────────────
+  bot.callbackQuery("wallet_history", async (ctx) => {
+    const userId = ctx.from.id;
     const user = await UserRepository.findById(userId);
-
-    const t = i18n.buildT(user?.languageCode || "en");
+    const t = i18n.buildT(user?.languageCode || "fa");
 
     if (!user) {
-      await context.answerCallbackQuery({
-        text: t("userNotFound"),
-        show_alert: true,
-      });
-      return;
-    }
-
-    await context.editText(
-      `${t("rechargeWalletTitle")}\n\n${t("rechargeSelectMethod")}`,
-
-      {
-        reply_markup: walletRechargeKeyboard(t),
-        parse_mode: "HTML",
-      },
-    );
-
-    await context.answerCallbackQuery();
-  });
-
-  bot.callbackQuery("wallet_history", async (context) => {
-    const userId = context.from.id;
-    const user = await UserRepository.findById(userId);
-
-    const t = i18n.buildT(user?.languageCode || "en");
-
-    if (!user) {
-      await context.answerCallbackQuery({
-        text: t("userNotFound"),
-        show_alert: true,
-      });
+      await ctx.answerCallbackQuery({ text: t("userNotFound"), show_alert: true });
       return;
     }
 
     const transactions = await WalletRepository.findByUserId(userId);
 
     if (!transactions || transactions.length === 0) {
-      await context.editText(
+      await ctx.editText(
         `${t("transactionHistoryTitle")}\n\n${t("transactionHistoryEmpty")}`,
-        {
-          reply_markup: walletHistoryKeyboard(t),
-          parse_mode: "HTML",
-        },
+        { reply_markup: walletHistoryKeyboard(t), parse_mode: "HTML" },
       );
-
-      await context.answerCallbackQuery();
+      await ctx.answerCallbackQuery();
       return;
     }
 
-    const recentTransactions = transactions.slice(0, 10);
-    let message = `${t("transactionHistoryTitle")}\n\n`;
+    const recent = transactions.slice(0, 10);
+    let msg = `${t("transactionHistoryTitle")}\n\n`;
 
-    for (const tx of recentTransactions) {
-      const type = tx.type === "credit" ? t("txTypeCredit") : t("txTypeDebit");
-      const sign = tx.type === "credit" ? "+" : "-";
+    for (const tx of recent) {
+      const isCredit = tx.type === "credit";
+      const typeLabel = isCredit ? t("txTypeCredit") : t("txTypeDebit");
+      const sign = isCredit ? "+" : "-";
 
-      let sourceText = "";
+      let sourceLabel = "";
       switch (tx.source) {
-        case "purchase":
-          sourceText = t("txSourcePurchase");
-          break;
-        case "recharge":
-          sourceText = t("txSourceRecharge");
-          break;
-        case "refund":
-          sourceText = t("txSourceRefund");
-          break;
-        case "referral":
-          sourceText = t("txSourceReferral");
-          break;
-        case "reward":
-          sourceText = t("txSourceReward");
-          break;
-        case "perk":
-          sourceText = t("txSourcePerk");
-          break;
-        default:
-          sourceText = t("txSourceAdminAdjustment");
+        case "purchase":   sourceLabel = t("txSourcePurchase");        break;
+        case "recharge":   sourceLabel = t("txSourceRecharge");        break;
+        case "refund":     sourceLabel = t("txSourceRefund");          break;
+        case "referral":   sourceLabel = t("txSourceReferral");        break;
+        case "reward":     sourceLabel = t("txSourceReward");          break;
+        case "perk":       sourceLabel = t("txSourcePerk");            break;
+        default:           sourceLabel = t("txSourceAdminAdjustment"); break;
       }
 
-      message += `━━━━━━━━━━━━━━━\n`;
-      message += `${type} ${sourceText}\n`;
-      message += `${t("transactionAmount")} ${sign}${tx.amount} ${t("currency")}\n`;
-      message += `${t("transactionDate")} ${new Date(tx.createdAt || "").toLocaleDateString()}\n`;
-
+      msg += `━━━━━━━━━━━━━━━\n`;
+      msg += `${typeLabel} ${sourceLabel}\n`;
+      msg += `${t("transactionAmount")} ${sign}${tx.amount} ${t("currency")}\n`;
+      msg += `${t("transactionDate")} ${new Date(tx.createdAt || "").toLocaleDateString("fa-IR")}\n`;
       if (tx.description) {
-        message += `${t("transactionDescription")} ${tx.description}\n`;
+        msg += `${t("transactionDescription")} ${tx.description}\n`;
       }
     }
+    msg += `━━━━━━━━━━━━━━━\n`;
 
-    message += `━━━━━━━━━━━━━━━\n`;
-
-    await context.editText(message, {
-      reply_markup: walletHistoryKeyboard(t),
-      parse_mode: "HTML",
-    });
-
-    await context.answerCallbackQuery();
-  });
-
-  bot.callbackQuery("recharge_crypto", async (context) => {
-    const userId = context.from.id;
-    const user = await UserRepository.findById(userId);
-    const t = i18n.buildT(user?.languageCode || "en");
-
-    if (!user) {
-      await context.answerCallbackQuery({
-        text: t("userNotFound"),
-        show_alert: true,
-      });
-      return;
-    }
-
-    await context.editText(
-      `${t("rechargeCryptoTitle")}\n\n${t("rechargeEnterAmountUsdt")}\n\n${t("rechargeMinAmountUsdt", "10")}\n${t("rechargeMaxAmountUsdt", "10000")}`,
-      {
-        reply_markup: rechargeCryptoKeyboard(t),
-        parse_mode: "HTML",
-      },
-    );
-
-    await context.answerCallbackQuery();
-  });
-
-  bot.callbackQuery("recharge_card", async (context) => {
-    const userId = context.from.id;
-    const user = await UserRepository.findById(userId);
-
-    const t = i18n.buildT(user?.languageCode || "en");
-
-    if (!user) {
-      await context.answerCallbackQuery({
-        text: t("userNotFound"),
-        show_alert: true,
-      });
-      return;
-    }
-
-    await context.editText(
-      `${t("rechargeCardTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10000")}\n${t("rechargeMaxAmount", "1000000")}`,
-
-      {
-        reply_markup: rechargeCardKeyboard(t),
-        parse_mode: "HTML",
-      },
-    );
-
-    await context.answerCallbackQuery();
-  });
-
-  bot.callbackQuery("recharge_zarinpal", async (context) => {
-    const userId = context.from.id;
-    const user = await UserRepository.findById(userId);
-
-    const t = i18n.buildT(user?.languageCode || "en");
-
-    if (!user) {
-      await context.answerCallbackQuery({
-        text: t("userNotFound"),
-        show_alert: true,
-      });
-      return;
-    }
-
-    await context.editText(
-      `${t("rechargeZarinpalTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10000")}\n${t("rechargeMaxAmount", "1000000")}`,
-
-      {
-        reply_markup: rechargeZarinpalKeyboard(t),
-        parse_mode: "HTML",
-      },
-    );
-
-    await context.answerCallbackQuery();
+    await ctx.editText(msg, { reply_markup: walletHistoryKeyboard(t), parse_mode: "HTML" });
+    await ctx.answerCallbackQuery();
   });
 }

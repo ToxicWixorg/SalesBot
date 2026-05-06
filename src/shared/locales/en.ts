@@ -151,6 +151,31 @@ export const en = {
   txSourcePerk: `${e.target} Perk Reward`,
   txSourceAdminAdjustment: `${e.settings} Admin Adjustment`,
 
+  // ── New wallet recharge keys ─────────────────────────────
+  rechargeAmount: (amount: string) => `💰 Amount: <b>${amount}</b> Toman`,
+  rechargeMethodSelectTitle: (amount: string) =>
+    `${e.wallet} Amount: <b>${amount}</b> Toman\n\nSelect payment method:`,
+  rechargeCardNumbers: `Card Numbers`,
+  rechargeCardSendReceipt: `After transferring the amount, send a photo of your receipt here.`,
+  rechargeCardExpectPhoto: `${e.cross} Please send a photo of your payment receipt (image, not text).`,
+  rechargePendingApproval: `${e.checkBold} Your request has been submitted!\n\n${e.hourglass} Waiting for admin approval — usually within 30 minutes.`,
+  rechargeApproved: (amount: string) =>
+    `${e.party} <b>Recharge approved!</b>\n\n${e.gem} <b>${amount}</b> Toman has been added to your wallet.`,
+  rechargeRejected: `${e.cross} <b>Recharge request rejected.</b>\n\nContact support if needed.`,
+  rechargeSessionExpired: `${e.warn} Session expired. Please start again from the wallet.`,
+  rechargeMethodDisabled: `${e.cross} This payment method is currently unavailable.`,
+  rechargeNoMethodAvailable: `${e.cross} No payment methods are currently active. Try again later.`,
+  rechargeUsdtRate: (rate: string) => `📈 Live rate: <b>${rate}</b> Toman/USDT`,
+  rechargeRateUnavailable: `${e.cross} Live USDT rate is unavailable. Please wait and try again.`,
+  rechargeCryptoInvalidTxId: `${e.cross} Invalid TxID (must be at least 10 characters). Please resend.`,
+  rechargeZarinpalInstructions: `${e.clipboard} Click Pay, complete the payment, then click Verify Payment.`,
+  btnVerifyPayment: `${e.checkBold} Verify Payment`,
+  rechargeZarinpalVerifying: `${e.hourglass} Verifying payment...`,
+  rechargeZarinpalSuccess: (amount: string) =>
+    `${e.party} <b>Payment confirmed!</b>\n\n${e.gem} <b>${amount}</b> Toman has been added to your wallet.`,
+  rechargeZarinpalFailed: `${e.cross} Payment not confirmed or not yet processed.`,
+  rechargeZarinpalRetry: `Try paying again or check again.`,
+
   // Language Names
   langEnglish: `${e.flag_en} English`,
   langPersian: `${e.flag_ir} فارسی`,

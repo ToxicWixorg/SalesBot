@@ -154,6 +154,32 @@ export const fa = {
   txSourcePerk: `${e.target} پاداش Perk`,
   txSourceAdminAdjustment: `${e.settings} تعدیل ادمین`,
 
+  // ── کلیدهای جدید شارژ کیف پول ──────────────────────────
+  rechargeAmount: (amount: string) => `💰 مبلغ: <b>${amount}</b> تومان`,
+  rechargeMethodSelectTitle: (amount: string) =>
+    `${e.wallet} مبلغ <b>${amount}</b> تومان\n\nروش پرداخت رو انتخاب کن:`,
+  rechargeCardNumbers: `شماره کارت‌ها`,
+  rechargeCardSendReceipt: `بعد از واریز مبلغ، رسید پرداخت (عکس) رو اینجا بفرست.`,
+  rechargeCardExpectPhoto: `${e.cross} لطفاً عکس رسید پرداخت رو بفرست (تصویر باشه نه متن).`,
+  rechargePendingApproval: `${e.checkBold} درخواستت ثبت شد!\n\n${e.hourglass} منتظر تأیید ادمین باش — معمولاً زیر ۳۰ دقیقه.`,
+  rechargeApproved: (amount: string) =>
+    `${e.party} <b>شارژ تأیید شد!</b>\n\n${e.gem} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
+  rechargeRejected: `${e.cross} <b>درخواست شارژ رد شد.</b>\n\nدر صورت نیاز با پشتیبانی تماس بگیر.`,
+  rechargeSessionExpired: `${e.warn} جلسه منقضی شده. دوباره از کیف پول شروع کن.`,
+  rechargeMethodDisabled: `${e.cross} این روش پرداخت فعلاً غیرفعاله.`,
+  rechargeNoMethodAvailable: `${e.cross} در حال حاضر هیچ روش پرداختی فعال نیست. بعداً امتحان کن.`,
+  rechargeUsdtRate: (rate: string) =>
+    `📈 نرخ لحظه‌ای: <b>${rate}</b> تومان/USDT`,
+  rechargeRateUnavailable: `${e.cross} قیمت لحظه‌ای USDT در دسترس نیست. کمی صبر کن و دوباره تلاش کن.`,
+  rechargeCryptoInvalidTxId: `${e.cross} TxID نامعتبره (باید حداقل ۱۰ کاراکتر باشه). دوباره بفرست.`,
+  rechargeZarinpalInstructions: `${e.clipboard} روی دکمه «پرداخت» بزن، مبلغ رو پرداخت کن، بعد دکمه «بررسی پرداخت» رو بزن.`,
+  btnVerifyPayment: `${e.checkBold} بررسی پرداخت`,
+  rechargeZarinpalVerifying: `${e.hourglass} در حال بررسی پرداخت...`,
+  rechargeZarinpalSuccess: (amount: string) =>
+    `${e.party} <b>پرداخت تأیید شد!</b>\n\n${e.gem} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
+  rechargeZarinpalFailed: `${e.cross} پرداخت تأیید نشد یا هنوز ثبت نشده.`,
+  rechargeZarinpalRetry: `دوباره پرداخت کن یا دوباره بررسی کن.`,
+
   // Language Names
   langEnglish: `${e.flag_en} English`,
   langPersian: `${e.flag_ir} فارسی`,

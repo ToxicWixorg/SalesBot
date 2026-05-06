@@ -151,6 +151,32 @@ export const ru = {
   txSourcePerk: `${e.target} Бонус Perk`,
   txSourceAdminAdjustment: `${e.settings} Корректировка администратора`,
 
+  // ── Новые ключи пополнения кошелька ──────────────────────────────────
+  rechargeAmount: (amount: string) => `💰 Сумма: <b>${amount}</b> Томан`,
+  rechargeMethodSelectTitle: (amount: string) =>
+    `${e.wallet} Сумма: <b>${amount}</b> Томан\n\nВыбери способ оплаты:`,
+  rechargeCardNumbers: `Номера карт`,
+  rechargeCardSendReceipt: `После перевода суммы пришли фото чека сюда.`,
+  rechargeCardExpectPhoto: `${e.cross} Пожалуйста, пришли фото квитанции (изображение, не текст).`,
+  rechargePendingApproval: `${e.checkBold} Заявка отправлена!\n\n${e.hourglass} Ожидай подтверждения администратора — обычно до 30 минут.`,
+  rechargeApproved: (amount: string) =>
+    `${e.party} <b>Пополнение подтверждено!</b>\n\n${e.gem} <b>${amount}</b> Томан добавлено на твой кошелёк.`,
+  rechargeRejected: `${e.cross} <b>Заявка на пополнение отклонена.</b>\n\nСвяжись с поддержкой при необходимости.`,
+  rechargeSessionExpired: `${e.warn} Сессия истекла. Начни заново из кошелька.`,
+  rechargeMethodDisabled: `${e.cross} Этот способ оплаты временно недоступен.`,
+  rechargeNoMethodAvailable: `${e.cross} Нет доступных способов оплаты. Попробуй позже.`,
+  rechargeUsdtRate: (rate: string) =>
+    `📈 Текущий курс: <b>${rate}</b> Томан/USDT`,
+  rechargeRateUnavailable: `${e.cross} Текущий курс USDT недоступен. Подожди и попробуй снова.`,
+  rechargeCryptoInvalidTxId: `${e.cross} Неверный TxID (минимум 10 символов). Пришли ещё раз.`,
+  rechargeZarinpalInstructions: `${e.clipboard} Нажми Оплатить, заверши оплату, затем нажми Проверить оплату.`,
+  btnVerifyPayment: `${e.checkBold} Проверить оплату`,
+  rechargeZarinpalVerifying: `${e.hourglass} Проверяем оплату...`,
+  rechargeZarinpalSuccess: (amount: string) =>
+    `${e.party} <b>Оплата подтверждена!</b>\n\n${e.gem} <b>${amount}</b> Томан добавлено на твой кошелёк.`,
+  rechargeZarinpalFailed: `${e.cross} Оплата не подтверждена или ещё не обработана.`,
+  rechargeZarinpalRetry: `Попробуй снова или проверь ещё раз.`,
+
   // Language Names
   langEnglish: `${e.flag_en} English`,
   langPersian: `${e.flag_ir} فارسی`,

@@ -46,8 +46,10 @@ export const config = {
   NEWS_TOPIC_ID: env.get("NEWS_TOPIC_ID").required().asInt(), // Announcements
   NEWREFERRAL_TOPIC_ID: env.get("NEWREFERRAL_TOPIC_ID").required().asInt(), // New referrals
 
+  // پرداخت‌ها و شارژ کیف پول (اگه Topic مجزا داری)
+  PAYMENTS_TOPIC_ID: env.get("PAYMENTS_TOPIC_ID").asInt(), // optional — if not set, falls back to ORDERS_TOPIC_ID
+
   // اضافه کردن Topics جدید (در صورت نیاز این خطوط را uncomment کنید)
-  // PAYMENTS_TOPIC_ID: env.get("PAYMENTS_TOPIC_ID").default("5").asInt(), // Payment issues
   // FEEDBACK_TOPIC_ID: env.get("FEEDBACK_TOPIC_ID").default("6").asInt(), // User feedback
   // TECHNICAL_TOPIC_ID: env.get("TECHNICAL_TOPIC_ID").default("7").asInt(), // Technical issues
 };
