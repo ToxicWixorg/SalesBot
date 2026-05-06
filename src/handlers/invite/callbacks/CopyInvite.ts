@@ -5,24 +5,21 @@ import { i18n } from "../../../shared/locales/index.ts";
 export async function CopyInviteCallback(context: Context) {
   if (!context.from) {
     return context.answerCallbackQuery({
-      text: "❌ Unable to identify user.",
+      text: i18n.buildT("en")("userIdentificationError"),
       show_alert: true,
-      parse_mode: "HTML",
     });
   }
 
   const userId = context.from.id;
   const user = await UserRepository.findById(userId);
+  const t = i18n.buildT(user?.languageCode || "en");
 
   if (!user) {
     return context.answerCallbackQuery({
-      text: "❌ User not found.",
+      text: t("userNotFound"),
       show_alert: true,
-      parse_mode: "HTML",
     });
   }
-
-  const t = i18n.buildT(user.languageCode || "en");
 
   const botInfo = await context.bot.api.getMe();
   const botUsername = botInfo.username || "your_bot";
@@ -37,6 +34,5 @@ export async function CopyInviteCallback(context: Context) {
   return context.answerCallbackQuery({
     text: textToSend,
     show_alert: true,
-    parse_mode: "HTML",
   });
 }

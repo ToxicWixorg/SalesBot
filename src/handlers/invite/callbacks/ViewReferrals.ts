@@ -7,24 +7,21 @@ import { referralListKeyboard } from "../../../shared/keyboards/index.ts";
 export async function ViewReferralsCallBack(context: Context) {
   if (!context.from) {
     return context.answerCallbackQuery({
-      text: "❌ Unable to identify user.",
+      text: i18n.buildT("en")("userIdentificationError"),
       show_alert: true,
-        parse_mode: "HTML",
     });
   }
 
   const userId = context.from.id;
   const user = await UserRepository.findById(userId);
+  const t = i18n.buildT(user?.languageCode || "en");
 
   if (!user) {
     return context.answerCallbackQuery({
-      text: "❌ User not found.",
+      text: t("userNotFound"),
       show_alert: true,
-        parse_mode: "HTML",
     });
   }
-
-  const t = i18n.buildT(user.languageCode || "em");
 
   const referredUsers = await ReferralRepository.getReferredUsers(userId);
   const rewardHistory = await ReferralRepository.getRewardHistory(userId);
@@ -33,7 +30,6 @@ export async function ViewReferralsCallBack(context: Context) {
     await context.answerCallbackQuery({
       text: t("noReferralsYet"),
       show_alert: true,
-      parse_mode: "HTML",
     });
     return;
   }

@@ -54,6 +54,11 @@ export const ru = {
   stock: `${e.box} Наличие:`,
   available: `${e.checkBold} В наличии`,
   outOfStock: `${e.cross} Нет в наличии`,
+  productNotFound: `${e.cross} Продукт не найден`,
+  planNotFound: `${e.cross} Тариф не найден`,
+  categoryNotFound: `${e.cross} Категория не найдена`,
+  noPlansAvailable: `${e.cross} Нет доступных тарифов`,
+  insufficientBalanceAlert: `${e.cross} Недостаточно средств`,
   deliveryTime: `${e.clock} Время доставки:`,
   deliveryType: `${e.truck} Тип доставки:`,
   deliveryAutomatic: `${e.zap} Мгновенно (автоматически)`,
@@ -212,6 +217,8 @@ export const ru = {
   orderId: "Номер заказа",
 
   // Settings
+  userNotFound: `${e.cross} Пользователь не найден`,
+  userIdentificationError: `${e.cross} Не удалось определить пользователя`,
   settingsTitle: `${e.settings} Настройки`,
   settingsDescription: `${e.info} Управляй своим аккаунтом здесь.`,
   btnAccountInfo: `👤 Информация об аккаунте`,
@@ -277,7 +284,7 @@ export const ru = {
     `Это действие <b>необратимо</b>!`,
   deleteAccountSuccess: `${e.checkBold} Твой аккаунт удалён.\n\nНадеемся снова тебя увидеть!`,
   deleteAccountCancelled: `${e.checkBold} Аккаунт не был удалён.`,
-  exportDataProcessing: `${e.hourglass} Подготавливаем твои данные...`,
+  exportDataProcessing: ` Подготавливаем твои данные...`,
   exportDataReady: `${e.checkBold} Данные готовы!`,
 
   // About
@@ -348,6 +355,12 @@ export const ru = {
   orderCannotReschedule: "Этот заказ нельзя перенести",
   orderRescheduleComingSoon: "Функция переноса скоро появится",
   orderReportComingSoon: "Система сообщений о проблемах скоро появится",
+  errorFetchingOrders: `${e.cross} Ошибка при загрузке заказов`,
+  errorFetchingOrderDetails: `${e.cross} Ошибка при загрузке деталей заказа`,
+  errorReschedulingOrder: `${e.cross} Ошибка при переносе заказа`,
+  errorRenewingOrder: `${e.cross} Ошибка при продлении заказа`,
+  errorOpeningTicket: `${e.cross} Ошибка при открытии тикета`,
+  errorReportingProblem: `${e.cross} Ошибка при отправке жалобы`,
 
   // Support & Tickets
   supportMenuText:
@@ -499,7 +512,7 @@ export const ru = {
   // Force Join Channels/Groups
   joinChannelRequired: `${e.flag_ru} <b>Требуется вступление</b>\n\nДля использования бота сначала вступи в следующие каналы/группы:`,
   btnIJoined: `✅ Вступил — проверить`,
-  joinChannelNotJoinedAlert: `${e.cross} Ты ещё не вступил во все необходимые каналы. Вступи и попробуй снова.`,
+  joinChannelNotJoinedAlert: ` Ты ещё не вступил во все необходимые каналы. Вступи и попробуй снова.`,
 
   // Manual / Scheduled Order Flow
   manualOrderInfoRequired: `${e.clipboard} <b>Необходимые данные</b>\n\nВведи следующие данные для обработки заказа:`,

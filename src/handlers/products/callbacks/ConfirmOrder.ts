@@ -35,14 +35,14 @@ export async function ConfirmOrderCallback(context: Context) {
   // Get plan
   const plan = await ProductPlanRepository.findById(planId);
   if (!plan) {
-    await context.answerCallbackQuery("❌ Plan not found");
+    await context.answerCallbackQuery(t("planNotFound"));
     return;
   }
 
   // Get product
   const product = await ProductRepository.findById(plan.productId);
   if (!product) {
-    await context.answerCallbackQuery("❌ Product not found");
+    await context.answerCallbackQuery(t("productNotFound"));
     return;
   }
 
@@ -59,7 +59,7 @@ export async function ConfirmOrderCallback(context: Context) {
   // Check wallet balance against the final (after-discount) price
   const currentBalance = parseFloat(user.walletBalance || "0");
   if (currentBalance < finalPrice) {
-    await context.answerCallbackQuery("❌ Insufficient balance");
+    await context.answerCallbackQuery(t("insufficientBalanceAlert"));
     const insufficientMsg = hasDiscount
       ? t("discountInsufficientBalanceWithDiscount", {
           required: finalPrice.toFixed(0),

@@ -18,8 +18,15 @@ export function productsListKeyboard(
   }
 
   products.forEach((product) => {
-    const stockIcon = (product.stock || 0) > 0 ? "✅" : "❌";
-    keyboard.text(`${stockIcon} ${product.name}`, `product_${product.id}`);
+    const inStock = (product.stock || 0) > 0;
+    const opts: { style: "success" | "danger"; icon_custom_emoji_id?: string } =
+      {
+        style: inStock ? "success" : "danger",
+        ...(product.customEmojiId
+          ? { icon_custom_emoji_id: product.customEmojiId }
+          : {}),
+      };
+    keyboard.text(product.name, `product_${product.id}`, opts);
     keyboard.row();
   });
 

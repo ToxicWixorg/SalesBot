@@ -7,24 +7,21 @@ import { discountHistoryKeyboard } from "../../../shared/keyboards/index.ts";
 export async function DiscountHistoryCallback(context: Context) {
   if (!context.from) {
     return context.answerCallbackQuery({
-      text: "❌ Unable to identify user.",
+      text: i18n.buildT("en")("userIdentificationError"),
       show_alert: true,
-        parse_mode: "HTML",
     });
   }
 
   const userId = context.from.id;
   const user = await UserRepository.findById(userId);
+  const t = i18n.buildT(user?.languageCode || "fa");
 
   if (!user) {
     return context.answerCallbackQuery({
-      text: "❌ User not found.",
+      text: t("userNotFound"),
       show_alert: true,
-        parse_mode: "HTML",
     });
   }
-
-  const t = i18n.buildT(user.languageCode || "fa");
 
   // دریافت تاریخچه استفاده
   const usageHistory = await DiscountCodeRepository.getUserUsageHistory(userId);
@@ -33,7 +30,6 @@ export async function DiscountHistoryCallback(context: Context) {
     await context.answerCallbackQuery({
       text: t("noDiscountHistory"),
       show_alert: true,
-        parse_mode: "HTML",
     });
     return;
   }

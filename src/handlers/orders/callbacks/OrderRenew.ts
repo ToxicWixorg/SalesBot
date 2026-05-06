@@ -25,7 +25,6 @@ export async function OrderRenewCallback(context: Context) {
     if (!order || Number(order.userId) !== userId) {
       await context.answerCallbackQuery({
         text: t("orderNotFound"),
-        parse_mode: "HTML",
         show_alert: true,
       });
       return;
@@ -36,7 +35,6 @@ export async function OrderRenewCallback(context: Context) {
     if (!product?.isRenewable) {
       await context.answerCallbackQuery({
         text: t("orderNotRenewable"),
-        parse_mode: "HTML",
         show_alert: true,
       });
       return;
@@ -45,14 +43,12 @@ export async function OrderRenewCallback(context: Context) {
     // TODO: پیاده‌سازی سیستم تمدید
     await context.answerCallbackQuery({
       text: t("orderRenewComingSoon"),
-        parse_mode: "HTML",
       show_alert: true,
     });
   } catch (error) {
     console.error("[ORDERS] Error renewing order:", error);
     await context.answerCallbackQuery({
-      text: "❌ خطا در تمدید سفارش",
-        parse_mode: "HTML",
+      text: t("errorRenewingOrder"),
       show_alert: true,
     });
   }

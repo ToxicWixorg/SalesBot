@@ -36,14 +36,14 @@ export async function SelectPlanCallback(context: Context) {
   // Get plan
   const plan = await ProductPlanRepository.findById(planId);
   if (!plan) {
-    await context.answerCallbackQuery("❌ Plan not found");
+    await context.answerCallbackQuery(t("planNotFound"));
     return;
   }
 
   // Get product
   const product = await ProductRepository.findById(plan.productId);
   if (!product) {
-    await context.answerCallbackQuery("❌ Product not found");
+    await context.answerCallbackQuery(t("productNotFound"));
     return;
   }
 

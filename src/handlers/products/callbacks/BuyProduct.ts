@@ -19,13 +19,13 @@ export async function BuyProductCallback(context: Context) {
   // Get product
   const product = await ProductRepository.findById(productId);
   if (!product) {
-    await context.answerCallbackQuery("❌ Product not found");
+    await context.answerCallbackQuery(t("productNotFound"));
     return;
   }
 
   // Check stock
   if ((product.stock || 0) <= 0) {
-    await context.answerCallbackQuery("❌ Out of stock");
+    await context.answerCallbackQuery(t("outOfStock"));
     return;
   }
 
@@ -33,7 +33,7 @@ export async function BuyProductCallback(context: Context) {
   const plans = await ProductPlanRepository.findByProductId(productId);
 
   if (plans.length === 0) {
-    await context.answerCallbackQuery("❌ No plans available");
+    await context.answerCallbackQuery(t("noPlansAvailable"));
     return;
   }
 

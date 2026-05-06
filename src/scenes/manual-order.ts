@@ -357,9 +357,10 @@ export function setupManualOrderScene(bot: AnyBot) {
 
   /** Alert when a user taps a full slot */
   bot.callbackQuery("slot_full", async (ctx) => {
-    await ctx.answerCallbackQuery(
-      "❌ این بازه پر شده، یک بازه دیگر انتخاب کنید",
-    );
+    const userId = ctx.from?.id;
+    const user = userId ? await UserRepository.findById(userId) : undefined;
+    const t = i18n.buildT(user?.languageCode ?? "fa");
+    await ctx.answerCallbackQuery(t("scheduleSlotFullAlert"));
   });
 
   /** User selected a time slot — slot_{templateId}_{date} */

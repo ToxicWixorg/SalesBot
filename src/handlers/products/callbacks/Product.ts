@@ -16,7 +16,7 @@ export async function ProductCallback(context: Context) {
   // Get product
   const product = await ProductRepository.findById(productId);
   if (!product) {
-    await context.answerCallbackQuery("❌ Product not found");
+    await context.answerCallbackQuery(t("productNotFound"));
     return;
   }
 

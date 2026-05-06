@@ -19,7 +19,7 @@ export async function CategoryCallBack(context: Context) {
   // Get category
   const category = await CategoryRepository.findById(categoryId);
   if (!category) {
-    await context.answerCallbackQuery("❌ Category not found");
+    await context.answerCallbackQuery(t("categoryNotFound"));
     return;
   }
 

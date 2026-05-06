@@ -55,6 +55,11 @@ export const fa = {
   stock: `${e.box} موجودی:`,
   available: `${e.checkBold} موجود`,
   outOfStock: `${e.cross} ناموجود`,
+  productNotFound: `${e.cross} محصول پیدا نشد`,
+  planNotFound: `${e.cross} پلن پیدا نشد`,
+  categoryNotFound: `${e.cross} دسته‌بندی پیدا نشد`,
+  noPlansAvailable: `${e.cross} پلنی موجود نیست`,
+  insufficientBalanceAlert: `${e.cross} موجودی کافی نیست`,
   deliveryTime: `${e.clock} زمان تحویل:`,
   deliveryType: `${e.truck} نوع تحویل:`,
   deliveryAutomatic: `${e.zap} فوری (خودکار)`,
@@ -215,6 +220,8 @@ export const fa = {
   orderId: "شماره سفارش",
 
   // Settings
+  userNotFound: `${e.cross} کاربر پیدا نشد`,
+  userIdentificationError: `${e.cross} خطا در شناسایی کاربر`,
   settingsTitle: `${e.settings} تنظیمات`,
   settingsDescription: `${e.info} از اینجا می‌تونی حسابت رو مدیریت کنی.`,
   btnAccountInfo: `👤 اطلاعات حساب`,
@@ -280,7 +287,7 @@ export const fa = {
     `این عمل <b>غیرقابل بازگشته</b>!`,
   deleteAccountSuccess: `${e.checkBold} حسابت حذف شد.\n\nامیدواریم دوباره ببینیمت!`,
   deleteAccountCancelled: `${e.checkBold} حسابت حذف نشد.`,
-  exportDataProcessing: `${e.hourglass} در حال آماده‌سازی اطلاعاتت...`,
+  exportDataProcessing: `در حال آماده‌سازی اطلاعاتت...`,
   exportDataReady: `${e.checkBold} اطلاعاتت آماده‌ست!`,
 
   // About
@@ -351,6 +358,12 @@ export const fa = {
   orderCannotReschedule: "این سفارش قابل تغییر زمان نیست",
   orderRescheduleComingSoon: "امکان تغییر زمان به‌زودی فعال می‌شه",
   orderReportComingSoon: "سیستم گزارش مشکل به‌زودی فعال می‌شه",
+  errorFetchingOrders: `${e.cross} خطا در دریافت سفارشات`,
+  errorFetchingOrderDetails: `${e.cross} خطا در دریافت جزئیات سفارش`,
+  errorReschedulingOrder: `${e.cross} خطا در تغییر زمان`,
+  errorRenewingOrder: `${e.cross} خطا در تمدید سفارش`,
+  errorOpeningTicket: `${e.cross} خطا در باز کردن تیکت`,
+  errorReportingProblem: `${e.cross} خطا در گزارش مشکل`,
 
   // Support & Tickets
   supportMenuText:
@@ -502,7 +515,7 @@ export const fa = {
   // Force Join Channels/Groups
   joinChannelRequired: `${e.flag_ir} <b>عضویت الزامی</b>\n\nبرای استفاده از ربات، اول توی کانال‌ها/گروه‌های زیر عضو بشو:`,
   btnIJoined: `✅ عضو شدم — بررسی کن`,
-  joinChannelNotJoinedAlert: `${e.cross} هنوز توی همه کانال‌های لازم عضو نشدی. عضو بشو و دوباره امتحان کن.`,
+  joinChannelNotJoinedAlert: ` هنوز توی همه کانال‌های لازم عضو نشدی. عضو بشو و دوباره امتحان کن.`,
 
   // ── فلوی سفارش دستی / زمان‌بندی‌شده ──────────────────────────────────────
   manualOrderInfoRequired: `${e.clipboard} <b>اطلاعات مورد نیاز</b>\n\nبرای پردازش سفارشت، اطلاعات زیر رو وارد کن:`,

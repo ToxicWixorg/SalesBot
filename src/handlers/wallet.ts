@@ -16,16 +16,16 @@ export function setupWalletHandlers(bot: AnyBot) {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
 
+    const t = i18n.buildT(user?.languageCode || "en");
+
     if (!user) {
       await context.answerCallbackQuery({
-        text: "❌ User not found",
+        text: t("userNotFound"),
         show_alert: true,
-        parse_mode: "HTML",
       });
       return;
     }
 
-    const t = i18n.buildT(user.languageCode || "en");
     const balance = user.walletBalance || "0";
 
     await context.editText(
@@ -43,19 +43,19 @@ export function setupWalletHandlers(bot: AnyBot) {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
 
+    const t = i18n.buildT(user?.languageCode || "en");
+
     if (!user) {
       await context.answerCallbackQuery({
-        text: "❌ User not found",
+        text: t("userNotFound"),
         show_alert: true,
-        parse_mode: "HTML",
       });
       return;
     }
 
-    const t = i18n.buildT(user.languageCode || "en");
-
     await context.editText(
       `${t("rechargeWalletTitle")}\n\n${t("rechargeSelectMethod")}`,
+
       {
         reply_markup: walletRechargeKeyboard(t),
         parse_mode: "HTML",
@@ -69,16 +69,16 @@ export function setupWalletHandlers(bot: AnyBot) {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
 
+    const t = i18n.buildT(user?.languageCode || "en");
+
     if (!user) {
       await context.answerCallbackQuery({
-        text: "❌ User not found",
+        text: t("userNotFound"),
         show_alert: true,
-        parse_mode: "HTML",
       });
       return;
     }
 
-    const t = i18n.buildT(user.languageCode || "en");
     const transactions = await WalletRepository.findByUserId(userId);
 
     if (!transactions || transactions.length === 0) {
@@ -148,17 +148,15 @@ export function setupWalletHandlers(bot: AnyBot) {
   bot.callbackQuery("recharge_crypto", async (context) => {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode || "en");
 
     if (!user) {
       await context.answerCallbackQuery({
-        text: "❌ User not found",
+        text: t("userNotFound"),
         show_alert: true,
-        parse_mode: "HTML",
       });
       return;
     }
-
-    const t = i18n.buildT(user.languageCode || "en");
 
     await context.editText(
       `${t("rechargeCryptoTitle")}\n\n${t("rechargeEnterAmountUsdt")}\n\n${t("rechargeMinAmountUsdt", "10")}\n${t("rechargeMaxAmountUsdt", "10000")}`,
@@ -175,19 +173,19 @@ export function setupWalletHandlers(bot: AnyBot) {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
 
+    const t = i18n.buildT(user?.languageCode || "en");
+
     if (!user) {
       await context.answerCallbackQuery({
-        text: "❌ User not found",
+        text: t("userNotFound"),
         show_alert: true,
-        parse_mode: "HTML",
       });
       return;
     }
 
-    const t = i18n.buildT(user.languageCode || "en");
-
     await context.editText(
       `${t("rechargeCardTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10000")}\n${t("rechargeMaxAmount", "1000000")}`,
+
       {
         reply_markup: rechargeCardKeyboard(t),
         parse_mode: "HTML",
@@ -201,19 +199,19 @@ export function setupWalletHandlers(bot: AnyBot) {
     const userId = context.from.id;
     const user = await UserRepository.findById(userId);
 
+    const t = i18n.buildT(user?.languageCode || "en");
+
     if (!user) {
       await context.answerCallbackQuery({
-        text: "❌ User not found",
+        text: t("userNotFound"),
         show_alert: true,
-        parse_mode: "HTML",
       });
       return;
     }
 
-    const t = i18n.buildT(user.languageCode || "en");
-
     await context.editText(
       `${t("rechargeZarinpalTitle")}\n\n${t("rechargeEnterAmount")}\n\n${t("rechargeMinAmount", "10000")}\n${t("rechargeMaxAmount", "1000000")}`,
+
       {
         reply_markup: rechargeZarinpalKeyboard(t),
         parse_mode: "HTML",

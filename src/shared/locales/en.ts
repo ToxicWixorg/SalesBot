@@ -54,6 +54,11 @@ export const en = {
   stock: `${e.box} Stock:`,
   available: `${e.checkBold} Available`,
   outOfStock: `${e.cross} Out of Stock`,
+  productNotFound: `${e.cross} Product not found`,
+  planNotFound: `${e.cross} Plan not found`,
+  categoryNotFound: `${e.cross} Category not found`,
+  noPlansAvailable: `${e.cross} No plans available`,
+  insufficientBalanceAlert: `${e.cross} Insufficient balance`,
   deliveryTime: `${e.clock} Delivery Time:`,
   deliveryType: `${e.truck} Delivery Type:`,
   deliveryAutomatic: `${e.zap} Instant (Automatic)`,
@@ -212,6 +217,8 @@ export const en = {
   orderId: "Order Number",
 
   // Settings
+  userNotFound: `${e.cross} User not found`,
+  userIdentificationError: `${e.cross} Unable to identify user`,
   settingsTitle: `${e.settings} Settings`,
   settingsDescription: `${e.info} Manage your account from here.`,
   btnAccountInfo: `👤 Account Info`,
@@ -277,7 +284,7 @@ export const en = {
     `This action is <b>irreversible</b>!`,
   deleteAccountSuccess: `${e.checkBold} Your account has been deleted.\n\nWe hope to see you again!`,
   deleteAccountCancelled: `${e.checkBold} Your account was not deleted.`,
-  exportDataProcessing: `${e.hourglass} Preparing your data...`,
+  exportDataProcessing: ` Preparing your data...`,
   exportDataReady: `${e.checkBold} Your data is ready!`,
 
   // About
@@ -348,6 +355,12 @@ export const en = {
   orderCannotReschedule: "This order cannot be rescheduled",
   orderRescheduleComingSoon: "Reschedule feature coming soon",
   orderReportComingSoon: "Problem report system coming soon",
+  errorFetchingOrders: `${e.cross} Error fetching orders`,
+  errorFetchingOrderDetails: `${e.cross} Error fetching order details`,
+  errorReschedulingOrder: `${e.cross} Error rescheduling order`,
+  errorRenewingOrder: `${e.cross} Error renewing order`,
+  errorOpeningTicket: `${e.cross} Error opening ticket`,
+  errorReportingProblem: `${e.cross} Error reporting problem`,
 
   // Support & Tickets
   supportMenuText:
@@ -499,7 +512,7 @@ export const en = {
   // Force Join Channels/Groups
   joinChannelRequired: `${e.flag_en} <b>Membership Required</b>\n\nTo use the bot, please join the following channels/groups first:`,
   btnIJoined: `✅ I've joined — check`,
-  joinChannelNotJoinedAlert: `${e.cross} You haven't joined all required channels yet. Join them and try again.`,
+  joinChannelNotJoinedAlert: `You haven't joined all required channels yet. Join them and try again.`,
 
   // Manual / Scheduled Order Flow
   manualOrderInfoRequired: `${e.clipboard} <b>Required Information</b>\n\nPlease enter the following details to process your order:`,

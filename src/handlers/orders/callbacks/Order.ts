@@ -26,7 +26,6 @@ export async function OrderCallback(
       await context.answerCallbackQuery({
         text: t("orderNotFound"),
         show_alert: true,
-        parse_mode: "HTML",
       });
       return;
     }
@@ -36,7 +35,6 @@ export async function OrderCallback(
       await context.answerCallbackQuery({
         text: t("orderAccessDenied"),
         show_alert: true,
-        parse_mode: "HTML",
       });
       return;
     }
@@ -108,9 +106,8 @@ export async function OrderCallback(
   } catch (error) {
     console.error("[ORDERS] Error fetching order details:", error);
     await context.answerCallbackQuery({
-      text: "❌ خطا در دریافت جزئیات سفارش",
+      text: t("errorFetchingOrderDetails"),
       show_alert: true,
-        parse_mode: "HTML",
     });
   }
 }

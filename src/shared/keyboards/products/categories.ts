@@ -11,7 +11,10 @@ export function categoriesKeyboard(
 
   categories.reverse().forEach((category, index) => {
     const icon = category.icon || "📦";
-    keyboard.text(`${icon} ${category.name}`, `category_${category.id}`);
+    const opts = category.customEmojiId
+      ? { icon_custom_emoji_id: category.customEmojiId }
+      : undefined;
+    keyboard.text(`${icon} ${category.name}`, `category_${category.id}`, opts);
 
     // Add row after every 2 categories
     if (index % 2 === 1 && index !== categories.length - 1) {

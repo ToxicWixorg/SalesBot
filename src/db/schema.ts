@@ -75,6 +75,7 @@ export const categoriesTable = pgTable("categories", {
   slug: text("slug").notNull().unique(),
   description: text("description"),
   icon: text("icon"),
+  customEmojiId: text("custom_emoji_id"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -110,6 +111,8 @@ export const productsTable = pgTable(
     stock: integer("stock").default(0),
     minStock: integer("min_stock").default(5),
 
+    customEmojiId: text("custom_emoji_id"),
+
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
@@ -143,6 +146,8 @@ export const productPlansTable = pgTable(
 
     order: integer("order").default(0),
     isActive: boolean("is_active").default(true),
+
+    customEmojiId: text("custom_emoji_id"),
 
     createdAt: timestamp("created_at").defaultNow(),
   },

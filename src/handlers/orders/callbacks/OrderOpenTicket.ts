@@ -19,7 +19,6 @@ export async function OrderOpenTicketCallback(context: Context) {
     if (!order || Number(order.userId) !== userId) {
       await context.answerCallbackQuery({
         text: t("orderNotFound"),
-        parse_mode: "HTML",
         show_alert: true,
       });
       return;
@@ -31,8 +30,7 @@ export async function OrderOpenTicketCallback(context: Context) {
   } catch (error) {
     console.error("[ORDERS] Error opening ticket:", error);
     await context.answerCallbackQuery({
-      text: "❌ خطا در باز کردن تیکت",
-        parse_mode: "HTML",
+      text: t("errorOpeningTicket"),
       show_alert: true,
     });
   }

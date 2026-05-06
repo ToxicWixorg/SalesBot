@@ -24,7 +24,6 @@ export async function OrderFilterAllCallback(
     if (orders.length === 0) {
       await context.answerCallbackQuery({
         text: t("ordersEmpty"),
-        parse_mode: "HTML",
         show_alert: true,
       });
       return;
@@ -61,8 +60,7 @@ export async function OrderFilterAllCallback(
   } catch (error) {
     console.error("[ORDERS] Error filtering all orders:", error);
     await context.answerCallbackQuery({
-      text: "❌ خطا در دریافت سفارشات",
-        parse_mode: "HTML",
+      text: t("errorFetchingOrders"),
       show_alert: true,
     });
   }

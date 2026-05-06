@@ -24,9 +24,14 @@ export function productPlansKeyboard(
       duration = `${plan.duration} ${durationUnit}`;
     }
 
+    const opts = plan.customEmojiId
+      ? { icon_custom_emoji_id: plan.customEmojiId }
+      : undefined;
+
     keyboard.text(
       `${plan.name} - ${plan.price} ${t("currency")} (${duration})`,
       `select_plan_${plan.id}`,
+      opts,
     );
     keyboard.row();
   });

@@ -25,7 +25,6 @@ export async function OrderRescheduleCallback(context: Context) {
     if (!order || Number(order.userId) !== userId) {
       await context.answerCallbackQuery({
         text: t("orderNotFound"),
-        parse_mode: "HTML",
         show_alert: true,
       });
       return;
@@ -34,7 +33,6 @@ export async function OrderRescheduleCallback(context: Context) {
     if (!["waiting_schedule", "scheduled"].includes(order.status)) {
       await context.answerCallbackQuery({
         text: t("orderCannotReschedule"),
-        parse_mode: "HTML",
         show_alert: true,
       });
       return;
@@ -43,14 +41,12 @@ export async function OrderRescheduleCallback(context: Context) {
     // TODO: پیاده‌سازی سیستم تغییر زمان
     await context.answerCallbackQuery({
       text: t("orderRescheduleComingSoon"),
-        parse_mode: "HTML",
       show_alert: true,
     });
   } catch (error) {
     console.error("[ORDERS] Error rescheduling order:", error);
     await context.answerCallbackQuery({
-      text: "❌ خطا در تغییر زمان",
-        parse_mode: "HTML",
+      text: t("errorReschedulingOrder"),
       show_alert: true,
     });
   }

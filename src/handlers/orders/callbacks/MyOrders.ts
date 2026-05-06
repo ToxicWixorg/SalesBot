@@ -8,13 +8,13 @@ export async function MyOrderCallback(context: Context) {
   const userId = context.from.id;
   const user = await UserRepository.findById(userId);
 
+  const t = i18n.buildT(user?.languageCode || "fa");
+
   if (!user) {
     return context.answerCallbackQuery({
-      text: "❌ کاربر یافت نشد",
+      text: t("userNotFound"),
     });
   }
-
-  const t = i18n.buildT(user.languageCode || "fa");
 
   try {
     const orders = await OrderRepository.findByUserId(userId);
@@ -67,9 +67,8 @@ export async function MyOrderCallback(context: Context) {
   } catch (error) {
     console.error("[ORDERS] Error fetching orders:", error);
     await context.answerCallbackQuery({
-      text: "❌ خطا در دریافت سفارشات",
+      text: t("errorFetchingOrders"),
       show_alert: true,
-        parse_mode: "HTML",
     });
   }
 }
