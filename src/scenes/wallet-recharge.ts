@@ -575,7 +575,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       "text:",
       ctx.text,
       "hasPhoto:",
-      !!(ctx as any).photo,
+      !!(ctx as any).update?.message?.photo,
     );
     console.log("[RECHARGE-MSG] rechargeState:", rechargeState.get(userId));
     console.log(
@@ -665,7 +665,9 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     // ─ 8b. رسید کارت (عکس) ────────────────────────────────
     if (state.step === "waiting_receipt") {
-      const photo = (ctx as any).photo as { file_id: string }[] | undefined;
+      const photo = (ctx as any).update?.message?.photo as
+        | { file_id: string }[]
+        | undefined;
       if (!photo || photo.length === 0) {
         await ctx.reply(t("rechargeCardExpectPhoto"), { parse_mode: "HTML" });
         return;
