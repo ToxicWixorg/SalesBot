@@ -214,5 +214,4 @@ export async function ConfirmInventoryOrderCallback(context: Context) {
     await context.send(itemMsg, { parse_mode: "HTML" });
   }
 
-  await context.send(t("inventoryDeliveryFooter"), { parse_mode: "HTML" });
 }

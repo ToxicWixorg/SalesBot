@@ -3,6 +3,7 @@ import { UserRepository } from "../../../repositories/UserRepository.ts";
 import { ReferralRepository } from "../../../repositories/ReferralRepository.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import { inviteKeyboard } from "../../../shared/keyboards/index.ts";
+import { getBotSettings } from "../../../plugins/base.ts";
 
 export async function InviteCallback(context: Context) {
   if (!context.from) {
@@ -21,6 +22,12 @@ export async function InviteCallback(context: Context) {
       text: t("userNotFound"),
       show_alert: true,
     });
+  }
+
+  const botSettings = await getBotSettings();
+  if (!botSettings.referralEnabled) {
+    await context.answerCallbackQuery();
+    return context.editText(t("referralDisabled"), { parse_mode: "HTML" });
   }
 
   const stats = await ReferralRepository.getReferralStats(userId);

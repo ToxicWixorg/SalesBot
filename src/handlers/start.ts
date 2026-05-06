@@ -2,11 +2,12 @@ import { Composer, InlineKeyboard } from "gramio";
 import { composer } from "../plugins/index.ts";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { ReferralRepository } from "../repositories/ReferralRepository.ts";
+import { ForceJoinRepository } from "../repositories/ForceJoinRepository.ts";
+import type { ForceJoinChannel } from "../db/schema.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { languageSelectionScene } from "../scenes/language-selection.ts";
 import { mainMenuKeyboard } from "../shared/keyboards/index.ts";
 import { sendNewUserNotification } from "../services/bot/notifications/newUser.ts";
-import { getRequiredChannels, type RequiredChannel } from "../config.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
 
 function generateReferralCode(userId: number): string {
@@ -16,13 +17,13 @@ function generateReferralCode(userId: number): string {
 async function getUnjoinedChannels(
   api: any,
   userId: number,
-  channels: RequiredChannel[],
-): Promise<RequiredChannel[]> {
-  const notMember: RequiredChannel[] = [];
+  channels: ForceJoinChannel[],
+): Promise<ForceJoinChannel[]> {
+  const notMember: ForceJoinChannel[] = [];
   for (const channel of channels) {
     try {
       const member = await api.getChatMember({
-        chat_id: channel.id,
+        chat_id: channel.channelId,
         user_id: userId,
       });
       if (member.status === "left" || member.status === "kicked") {
@@ -36,12 +37,12 @@ async function getUnjoinedChannels(
 }
 
 function buildJoinKeyboard(
-  unjoined: RequiredChannel[],
+  unjoined: ForceJoinChannel[],
   t: ReturnType<typeof i18n.buildT>,
 ): InlineKeyboard {
   const keyboard = new InlineKeyboard();
   for (const channel of unjoined) {
-    keyboard.url(channel.name, channel.url).row();
+    keyboard.url(channel.channelName, channel.channelUrl).row();
   }
   keyboard.text(t("btnIJoined"), "check_membership", {
     icon_custom_emoji_id: undefined, //emojiIds.checkBold,
@@ -136,7 +137,7 @@ export const startComposer = new Composer()
     const userName = firstName || username || "User";
 
     // Check required channel/group membership before showing main menu
-    const requiredChannels = getRequiredChannels();
+    const requiredChannels = await ForceJoinRepository.getActiveChannels();
     if (requiredChannels.length > 0) {
       const unjoined = await getUnjoinedChannels(
         context.bot.api,
@@ -182,7 +183,7 @@ export const startComposer = new Composer()
         : "en";
     const t = i18n.buildT(userLang);
 
-    const requiredChannels = getRequiredChannels();
+    const requiredChannels = await ForceJoinRepository.getActiveChannels();
     const unjoined = await getUnjoinedChannels(
       context.bot.api,
       userId,

@@ -26,3 +26,4 @@ export {
   AdminSessionRepository,
 } from "./AdminRepository.ts";
 export { InventoryRepository } from "./InventoryRepository.ts";
+export { ForceJoinRepository } from "./ForceJoinRepository.ts";

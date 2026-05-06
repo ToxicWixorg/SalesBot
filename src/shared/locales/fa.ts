@@ -597,6 +597,25 @@ export const fa = {
     `${e.key} ادمین از همین چت اطلاعات لاگین رو برات می‌فرسته.\n` +
     `${e.sparkles} آماده‌ای؟ بپر توش!`,
 
+  // Blocked user
+  userBlocked:
+    `⛔ <b>دسترسی شما محدود شده</b>\n\n` +
+    `حساب شما توسط مدیریت مسدود شده. در صورت وجود اشتباه با پشتیبانی تماس بگیرید.`,
+  userBlockedWithReason: (reason: string) =>
+    `⛔ <b>دسترسی شما محدود شده</b>\n\n` +
+    `📝 دلیل: ${reason}\n\n` +
+    `در صورت وجود اشتباه با پشتیبانی تماس بگیرید.`,
+
+  // Maintenance mode
+  botMaintenance:
+    `🔧 <b>ربات موقتاً در دسترس نیست</b>\n\n` +
+    `در حال تعمیر یا بهروزرسانی هستیم. یکم کم برمیگردیم. ممنون صبرت هستیم ༉`,
+  botMaintenanceCustom: (msg: string) => `🔧 ${msg}`,
+
+  // Feature disabled messages
+  referralDisabled: `🔒 <b>سیستم رفرال غیرفعال است</b>\n\nدر حال حاضر برنامه دعوت از دوستان موقتاً غیرفعال شده است.`,
+  shopDisabled: `🔒 <b>فروشگاه غیرفعال است</b>\n\nدر حال حاضر فروشگاه موقتاً غیرفعال شده است. لطفاً بعداً دوباره امتحان کنید.`,
+
   // ── Stock notification ──────────────────────────────────────────────────────
   stockSubscribed: `🔔 موجود شد بهت خبر می‌دیم!`,
   stockAlreadySubscribed: `✅ قبلاً ثبت‌نام کردی. وقتی موجود شه خبر می‌دیم.`,
@@ -643,7 +662,11 @@ export const fa = {
     `${e.id} شماره سفارش: #${data.orderId}`,
   inventoryDeliveryHeader: (data: { productName: string }) =>
     `${e.key} <b>تحویل: ${data.productName}</b>`,
-  inventoryDeliveryItem: (data: { index: number; content: string }) =>
-    `<b>#${data.index}</b>\n${data.content}`,
-  inventoryDeliveryFooter: `${e.sparkles} این اطلاعات را در جایی امن ذخیره کنید. همچنین در بخش سفارشات من قابل مشاهده است.`,
+
+  inventoryDeliveryItem: (data: { index: number; content: string }[]) =>
+    `${e.fire} با تشکر از خرید شما دوست عزیز \n\n` +
+    `${e.bag} سفارش شما آماده \n\n` +
+    data.map((item) => `<b>#${item.index}</b>\n${item.content}`).join("\n\n") +
+    `${e.truck} باز هم یه فروشگاه ما سر بزنید \n` +
+    `${e.sparkles} مشتاقانه منتظر شما هستیم `,
 } satisfies LanguageMap;

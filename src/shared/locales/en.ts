@@ -613,7 +613,8 @@ export const en = {
     `${e.cross} Not enough stock. Available: <b>${data.stock}</b>`,
   quantityExceedsLimit: (data: { max: number }) =>
     `${e.cross} You can purchase a maximum of <b>${data.max}</b> items per order.`,
-  warrantyDays: (data: { days: number }) => `Warranty: <b>${data.days} days</b>`,
+  warrantyDays: (data: { days: number }) =>
+    `Warranty: <b>${data.days} days</b>`,
   termsTitle: `Terms & Conditions`,
   btnPayWallet: `💳 Pay with Wallet`,
   btnChangeQuantity: `✏️ Change Quantity`,
@@ -645,7 +646,29 @@ export const en = {
     `${e.id} Order: #${data.orderId}`,
   inventoryDeliveryHeader: (data: { productName: string }) =>
     `${e.key} <b>Delivery: ${data.productName}</b>`,
-  inventoryDeliveryItem: (data: { index: number; content: string }) =>
-    `<b>#${data.index}</b>\n${data.content}`,
-  inventoryDeliveryFooter: `${e.sparkles} Keep this information safe. You can also view it in My Orders.`,
+  inventoryDeliveryItem: (data: { index: number; content: string }[]) =>
+    `${e.fire} با تشکر از خرید شما دوست عزیز \n\n` +
+    `${e.bag} سفارش شما آماده \n\n` +
+    data.map((item) => `<b>#${item.index}</b>\n${item.content}`).join("\n\n") +
+    `${e.truck} باز هم یه فروشگاه ما سر بزنید \n` +
+    `${e.sparkles} مشتاقانه منتظر شما هستیم `,
+
+  // Blocked user
+  userBlocked:
+    `⛔ <b>Your access has been restricted</b>\n\n` +
+    `Your account has been suspended by administration. If you believe this is a mistake, please contact support.`,
+  userBlockedWithReason: (reason: string) =>
+    `⛔ <b>Your access has been restricted</b>\n\n` +
+    `📝 Reason: ${reason}\n\n` +
+    `If you believe this is a mistake, please contact support.`,
+
+  // Maintenance mode
+  botMaintenance:
+    `🔧 <b>Bot is temporarily unavailable</b>\n\n` +
+    `We are performing maintenance or updates. We'll be back shortly. Thank you for your patience ༉`,
+  botMaintenanceCustom: (msg: string) => `🔧 ${msg}`,
+
+  // Feature disabled messages
+  referralDisabled: `🔒 <b>Referral System Unavailable</b>\n\nThe referral program is temporarily disabled.`,
+  shopDisabled: `🔒 <b>Shop Unavailable</b>\n\nThe shop is temporarily disabled. Please try again later.`,
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

@@ -613,7 +613,8 @@ export const ru = {
     `${e.cross} Недостаточно товара. Доступно: <b>${data.stock}</b> шт.`,
   quantityExceedsLimit: (data: { max: number }) =>
     `${e.cross} Максимально <b>${data.max}</b> шт. за один заказ.`,
-  warrantyDays: (data: { days: number }) => `Гарантия: <b>${data.days} дней</b>`,
+  warrantyDays: (data: { days: number }) =>
+    `Гарантия: <b>${data.days} дней</b>`,
   termsTitle: `Условия и правила`,
   btnPayWallet: `💳 Оплатить с кошелька`,
   btnChangeQuantity: `✏️ Изменить количество`,
@@ -645,7 +646,29 @@ export const ru = {
     `${e.id} Заказ: #${data.orderId}`,
   inventoryDeliveryHeader: (data: { productName: string }) =>
     `${e.key} <b>Доставка: ${data.productName}</b>`,
-  inventoryDeliveryItem: (data: { index: number; content: string }) =>
-    `<b>#${data.index}</b>\n${data.content}`,
-  inventoryDeliveryFooter: `${e.sparkles} Сохраните эти данные в надёжном месте. Также доступно в разделе «Мои заказы».`,
+  inventoryDeliveryItem: (data: { index: number; content: string }[]) =>
+    `${e.fire} با تشکر از خرید شما دوست عزیز \n\n` +
+    `${e.bag} سفارش شما آماده \n\n` +
+    data.map((item) => `<b>#${item.index}</b>\n${item.content}`).join("\n\n") +
+    `${e.truck} باز هم یه فروشگاه ما سر بزنید \n` +
+    `${e.sparkles} مشتاقانه منتظر شما هستیم `,
+
+  // Blocked user
+  userBlocked:
+    `⛔ <b>Ваш доступ ограничен</b>\n\n` +
+    `Ваш аккаунт заблокирован администрацией. Если вы считаете, что это ошибка, свяжитесь с поддержкой.`,
+  userBlockedWithReason: (reason: string) =>
+    `⛔ <b>Ваш доступ ограничен</b>\n\n` +
+    `📝 Причина: ${reason}\n\n` +
+    `Если вы считаете, что это ошибка, свяжитесь с поддержкой.`,
+
+  // Maintenance mode
+  botMaintenance:
+    `🔧 <b>Бот временно недоступен</b>\n\n` +
+    `Проводится техобслуживание или обновление. Скоро вернёмся. Спасибо за ожидание ༉`,
+  botMaintenanceCustom: (msg: string) => `🔧 ${msg}`,
+
+  // Feature disabled messages
+  referralDisabled: `🔒 <b>Реферальная система недоступна</b>\n\nРеферальная программа временно отключена.`,
+  shopDisabled: `🔒 <b>Магазин недоступен</b>\n\nМагазин временно отключён. Попробуйте позже.`,
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

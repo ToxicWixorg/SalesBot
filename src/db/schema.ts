@@ -907,3 +907,95 @@ export const adminSessionsTable = pgTable(
 
 export type AdminSession = typeof adminSessionsTable.$inferSelect;
 export type InsertAdminSession = typeof adminSessionsTable.$inferInsert;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 📢 FORCE JOIN CHANNELS ━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+export const forceJoinChannelsTable = pgTable("force_join_channels", {
+  id: serial("id").primaryKey(),
+  channelId: text("channel_id").notNull(), // e.g. "@MyChannel" or "-1001234567890"
+  channelUrl: text("channel_url").notNull(), // invite link or t.me link
+  channelName: text("channel_name").notNull(), // display name shown to user
+  isActive: boolean("is_active").default(true),
+  order: integer("order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type ForceJoinChannel = typeof forceJoinChannelsTable.$inferSelect;
+export type InsertForceJoinChannel = typeof forceJoinChannelsTable.$inferInsert;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 💳 PAYMENT SETTINGS ━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// شماره کارت‌های بانکی (چند کارت)
+export const paymentCardNumbersTable = pgTable("payment_card_numbers", {
+  id: serial("id").primaryKey(),
+  cardNumber: text("card_number").notNull(), // e.g. 6037-9975-1234-5678
+  holderName: text("holder_name").notNull(), // نام صاحب کارت
+  bankName: text("bank_name"), // نام بانک
+  isActive: boolean("is_active").default(true),
+  order: integer("order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type PaymentCardNumber = typeof paymentCardNumbersTable.$inferSelect;
+export type InsertPaymentCardNumber =
+  typeof paymentCardNumbersTable.$inferInsert;
+
+// تنظیمات درگاه‌های پرداخت (ردیف واحد id=1)
+export const paymentSettingsTable = pgTable("payment_settings", {
+  id: serial("id").primaryKey(),
+  // Card
+  cardEnabled: boolean("card_enabled").default(true),
+  // Zarinpal
+  zarinpalEnabled: boolean("zarinpal_enabled").default(false),
+  zarinpalMerchantId: text("zarinpal_merchant_id"),
+  zarinpalSandbox: boolean("zarinpal_sandbox").default(true),
+  // Crypto / USDT
+  cryptoEnabled: boolean("crypto_enabled").default(false),
+  cryptoAddress: text("crypto_address"),
+  cryptoNetwork: text("crypto_network").default("TRC20"), // TRC20 | ERC20 | BEP20
+  cryptoExchangeRate: integer("crypto_exchange_rate").default(0), // نرخ تومان به USDT (دستی)
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type PaymentSettings = typeof paymentSettingsTable.$inferSelect;
+export type InsertPaymentSettings = typeof paymentSettingsTable.$inferInsert;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 💾 BACKUP SETTINGS ━━━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+export const backupSettingsTable = pgTable("backup_settings", {
+  id: serial("id").primaryKey(),
+  isEnabled: boolean("is_enabled").default(false),
+  telegramChannelId: text("telegram_channel_id"), // channel to send backup file
+  cronSchedule: text("cron_schedule").default("0 3 * * *"), // daily 3am
+  lastBackupAt: timestamp("last_backup_at"),
+  lastBackupStatus: text("last_backup_status"), // success | failed
+  lastBackupSize: integer("last_backup_size"), // bytes
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type BackupSettings = typeof backupSettingsTable.$inferSelect;
+export type InsertBackupSettings = typeof backupSettingsTable.$inferInsert;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ⚙️ BOT SETTINGS ━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Single-row table (id=1) — global bot configuration
+export const botSettingsTable = pgTable("bot_settings", {
+  id: serial("id").primaryKey(),
+  maintenanceMode: boolean("maintenance_mode").default(false),
+  maintenanceMessage: text("maintenance_message"), // optional custom message
+  referralEnabled: boolean("referral_enabled").default(true),
+  shopEnabled: boolean("shop_enabled").default(true),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type BotSettings = typeof botSettingsTable.$inferSelect;
+export type InsertBotSettings = typeof botSettingsTable.$inferInsert;
