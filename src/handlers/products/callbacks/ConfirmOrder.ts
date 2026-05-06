@@ -72,9 +72,13 @@ export async function ConfirmOrderCallback(context: Context) {
     await context.editText(insufficientMsg, {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard()
-        .text(t("btnRechargeWallet"), "wallet")
+        .text(t("btnRechargeWallet"), "wallet", {
+          icon_custom_emoji_id: emojiIds.wallet,
+        })
         .row()
-        .text(t("btnCancel"), "cancel_order"),
+        .text(t("btnCancel"), "cancel_order", {
+          icon_custom_emoji_id: emojiIds.cross,
+        }),
     });
     return;
   }
@@ -97,7 +101,11 @@ export async function ConfirmOrderCallback(context: Context) {
 
     if (!config) {
       await context.editText(t("noConfigAvailable"), {
-        reply_markup: new InlineKeyboard().text(t("btnCancel"), "cancel_order"),
+        reply_markup: new InlineKeyboard().text(
+          t("btnCancel"),
+          "cancel_order",
+          { icon_custom_emoji_id: emojiIds.cross },
+        ),
         parse_mode: "HTML",
       });
       return;
@@ -157,9 +165,13 @@ export async function ConfirmOrderCallback(context: Context) {
       {
         parse_mode: "HTML",
         reply_markup: new InlineKeyboard()
-          .text(t("btnMyOrders"), "orders")
+          .text(t("btnMyOrders"), "orders", {
+            icon_custom_emoji_id: emojiIds.box,
+          })
           .row()
-          .text(t("btnMainMenu"), "main_menu"),
+          .text(t("btnMainMenu"), "main_menu", {
+            icon_custom_emoji_id: emojiIds.home,
+          }),
       },
     );
 

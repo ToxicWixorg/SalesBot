@@ -176,9 +176,13 @@ async function finishManualOrder(
   const currentBalance = parseFloat(freshUser?.walletBalance ?? "0");
   if (currentBalance < finalPrice) {
     const keyboard = new InlineKeyboard()
-      .text(t("btnRechargeWallet"), "wallet")
+      .text(t("btnRechargeWallet"), "wallet", {
+        icon_custom_emoji_id: emojiIds.wallet,
+      })
       .row()
-      .text(t("btnCancel"), "cancel_order");
+      .text(t("btnCancel"), "cancel_order", {
+        icon_custom_emoji_id: emojiIds.cross,
+      });
     await sendFn(
       t("insufficientBalance", {
         required: finalPrice.toFixed(0),
@@ -532,9 +536,13 @@ async function finishManualOrderWithSlot(
   const currentBalance = parseFloat(freshUser?.walletBalance ?? "0");
   if (currentBalance < finalPrice) {
     const keyboard = new InlineKeyboard()
-      .text(t("btnRechargeWallet"), "wallet")
+      .text(t("btnRechargeWallet"), "wallet", {
+        icon_custom_emoji_id: emojiIds.wallet,
+      })
       .row()
-      .text(t("btnCancel"), "cancel_order");
+      .text(t("btnCancel"), "cancel_order", {
+        icon_custom_emoji_id: emojiIds.cross,
+      });
     await sendFn(
       t("insufficientBalance", {
         required: finalPrice.toFixed(0),
