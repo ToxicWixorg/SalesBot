@@ -645,15 +645,7 @@ export const en = {
     `${e.id} Order: #${data.orderId}`,
   inventoryDeliveryHeader: (data: { productName: string }) =>
     `${e.key} <b>Delivery: ${data.productName}</b>`,
-  inventoryDeliveryItem: (data: {
-    index: number;
-    email: string;
-    password: string;
-    extraData: string;
-  }) =>
-    `<b>#${data.index}</b>\n` +
-    `📧 Email: <code>${data.email}</code>\n` +
-    `🔐 Password: <code>${data.password}</code>` +
-    (data.extraData ? `\n📝 Extra: ${data.extraData}` : ``),
+  inventoryDeliveryItem: (data: { index: number; content: string }) =>
+    `<b>#${data.index}</b>\n${data.content}`,
   inventoryDeliveryFooter: `${e.sparkles} Keep this information safe. You can also view it in My Orders.`,
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

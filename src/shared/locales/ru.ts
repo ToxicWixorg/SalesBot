@@ -645,15 +645,7 @@ export const ru = {
     `${e.id} Заказ: #${data.orderId}`,
   inventoryDeliveryHeader: (data: { productName: string }) =>
     `${e.key} <b>Доставка: ${data.productName}</b>`,
-  inventoryDeliveryItem: (data: {
-    index: number;
-    email: string;
-    password: string;
-    extraData: string;
-  }) =>
-    `<b>#${data.index}</b>\n` +
-    `📧 Email: <code>${data.email}</code>\n` +
-    `🔐 Пароль: <code>${data.password}</code>` +
-    (data.extraData ? `\n📝 Доп. данные: ${data.extraData}` : ``),
+  inventoryDeliveryItem: (data: { index: number; content: string }) =>
+    `<b>#${data.index}</b>\n${data.content}`,
   inventoryDeliveryFooter: `${e.sparkles} Сохраните эти данные в надёжном месте. Также доступно в разделе «Мои заказы».`,
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

@@ -643,15 +643,7 @@ export const fa = {
     `${e.id} شماره سفارش: #${data.orderId}`,
   inventoryDeliveryHeader: (data: { productName: string }) =>
     `${e.key} <b>تحویل: ${data.productName}</b>`,
-  inventoryDeliveryItem: (data: {
-    index: number;
-    email: string;
-    password: string;
-    extraData: string;
-  }) =>
-    `<b>#${data.index}</b>\n` +
-    `📧 ایمیل: <code>${data.email}</code>\n` +
-    `🔐 پسورد: <code>${data.password}</code>` +
-    (data.extraData ? `\n📝 اطلاعات اضافه: ${data.extraData}` : ``),
+  inventoryDeliveryItem: (data: { index: number; content: string }) =>
+    `<b>#${data.index}</b>\n${data.content}`,
   inventoryDeliveryFooter: `${e.sparkles} این اطلاعات را در جایی امن ذخیره کنید. همچنین در بخش سفارشات من قابل مشاهده است.`,
 } satisfies LanguageMap;

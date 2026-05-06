@@ -713,6 +713,7 @@ export const inventoryTable = pgTable(
     email: text("email"),
     password: text("password"),
     extraData: text("extra_data"), // any extra info (e.g. backup codes, notes)
+    content: text("content"), // free-form delivery content (replaces email/password for simple items)
 
     // Status: available | reserved | used | dead
     status: text("status").notNull().default("available"),

@@ -207,9 +207,7 @@ export async function ConfirmInventoryOrderCallback(context: Context) {
     const item = reserved[i]!;
     const itemMsg = t("inventoryDeliveryItem", {
       index: i + 1,
-      email: item.email ?? "—",
-      password: item.password ?? "—",
-      extraData: item.extraData ?? "",
+      content: item.content ?? [item.email, item.password, item.extraData].filter(Boolean).join(":") || "—",
     });
     await context.send(itemMsg, { parse_mode: "HTML" });
   }
