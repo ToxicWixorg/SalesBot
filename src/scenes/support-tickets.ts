@@ -184,14 +184,19 @@ export function setupTicketScenes(bot: AnyBot) {
   /**
    * Unified message handler - handles both private chats and forum group
    */
-  bot.on("message", async (context) => {
+  bot.on("message", async (context, next) => {
     console.log("[DEBUG-MSG] ========== MESSAGE HANDLER START ==========");
     console.log("[DEBUG-MSG] Chat type:", context.chat?.type);
 
     const userId = context.from?.id;
-    if (!userId || !context.text) {
-      console.log("[DEBUG-MSG] No userId or text, returning");
+    if (!userId) {
+      console.log("[DEBUG-MSG] No userId, returning");
       return;
+    }
+    // Non-text messages (photos, etc.) are not for tickets — pass to next handler
+    if (!context.text) {
+      console.log("[DEBUG-MSG] No text (media?), passing to next handler");
+      return next();
     }
 
     // ========== HANDLE FORUM GROUP (SUPERGROUP) ==========
@@ -318,7 +323,7 @@ export function setupTicketScenes(bot: AnyBot) {
           "- Reply state:",
           ticketReplyState.has(userId),
         );
-        return;
+        return next();
       }
       console.log("[DEBUG-TICKET] Not in scene ✓");
 
@@ -343,8 +348,8 @@ export function setupTicketScenes(bot: AnyBot) {
       const state = ticketState.get(userId);
       console.log("[DEBUG-TICKET] State:", state);
       if (!state || state.step !== "message") {
-        console.log("[DEBUG-TICKET] No valid state, returning");
-        return;
+        console.log("[DEBUG-TICKET] No valid state, passing to next handler");
+        return next();
       }
 
       console.log("[DEBUG-TICKET] Calling handleTicketCreation");
