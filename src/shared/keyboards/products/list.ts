@@ -12,7 +12,7 @@ export function productsListKeyboard(
 
   if (products.length === 0) {
     keyboard.text(t("btnBack"), `categories`, {
-      icon_custom_emoji_id: null, //emojiIds.back,
+      icon_custom_emoji_id: undefined, //emojiIds.back,
     });
     return keyboard;
   }
@@ -31,7 +31,7 @@ export function productsListKeyboard(
   });
 
   keyboard.text(t("btnBack"), `categories`, {
-    icon_custom_emoji_id: null, //emojiIds.back,
+    icon_custom_emoji_id: undefined, //emojiIds.back,
   });
 
   return keyboard;

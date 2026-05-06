@@ -8,14 +8,14 @@ export function orderConfirmationKeyboard(
 ): InlineKeyboard {
   return new InlineKeyboard()
     .text(t("btnConfirmOrder"), `confirm_order_${planId}`, {
-      icon_custom_emoji_id: null, //emojiIds.checkBold,
+      icon_custom_emoji_id: undefined, //emojiIds.checkBold,
     })
     .row()
     .text(t("btnAddDiscountCode"), `add_discount_${planId}`, {
-      icon_custom_emoji_id: null, //emojiIds.ticket,
+      icon_custom_emoji_id: undefined, //emojiIds.ticket,
     })
     .row()
     .text(t("btnCancel"), `cancel_order`, {
-      icon_custom_emoji_id: null, //emojiIds.cross,
+      icon_custom_emoji_id: undefined, //emojiIds.cross,
     });
 }

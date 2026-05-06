@@ -25,27 +25,27 @@ export const fa = {
     `یه گزینه انتخاب کن:`,
 
   // Buttons
-  btnProducts: `🛍️ محصولات`,
-  btnMyOrders: `📦 سفارشات من`,
-  btnWallet: `💰 کیف پول`,
-  btnInviteFriends: `👥 دعوت دوستان`,
-  btnDiscountCode: `🎁 کد تخفیف`,
-  btnSupport: `💬 پشتیبانی`,
-  btnSettings: `⚙️ تنظیمات`,
-  btnBack: `🔙 بازگشت`,
-  btnCancel: `❌ لغو`,
-  btnMainMenu: `🏠 منوی اصلی`,
-  btnChangeLanguage: `🌐 تغییر زبان`,
-  btnNotifications: `🔔 اعلان‌ها`,
-  btnYes: `✅ بله`,
-  btnNo: `❌ خیر`,
-  btnConfirm: `✅ تایید`,
+  btnProducts: `محصولات`,
+  btnMyOrders: `سفارشات من`,
+  btnWallet: `کیف پول`,
+  btnInviteFriends: ` دعوت دوستان`,
+  btnDiscountCode: ` کد تخفیف`,
+  btnSupport: ` پشتیبانی`,
+  btnSettings: ` تنظیمات`,
+  btnBack: ` بازگشت`,
+  btnCancel: ` لغو`,
+  btnMainMenu: ` منوی اصلی`,
+  btnChangeLanguage: ` تغییر زبان`,
+  btnNotifications: ` اعلان‌ها`,
+  btnYes: ` بله`,
+  btnNo: ` خیر`,
+  btnConfirm: ` تایید`,
 
   // Products
-  btnBuyProduct: `🛍️ خرید`,
-  btnNotifyStock: `🔔 اطلاع موجودی`,
-  btnConfirmOrder: `✅ تایید سفارش`,
-  btnAddDiscountCode: `🎫 افزودن کد تخفیف`,
+  btnBuyProduct: ` خرید`,
+  btnNotifyStock: ` اطلاع موجودی`,
+  btnConfirmOrder: ` تایید سفارش`,
+  btnAddDiscountCode: ` افزودن کد تخفیف`,
   productsTitle: `${e.bag} محصولات`,
   selectCategory: `${e.tag} یه دسته‌بندی انتخاب کن:`,
   categoryProducts: (category: string) => `محصولات <b>${category}</b>:`,
@@ -78,15 +78,15 @@ export const fa = {
   walletTitle: `${e.wallet} کیف پول`,
   walletBalance: (balance: string) => `موجودی: <b>${balance}</b> تومان`,
   walletEmpty: `${e.wallet} کیف پولت فعلاً خالیه ${e.sparkles} شارژش کن و شروع کن!`,
-  btnRechargeWallet: `💳 شارژ کیف پول`,
-  btnTransactionHistory: `📊 تاریخچه تراکنش‌ها`,
+  btnRechargeWallet: ` شارژ کیف پول`,
+  btnTransactionHistory: ` تاریخچه تراکنش‌ها`,
 
   // Wallet Recharge
   rechargeWalletTitle: `${e.card} شارژ کیف پول`,
   rechargeSelectMethod: `روش شارژ رو انتخاب کن:`,
-  btnRechargeCrypto: `🪙 پرداخت کریپتو (USDT)`,
-  btnRechargeCard: `💳 پرداخت با کارت`,
-  btnRechargeZarinpal: `💰 درگاه زرین‌پال`,
+  btnRechargeCrypto: ` پرداخت کریپتو (USDT)`,
+  btnRechargeCard: ` پرداخت با کارت`,
+  btnRechargeZarinpal: ` درگاه زرین‌پال`,
 
   rechargeEnterAmount: `${e.wallet} مبلغ شارژ رو وارد کن:`,
   rechargeEnterAmountUsdt: `${e.coin} مقدار USDT رو وارد کن:`,
@@ -142,8 +142,8 @@ export const fa = {
   transactionDescription: "توضیحات:",
 
   // Transaction Types
-  txTypeCredit: "➕ واریز",
-  txTypeDebit: "➖ برداشت",
+  txTypeCredit: " واریز",
+  txTypeDebit: " برداشت",
 
   // Transaction Sources
   txSourcePurchase: `${e.bag} خرید`,
@@ -175,9 +175,9 @@ export const fa = {
     `۲. وقتی عضو شدن، پاداش می‌گیری\n` +
     `۳. پاداش مستقیم به کیف پولت واریز می‌شه\n\n` +
     `${e.gem} پاداش هر دعوت: <b>۱۰٬۰۰۰</b> تومان`,
-  btnShareInviteLink: `📤 اشتراک‌گذاری لینک`,
-  btnCopyLink: `📋 کپی لینک`,
-  btnViewReferrals: `👥 لیست دعوت‌شدگان`,
+  btnShareInviteLink: ` اشتراک‌گذاری لینک`,
+  btnCopyLink: ` کپی لینک`,
+  btnViewReferrals: ` لیست دعوت‌شدگان`,
   inviteShareText: `${e.gift} با این لینک عضو شو و تخفیف ویژه بگیر!`,
   inviteLinkCopied: (link: string) =>
     `${e.checkBold} لینک کپی شد!\n\n<code>${link}</code>\n\nاین لینک رو برای دوستات بفرست.`,
@@ -193,10 +193,10 @@ export const fa = {
     `${e.gift} <b>کد تخفیف</b>\n\n` +
     `با کدهای تخفیف، قیمت خریدت رو پایین بیار.\n\n` +
     `می‌تونی هنگام خرید کد بزنی یا از اینجا اعتبارش رو چک کنی.`,
-  btnEnterDiscountCode: `✏️ وارد کردن کد تخفیف`,
-  btnDiscountHistory: `📊 تاریخچه استفاده`,
+  btnEnterDiscountCode: ` وارد کردن کد تخفیف`,
+  btnDiscountHistory: ` تاریخچه استفاده`,
   enterDiscountCodePrompt: `${e.pencil} کد تخفیفت رو وارد کن:\n\nمثال: <code>SUMMER2024</code>`,
-  btnTryAgain: `🔄 تلاش دوباره`,
+  btnTryAgain: ` تلاش دوباره`,
   discountCodeValid: (data: {
     code: string;
     type: string;
@@ -226,8 +226,8 @@ export const fa = {
   settingsDescription: `${e.info} از اینجا می‌تونی حسابت رو مدیریت کنی.`,
   btnAccountInfo: `👤 اطلاعات حساب`,
   btnNotificationSettings: `🔔 تنظیمات اعلان‌ها`,
-  btnPrivacy: `🔒 حریم خصوصی`,
-  btnAbout: `ℹ️ درباره ما`,
+  btnPrivacy: ` حریم خصوصی`,
+  btnAbout: `ℹ درباره ما`,
 
   // Account Info
   accountInfoTitle: `${e.person} اطلاعات حساب`,
@@ -253,16 +253,11 @@ export const fa = {
   // Notification Settings
   notificationSettingsTitle: `${e.bell} تنظیمات اعلان‌ها`,
   notificationSettingsDescription: `${e.info} انتخاب کن کدوم اعلان‌ها رو دریافت کنی:`,
-  btnToggleOrderNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} اعلان سفارشات`,
-  btnToggleWalletNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} اعلان کیف پول`,
-  btnTogglePromotionNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} اعلان تخفیفات`,
-  btnToggleReferralNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} اعلان دعوت دوستان`,
-  btnToggleStockNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} اعلان موجودی محصولات`,
+  btnToggleOrderNotifications: (enabled: boolean) => `اعلان سفارشات`,
+  btnToggleWalletNotifications: (enabled: boolean) => ` اعلان کیف پول`,
+  btnTogglePromotionNotifications: (enabled: boolean) => `اعلان تخفیفات`,
+  btnToggleReferralNotifications: (enabled: boolean) => `اعلان دعوت دوستان`,
+  btnToggleStockNotifications: (enabled: boolean) => ` اعلان موجودی محصولات`,
   notificationToggled: (type: string, enabled: boolean) =>
     `${enabled ? `${e.checkBold} فعال شد` : `${e.cross} غیرفعال شد`}: ${type}`,
   allNotificationsEnabled: `${e.checkBold} همه اعلان‌ها فعالن`,
@@ -271,9 +266,9 @@ export const fa = {
   // Privacy
   privacyTitle: `${e.lock} حریم خصوصی`,
   privacyDescription: `${e.shield} مدیریت داده‌های شخصی:`,
-  btnClearHistory: `🗑️ پاک کردن تاریخچه`,
-  btnDeleteAccount: `❌ حذف حساب`,
-  btnExportData: `📤 دریافت اطلاعات من`,
+  btnClearHistory: ` پاک کردن تاریخچه`,
+  btnDeleteAccount: `حذف حساب`,
+  btnExportData: ` دریافت اطلاعات من`,
   clearHistoryConfirm:
     `${e.warn} <b>مطمئنی؟</b>\n\n` +
     `تاریخچه‌ات پاک می‌شه — این عمل برگشت نداره.`,
@@ -309,9 +304,9 @@ export const fa = {
   ordersSelectFilter: `یه فیلتر انتخاب کن:`,
 
   // Orders Filter Buttons
-  btnOrdersFilterActive: `🔵 فعال`,
-  btnOrdersFilterCompleted: `🟢 تکمیل‌شده`,
-  btnOrdersFilterAll: `📋 همه`,
+  btnOrdersFilterActive: `فعال`,
+  btnOrdersFilterCompleted: `تکمیل‌شده`,
+  btnOrdersFilterAll: `همه`,
 
   // Orders List
   ordersActiveTitle: `${e.blue} سفارشات فعال`,
@@ -343,11 +338,11 @@ export const fa = {
   orderDeliveryInstructions: "دستورالعمل",
 
   // Order Buttons
-  btnOrderOpenTicket: `💬 باز کردن تیکت`,
-  btnOrderRenew: `🔄 تمدید`,
-  btnOrderReschedule: `📅 تغییر زمان`,
-  btnOrderReportProblem: `⚠️ گزارش مشکل`,
-  btnBackToOrders: `🔙 بازگشت به سفارشات`,
+  btnOrderOpenTicket: `باز کردن تیکت`,
+  btnOrderRenew: `تمدید`,
+  btnOrderReschedule: `تغییر زمان`,
+  btnOrderReportProblem: `گزارش مشکل`,
+  btnBackToOrders: `بازگشت به سفارشات`,
 
   // Order Actions
   orderNotFound: "سفارش پیدا نشد",
@@ -372,16 +367,16 @@ export const fa = {
     `• گزارش مشکل\n` +
     `• مشاهده تیکت‌ها`,
 
-  btnNewSupportTicket: `🎫 تیکت جدید`,
-  btnNewReportTicket: `⚠️ گزارش مشکل`,
-  btnMyTickets: `📋 تیکت‌های من`,
-  btnViewMyTickets: `👁️ مشاهده تیکت‌ها`,
-  btnBackToMain: `🏠 منوی اصلی`,
-  btnReplyToTicket: `💬 پاسخ`,
-  btnViewMessages: `💬 مشاهده پیام‌ها`,
-  btnBackToTickets: `🔙 بازگشت به تیکت‌ها`,
-  btnViewTicket: `👁️ مشاهده تیکت`,
-  btnViewOrder: `📦 مشاهده سفارش`,
+  btnNewSupportTicket: `تیکت جدید`,
+  btnNewReportTicket: `گزارش مشکل`,
+  btnMyTickets: `تیکت‌های من`,
+  btnViewMyTickets: `مشاهده تیکت‌ها`,
+  btnBackToMain: `منوی اصلی`,
+  btnReplyToTicket: `پاسخ`,
+  btnViewMessages: `شاهده پیام‌ها`,
+  btnBackToTickets: `بازگشت به تیکت‌ها`,
+  btnViewTicket: `مشاهده تیکت`,
+  btnViewOrder: `مشاهده سفارش`,
 
   // Ticket Creation
   ticketSupportPrompt:
@@ -473,13 +468,13 @@ export const fa = {
     `${e.key} <b>کانفیگ VPN تو</b>${data.label ? ` (${data.label})` : ""}\n\n` +
     `<code>${data.configData}</code>\n\n` +
     `روی کانفیگ بالا تپ کن تا کپی بشه، بعد توی اپ VPN وارد کن.`,
-  btnMyOrders2: `📦 سفارشات من`,
-  btnBackToMenu: `🏠 منوی اصلی`,
+  btnMyOrders2: `سفارشات من`,
+  btnBackToMenu: `منوی اصلی`,
 
   // Discount code during order flow
   enterDiscountCodeForOrder: `${e.ticket} <b>افزودن کد تخفیف</b>\n\nکد تخفیفت رو وارد کن:\n\nمثال: <code>SUMMER2024</code>`,
-  btnSkipDiscount: `⚡ بدون کد تخفیف ادامه بده`,
-  btnRemoveDiscount: `🗑️ حذف تخفیف`,
+  btnSkipDiscount: `بدون کد تخفیف ادامه بده`,
+  btnRemoveDiscount: `حذف تخفیف`,
   discountCodeAppliedToOrder: (data: {
     code: string;
     discountAmount: string;

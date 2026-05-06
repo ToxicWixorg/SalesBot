@@ -12,7 +12,7 @@ export function productDetailsKeyboard(
 
   if (hasStock) {
     keyboard.text(t("btnBuyProduct"), `buy_product_${product.id}`, {
-      icon_custom_emoji_id: null, //emojiIds.bag,
+      icon_custom_emoji_id: undefined, //emojiIds.bag,
     });
     keyboard.row();
   } else {
@@ -20,7 +20,7 @@ export function productDetailsKeyboard(
   }
 
   keyboard.text(t("btnBack"), `category_${product.categoryId}`, {
-    icon_custom_emoji_id: null, //emojiIds.back,
+    icon_custom_emoji_id: undefined, //emojiIds.back,
   });
 
   return keyboard;

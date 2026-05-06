@@ -37,7 +37,7 @@ export function productPlansKeyboard(
   });
 
   keyboard.text(t("btnBack"), `product_${productId}`, {
-    icon_custom_emoji_id: null, //emojiIds.back,
+    icon_custom_emoji_id: undefined, //emojiIds.back,
   });
 
   return keyboard;

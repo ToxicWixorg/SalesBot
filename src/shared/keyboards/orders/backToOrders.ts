@@ -5,10 +5,10 @@ import { emojiIds } from "../../locales/emojies.ts";
 export function backToOrdersKeyboard(t: TFunction): InlineKeyboard {
   return new InlineKeyboard()
     .text(t("btnBackToOrders"), "back_to_orders", {
-      icon_custom_emoji_id: null, //emojiIds.back,
+      icon_custom_emoji_id: undefined, //emojiIds.back,
     })
     .row()
     .text(t("btnMainMenu"), "main_menu", {
-      icon_custom_emoji_id: null, //emojiIds.home,
+      icon_custom_emoji_id: undefined, //emojiIds.home,
     });
 }

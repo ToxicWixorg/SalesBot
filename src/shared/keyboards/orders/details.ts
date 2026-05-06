@@ -12,7 +12,7 @@ export function orderDetailsKeyboard(
 
   // دکمه باز کردن تیکت
   keyboard.text(t("btnOrderOpenTicket"), `order_open_ticket_${order.id}`, {
-    icon_custom_emoji_id: null, //emojiIds.chat,
+    icon_custom_emoji_id: undefined, //emojiIds.chat,
   });
 
   // دکمه تمدید (فقط برای محصولات قابل تمدید و سفارشات تکمیل شده یا نزدیک به پایان)
@@ -21,7 +21,7 @@ export function orderDetailsKeyboard(
     ["completed", "active", "expiring_soon"].includes(order.status)
   ) {
     keyboard.text(t("btnOrderRenew"), `order_renew_${order.id}`, {
-      icon_custom_emoji_id: null, //emojiIds.refresh,
+      icon_custom_emoji_id: undefined, //emojiIds.refresh,
     });
   }
 
@@ -30,7 +30,7 @@ export function orderDetailsKeyboard(
   // دکمه تغییر زمان (فقط برای سفارشات منتظر یا زمان‌بندی شده)
   if (["waiting_schedule", "scheduled"].includes(order.status)) {
     keyboard.text(t("btnOrderReschedule"), `order_reschedule_${order.id}`, {
-      icon_custom_emoji_id: null, //emojiIds.calendar,
+      icon_custom_emoji_id: undefined, //emojiIds.calendar,
     });
   }
 
@@ -38,7 +38,7 @@ export function orderDetailsKeyboard(
   if (["completed", "active"].includes(order.status)) {
     keyboard
       .text(t("btnOrderReportProblem"), `order_report_problem_${order.id}`, {
-        icon_custom_emoji_id: null, //emojiIds.warn,
+        icon_custom_emoji_id: undefined, //emojiIds.warn,
       })
       .row();
   }
@@ -46,11 +46,11 @@ export function orderDetailsKeyboard(
   // دکمه بازگشت
   keyboard
     .text(t("btnBackToOrders"), "back_to_orders", {
-      icon_custom_emoji_id: null, //emojiIds.back,
+      icon_custom_emoji_id: undefined, //emojiIds.back,
     })
     .row();
   keyboard.text(t("btnMainMenu"), "main_menu", {
-    icon_custom_emoji_id: null, //emojiIds.home,
+    icon_custom_emoji_id: undefined, //emojiIds.home,
   });
 
   return keyboard;
