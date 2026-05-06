@@ -171,7 +171,7 @@ export async function ConfirmOrderCallback(context: Context) {
           .row()
           .text(t("btnMainMenu"), "main_menu", {
             icon_custom_emoji_id: emojiIds.home,
-          }),null //emojiIds.
+          }),
       },
     );
 
