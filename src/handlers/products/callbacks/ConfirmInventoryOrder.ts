@@ -113,16 +113,13 @@ export async function ConfirmInventoryOrderCallback(context: Context) {
   if (!reserved) {
     // Not enough stock — release placeholder order
     await OrderRepository.updateStatus(placeholderOrder.id, "cancelled");
-    await context.editText(
-      t("quantityExceedsStock", { stock: 0 }),
-      {
-        parse_mode: "HTML",
-        reply_markup: new InlineKeyboard()
-          .text(t("btnBack"), `product_${plan.productId}`)
-          .row()
-          .text(t("btnNotifyStock"), `notify_stock_${plan.productId}`),
-      },
-    );
+    await context.editText(t("quantityExceedsStock", { stock: 0 }), {
+      parse_mode: "HTML",
+      reply_markup: new InlineKeyboard()
+        .text(t("btnBack"), `product_${plan.productId}`)
+        .row()
+        .text(t("btnNotifyStock"), `notify_stock_${plan.productId}`),
+    });
     return;
   }
 
@@ -207,7 +204,12 @@ export async function ConfirmInventoryOrderCallback(context: Context) {
     const item = reserved[i]!;
     const itemMsg = t("inventoryDeliveryItem", {
       index: i + 1,
-      content: item.content ?? [item.email, item.password, item.extraData].filter(Boolean).join(":") || "—",
+      content:
+        item.content ??
+        ([item.email, item.password, item.extraData]
+          .filter(Boolean)
+          .join(":") ||
+          "—"),
     });
     await context.send(itemMsg, { parse_mode: "HTML" });
   }
