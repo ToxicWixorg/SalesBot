@@ -14,7 +14,6 @@ export function regionSelectionKeyboard(
   const kb = new InlineKeyboard();
   for (let i = 0; i < regions.length; i++) {
     const r = regions[i]!;
-    // Show region-specific price if available
     const priceLabel = r.price
       ? ` — ${Number(r.price).toLocaleString()} ${t("currency")}`
       : "";

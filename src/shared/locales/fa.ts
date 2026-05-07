@@ -748,4 +748,5 @@ export const fa = {
     `👤 کاربر: ${userLabel} (<code>${opts.userId}</code>)\n` +
     `💰 مبلغ: <b>${formatNum(opts.amount)}</b> تومان\n` +
     `🔑 روش: ${methodLabel}\n`,
+  regionNotFound: "ریجن پیدا نشد ❌",
 } satisfies LanguageMap;

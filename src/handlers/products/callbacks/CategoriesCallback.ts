@@ -2,10 +2,10 @@ import { Context } from "gramio";
 import { UserRepository } from "../../../repositories/UserRepository.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import { getBotSettings } from "../../../plugins/base.ts";
-import { CategoryRepository } from "../../../repositories/ProductRepository.ts";
+import { CategoryRepository } from "../../../repositories/index.ts";
 import { categoriesKeyboard } from "../../../shared/keyboards/index.ts";
 
-export async function ProductsCallback(context: Context) {
+export async function CategoriesCallback(context: Context) {
   if (!context.from) return;
 
   const user = await UserRepository.findById(context.from.id);
