@@ -23,7 +23,6 @@ process.on("unhandledRejection", (error) => {
 });
 
 await seedOwnerOnStartup();
-await seedCategoriesOnStartup();
 
 await bot.start();
 startReminderService(bot);
