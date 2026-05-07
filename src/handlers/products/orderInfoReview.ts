@@ -5,6 +5,7 @@ import type { InfoStep, PendingOrderInfo } from "./pendingOrderInfoState.ts";
 /** Human-readable Persian label for each info step */
 const stepLabel: Record<InfoStep, string> = {
   email: "📧 ایمیل",
+  password: "🔑 رمز ایمیل",
   loginUsername: "👤 نام کاربری",
   loginPassword: "🔐 رمز عبور",
   region: "🌍 منطقه",
