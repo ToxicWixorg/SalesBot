@@ -151,6 +151,13 @@ export const startComposer = new Composer()
       }
     }
 
+    await context.send(
+      `<tg-emoji emoji-id="5314310000531766389">©️</tg-emoji> This is a demo , so if you see any bugs or have suggestions, please let us know!`,
+      {
+        parse_mode: "HTML",
+      },
+    );
+
     return context.send(t("main_menu", userName), {
       reply_markup: mainMenuKeyboard(t),
       parse_mode: "HTML",
