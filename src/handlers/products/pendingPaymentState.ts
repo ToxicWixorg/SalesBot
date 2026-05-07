@@ -1,20 +1,17 @@
 /**
- * In-memory state for non-wallet order payments in progress.
- * Used during ZarinPal payment flow (waiting for user to verify).
- * Card/crypto flows also use this to pass the final price to the confirm callback.
+ * Tracks an in-flight card / ZarinPal / crypto payment for a manual order.
+ * Stored while the user is on the "payment pending" screen so we can
+ * verify / confirm it when they press the confirmation button.
  */
 
-export interface PendingPaymentInfo {
+export type PendingPaymentInfo = {
   planId: number;
   finalPrice: number;
-  /** ZarinPal: authority token returned by payment request */
+  /** ZarinPal authority token — set when a ZarinPal payment URL was generated */
   zarinpalAuthority?: string;
-  /** ZarinPal: full payment URL to show the user */
+  /** Direct ZarinPal payment URL shown to the user */
   zarinpalPayUrl?: string;
-}
+};
 
-/**
- * userId → PendingPaymentInfo
- * Cleared after successful payment or cancellation.
- */
+/** userId → payment state */
 export const pendingPaymentState = new Map<number, PendingPaymentInfo>();

@@ -1,268 +1,159 @@
-import { Context, InlineKeyboard } from "gramio";
+import { InlineKeyboard } from "gramio";
 import { i18n } from "../../../shared/locales/index.ts";
+import { emojiIds } from "../../../shared/locales/emojies.ts";
 import { UserRepository } from "../../../repositories/UserRepository.ts";
 import {
   ProductRepository,
   ProductPlanRepository,
-  ProductConfigRepository,
 } from "../../../repositories/ProductRepository.ts";
-import { OrderRepository } from "../../../repositories/OrderRepository.ts";
-import { WalletRepository } from "../../../repositories/WalletRepository.ts";
-import { DiscountCodeRepository } from "../../../repositories/DiscountCodeRepository.ts";
-import { appliedDiscountState } from "../discountOrderState.ts";
+import { getBotInstance } from "../../../botInstance.ts";
 import {
   pendingOrderInfoState,
   type InfoStep,
+  type PendingOrderInfo,
 } from "../pendingOrderInfoState.ts";
+import { appliedDiscountState } from "../discountOrderState.ts";
 import { preSelectedRegionState } from "../preSelectedRegionState.ts";
 import { createManualOrderDirect } from "../../../scenes/manual-order.ts";
-import { getBotInstance } from "../../../botInstance.ts";
-import { emojiIds } from "../../../shared/locales/emojies.ts";
 
-/** Delivery types that are fulfilled instantly from a pre-loaded config pool */
-const CONFIG_DELIVERY_TYPES = ["automatic", "code", "family_join"] as const;
+/**
+ * Maps each InfoStep to its i18n prompt key.
+ */
+const promptKeyMap: Record<InfoStep, string> = {
+  email: "manualOrderEmailPrompt",
+  loginUsername: "manualOrderLoginUsernamePrompt",
+  loginPassword: "manualOrderLoginPasswordPrompt",
+  region: "manualOrderRegionPrompt",
+};
 
-export async function ConfirmOrderCallback(context: Context) {
-  if (!context.from || !context.queryData) return;
-
-  const planId = Number.parseInt(context.queryData[1]);
-  const userId = context.from.id;
+/**
+ * Handler for `confirm_order_{planId}` callback.
+ *
+ * Flow:
+ *   1. Resolve plan + product
+ *   2. Read pre-selected region and applied discount
+ *   3. Pre-check if wallet has any balance at all (optional hint)
+ *   4. Build the list of info steps the user must complete
+ *   5a. No steps → delegate to createManualOrderDirect (payment screen)
+ *   5b. Steps exist → push PendingOrderInfo state and send first prompt
+ */
+export async function ConfirmOrderCallback(context: any): Promise<void> {
+  const planId = parseInt(context.queryData[1]);
+  const userId = context.from?.id;
+  if (!userId) return;
 
   const user = await UserRepository.findById(userId);
   if (!user) return;
 
-  const t = i18n.buildT(user.languageCode || "en");
+  const t = i18n.buildT(user.languageCode ?? "fa");
 
-  // Get plan
   const plan = await ProductPlanRepository.findById(planId);
   if (!plan) {
-    await context.answerCallbackQuery(t("planNotFound"));
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
     return;
   }
 
-  // Get product
   const product = await ProductRepository.findById(plan.productId);
   if (!product) {
-    await context.answerCallbackQuery(t("productNotFound"));
-    return;
-  }
-
-  const basePlanPrice = parseFloat(plan.price as string);
-
-  // If a region was pre-selected with a price override, use it as the base price
-  const preRegionForPrice = preSelectedRegionState.get(userId);
-  const regionPriceOverride =
-    preRegionForPrice?.planId === planId ? preRegionForPrice.price : undefined;
-  const price = regionPriceOverride ?? basePlanPrice;
-
-  // Check for a pending discount applied by the user
-  const pendingDiscount = appliedDiscountState.get(userId);
-  const hasDiscount =
-    pendingDiscount !== undefined && pendingDiscount.planId === planId;
-
-  const discountAmount = hasDiscount ? pendingDiscount.discountAmount : 0;
-  const finalPrice = hasDiscount ? pendingDiscount.finalPrice : price;
-
-  // Check wallet balance against the final (after-discount) price
-  const currentBalance = parseFloat(user.walletBalance || "0");
-  if (currentBalance < finalPrice) {
-    await context.answerCallbackQuery(t("insufficientBalanceAlert"));
-    const insufficientMsg = hasDiscount
-      ? t("discountInsufficientBalanceWithDiscount", {
-          required: finalPrice.toFixed(0),
-          current: currentBalance.toFixed(0),
-        })
-      : t("insufficientBalance", {
-          required: finalPrice.toFixed(0),
-          current: currentBalance.toFixed(0),
-        });
-    await context.editText(insufficientMsg, {
-      parse_mode: "HTML",
-      reply_markup: new InlineKeyboard()
-        .text(t("btnRechargeWallet"), "wallet", {
-          icon_custom_emoji_id: emojiIds.wallet,
-        })
-        .row()
-        .text(t("btnCancel"), "cancel_order", {
-          icon_custom_emoji_id: emojiIds.cross,
-        }),
+    await context.answerCallbackQuery({
+      text: t("productNotFound"),
+      show_alert: true,
     });
     return;
   }
 
-  await context.answerCallbackQuery();
+  // ── Resolve pre-selected region ────────────────────────────────────────────
+  const preRegion = preSelectedRegionState.get(userId);
+  const regionForThisPlan =
+    preRegion?.planId === planId ? preRegion : undefined;
+  const regionPrice = regionForThisPlan?.price;
 
-  // ── Branch by delivery type ──────────────────────────────────────────────
-  const isConfigBased = (CONFIG_DELIVERY_TYPES as readonly string[]).includes(
-    product.deliveryType,
-  );
+  // ── Resolve price (region override > plan base) ────────────────────────────
+  const basePrice = regionPrice ?? parseFloat(plan.price as string);
+  const discount = appliedDiscountState.get(userId);
+  const hasDiscount = discount && discount.planId === planId;
+  const finalPrice = hasDiscount ? discount.finalPrice : basePrice;
 
-  if (isConfigBased) {
-    // ── Automatic / instant config delivery ─────────────────────────────
-    let config = await ProductConfigRepository.findAvailableByPlanId(planId);
-    if (!config) {
-      config = await ProductConfigRepository.findAvailableByProductId(
-        plan.productId,
-      );
-    }
+  // ── Pre-check wallet (show hint, not hard-block — card/crypto still possible) ─
+  const walletBalance = parseFloat(user.walletBalance ?? "0");
+  if (walletBalance < finalPrice) {
+    // We don't block here — card / zarinpal / crypto paths are still available.
+    // The payment screen itself will hide the wallet button if balance is low.
+  }
 
-    if (!config) {
-      await context.editText(t("noConfigAvailable"), {
-        reply_markup: new InlineKeyboard().text(
-          t("btnCancel"),
-          "cancel_order",
-          { icon_custom_emoji_id: emojiIds.cross },
-        ),
-        parse_mode: "HTML",
-      });
-      return;
-    }
+  // ── Build required info steps ──────────────────────────────────────────────
+  // Region via keyboard is already captured in preSelectedRegionState;
+  // only add "region" text-input step when no region UI is available.
+  const planHasRegions = (plan.regions?.length ?? 0) > 0;
+  const productHasRegions = (product.regions?.length ?? 0) > 0;
+  const regionCoveredByKeyboard = planHasRegions || productHasRegions;
 
-    // Create completed order
-    const order = await OrderRepository.create({
-      userId: userId as any,
-      productId: plan.productId,
-      planId,
-      status: "completed",
-      quantity: 1,
-      totalPrice: plan.price as any,
-      discountAmount: discountAmount.toString() as any,
-      walletUsed: finalPrice.toString() as any,
-      finalPrice: finalPrice.toString() as any,
-      paymentMethod: "wallet",
-      discountCodeId: hasDiscount ? pendingDiscount.discountCodeId : undefined,
-      delivery: { configId: config.id, configData: config.configData },
-      deliveredAt: new Date(),
-    });
+  const steps: InfoStep[] = [];
 
-    // Deduct wallet
-    await UserRepository.updateWalletBalance(userId, finalPrice, "subtract");
-    await WalletRepository.debitBalance(
+  if (
+    product.requiresRegion &&
+    !regionCoveredByKeyboard &&
+    !regionForThisPlan
+  ) {
+    steps.push("region");
+  }
+  if (product.requiresEmail || plan.requiresEmail) {
+    steps.push("email");
+  }
+  if (product.requiresLogin || plan.requiresLogin) {
+    steps.push("loginUsername");
+    steps.push("loginPassword");
+  }
+
+  // ── Pre-collected region (from keyboard selection) ──────────────────────────
+  const preCollected: Partial<Record<InfoStep, string>> = {};
+  if (regionForThisPlan) {
+    preCollected.region = `${regionForThisPlan.flag} ${regionForThisPlan.name}`;
+  }
+
+  // ── No info steps → go straight to payment ────────────────────────────────
+  if (steps.length === 0) {
+    await createManualOrderDirect(
+      getBotInstance(),
       userId,
-      finalPrice.toFixed(2),
-      "purchase",
-      order.id,
-      `خرید ${product.name} - ${plan.name}`,
-    );
-
-    if (hasDiscount && pendingDiscount) {
-      await DiscountCodeRepository.recordUsage(
-        pendingDiscount.discountCodeId,
-        userId,
-        order.id,
-        pendingDiscount.discountAmount,
-      );
-      appliedDiscountState.delete(userId);
-    }
-
-    await ProductConfigRepository.markAsUsed(config.id, order.id);
-    await ProductRepository.decreaseStock(plan.productId);
-
-    const updatedUser = await UserRepository.findById(userId);
-    const newBalance = parseFloat(updatedUser?.walletBalance || "0");
-
-    await context.editText(
-      t("orderSuccess", {
-        orderId: order.id,
-        productName: product.name,
-        planName: plan.name,
-        amount: finalPrice.toFixed(0),
-        remainingBalance: newBalance.toFixed(0),
-      }),
-      {
-        parse_mode: "HTML",
-        reply_markup: new InlineKeyboard()
-          .text(t("btnMyOrders"), "orders", {
-            icon_custom_emoji_id: emojiIds.box,
-          })
-          .row()
-          .text(t("btnMainMenu"), "main_menu", {
-            icon_custom_emoji_id: emojiIds.home,
-          }),
-      },
-    );
-
-    await context.send(
-      t("vpnConfigMessage", {
-        configData: config.configData,
-        label: config.label ?? undefined,
-      }),
-      { parse_mode: "HTML" },
-    );
-  } else {
-    // ── Manual / Custom-schedule / Invite delivery ──────────────────────
-    // Determine which fields to collect from the user (from plan-level requirements)
-    const steps: InfoStep[] = [];
-    if (plan.requiresEmail) steps.push("email");
-    if (plan.requiresLogin) {
-      steps.push("loginUsername");
-      steps.push("loginPassword");
-    }
-    if (plan.requiresRegion) steps.push("region");
-
-    // If region was already selected via inline keyboard button, pre-fill it
-    const preRegion = preSelectedRegionState.get(userId);
-    const preFilledCollected: Partial<Record<InfoStep, string>> = {};
-    let effectiveSteps = steps;
-    // Use region-specific price if set during region selection
-    const regionPrice =
-      preRegion?.planId === planId ? preRegion.price : undefined;
-    const effectivePrice = regionPrice ?? price;
-    if (preRegion && preRegion.planId === planId) {
-      preFilledCollected.region = preRegion.region;
-      effectiveSteps = steps.filter((s) => s !== "region");
-      preSelectedRegionState.delete(userId);
-    }
-
-    if (effectiveSteps.length === 0) {
-      // No info needed – create the order immediately
-      await createManualOrderDirect(
-        getBotInstance(),
-        userId,
-        planId,
-        product.deliveryType,
-        (text, opts) => context.editText(text, opts),
-        preFilledCollected,
-      );
-      return;
-    }
-
-    // Save state and ask for the first field
-    pendingOrderInfoState.set(userId, {
       planId,
-      deliveryType: product.deliveryType,
-      phase: "info",
-      steps: effectiveSteps,
-      currentStep: 0,
-      collected: preFilledCollected,
-      discount: hasDiscount ? pendingDiscount : undefined,
-      regionPrice: regionPrice,
-    });
-
-    const stepIndicator = t("manualOrderStep", {
-      current: 1,
-      total: effectiveSteps.length,
-    });
-    const firstPromptKey = getPromptKey(effectiveSteps[0]);
-    const message = `${t("manualOrderInfoRequired")}\n\n${stepIndicator}\n\n${t(firstPromptKey as any)}`;
-
-    await context.editText(message, {
-      parse_mode: "HTML",
-      reply_markup: new InlineKeyboard().text(
-        t("btnCancelManualOrder"),
-        "cancel_manual_order",
-        { icon_custom_emoji_id: emojiIds.cross },
-      ),
-    });
+      product.deliveryType,
+      (text, opts) => context.editText(text, opts),
+      preCollected,
+    );
+    return;
   }
-}
 
-function getPromptKey(step: InfoStep): string {
-  const map: Record<InfoStep, string> = {
-    email: "manualOrderEmailPrompt",
-    loginUsername: "manualOrderLoginUsernamePrompt",
-    loginPassword: "manualOrderLoginPasswordPrompt",
-    region: "manualOrderRegionPrompt",
+  // ── Store state and send first info-collection prompt ──────────────────────
+  const state: PendingOrderInfo = {
+    planId,
+    deliveryType: product.deliveryType,
+    phase: "info",
+    steps,
+    currentStep: 0,
+    collected: preCollected,
+    discount: hasDiscount ? discount : undefined,
+    regionPrice,
   };
-  return map[step];
+
+  pendingOrderInfoState.set(userId, state);
+
+  const firstStep = steps[0]!;
+  const stepIndicator = t("manualOrderStep", {
+    current: 1,
+    total: steps.length,
+  });
+  const promptText = `${stepIndicator}\n\n${t(promptKeyMap[firstStep] as any)}`;
+
+  await context.editText(promptText, {
+    parse_mode: "HTML",
+    reply_markup: new InlineKeyboard().text(
+      t("btnCancelManualOrder"),
+      "cancel_manual_order",
+      { icon_custom_emoji_id: emojiIds.cross },
+    ),
+  });
 }

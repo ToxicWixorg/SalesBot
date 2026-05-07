@@ -1,113 +1,99 @@
-/**
- * Helpers for the payment confirmation screen.
- * Shows final order summary + dynamic payment method keyboard.
- */
-
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../shared/locales/index.ts";
 import type { InfoStep } from "./pendingOrderInfoState.ts";
 import type { PaymentSettings, PaymentCardNumber } from "../../db/schema.ts";
 
-export interface PaymentKeyboardOptions {
-  settings?: PaymentSettings;
-  cards?: PaymentCardNumber[];
-  walletBalance: number;
-  finalPrice: number;
-}
-
-export interface PaymentSummaryData {
+export type PaymentSummaryData = {
   productName: string;
   planName: string;
-  duration?: number | null;
-  durationUnit?: string | null;
+  duration: number | null | undefined;
+  durationUnit: string | null | undefined;
   collected: Partial<Record<InfoStep, string>>;
   originalPrice: number;
   discountCode?: string;
   discountAmount?: number;
   finalPrice: number;
   walletBalance: number;
-}
+};
 
+export type PaymentKeyboardOptions = {
+  settings: PaymentSettings | undefined;
+  cards: PaymentCardNumber[];
+  walletBalance: number;
+  finalPrice: number;
+};
+
+/**
+ * Builds the full payment summary message shown before the user picks a method.
+ */
 export function buildPaymentSummaryText(
   t: TFunction,
   data: PaymentSummaryData,
 ): string {
-  const lines: string[] = [`${t("paymentSummaryTitle")}`, ""];
-
-  lines.push(`📦 ${data.productName}`);
-  lines.push(`📋 ${data.planName}`);
-
+  let duration = t("oneTime");
   if (data.duration) {
-    const unitKey = data.durationUnit || "day";
-    let unit = "";
-    if (unitKey === "day") unit = t("duration_day");
-    else if (unitKey === "month") unit = t("duration_month");
-    else if (unitKey === "year") unit = t("duration_year");
-    lines.push(`⏱ ${data.duration} ${unit}`);
+    const unitKey = data.durationUnit ?? "day";
+    let unitLabel = "";
+    if (unitKey === "day") unitLabel = t("duration_day");
+    else if (unitKey === "month") unitLabel = t("duration_month");
+    else if (unitKey === "year") unitLabel = t("duration_year");
+    duration = `${data.duration} ${unitLabel}`;
   }
 
-  if (data.collected.region) {
-    lines.push(`🌍 ${data.collected.region}`);
-  }
-
-  lines.push("");
-
+  let text = `${t("paymentSummaryTitle")}\n\n`;
+  text += `📦 ${data.productName}\n`;
+  text += `📋 ${data.planName} — ${duration}\n`;
+  if (data.collected.email) text += `📧 ${data.collected.email}\n`;
+  if (data.collected.region) text += `🌍 ${data.collected.region}\n`;
+  text += `\n`;
+  text += `${t("paymentOriginalPrice")}: ${data.originalPrice.toLocaleString()} ${t("currency")}\n`;
   if (data.discountCode && data.discountAmount) {
-    lines.push(
-      `💵 ${t("paymentOriginalPrice")}: <s>${data.originalPrice.toLocaleString()}</s> ${t("currency")}`,
-    );
-    lines.push(
-      `🎫 ${t("paymentDiscount")} (${data.discountCode}): -${data.discountAmount.toLocaleString()} ${t("currency")}`,
-    );
-    lines.push(
-      `✅ ${t("paymentFinalPrice")}: <b>${data.finalPrice.toLocaleString()}</b> ${t("currency")}`,
-    );
-  } else {
-    lines.push(
-      `💰 ${t("paymentFinalPrice")}: <b>${data.finalPrice.toLocaleString()}</b> ${t("currency")}`,
-    );
+    text += `${t("paymentDiscount")}: -${data.discountAmount.toLocaleString()} ${t("currency")} (${data.discountCode})\n`;
   }
+  text += `${t("paymentFinalPrice")}: <b>${data.finalPrice.toLocaleString()}</b> ${t("currency")}\n`;
+  text += `${t("paymentWalletBalance")}: ${data.walletBalance.toLocaleString()} ${t("currency")}\n`;
+  text += `\n${t("paymentPrompt")}`;
 
-  lines.push(
-    `👛 ${t("paymentWalletBalance")}: ${data.walletBalance.toLocaleString()} ${t("currency")}`,
-  );
-
-  lines.push("", t("paymentPrompt"));
-  return lines.join("\n");
+  return text;
 }
 
+/**
+ * Builds the payment method inline keyboard based on enabled gateways.
+ * Shows "Top-up wallet" if balance is insufficient.
+ */
 export function paymentKeyboard(
   t: TFunction,
   planId: number,
-  opts?: PaymentKeyboardOptions,
+  opts: PaymentKeyboardOptions,
 ): InlineKeyboard {
   const kb = new InlineKeyboard();
+  const canPayWallet = opts.walletBalance >= opts.finalPrice;
 
-  // Wallet — only if balance covers the price
-  const canPayWallet = !opts || opts.walletBalance >= opts.finalPrice;
   if (canPayWallet) {
     kb.text(t("btnPayWallet"), `pay_wallet_${planId}`).row();
   }
 
-  // Card (if enabled and at least one active card exists)
-  if (opts?.settings?.cardEnabled && (opts.cards?.length ?? 0) > 0) {
+  if (opts.settings?.cardEnabled) {
     kb.text(t("btnPayCard"), `pay_card_${planId}`).row();
   }
 
-  // ZarinPal (if enabled and merchant ID is set)
-  if (opts?.settings?.zarinpalEnabled && opts.settings?.zarinpalMerchantId) {
+  if (opts.settings?.zarinpalEnabled && opts.settings.zarinpalMerchantId) {
     kb.text(t("btnPayZarinpal"), `pay_zarinpal_${planId}`).row();
   }
 
-  // Crypto / USDT (if enabled, address and exchange rate set)
   if (
-    opts?.settings?.cryptoEnabled &&
-    opts.settings?.cryptoAddress &&
-    (opts.settings?.cryptoExchangeRate ?? 0) > 0
+    opts.settings?.cryptoEnabled &&
+    opts.settings.cryptoAddress &&
+    (opts.settings.cryptoExchangeRate ?? 0) > 0
   ) {
     kb.text(t("btnPayCrypto"), `pay_crypto_${planId}`).row();
   }
 
+  if (!canPayWallet) {
+    kb.text(t("btnRechargeWallet"), "wallet").row();
+  }
+
   kb.text(t("btnCancelManualOrder"), "cancel_manual_order");
+
   return kb;
 }

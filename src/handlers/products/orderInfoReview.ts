@@ -1,63 +1,51 @@
-/**
- * Helpers for the order-info review screen.
- * After all steps are collected, we show a summary with Confirm / Edit buttons
- * before actually creating the order.
- */
-
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../shared/locales/index.ts";
 import type { InfoStep, PendingOrderInfo } from "./pendingOrderInfoState.ts";
 
-const STEP_LABELS: Record<InfoStep, string> = {
+/** Human-readable Persian label for each info step */
+const stepLabel: Record<InfoStep, string> = {
   email: "📧 ایمیل",
   loginUsername: "👤 نام کاربری",
   loginPassword: "🔐 رمز عبور",
   region: "🌍 منطقه",
 };
 
-const STEP_LABELS_EN: Record<InfoStep, string> = {
-  email: "📧 Email",
-  loginUsername: "👤 Username",
-  loginPassword: "🔐 Password",
-  region: "🌍 Region",
-};
-
+/**
+ * Builds the review message that shows the user all collected info
+ * and asks them to confirm or edit individual fields.
+ */
 export function buildOrderInfoReviewText(
   t: TFunction,
   state: PendingOrderInfo,
 ): string {
-  const lines: string[] = [`${t("orderInfoReviewTitle")}`, ""];
+  let text = `${t("orderInfoReviewTitle")}\n${t("orderInfoReviewPrompt")}\n\n`;
 
-  const allCollected: InfoStep[] = [
-    "email",
-    "loginUsername",
-    "loginPassword",
-    "region",
-  ];
-
-  for (const step of allCollected) {
-    const value = state.collected[step];
-    if (!value) continue;
-    lines.push(`${STEP_LABELS[step]}: <code>${value}</code>`);
+  for (const step of state.steps) {
+    const value = state.collected[step] ?? "—";
+    text += `${stepLabel[step]}: <code>${value}</code>\n`;
   }
 
-  lines.push("", t("orderInfoReviewPrompt"));
-  return lines.join("\n");
+  return text;
 }
 
+/**
+ * Inline keyboard for the review screen.
+ * Provides a "Confirm & Continue" button plus an "Edit" button per step.
+ */
 export function orderInfoReviewKeyboard(
   t: TFunction,
   planId: number,
-  collectedSteps: InfoStep[],
+  steps: InfoStep[],
 ): InlineKeyboard {
   const kb = new InlineKeyboard();
 
   kb.text(t("btnConfirmInfo"), `confirm_info_${planId}`).row();
 
-  for (const step of collectedSteps) {
-    kb.text(`✏️ ${STEP_LABELS_EN[step]}`, `edit_info_${planId}_${step}`).row();
+  for (const step of steps) {
+    kb.text(`✏️ ${stepLabel[step]}`, `edit_info_${planId}_${step}`).row();
   }
 
   kb.text(t("btnCancelManualOrder"), "cancel_manual_order");
+
   return kb;
 }

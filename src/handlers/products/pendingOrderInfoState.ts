@@ -1,42 +1,34 @@
-/**
- * State management for collecting user info during manual/schedule order flow.
- * Similar to discountOrderState.ts – cleared after order is placed or cancelled.
- */
+import type { AppliedDiscount } from "./discountOrderState.ts";
 
+/**
+ * Steps of info collection for manual/scheduled orders.
+ * Each step corresponds to a piece of information we ask the user.
+ */
 export type InfoStep = "email" | "loginUsername" | "loginPassword" | "region";
 
-/** Which phase of the order flow we're in */
-export type OrderFlowPhase = "info" | "slot" | "review" | "payment";
-
-export interface PendingOrderInfo {
+/**
+ * Full state object kept for a user while their order is being built.
+ *
+ * Phases:
+ *  - "info"    → collecting required info (email, password, region, …)
+ *  - "review"  → showing collected info for confirmation
+ *  - "slot"    → picking a time-slot (custom_schedule products)
+ *  - "payment" → choosing payment method and confirming purchase
+ */
+export type PendingOrderInfo = {
   planId: number;
-  /** Product delivery type — determines whether slot selection phase runs */
   deliveryType: string;
-  /** Current phase: collecting info fields, or selecting a time slot */
-  phase: OrderFlowPhase;
-  /** Ordered list of fields we still need to collect */
+  phase: "info" | "review" | "payment" | "slot";
   steps: InfoStep[];
-  /** Index into `steps` – which field we're currently asking for */
   currentStep: number;
-  /** Values collected so far */
   collected: Partial<Record<InfoStep, string>>;
-  /** Discount info forwarded from the discount state, if any */
-  discount?: {
-    planId: number;
-    discountCodeId: number;
-    discountAmount: number;
-    finalPrice: number;
-    originalPrice: number;
-    code: string;
-  };
-  /**
-   * Set while the user is re-editing a single step (from review screen).
-   * After they type, return directly to review instead of continuing steps.
-   */
-  editingStep?: InfoStep;
-  /** Price override from region selection (overrides plan.price) */
+  /** Discount already validated and waiting to be applied */
+  discount?: AppliedDiscount;
+  /** Price override when the user selected a region with its own price */
   regionPrice?: number;
-}
+  /** Which step is being re-edited from the review screen */
+  editingStep?: InfoStep;
+};
 
-/** userId → state */
+/** userId → order-info state */
 export const pendingOrderInfoState = new Map<number, PendingOrderInfo>();
