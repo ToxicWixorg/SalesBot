@@ -99,4 +99,6 @@ export async function SelectPlanCallback(context: Context) {
       reply_markup: orderConfirmationKeyboard(t, planId),
     });
   }
+
+  console.log(product.deliveryType);
 }
