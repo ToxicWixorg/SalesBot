@@ -46,7 +46,7 @@ export async function SelectPlanCallback(context: Context) {
 
   preSelectedRegionState.delete(userId);
 
-  if (product.deliveryType === "inventory") {
+  if (product.deliveryType === "automatic") {
     const available = await InventoryRepository.countAvailable(product.id);
     if (available <= 0) {
       await context.answerCallbackQuery({
@@ -98,7 +98,8 @@ export async function SelectPlanCallback(context: Context) {
       parse_mode: "HTML",
       reply_markup: orderConfirmationKeyboard(t, planId),
     });
+    return;
   }
 
-  console.log(product.deliveryType);
+  console.log("[product selectplan] ", product);
 }
