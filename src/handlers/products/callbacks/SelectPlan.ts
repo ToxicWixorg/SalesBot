@@ -107,8 +107,17 @@ export async function SelectPlanCallback(context: Context) {
 
   // If the product requires a region AND has predefined region options,
   // show an inline keyboard for region selection before the order summary.
-  const regions =
+  // Plan-level regions take priority over product-level regions.
+  const planRegions =
+    (plan.regions as Array<{
+      flag: string;
+      name: string;
+      price?: string;
+    }> | null) ?? [];
+  const productRegions =
     (product.regions as Array<{ flag: string; name: string }> | null) ?? [];
+  const regions = planRegions.length > 0 ? planRegions : productRegions;
+
   if (plan.requiresRegion && regions.length > 0) {
     // Clear any stale pre-selected region for this plan
     preSelectedRegionState.delete(userId);

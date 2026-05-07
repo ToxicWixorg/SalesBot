@@ -567,7 +567,9 @@ export function setupWalletRechargeScene(bot: AnyBot) {
           ? `\n\n✅ <b>Approved</b> — ${ctx.from.firstName}`
           : `\n\n❌ <b>Rejected</b> — ${ctx.from.firstName}`;
 
-      await ctx.editText(original + resultLine, { reply_markup: [] });
+      await ctx.editText(original + resultLine, {
+        reply_markup: new InlineKeyboard(),
+      });
     } catch (err) {
       console.error("[RECHARGE-ADMIN] edit message error:", err);
     }

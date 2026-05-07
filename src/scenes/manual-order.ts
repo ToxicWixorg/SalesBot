@@ -41,6 +41,7 @@ import {
 } from "../handlers/products/orderPayment.ts";
 import { pendingPaymentState } from "../handlers/products/pendingPaymentState.ts";
 import { appliedDiscountState } from "../handlers/products/discountOrderState.ts";
+import { preSelectedRegionState } from "../handlers/products/preSelectedRegionState.ts";
 import { config } from "../config.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
 
@@ -77,7 +78,7 @@ async function showPaymentScreen(
   const product = await ProductRepository.findById(plan.productId);
   if (!product) return;
 
-  const originalPrice = parseFloat(plan.price as string);
+  const originalPrice = state.regionPrice ?? parseFloat(plan.price as string);
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
   const hasDiscount =
     pendingDiscount !== undefined && pendingDiscount.planId === state.planId;
@@ -233,7 +234,7 @@ async function finishManualOrder(
     return;
   }
 
-  const originalPrice = parseFloat(plan.price as string);
+  const originalPrice = state.regionPrice ?? parseFloat(plan.price as string);
 
   // Re-check discount state (or use forwarded discount)
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
@@ -1032,6 +1033,11 @@ export async function createManualOrderDirect(
   editFn: (text: string, opts?: any) => Promise<any>,
   preCollected?: Partial<Record<InfoStep, string>>,
 ) {
+  const preRegion = preSelectedRegionState.get(userId);
+  const regionPrice =
+    preRegion?.planId === planId ? preRegion.price : undefined;
+  if (preRegion?.planId === planId) preSelectedRegionState.delete(userId);
+
   const state: PendingOrderInfo = {
     planId,
     deliveryType,
@@ -1040,6 +1046,7 @@ export async function createManualOrderDirect(
     currentStep: 0,
     collected: preCollected ?? {},
     discount: appliedDiscountState.get(userId),
+    regionPrice,
   };
 
   // If custom_schedule with no info steps, show slot picker immediately
@@ -1093,7 +1100,7 @@ async function finishManualOrderWithSlot(
     return;
   }
 
-  const originalPrice = parseFloat(plan.price as string);
+  const originalPrice = state.regionPrice ?? parseFloat(plan.price as string);
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
   const hasDiscount =
     pendingDiscount !== undefined && pendingDiscount.planId === state.planId;
@@ -1240,7 +1247,7 @@ async function createPendingPaymentOrder(
   const product = await ProductRepository.findById(plan.productId);
   if (!product) return null;
 
-  const originalPrice = parseFloat(plan.price as string);
+  const originalPrice = state.regionPrice ?? parseFloat(plan.price as string);
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
   const hasDiscount =
     pendingDiscount !== undefined && pendingDiscount.planId === state.planId;

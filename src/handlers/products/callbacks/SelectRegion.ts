@@ -48,18 +48,32 @@ export async function SelectRegionCallback(context: Context) {
     return;
   }
 
-  const regions =
+  // Read regions from plan (plan-level regions override product-level)
+  const planRegions =
+    (plan.regions as Array<{
+      flag: string;
+      name: string;
+      price?: string;
+    }> | null) ?? [];
+  const productRegions =
     (product.regions as Array<{ flag: string; name: string }> | null) ?? [];
+  const regions = planRegions.length > 0 ? planRegions : productRegions;
+
   const selectedRegion = regions[regionIndex];
   if (!selectedRegion) {
     await context.answerCallbackQuery(t("planNotFound"));
     return;
   }
 
-  // Save the pre-selected region for this user
+  // Save the pre-selected region (with price override if defined)
+  const regionPrice =
+    "price" in selectedRegion && selectedRegion.price
+      ? parseFloat(selectedRegion.price)
+      : undefined;
   preSelectedRegionState.set(userId, {
     planId,
     region: `${selectedRegion.flag} ${selectedRegion.name}`,
+    price: regionPrice,
   });
 
   await context.answerCallbackQuery();
@@ -94,18 +108,21 @@ export async function SelectRegionCallback(context: Context) {
 
   message += `\n🚚 ${deliveryTypeBadge(product.deliveryType)}\n`;
 
+  // Use region-specific price if available, otherwise fall back to plan price
+  const effectivePrice = regionPrice ?? parseFloat(plan.price as string);
+
   if (hasDiscount && pendingDiscount) {
     message += `\n${t("orderSummaryWithDiscount", {
       productName: product.name,
       planName: plan.name,
       duration: plan.duration ? String(plan.duration) : "",
-      originalPrice: parseFloat(plan.price as string).toFixed(0),
+      originalPrice: effectivePrice.toFixed(0),
       discountAmount: pendingDiscount.discountAmount.toFixed(0),
       finalPrice: pendingDiscount.finalPrice.toFixed(0),
       code: pendingDiscount.code,
     })}`;
   } else {
-    message += `\n${t("total")} ${plan.price} ${t("currency")}`;
+    message += `\n${t("total")} ${effectivePrice.toLocaleString()} ${t("currency")}`;
   }
 
   await context.editText(message, {

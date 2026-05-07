@@ -47,7 +47,13 @@ export async function ConfirmOrderCallback(context: Context) {
     return;
   }
 
-  const price = parseFloat(plan.price as string);
+  const basePlanPrice = parseFloat(plan.price as string);
+
+  // If a region was pre-selected with a price override, use it as the base price
+  const preRegionForPrice = preSelectedRegionState.get(userId);
+  const regionPriceOverride =
+    preRegionForPrice?.planId === planId ? preRegionForPrice.price : undefined;
+  const price = regionPriceOverride ?? basePlanPrice;
 
   // Check for a pending discount applied by the user
   const pendingDiscount = appliedDiscountState.get(userId);
@@ -198,6 +204,10 @@ export async function ConfirmOrderCallback(context: Context) {
     const preRegion = preSelectedRegionState.get(userId);
     const preFilledCollected: Partial<Record<InfoStep, string>> = {};
     let effectiveSteps = steps;
+    // Use region-specific price if set during region selection
+    const regionPrice =
+      preRegion?.planId === planId ? preRegion.price : undefined;
+    const effectivePrice = regionPrice ?? price;
     if (preRegion && preRegion.planId === planId) {
       preFilledCollected.region = preRegion.region;
       effectiveSteps = steps.filter((s) => s !== "region");
@@ -226,6 +236,7 @@ export async function ConfirmOrderCallback(context: Context) {
       currentStep: 0,
       collected: preFilledCollected,
       discount: hasDiscount ? pendingDiscount : undefined,
+      regionPrice: regionPrice,
     });
 
     const stepIndicator = t("manualOrderStep", {

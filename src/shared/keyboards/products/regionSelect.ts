@@ -9,12 +9,16 @@ import type { TFunction } from "../../locales/index.ts";
 export function regionSelectionKeyboard(
   t: TFunction,
   planId: number,
-  regions: Array<{ flag: string; name: string }>,
+  regions: Array<{ flag: string; name: string; price?: string }>,
 ): InlineKeyboard {
   const kb = new InlineKeyboard();
   for (let i = 0; i < regions.length; i++) {
     const r = regions[i]!;
-    kb.text(`${r.flag} ${r.name}`, `select_region_${planId}_${i}`);
+    // Show region-specific price if available
+    const priceLabel = r.price
+      ? ` — ${Number(r.price).toLocaleString()} ${t("currency")}`
+      : "";
+    kb.text(`${r.flag} ${r.name}${priceLabel}`, `select_region_${planId}_${i}`);
     if (i % 2 === 1) kb.row();
   }
   if (regions.length % 2 !== 0) kb.row();

@@ -34,6 +34,8 @@ export interface PendingOrderInfo {
    * After they type, return directly to review instead of continuing steps.
    */
   editingStep?: InfoStep;
+  /** Price override from region selection (overrides plan.price) */
+  regionPrice?: number;
 }
 
 /** userId → state */

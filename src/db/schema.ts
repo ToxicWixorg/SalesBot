@@ -155,6 +155,11 @@ export const productPlansTable = pgTable(
     requiresLogin: boolean("requires_login").default(false),
     requiresRegion: boolean("requires_region").default(false),
 
+    // Regions per plan (overrides product-level regions). Each entry can have its own price.
+    regions: jsonb("regions")
+      .$type<{ flag: string; name: string; price: string }[]>()
+      .default([]),
+
     order: integer("order").default(0),
     isActive: boolean("is_active").default(true),
 

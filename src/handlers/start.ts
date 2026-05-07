@@ -161,7 +161,6 @@ export const startComposer = new Composer()
       return context.answerCallbackQuery({
         text: "❌ Unable to identify user.",
         show_alert: true,
-        parse_mode: "HTML",
       });
     }
 
@@ -172,7 +171,6 @@ export const startComposer = new Composer()
       return context.answerCallbackQuery({
         text: "❌ User not found.",
         show_alert: true,
-        parse_mode: "HTML",
       });
     }
 
@@ -199,7 +197,6 @@ export const startComposer = new Composer()
       return context.answerCallbackQuery({
         text: t("joinChannelNotJoinedAlert"),
         show_alert: true,
-        parse_mode: "HTML",
       });
     }
 
@@ -226,7 +223,6 @@ export const startComposer = new Composer()
       return context.answerCallbackQuery({
         text: "❌ Unable to identify user.",
         show_alert: true,
-        parse_mode: "HTML",
       });
     }
     const firstName = context.from.firstName || null;
@@ -240,7 +236,6 @@ export const startComposer = new Composer()
       return context.answerCallbackQuery({
         text: "❌ User not found.",
         show_alert: true,
-        parse_mode: "HTML",
       });
     }
 
