@@ -377,6 +377,16 @@ export const en = {
   orderTicketComingSoon: "Ticket system coming soon",
   orderNotRenewable: "This product cannot be renewed",
   orderRenewComingSoon: "Renewal feature coming soon",
+  renewScreenTitle: "🔄 Renew Service",
+  renewWalletSuccess: (data: {
+    orderId: number;
+    productName: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>Renewal Successful!</b>\n\n` +
+    `📦 ${data.productName}\n` +
+    `🎫 Order #${data.orderId}\n\n` +
+    `👛 Remaining balance: ${data.remainingBalance} Toman`,
   orderCannotReschedule: "This order cannot be rescheduled",
   orderRescheduleComingSoon: "Reschedule feature coming soon",
   orderReportComingSoon: "Problem report system coming soon",
@@ -548,6 +558,39 @@ export const en = {
   manualOrderLoginPasswordPrompt: `${e.lock} Enter the account <b>password</b>:`,
   manualOrderRegionPrompt: `${e.earth} Enter the desired <b>region</b> (e.g. US, EU, Asia):`,
   manualOrderNeedsLabel: "Required Information",
+  selectRegion: `${e.earth} <b>Select Region</b>\n\nChoose your desired region:`,
+  selectedRegion: "Selected Region",
+  orderInfoReviewTitle: `${e.clipboard} <b>Review Order Info</b>`,
+  orderInfoReviewPrompt: "Confirm the details below or edit them:",
+  btnConfirmInfo: `${e.checkBold} Confirm & Continue`,
+  paymentSummaryTitle: `${e.wallet} <b>Order Payment</b>`,
+  paymentPrompt: "Choose a payment method to complete your order:",
+  paymentOriginalPrice: "Original Price",
+  paymentDiscount: "Discount",
+  paymentFinalPrice: "Final Price",
+  paymentWalletBalance: "Wallet Balance",
+  btnPayWallet: `${e.wallet} Pay from Wallet`,
+  btnPayCard: `💳 Pay by Card`,
+  btnPayZarinpal: `🟢 ZarinPal Gateway`,
+  btnPayCrypto: `🪙 Pay with USDT (Crypto)`,
+  payCardInstructions: (data: { amount: string }) =>
+    `💳 <b>Card Payment</b>\n\n` +
+    `💰 Amount: <b>${data.amount}</b> Toman\n\n` +
+    `Copy one of the card numbers below and transfer the amount:`,
+  payCardConfirmNote: `After transferring, tap "✅ I've transferred" button.`,
+  btnConfirmCardPayment: `✅ I've transferred`,
+  payCardPending: (data: { orderId: number }) =>
+    `${e.checkBold} <b>Order placed!</b>\n\n` +
+    `${e.id} Order: #${data.orderId}\n\n` +
+    `${e.hourglass} Your order will be processed after admin confirms the transfer.\n` +
+    `Usually confirmed within <b>1–24 hours</b>.`,
+  payCryptoConfirmNote: `After completing the transaction, tap "✅ I've paid" button.`,
+  btnConfirmCryptoPayment: `✅ I've paid`,
+  payCryptoPending: (data: { orderId: number }) =>
+    `${e.checkBold} <b>Order placed!</b>\n\n` +
+    `${e.id} Order: #${data.orderId}\n\n` +
+    `${e.hourglass} Your order will be processed after admin verifies the transaction.\n` +
+    `Usually confirmed within <b>30 minutes – 2 hours</b>.`,
   btnCancelManualOrder: `❌ Cancel Order`,
   manualOrderCancelled: `${e.cross} Order cancelled.`,
   manualOrderPending: (data: {
@@ -641,7 +684,6 @@ export const en = {
   warrantyDays: (data: { days: number }) =>
     `Warranty: <b>${data.days} days</b>`,
   termsTitle: `Terms & Conditions`,
-  btnPayWallet: `💳 Pay with Wallet`,
   btnChangeQuantity: `✏️ Change Quantity`,
   inventoryOrderSummary: (data: {
     productName: string;
@@ -696,4 +738,14 @@ export const en = {
   // Feature disabled messages
   referralDisabled: `🔒 <b>Referral System Unavailable</b>\n\nThe referral program is temporarily disabled.`,
   shopDisabled: `🔒 <b>Shop Unavailable</b>\n\nThe shop is temporarily disabled. Please try again later.`,
+  adminConfirmRechargeMsg: (
+    userLabel: string,
+    opts: any,
+    formatNum: (num: number) => string,
+    methodLabel: string,
+  ) =>
+    `💵 <b>Wallet Recharge Request</b>\n\n` +
+    `👤 User: ${userLabel} (<code>${opts.userId}</code>)\n` +
+    `💰 Amount: <b>${formatNum(opts.amount)}</b> Toman\n` +
+    `🔑 Method: ${methodLabel}\n`,
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

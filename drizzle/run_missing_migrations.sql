@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Missing Migrations: 0013 → 0016
+-- Missing Migrations: 0013 → 0017
 -- Run this on the server DB if drizzle-kit migrate hasn't been executed yet.
 -- All statements use IF NOT EXISTS / ON CONFLICT so they're safe to re-run.
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -74,3 +74,6 @@ CREATE TABLE IF NOT EXISTS "bot_settings" (
 INSERT INTO "bot_settings" ("id", "maintenance_mode", "referral_enabled", "shop_enabled")
 VALUES (1, false, true, true)
 ON CONFLICT ("id") DO NOTHING;
+
+-- 0017: product_regions
+ALTER TABLE "products" ADD COLUMN IF NOT EXISTS "regions" jsonb DEFAULT '[]'::jsonb;

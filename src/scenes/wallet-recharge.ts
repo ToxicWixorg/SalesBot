@@ -5,6 +5,7 @@ import { PaymentRepository } from "../repositories/PaymentRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { config } from "../config.ts";
 import { ticketState, ticketReplyState } from "./support-tickets.ts";
+import { ReplyError } from "ioredis";
 
 // ─────────────────────────────────────────────────────────
 // State Management
@@ -76,7 +77,6 @@ async function fetchUsdtRate(): Promise<number | null> {
   return null;
 }
 
-/** ارسال نوتیف به گروه ادمین برای تایید شارژ */
 async function notifyAdmin(
   bot: AnyBot,
   opts: {
@@ -104,26 +104,28 @@ async function notifyAdmin(
         ? "🪙 کریپتو (USDT)"
         : "💰 زرین‌پال";
 
-  let msg =
-    `💵 <b>درخواست شارژ کیف پول</b>\n\n` +
-    `👤 کاربر: ${userLabel} (<code>${opts.userId}</code>)\n` +
-    `💰 مبلغ: <b>${formatNum(opts.amount)}</b> تومان\n` +
-    `🔑 روش: ${methodLabel}\n`;
+  const t = i18n.buildT("en");
+  let msg = t(
+    "adminConfirmRechargeMsg",
+    userLabel,
+    opts,
+    formatNum,
+    methodLabel,
+  );
 
   if (opts.usdtAmount) {
     msg += `🪙 معادل: <b>${opts.usdtAmount.toFixed(4)}</b> USDT\n`;
   }
   msg += `\n⏰ ${new Date().toLocaleString("en-GB")}`;
 
-  // فرمت callback: "ra:{userId}:{amount}:{m}" — max ~30 chars
   const mc =
     opts.method === "zarinpal" ? "z" : opts.method === "crypto" ? "k" : "c";
   const approveData = `ra:${opts.userId}:${opts.amount}:${mc}`;
   const rejectData = `rr:${opts.userId}:${opts.amount}:${mc}`;
 
   const keyboard = new InlineKeyboard()
-    .text("✅ تأیید", approveData)
-    .text("❌ رد", rejectData);
+    .text("✅ Approve", approveData)
+    .text("❌ Reject", rejectData);
 
   try {
     if (opts.evidenceType === "photo") {
@@ -191,11 +193,6 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     const t = i18n.buildT(user?.languageCode || "fa");
 
     rechargeState.set(ctx.from.id, { step: "enter_amount" });
-    console.log(
-      "[RECHARGE] State set for userId:",
-      ctx.from.id,
-      "→ enter_amount",
-    );
 
     await ctx.editText(
       `${t("rechargeWalletTitle")}\n\n` +
@@ -210,7 +207,6 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     await ctx.answerCallbackQuery();
   });
 
-  // ── 2. کارت بانکی ──────────────────────────────────────
   bot.callbackQuery("recharge_card", async (ctx) => {
     const userId = ctx.from.id;
     const state = rechargeState.get(userId);
@@ -522,9 +518,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     await ctx.answerCallbackQuery({ text: t("rechargePaymentCancelled") });
   });
 
-  // ── 7. تأیید/رد ادمین  format: ra/rr:{userId}:{amount}:{c|z|k} ─
   bot.callbackQuery(/^r[ar]:\d+:\d+:[czk]$/, async (ctx) => {
-    // When matched with regex, queryData is a RegExpMatchArray; queryData[0] = full match string
     const raw = Array.isArray(ctx.queryData)
       ? ctx.queryData[0]
       : (ctx.queryData as string);
@@ -561,92 +555,43 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       await ctx.answerCallbackQuery({ text: "❌ درخواست رد شد" });
     }
 
-    // حذف دکمه‌ها از پیام ادمین و نشان دادن نتیجه
     try {
-      // GramIO transforms snake_case to camelCase
       const cbq =
         (ctx as any).update?.callbackQuery ??
         (ctx as any).update?.callback_query;
       const msg = cbq?.message;
-      console.log(
-        "[RECHARGE-ADMIN] cbq:",
-        !!cbq,
-        "msg:",
-        !!msg,
-        "caption:",
-        msg?.caption !== undefined,
-        "text:",
-        msg?.text !== undefined,
-      );
 
       const original = msg?.caption ?? msg?.text ?? "";
       const resultLine =
         action === "ra"
-          ? `\n\n✅ <b>تأیید شد</b> — ${ctx.from.firstName}`
-          : `\n\n❌ <b>رد شد</b> — ${ctx.from.firstName}`;
+          ? `\n\n✅ <b>Approved</b> — ${ctx.from.firstName}`
+          : `\n\n❌ <b>Rejected</b> — ${ctx.from.firstName}`;
 
-      if (msg?.caption !== undefined) {
-        await (ctx.api as any).editMessageCaption({
-          chat_id: msg.chat.id,
-          message_id: msg.message_id,
-          caption: original + resultLine,
-          parse_mode: "HTML",
-          reply_markup: { inline_keyboard: [] },
-        });
-      } else if (msg?.text !== undefined) {
-        await (ctx.api as any).editMessageText({
-          chat_id: msg.chat.id,
-          message_id: msg.message_id,
-          text: original + resultLine,
-          parse_mode: "HTML",
-          reply_markup: { inline_keyboard: [] },
-        });
-      }
+      await ctx.editText(original + resultLine, { reply_markup: [] });
     } catch (err) {
       console.error("[RECHARGE-ADMIN] edit message error:", err);
     }
   });
 
-  // ── 8. Message Handler ─────────────────────────────────
   bot.on("message", async (ctx) => {
     const userId = ctx.from?.id;
     if (!userId) return;
-
-    console.log(
-      "[RECHARGE-MSG] Handler reached. userId:",
-      userId,
-      "text:",
-      ctx.text,
-      "hasPhoto:",
-      !!(ctx as any).update?.message?.photo,
-    );
-    console.log("[RECHARGE-MSG] rechargeState:", rechargeState.get(userId));
-    console.log(
-      "[RECHARGE-MSG] ticketState:",
-      ticketState.has(userId),
-      "ticketReplyState:",
-      ticketReplyState.has(userId),
-    );
 
     if (ticketState.has(userId) || ticketReplyState.has(userId)) return;
     if ((ctx as any).scene?.current) return;
 
     const state = rechargeState.get(userId);
     if (!state) {
-      console.log("[RECHARGE-MSG] No recharge state for user, ignoring.");
       return;
     }
-    console.log("[RECHARGE-MSG] Processing state:", state.step);
 
     const user = await UserRepository.findById(userId);
     const t = i18n.buildT(user?.languageCode || "fa");
 
-    // ─ 8a. ورود مبلغ ──────────────────────────────────────
     if (state.step === "enter_amount") {
       const text = ctx.text;
       if (!text) return;
 
-      // تبدیل اعداد فارسی و حذف جداکننده‌های هزارگان
       const normalized = text
         .replace(/[,،٬\s]/g, "")
         .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776));

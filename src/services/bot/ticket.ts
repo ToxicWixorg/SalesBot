@@ -25,8 +25,6 @@ export class TicketService {
     orderId?: number;
     priority?: "low" | "normal" | "high" | "urgent";
   }): Promise<Ticket> {
-    console.log("[DEBUG] TicketService.createTicket called:", data);
-    // Get user info
     const user = await UserRepository.findById(data.userId);
     if (!user) {
       throw new Error("User not found");
@@ -52,23 +50,14 @@ export class TicketService {
       });
     }
 
-    // Send to forum group if configured
-    console.log("[DEBUG] config.SUPPORT_GROUP_ID:", config.SUPPORT_GROUP_ID);
+
     if (config.SUPPORT_GROUP_ID) {
-      console.log("[DEBUG] Sending ticket to forum...");
       await this.sendTicketToForum(ticket, user);
-    } else {
-      console.warn(
-        "[DEBUG] SUPPORT_GROUP_ID not configured, skipping forum sync",
-      );
     }
 
     return ticket;
   }
 
-  /**
-   * Send ticket to Telegram Forum Group
-   */
   private async sendTicketToForum(
     ticket: Ticket,
     user: { id: number; username?: string | null; firstName?: string | null },
@@ -79,14 +68,6 @@ export class TicketService {
     }
 
     const topicId = TICKET_TOPICS[ticket.type as TicketType];
-    console.log(
-      "[DEBUG] sendTicketToForum - Type:",
-      ticket.type,
-      "- TopicID:",
-      topicId,
-      "- GroupID:",
-      config.SUPPORT_GROUP_ID,
-    );
     const username = user.username
       ? `@${user.username}`
       : user.firstName || "User";
@@ -129,9 +110,6 @@ export class TicketService {
         threadMessageId: sentMessage.message_id,
       });
 
-      console.log(
-        `[TICKET] Sent ticket ${ticket.ticketNumber} to forum (topic: ${topicId}, thread: ${sentMessage.message_id})`,
-      );
     } catch (error) {
       console.error("[TICKET] Failed to send to forum:", error);
       // Don't throw - ticket is created, just not synced to forum yet
@@ -182,9 +160,6 @@ export class TicketService {
         await TicketRepository.updateTicketStatus(ticket.id, "waiting_support");
       }
 
-      console.log(
-        `[TICKET] User message sent to forum thread ${ticket.ticketNumber}`,
-      );
     } catch (error) {
       console.error("[TICKET] Failed to send user message to forum:", error);
     }
@@ -220,9 +195,6 @@ export class TicketService {
         parse_mode: "HTML",
       });
 
-      console.log(
-        `[TICKET] Support message sent to user ${ticket.userId} for ticket ${ticket.ticketNumber}`,
-      );
     } catch (error) {
       console.error("[TICKET] Failed to send message to user:", error);
     }
@@ -241,7 +213,6 @@ export class TicketService {
       await TicketRepository.getTicketByThreadMessageId(messageThreadId);
 
     if (!ticket) {
-      console.log("[TICKET] No ticket found for thread:", messageThreadId);
       return;
     }
 

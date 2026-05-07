@@ -30,6 +30,7 @@ if (useWebhook) {
     await bot.start({
         longPolling: { timeout: 30 },
         dropPendingUpdates: true,
+        
     });
     console.log("[bot] long polling mode");
 }

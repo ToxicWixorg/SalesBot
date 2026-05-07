@@ -13,6 +13,7 @@ import { setupWalletRechargeScene } from "./scenes/wallet-recharge.ts";
 import { supportHandler } from "./handlers/support.ts";
 import { setupTicketScenes } from "./scenes/support-tickets.ts";
 import { setupManualOrderScene } from "./scenes/manual-order.ts";
+import { setupRenewalPaymentCallbacks } from "./handlers/orders/callbacks/OrderRenewPayment.ts";
 import { setupEnterQuantityHandler } from "./handlers/products/callbacks/EnterQuantity.ts";
 import { setBotInstance } from "./botInstance.ts";
 
@@ -50,6 +51,9 @@ setBotInstance(bot);
 
 // Setup manual order scene (must run before ticket scenes)
 setupManualOrderScene(bot);
+
+// Setup renewal payment callbacks
+setupRenewalPaymentCallbacks(bot);
 
 // Setup inventory order quantity-entry handler
 setupEnterQuantityHandler(bot);

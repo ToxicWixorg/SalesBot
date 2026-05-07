@@ -23,9 +23,6 @@ interface CreateAdminOptions {
 }
 
 async function createAdmin(options: CreateAdminOptions) {
-  console.log("🔧 Starting admin creation...\n");
-
-  // بررسی اینکه user وجود دارد
   const [user] = await db
     .select()
     .from(usersTable)
@@ -34,19 +31,9 @@ async function createAdmin(options: CreateAdminOptions) {
 
   if (!user) {
     console.error(`❌ کاربر با ID ${options.userId} یافت نشد!`);
-    console.log(
-      "💡 ابتدا باید کاربر وارد بات شود یا دستی در دیتابیس ایجاد شود.",
-    );
     process.exit(1);
   }
 
-  console.log("✓ کاربر یافت شد:");
-  console.log(`  - ID: ${user.id}`);
-  console.log(`  - نام: ${user.firstName || "ندارد"}`);
-  console.log(`  - نام کاربری: @${user.username || "ندارد"}`);
-  console.log();
-
-  // بررسی اینکه آیا قبلا ادمین شده
   const [existingAdmin] = await db
     .select()
     .from(adminsTable)
@@ -54,12 +41,6 @@ async function createAdmin(options: CreateAdminOptions) {
     .limit(1);
 
   if (existingAdmin) {
-    console.error(`❌ این کاربر قبلاً به عنوان ادمین ثبت شده است!`);
-    console.log(`  - نقش فعلی: ${existingAdmin.role}`);
-    console.log(`  - وضعیت: ${existingAdmin.isActive ? "فعال" : "غیرفعال"}`);
-    console.log(
-      `  - SuperAdmin: ${existingAdmin.isSuperAdmin ? "بله" : "خیر"}`,
-    );
     process.exit(1);
   }
 
@@ -75,24 +56,11 @@ async function createAdmin(options: CreateAdminOptions) {
   const allowedSections =
     DefaultPermissions[role] || DefaultPermissions.support;
 
-  console.log("📝 اطلاعات ادمین جدید:");
-  console.log(`  - نام نمایشی: ${displayName}`);
-  console.log(`  - نقش: ${options.role}`);
-  console.log(`  - SuperAdmin: ${options.isSuperAdmin ? "بله" : "خیر"}`);
-  console.log(`  - دسترسی‌ها: ${allowedSections.length} بخش`);
-  if (options.email) console.log(`  - ایمیل: ${options.email}`);
-  if (options.phone) console.log(`  - تلفن: ${options.phone}`);
-  console.log();
-
-  // به روزرسانی role در جدول users
   await db
     .update(usersTable)
     .set({ role: options.role })
     .where(eq(usersTable.id, options.userId));
 
-  console.log("✓ جدول users به‌روزرسانی شد");
-
-  // ساخت رکورد ادمین
   const [newAdmin] = await db
     .insert(adminsTable)
     .values({
@@ -113,16 +81,6 @@ async function createAdmin(options: CreateAdminOptions) {
       createdBy: null,
     })
     .returning();
-
-  console.log("✓ رکورد ادمین ایجاد شد");
-  console.log();
-  console.log("✅ ادمین با موفقیت ایجاد شد!");
-  console.log(`  - Admin ID: ${newAdmin.id}`);
-  console.log(`  - User ID: ${newAdmin.userId}`);
-  console.log(`  - نقش: ${newAdmin.role}`);
-  console.log();
-  console.log("🎉 حالا این کاربر می‌تواند به بخش‌های ادمین دسترسی داشته باشد.");
-
   process.exit(0);
 }
 
@@ -165,7 +123,6 @@ if (!validRoles.includes(role as any)) {
   process.exit(1);
 }
 
-// پارس کردن options
 const options: CreateAdminOptions = {
   userId,
   role,

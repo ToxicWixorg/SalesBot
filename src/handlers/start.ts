@@ -77,7 +77,6 @@ export const startComposer = new Composer()
         const referrer = await UserRepository.findByReferralCode(referralCode);
         if (referrer) {
           referrerId = referrer.id;
-          console.log("[START] Referrer found:", referrerId);
         }
       }
 

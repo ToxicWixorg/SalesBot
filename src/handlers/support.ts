@@ -382,8 +382,6 @@ export const supportHandler = (bot: AnyBot) => {
       }
     });
   }
-
-  console.log("✅ Support handler registered");
 };
 
 // Helper functions

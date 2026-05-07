@@ -22,16 +22,9 @@ export const ticketState = new Map<
 export const ticketReplyState = new Map<number, number>(); // userId -> ticketId
 
 export function setupTicketScenes(bot: AnyBot) {
-  console.log("🎫 Setting up ticket scenes...");
-
   bot.callbackQuery("new_support_ticket", async (context) => {
-    console.log(
-      "[DEBUG] new_support_ticket callback triggered for user:",
-      context.from.id,
-    );
     const user = await UserRepository.findById(context.from.id);
     if (!user) {
-      console.log("[DEBUG] User not found in database:", context.from.id);
       return;
     }
     const t = i18n.buildT(user.languageCode || "en");
@@ -40,11 +33,6 @@ export function setupTicketScenes(bot: AnyBot) {
       type: "support",
       step: "message",
     });
-    console.log(
-      "[DEBUG] Ticket state set for user:",
-      context.from.id,
-      ticketState.get(context.from.id),
-    );
 
     const keyboard = new InlineKeyboard().text(t("btnCancel"), "cancel_ticket");
 
@@ -185,73 +173,32 @@ export function setupTicketScenes(bot: AnyBot) {
    * Unified message handler - handles both private chats and forum group
    */
   bot.on("message", async (context, next) => {
-    console.log("[DEBUG-MSG] ========== MESSAGE HANDLER START ==========");
-    console.log("[DEBUG-MSG] Chat type:", context.chat?.type);
-
     const userId = context.from?.id;
     if (!userId) {
-      console.log("[DEBUG-MSG] No userId, returning");
       return;
     }
     // Non-text messages (photos, etc.) are not for tickets — pass to next handler
     if (!context.text) {
-      console.log("[DEBUG-MSG] No text (media?), passing to next handler");
       return next();
     }
 
     // ========== HANDLE FORUM GROUP (SUPERGROUP) ==========
     if (context.chat?.type === "supergroup") {
-      console.log("[DEBUG-FORUM] Processing supergroup message");
-
-      // Check if this is the support group
       const chatId = context.chat.id.toString();
       const supportGroupId = config.SUPPORT_GROUP_ID?.replace("-100", "");
-      console.log(
-        "[DEBUG-FORUM] Chat ID:",
-        chatId,
-        "Support Group ID:",
-        supportGroupId,
-      );
 
       if (!config.SUPPORT_GROUP_ID || !chatId.includes(supportGroupId || "")) {
-        console.log("[DEBUG-FORUM] Not the support group, skipping");
         return;
       }
-
-      // Check if this is a reply to a thread
-      console.log("[DEBUG-FORUM] Full context keys:", Object.keys(context));
-      console.log("[DEBUG-FORUM] context.update:", (context as any).update);
-      console.log("[DEBUG-FORUM] context.payload:", (context as any).payload);
-      console.log(
-        "[DEBUG-FORUM] context.update?.message:",
-        (context as any).update?.message,
-      );
 
       // Try different paths to find reply_to_message and message_thread_id
       const message =
         (context as any).update?.message || (context as any).payload;
-      console.log("[DEBUG-FORUM] Extracted message:", message);
-      console.log(
-        "[DEBUG-FORUM] message.reply_to_message:",
-        message?.reply_to_message,
-      );
-      console.log(
-        "[DEBUG-FORUM] message.message_thread_id:",
-        message?.message_thread_id,
-      );
 
       const replyToMessageId = message?.reply_to_message?.message_id;
       const messageThreadId = message?.message_thread_id;
 
-      console.log(
-        "[DEBUG-FORUM] Reply to:",
-        replyToMessageId,
-        "Thread ID:",
-        messageThreadId,
-      );
-
       if (!replyToMessageId && !messageThreadId) {
-        console.log("[DEBUG-FORUM] Not a thread message, skipping");
         return;
       }
 
@@ -259,16 +206,8 @@ export function setupTicketScenes(bot: AnyBot) {
       const messageText = context.text;
 
       if (!supportUserId || !messageText) {
-        console.log("[DEBUG-FORUM] No user ID or message text, skipping");
         return;
       }
-
-      console.log(
-        "[DEBUG-FORUM] Support reply from:",
-        supportUserId,
-        "Message:",
-        messageText.substring(0, 50),
-      );
 
       try {
         // Find ticket by thread message ID
@@ -276,19 +215,8 @@ export function setupTicketScenes(bot: AnyBot) {
           replyToMessageId || messageThreadId!,
         );
         if (!ticket) {
-          console.log(
-            "[DEBUG-FORUM] Ticket not found for thread message ID:",
-            replyToMessageId || messageThreadId,
-          );
           return;
         }
-
-        console.log(
-          "[DEBUG-FORUM] Found ticket:",
-          ticket.ticketNumber,
-          "ID:",
-          ticket.id,
-        );
 
         const ticketService = new TicketService(bot.api);
         await ticketService.sendSupportMessageToUser(
@@ -296,74 +224,36 @@ export function setupTicketScenes(bot: AnyBot) {
           supportUserId,
           messageText,
         );
-        console.log("[DEBUG-FORUM] Message sent to user successfully");
       } catch (error) {
         console.error("[FORUM] Error handling support reply:", error);
       }
 
-      console.log("[DEBUG-FORUM] ========== FORUM HANDLER END ==========");
       return;
     }
 
-    // ========== HANDLE PRIVATE CHAT (TICKET CREATION) ==========
     if (context.chat?.type === "private") {
-      console.log("[DEBUG-TICKET] Processing private chat message");
-      console.log("[DEBUG-TICKET] UserId:", userId);
-
-      // Check if user is in a scene
       const inScene = (context as any).scene?.current;
       if (inScene) {
-        console.log(
-          "[DEBUG-TICKET] User is in scene:",
-          inScene,
-          "- skipping - userId:",
-          userId,
-          "- State:",
-          ticketState.has(userId),
-          "- Reply state:",
-          ticketReplyState.has(userId),
-        );
         return next();
       }
-      console.log("[DEBUG-TICKET] Not in scene ✓");
 
-      // Check if replying to existing ticket
-      console.log(
-        "[DEBUG-TICKET] Checking ticketReplyState:",
-        ticketReplyState.has(userId),
-      );
       if (ticketReplyState.has(userId)) {
-        console.log(
-          "[DEBUG-TICKET] User is replying to ticket, calling handleTicketReply",
-        );
         await handleTicketReply(context, userId);
         return;
       }
 
-      // Check if creating new ticket
-      console.log(
-        "[DEBUG-TICKET] Checking ticketState:",
-        ticketState.has(userId),
-      );
       const state = ticketState.get(userId);
-      console.log("[DEBUG-TICKET] State:", state);
+
       if (!state || state.step !== "message") {
-        console.log("[DEBUG-TICKET] No valid state, passing to next handler");
         return next();
       }
 
-      console.log("[DEBUG-TICKET] Calling handleTicketCreation");
       await handleTicketCreation(context, userId, state);
-      console.log("[DEBUG-TICKET] ========== TICKET HANDLER END ==========");
       return;
     }
 
-    console.log("[DEBUG-MSG] Unknown chat type, skipping");
   });
 
-  /**
-   * Handle ticket creation
-   */
   async function handleTicketCreation(
     context: any,
     userId: number,
@@ -379,13 +269,6 @@ export function setupTicketScenes(bot: AnyBot) {
       await context.reply(t("ticketMessageTooShort"), { parse_mode: "HTML" });
       return;
     }
-
-    console.log(
-      "[DEBUG] Creating ticket for user:",
-      userId,
-      "Type:",
-      state.type,
-    );
 
     try {
       const ticketService = new TicketService(bot.api);

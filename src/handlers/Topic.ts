@@ -5,20 +5,12 @@ export const TopicComposer = new Composer()
   .extend(composer)
   .command("Topics", async (context) => {
     if (!context.chat) {
-      console.log("no Chat");
       return;
     }
 
-    console.log("📍 Chat ID:", context.chat.id);
-    console.log("📍 Chat Type:", context.chat.type);
-    console.log("📍 Chat Title:", context.chat.title);
-
-    // Check if message has thread/topic ID
     const threadId = context.update?.message?.message_thread_id;
     if (threadId) {
-      console.log("🔢 Topic ID:", threadId);
 
-      // Send response
       await context.send(
         `📊 <b>Forum/Topic Info:</b>\n\n` +
           `🆔 Chat ID: <code>${context.chat.id}</code>\n` +

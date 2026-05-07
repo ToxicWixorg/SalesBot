@@ -24,11 +24,22 @@ import { OrderRepository } from "../repositories/OrderRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
 import { DiscountCodeRepository } from "../repositories/DiscountCodeRepository.ts";
 import { ScheduleRepository } from "../repositories/ScheduleRepository.ts";
+import { PaymentRepository } from "../repositories/PaymentRepository.ts";
+import { TicketService } from "../services/bot/ticket.ts";
 import {
   pendingOrderInfoState,
   type InfoStep,
   type PendingOrderInfo,
 } from "../handlers/products/pendingOrderInfoState.ts";
+import {
+  buildOrderInfoReviewText,
+  orderInfoReviewKeyboard,
+} from "../handlers/products/orderInfoReview.ts";
+import {
+  buildPaymentSummaryText,
+  paymentKeyboard,
+} from "../handlers/products/orderPayment.ts";
+import { pendingPaymentState } from "../handlers/products/pendingPaymentState.ts";
 import { appliedDiscountState } from "../handlers/products/discountOrderState.ts";
 import { config } from "../config.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
@@ -46,6 +57,65 @@ function getPromptKey(step: InfoStep): string {
     region: "manualOrderRegionPrompt",
   };
   return map[step];
+}
+
+/**
+ * Fetch plan/product/user and display the payment confirmation screen.
+ * Transitions state to "payment" phase.
+ */
+async function showPaymentScreen(
+  sendFn: (text: string, opts?: any) => Promise<any>,
+  userId: number,
+  state: PendingOrderInfo,
+) {
+  const user = await UserRepository.findById(userId);
+  if (!user) return;
+  const t = i18n.buildT(user.languageCode || "en");
+
+  const plan = await ProductPlanRepository.findById(state.planId);
+  if (!plan) return;
+  const product = await ProductRepository.findById(plan.productId);
+  if (!product) return;
+
+  const originalPrice = parseFloat(plan.price as string);
+  const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
+  const hasDiscount =
+    pendingDiscount !== undefined && pendingDiscount.planId === state.planId;
+
+  const finalPrice = hasDiscount ? pendingDiscount.finalPrice : originalPrice;
+  const walletBalance = parseFloat(user.walletBalance ?? "0");
+
+  // Fetch payment settings and active cards for dynamic keyboard
+  const [paySettings, activeCards] = await Promise.all([
+    PaymentRepository.getSettings(),
+    PaymentRepository.getActiveCards(),
+  ]);
+
+  state.phase = "payment";
+
+  await sendFn(
+    buildPaymentSummaryText(t, {
+      productName: product.name,
+      planName: plan.name,
+      duration: plan.duration,
+      durationUnit: plan.durationUnit,
+      collected: state.collected,
+      originalPrice,
+      discountCode: hasDiscount ? pendingDiscount.code : undefined,
+      discountAmount: hasDiscount ? pendingDiscount.discountAmount : undefined,
+      finalPrice,
+      walletBalance,
+    }),
+    {
+      parse_mode: "HTML",
+      reply_markup: paymentKeyboard(t, state.planId, {
+        settings: paySettings,
+        cards: activeCards,
+        walletBalance,
+        finalPrice,
+      }),
+    },
+  );
 }
 
 /** Send the current step's prompt to the user */
@@ -78,7 +148,7 @@ async function sendStepPrompt(
   }
 }
 
-/** Notify the admin forum group about a new manual order */
+/** Notify the admin forum group about a new manual order by creating a proper ticket */
 async function notifyAdminNewOrder(
   bot: AnyBot,
   data: {
@@ -91,46 +161,48 @@ async function notifyAdminNewOrder(
     finalPrice: number;
     collected: Partial<Record<InfoStep, string>>;
     deliveryType: string;
+    paymentMethod?: string;
     scheduledSlot?: string;
   },
 ) {
-  if (!config.SUPPORT_GROUP_ID || !config.ORDERS_TOPIC_ID) return;
-
   const userLabel = data.username
     ? `@${data.username}`
     : data.firstName || "User";
 
-  let msg =
-    `🆕 <b>New Manual Order</b>\n\n` +
-    `🆔 Order: <b>#${data.orderId}</b>\n` +
-    `👤 User: ${userLabel} (<code>${data.userId}</code>)\n` +
-    `📦 Product: <b>${data.productName}</b>\n` +
+  let description =
+    `🆔 Order: #${data.orderId}\n` +
+    `👤 User: ${userLabel} (${data.userId})\n` +
+    `📦 Product: ${data.productName}\n` +
     `📋 Plan: ${data.planName}\n` +
-    `🚚 Type: <code>${data.deliveryType}</code>\n` +
-    `💰 Amount: <b>${data.finalPrice.toLocaleString()}</b> Toman\n`;
+    `🚚 Delivery: ${data.deliveryType}\n` +
+    `💰 Amount: ${data.finalPrice.toLocaleString()} Toman\n`;
 
+  if (data.paymentMethod) description += `💳 Payment: ${data.paymentMethod}\n`;
   if (data.collected.email)
-    msg += `📧 Email: <code>${data.collected.email}</code>\n`;
+    description += `📧 Email: ${data.collected.email}\n`;
   if (data.collected.loginUsername)
-    msg += `👤 Username: <code>${data.collected.loginUsername}</code>\n`;
+    description += `👤 Username: ${data.collected.loginUsername}\n`;
   if (data.collected.loginPassword)
-    msg += `🔐 Password: <code>${data.collected.loginPassword}</code>\n`;
+    description += `🔐 Password: ${data.collected.loginPassword}\n`;
   if (data.collected.region)
-    msg += `🌍 Region: <code>${data.collected.region}</code>\n`;
+    description += `🌍 Region: ${data.collected.region}\n`;
+  if (data.scheduledSlot)
+    description += `📅 Scheduled: ${data.scheduledSlot}\n`;
 
-  if (data.scheduledSlot) msg += `📅 Scheduled: <b>${data.scheduledSlot}</b>\n`;
-
-  msg += `\n⏰ ${new Date().toLocaleString("en-GB")}`;
+  description += `\n⏰ ${new Date().toLocaleString("en-GB")}`;
 
   try {
-    await (bot.api as any).sendMessage({
-      chat_id: Number(config.SUPPORT_GROUP_ID),
-      message_thread_id: config.ORDERS_TOPIC_ID,
-      text: msg,
-      parse_mode: "HTML",
+    const ticketService = new TicketService(bot.api);
+    await ticketService.createTicket({
+      userId: data.userId,
+      type: "order",
+      title: `Order #${data.orderId} — ${data.productName} (${data.planName})`,
+      description,
+      orderId: data.orderId,
+      priority: "high",
     });
   } catch (err) {
-    console.error("[MANUAL-ORDER] Failed to notify admin forum:", err);
+    console.error("[MANUAL-ORDER] Failed to create order ticket:", err);
   }
 }
 
@@ -256,6 +328,7 @@ async function finishManualOrder(
     finalPrice,
     collected: state.collected,
     deliveryType: product.deliveryType,
+    paymentMethod: "wallet",
   });
 
   // Tell user their order was placed
@@ -422,18 +495,34 @@ export function setupManualOrderScene(bot: AnyBot) {
     const state = pendingOrderInfoState.get(userId);
     if (!state) return next?.();
 
-    // During slot selection phase, ignore text messages
-    if (state.phase === "slot") return next?.();
+    // Ignore text during slot/review phases
+    if (state.phase === "slot" || state.phase === "review") return next?.();
 
     const answer = ctx.text.trim();
     if (!answer) return next?.();
 
+    // ── Re-edit mode: user is fixing a single field from review ──────────
+    if (state.editingStep) {
+      state.collected[state.editingStep] = answer;
+      state.editingStep = undefined;
+      state.phase = "review";
+
+      const user = await UserRepository.findById(userId);
+      const t = i18n.buildT(user?.languageCode ?? "en");
+
+      await ctx.send(buildOrderInfoReviewText(t, state), {
+        parse_mode: "HTML",
+        reply_markup: orderInfoReviewKeyboard(t, state.planId, state.steps),
+      });
+      return;
+    }
+
+    // ── Normal info-collection flow ───────────────────────────────────────
     const step = state.steps[state.currentStep];
     state.collected[step] = answer;
     state.currentStep++;
 
     if (state.currentStep >= state.steps.length) {
-      // All info steps done — decide next phase
       const user = await UserRepository.findById(userId);
       const t = i18n.buildT(user?.languageCode ?? "en");
       const plan = await ProductPlanRepository.findById(state.planId);
@@ -450,15 +539,15 @@ export function setupManualOrderScene(bot: AnyBot) {
           plan,
         );
         if (!shown) {
-          // showSlotPicker already sent "no slots" message with cancel button
           pendingOrderInfoState.delete(userId);
         }
       } else {
-        // manual/invite/etc — no slot needed
-        pendingOrderInfoState.delete(userId);
-        await finishManualOrder(bot, userId, state, (text, opts) =>
-          ctx.send(text, opts),
-        );
+        // All info done — show review screen
+        state.phase = "review";
+        await ctx.send(buildOrderInfoReviewText(t, state), {
+          parse_mode: "HTML",
+          reply_markup: orderInfoReviewKeyboard(t, state.planId, state.steps),
+        });
       }
     } else {
       // Ask next step
@@ -466,6 +555,471 @@ export function setupManualOrderScene(bot: AnyBot) {
       const t = i18n.buildT(user?.languageCode ?? "en");
       await sendStepPrompt(ctx, t, state, false);
     }
+  });
+
+  /** User confirms collected info — show payment screen */
+  bot.callbackQuery(/^confirm_info_(\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery();
+    const userId = ctx.from?.id;
+    if (!userId) return;
+
+    const state = pendingOrderInfoState.get(userId);
+    if (!state || state.phase !== "review") return;
+
+    await showPaymentScreen(
+      (text, opts) => ctx.editText(text, opts),
+      userId,
+      state,
+    );
+  });
+
+  /** User pays from wallet — create the order */
+  bot.callbackQuery(/^pay_wallet_(\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery();
+    const userId = ctx.from?.id;
+    if (!userId) return;
+
+    const state = pendingOrderInfoState.get(userId);
+    if (!state || state.phase !== "payment") return;
+
+    pendingOrderInfoState.delete(userId);
+    await finishManualOrder(bot, userId, state, (text, opts) =>
+      ctx.editText(text, opts),
+    );
+  });
+
+  /** User chooses card payment */
+  bot.callbackQuery(/^pay_card_(\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery();
+    const userId = ctx.from?.id;
+    if (!userId) return;
+
+    const state = pendingOrderInfoState.get(userId);
+    if (!state || state.phase !== "payment") return;
+
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode ?? "fa");
+
+    const [settings, cards] = await Promise.all([
+      PaymentRepository.getSettings(),
+      PaymentRepository.getActiveCards(),
+    ]);
+
+    if (!settings?.cardEnabled || cards.length === 0) {
+      await ctx.answerCallbackQuery({
+        text: t("rechargeMethodDisabled"),
+        show_alert: true,
+      });
+      return;
+    }
+
+    const plan = await ProductPlanRepository.findById(state.planId);
+    const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
+    const hasDiscount =
+      pendingDiscount && pendingDiscount.planId === state.planId;
+    const finalPrice = hasDiscount
+      ? pendingDiscount.finalPrice
+      : parseFloat((plan?.price as string) ?? "0");
+
+    // Build card instructions — show all active cards
+    let msg = `💳 <b>${t("paymentSummaryTitle" as any)}</b>\n\n💰 ${finalPrice.toLocaleString()} ${t("currency")}\n\n`;
+    for (const card of cards) {
+      msg += `🏦 ${card.bankName ?? ""} — ${card.holderName}\n`;
+      msg += `<code>${card.cardNumber}</code>\n\n`;
+    }
+    // Prompt user to confirm after transferring
+    const cardNoteKey = "payCardConfirmNote" as any;
+    msg += t(cardNoteKey);
+
+    pendingPaymentState.set(userId, { planId: state.planId, finalPrice });
+
+    await ctx.editText(msg, {
+      parse_mode: "HTML",
+      reply_markup: new InlineKeyboard()
+        .text(t("btnConfirmCardPayment" as any), `confirm_card_${state.planId}`)
+        .row()
+        .text(t("btnCancelManualOrder"), "cancel_manual_order"),
+    });
+  });
+
+  /** User confirms they transferred via card */
+  bot.callbackQuery(/^confirm_card_(\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery();
+    const userId = ctx.from?.id;
+    if (!userId) return;
+
+    const state = pendingOrderInfoState.get(userId);
+    if (!state || state.phase !== "payment") return;
+
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode ?? "fa");
+
+    const result = await createPendingPaymentOrder(userId, state, "card");
+    if (!result) {
+      await ctx.editText(t("errorFetchingOrderDetails"), {
+        parse_mode: "HTML",
+      });
+      return;
+    }
+
+    pendingOrderInfoState.delete(userId);
+    pendingPaymentState.delete(userId);
+
+    // Notify admin
+    await notifyAdminNewOrder(bot, {
+      orderId: result.orderId,
+      userId,
+      username: user?.username ?? null,
+      firstName: user?.firstName ?? null,
+      productName: result.productName,
+      planName: result.planName,
+      finalPrice: result.finalPrice,
+      collected: state.collected,
+      deliveryType: "manual",
+      paymentMethod: "card",
+    });
+
+    await ctx.editText(t("payCardPending" as any, result.orderId as any), {
+      parse_mode: "HTML",
+      reply_markup: new InlineKeyboard()
+        .text(t("btnMyOrders"), "orders", {
+          icon_custom_emoji_id: emojiIds.box,
+        })
+        .row()
+        .text(t("btnBackToMenu"), "categories", {
+          icon_custom_emoji_id: emojiIds.home,
+        }),
+    });
+  });
+
+  /** User chooses ZarinPal payment */
+  bot.callbackQuery(/^pay_zarinpal_(\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery();
+    const userId = ctx.from?.id;
+    if (!userId) return;
+
+    const state = pendingOrderInfoState.get(userId);
+    if (!state || state.phase !== "payment") return;
+
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode ?? "fa");
+
+    const settings = await PaymentRepository.getSettings();
+    if (!settings?.zarinpalEnabled || !settings.zarinpalMerchantId) {
+      await ctx.answerCallbackQuery({
+        text: t("rechargeMethodDisabled"),
+        show_alert: true,
+      });
+      return;
+    }
+
+    const plan = await ProductPlanRepository.findById(state.planId);
+    const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
+    const hasDiscount =
+      pendingDiscount && pendingDiscount.planId === state.planId;
+    const finalPrice = hasDiscount
+      ? pendingDiscount.finalPrice
+      : parseFloat((plan?.price as string) ?? "0");
+
+    const apiUrl = settings.zarinpalSandbox
+      ? "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
+      : "https://api.zarinpal.com/pg/v4/payment/request.json";
+
+    try {
+      const botInfo = await (bot.api as any).getMe();
+      const resp = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          merchant_id: settings.zarinpalMerchantId,
+          amount: Math.round(finalPrice) * 10, // Toman → Rial
+          description: `سفارش اشتراک - کاربر ${userId}`,
+          callback_url: `https://t.me/${botInfo.username}`,
+        }),
+        signal: AbortSignal.timeout(10_000),
+      });
+
+      const data = (await resp.json()) as any;
+      if (data?.data?.code !== 100)
+        throw new Error(JSON.stringify(data?.errors ?? data));
+
+      const authority: string = data.data.authority;
+      const gateway = settings.zarinpalSandbox
+        ? "https://sandbox.zarinpal.com/pg/StartPay/"
+        : "https://www.zarinpal.com/pg/StartPay/";
+      const payUrl = gateway + authority;
+
+      pendingPaymentState.set(userId, {
+        planId: state.planId,
+        finalPrice,
+        zarinpalAuthority: authority,
+        zarinpalPayUrl: payUrl,
+      });
+
+      await ctx.editText(
+        `${t("rechargeZarinpalTitle")}\n\n${t("rechargeAmount", finalPrice.toLocaleString())}\n\n${t("rechargeZarinpalInstructions")}`,
+        {
+          parse_mode: "HTML",
+          reply_markup: new InlineKeyboard()
+            .url(t("btnPayNow"), payUrl)
+            .row()
+            .text(
+              t("btnVerifyPayment"),
+              `verify_zarinpal_order_${state.planId}`,
+            )
+            .row()
+            .text(t("btnCancelManualOrder"), "cancel_manual_order"),
+        },
+      );
+    } catch (err) {
+      console.error("[manual-order] ZarinPal request error:", err);
+      await ctx.editText(t("rechargeZarinpalFailed"), {
+        parse_mode: "HTML",
+        reply_markup: new InlineKeyboard().text(
+          t("btnCancelManualOrder"),
+          "cancel_manual_order",
+        ),
+      });
+    }
+  });
+
+  /** Verify ZarinPal order payment */
+  bot.callbackQuery(/^verify_zarinpal_order_(\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery({ text: "⏳..." });
+    const userId = ctx.from?.id;
+    if (!userId) return;
+
+    const state = pendingOrderInfoState.get(userId);
+    const payState = pendingPaymentState.get(userId);
+    if (!state || state.phase !== "payment" || !payState?.zarinpalAuthority)
+      return;
+
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode ?? "fa");
+
+    const settings = await PaymentRepository.getSettings();
+    if (!settings?.zarinpalMerchantId) return;
+
+    const verifyUrl = settings.zarinpalSandbox
+      ? "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"
+      : "https://api.zarinpal.com/pg/v4/payment/verify.json";
+
+    try {
+      const resp = await fetch(verifyUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          merchant_id: settings.zarinpalMerchantId,
+          amount: Math.round(payState.finalPrice) * 10,
+          authority: payState.zarinpalAuthority,
+        }),
+        signal: AbortSignal.timeout(10_000),
+      });
+
+      const data = (await resp.json()) as any;
+      const code: number = data?.data?.code ?? -1;
+
+      if (code === 100 || code === 101) {
+        const refId: string = String(
+          data?.data?.ref_id ?? payState.zarinpalAuthority,
+        );
+        const result = await createPendingPaymentOrder(
+          userId,
+          state,
+          "zarinpal",
+          refId,
+        );
+        if (!result) return;
+
+        // Mark as paid immediately since ZarinPal confirmed
+        await OrderRepository.updateStatus(result.orderId, "pending_admin");
+
+        pendingOrderInfoState.delete(userId);
+        pendingPaymentState.delete(userId);
+
+        await notifyAdminNewOrder(bot, {
+          orderId: result.orderId,
+          userId,
+          username: user?.username ?? null,
+          firstName: user?.firstName ?? null,
+          productName: result.productName,
+          planName: result.planName,
+          finalPrice: result.finalPrice,
+          collected: state.collected,
+          deliveryType: "manual",
+          paymentMethod: "zarinpal",
+        });
+
+        await ctx.editText(
+          t("rechargeZarinpalSuccess", result.finalPrice.toLocaleString()),
+          {
+            parse_mode: "HTML",
+            reply_markup: new InlineKeyboard()
+              .text(t("btnMyOrders"), "orders", {
+                icon_custom_emoji_id: emojiIds.box,
+              })
+              .row()
+              .text(t("btnBackToMenu"), "categories", {
+                icon_custom_emoji_id: emojiIds.home,
+              }),
+          },
+        );
+      } else {
+        await ctx.editText(
+          t("rechargeZarinpalFailed") + "\n\n" + t("rechargeZarinpalRetry"),
+          {
+            parse_mode: "HTML",
+            reply_markup: new InlineKeyboard()
+              .url(t("btnPayNow"), payState.zarinpalPayUrl!)
+              .row()
+              .text(
+                t("btnVerifyPayment"),
+                `verify_zarinpal_order_${state.planId}`,
+              )
+              .row()
+              .text(t("btnCancelManualOrder"), "cancel_manual_order"),
+          },
+        );
+      }
+    } catch (err) {
+      console.error("[manual-order] ZarinPal verify error:", err);
+      await ctx.reply(t("rechargeZarinpalFailed"), { parse_mode: "HTML" });
+    }
+  });
+
+  /** User chooses crypto/USDT payment */
+  bot.callbackQuery(/^pay_crypto_(\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery();
+    const userId = ctx.from?.id;
+    if (!userId) return;
+
+    const state = pendingOrderInfoState.get(userId);
+    if (!state || state.phase !== "payment") return;
+
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode ?? "fa");
+
+    const settings = await PaymentRepository.getSettings();
+    if (
+      !settings?.cryptoEnabled ||
+      !settings.cryptoAddress ||
+      (settings.cryptoExchangeRate ?? 0) <= 0
+    ) {
+      await ctx.answerCallbackQuery({
+        text: t("rechargeMethodDisabled"),
+        show_alert: true,
+      });
+      return;
+    }
+
+    const plan = await ProductPlanRepository.findById(state.planId);
+    const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
+    const hasDiscount =
+      pendingDiscount && pendingDiscount.planId === state.planId;
+    const finalPrice = hasDiscount
+      ? pendingDiscount.finalPrice
+      : parseFloat((plan?.price as string) ?? "0");
+
+    const usdtAmount = finalPrice / settings.cryptoExchangeRate!;
+
+    pendingPaymentState.set(userId, { planId: state.planId, finalPrice });
+
+    await ctx.editText(
+      `${t("rechargeCryptoTitle")}\n\n` +
+        `${t("rechargeAmount", finalPrice.toLocaleString())}\n\n` +
+        `${t("rechargeCryptoAddress", settings.cryptoAddress)}\n\n` +
+        `${t("rechargeCryptoAmount", usdtAmount.toFixed(4))}\n` +
+        `${t("rechargeCryptoNetwork", settings.cryptoNetwork ?? "TRC20")}\n\n` +
+        `${t("payCryptoConfirmNote" as any)}`,
+      {
+        parse_mode: "HTML",
+        reply_markup: new InlineKeyboard()
+          .text(
+            t("btnConfirmCryptoPayment" as any),
+            `confirm_crypto_${state.planId}`,
+          )
+          .row()
+          .text(t("btnCancelManualOrder"), "cancel_manual_order"),
+      },
+    );
+  });
+
+  /** User confirms crypto transfer done */
+  bot.callbackQuery(/^confirm_crypto_(\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery();
+    const userId = ctx.from?.id;
+    if (!userId) return;
+
+    const state = pendingOrderInfoState.get(userId);
+    if (!state || state.phase !== "payment") return;
+
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode ?? "fa");
+
+    const result = await createPendingPaymentOrder(userId, state, "crypto");
+    if (!result) {
+      await ctx.editText(t("errorFetchingOrderDetails"), {
+        parse_mode: "HTML",
+      });
+      return;
+    }
+
+    pendingOrderInfoState.delete(userId);
+    pendingPaymentState.delete(userId);
+
+    await notifyAdminNewOrder(bot, {
+      orderId: result.orderId,
+      userId,
+      username: user?.username ?? null,
+      firstName: user?.firstName ?? null,
+      productName: result.productName,
+      planName: result.planName,
+      finalPrice: result.finalPrice,
+      collected: state.collected,
+      deliveryType: "manual",
+      paymentMethod: "crypto",
+    });
+
+    await ctx.editText(t("payCryptoPending" as any, result.orderId as any), {
+      parse_mode: "HTML",
+      reply_markup: new InlineKeyboard()
+        .text(t("btnMyOrders"), "orders", {
+          icon_custom_emoji_id: emojiIds.box,
+        })
+        .row()
+        .text(t("btnBackToMenu"), "categories", {
+          icon_custom_emoji_id: emojiIds.home,
+        }),
+    });
+  });
+
+  /** User wants to re-edit a specific field */
+  bot.callbackQuery(/^edit_info_(\d+)_(\w+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery();
+    const userId = ctx.from?.id;
+    if (!userId) return;
+
+    const state = pendingOrderInfoState.get(userId);
+    if (!state) return;
+
+    const [, , stepName] = ctx.queryData as [string, string, string];
+    const step = stepName as InfoStep;
+    if (!state.steps.includes(step)) return;
+
+    state.editingStep = step;
+    state.phase = "info";
+
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode ?? "en");
+
+    const promptKey = getPromptKey(step);
+    await ctx.editText(t(promptKey as any), {
+      parse_mode: "HTML",
+      reply_markup: new InlineKeyboard().text(
+        t("btnCancelManualOrder"),
+        "cancel_manual_order",
+      ),
+    });
   });
 }
 
@@ -476,6 +1030,7 @@ export async function createManualOrderDirect(
   planId: number,
   deliveryType: string,
   editFn: (text: string, opts?: any) => Promise<any>,
+  preCollected?: Partial<Record<InfoStep, string>>,
 ) {
   const state: PendingOrderInfo = {
     planId,
@@ -483,7 +1038,7 @@ export async function createManualOrderDirect(
     phase: "info",
     steps: [],
     currentStep: 0,
-    collected: {},
+    collected: preCollected ?? {},
     discount: appliedDiscountState.get(userId),
   };
 
@@ -507,7 +1062,9 @@ export async function createManualOrderDirect(
     }
   }
 
-  await finishManualOrder(bot, userId, state, editFn);
+  // Show payment confirmation screen
+  pendingOrderInfoState.set(userId, state);
+  await showPaymentScreen(editFn, userId, state);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -635,6 +1192,7 @@ async function finishManualOrderWithSlot(
     finalPrice,
     collected: state.collected,
     deliveryType: product.deliveryType,
+    paymentMethod: "wallet",
     scheduledSlot: `${slot.date} ${slot.timeSlot}`,
   });
 
@@ -659,4 +1217,64 @@ async function finishManualOrderWithSlot(
     }),
     { parse_mode: "HTML", reply_markup: keyboard },
   );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Helper: create an unpaid order (card / crypto / zarinpal flow)
+// Returns the created order ID.
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function createPendingPaymentOrder(
+  userId: number,
+  state: PendingOrderInfo,
+  paymentMethod: "card" | "zarinpal" | "crypto",
+  paymentId?: string,
+): Promise<{
+  orderId: number;
+  finalPrice: number;
+  productName: string;
+  planName: string;
+} | null> {
+  const plan = await ProductPlanRepository.findById(state.planId);
+  if (!plan) return null;
+  const product = await ProductRepository.findById(plan.productId);
+  if (!product) return null;
+
+  const originalPrice = parseFloat(plan.price as string);
+  const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
+  const hasDiscount =
+    pendingDiscount !== undefined && pendingDiscount.planId === state.planId;
+  const discountAmount = hasDiscount ? pendingDiscount.discountAmount : 0;
+  const finalPrice = hasDiscount ? pendingDiscount.finalPrice : originalPrice;
+
+  const delivery: Record<string, string> = {};
+  if (state.collected.email) delivery.email = state.collected.email;
+  if (state.collected.loginUsername)
+    delivery.loginUsername = state.collected.loginUsername;
+  if (state.collected.loginPassword)
+    delivery.loginPassword = state.collected.loginPassword;
+  if (state.collected.region) delivery.region = state.collected.region;
+
+  const order = await OrderRepository.create({
+    userId: userId as any,
+    productId: plan.productId,
+    planId: plan.id,
+    status: "pending_payment",
+    quantity: 1,
+    totalPrice: plan.price as any,
+    discountAmount: discountAmount.toString() as any,
+    walletUsed: "0" as any,
+    finalPrice: finalPrice.toString() as any,
+    paymentMethod,
+    paymentId: paymentId ?? null,
+    discountCodeId: hasDiscount ? pendingDiscount.discountCodeId : undefined,
+    delivery,
+  });
+
+  return {
+    orderId: order.id,
+    finalPrice,
+    productName: product.name,
+    planName: plan.name,
+  };
 }

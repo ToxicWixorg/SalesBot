@@ -13,9 +13,7 @@ import { adminsTable, usersTable } from "../db/schema.ts";
 import { eq } from "drizzle-orm";
 
 async function listAdmins(options: { role?: string; showInactive?: boolean }) {
-  console.log("📋 لیست ادمین‌ها\n");
 
-  // دریافت همه ادمین‌ها
   let query = db
     .select({
       admin: adminsTable,
@@ -27,13 +25,10 @@ async function listAdmins(options: { role?: string; showInactive?: boolean }) {
   const admins = await query;
 
   if (admins.length === 0) {
-    console.log("❌ هیچ ادمینی یافت نشد!");
-    console.log("💡 برای ایجاد ادمین اول از دستور زیر استفاده کنید:");
-    console.log("   bun src/scripts/create-admin.ts <USER_ID> <ROLE>");
     process.exit(0);
   }
 
-  // فیلتر کردن
+
   let filteredAdmins = admins;
 
   if (options.role) {
@@ -47,50 +42,41 @@ async function listAdmins(options: { role?: string; showInactive?: boolean }) {
   }
 
   if (filteredAdmins.length === 0) {
-    console.log("❌ هیچ ادمینی با این فیلتر یافت نشد!");
     process.exit(0);
   }
 
-  // نمایش آمار
   const totalCount = admins.length;
   const activeCount = admins.filter((a) => a.admin.isActive).length;
   const superAdminCount = admins.filter((a) => a.admin.isSuperAdmin).length;
 
-  console.log(`📊 آمار کلی:`);
-  console.log(`  - تعداد کل: ${totalCount}`);
-  console.log(`  - فعال: ${activeCount}`);
-  console.log(`  - SuperAdmin: ${superAdminCount}`);
-  console.log();
-
-  // نمایش لیست
-  console.log(`📝 لیست ادمین‌ها (${filteredAdmins.length} نفر):\n`);
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+  // console.log(`📝 لیست ادمین‌ها (${filteredAdmins.length} نفر):\n`);
+  // console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 
   for (const { admin, user } of filteredAdmins) {
     const status = admin.isActive ? "✅ فعال" : "❌ غیرفعال";
     const superBadge = admin.isSuperAdmin ? " 👑 SuperAdmin" : "";
 
-    console.log(`${status}${superBadge}`);
-    console.log(`  🆔 Admin ID: ${admin.id}`);
-    console.log(`  👤 User ID: ${admin.userId}`);
-    console.log(`  📛 نام: ${admin.displayName || "ندارد"}`);
+    // console.log(`${status}${superBadge}`);
+    // console.log(`  🆔 Admin ID: ${admin.id}`);
+    // console.log(`  👤 User ID: ${admin.userId}`);
+    // console.log(`  📛 نام: ${admin.displayName || "ندارد"}`);
 
-    if (user) {
-      console.log(`  🔤 نام کاربری: @${user.username || "ندارد"}`);
-      console.log(
-        `  👨 نام کامل: ${user.firstName || ""} ${user.lastName || ""}`,
-      );
-    }
+    // if (user) {
+      // console.log(`  🔤 نام کاربری: @${user.username || "ندارد"}`);
+      // console.log(
+      //   `  👨 نام کامل: ${user.firstName || ""} ${user.lastName || ""}`,
+      // );
+    // }
 
-    console.log(`  🎭 نقش: ${admin.role}`);
+    // console.log(`  🎭 نقش: ${admin.role}`);
 
-    if (admin.email) console.log(`  📧 ایمیل: ${admin.email}`);
-    if (admin.phone) console.log(`  📱 تلفن: ${admin.phone}`);
+    // if (admin.email) console.log(`  📧 ایمیل: ${admin.email}`);
+    // if (admin.phone) console.log(`  📱 تلفن: ${admin.phone}`);
 
     const allowedSections = admin.allowedSections as string[] | null;
-    if (allowedSections && allowedSections.length > 0) {
-      console.log(`  🔓 دسترسی‌ها: ${allowedSections.join(", ")}`);
-    }
+    // if (allowedSections && allowedSections.length > 0) {
+    //   console.log(`  🔓 دسترسی‌ها: ${allowedSections.join(", ")}`);
+    // }
 
     if (admin.lastLoginAt) {
       const lastLogin = new Date(admin.lastLoginAt);
@@ -113,7 +99,6 @@ async function listAdmins(options: { role?: string; showInactive?: boolean }) {
     );
   }
 
-  // نمایش تعداد بر اساس نقش
   const roleStats: Record<string, number> = {};
   for (const { admin } of admins) {
     roleStats[admin.role] = (roleStats[admin.role] || 0) + 1;

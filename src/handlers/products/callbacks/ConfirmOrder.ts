@@ -14,6 +14,7 @@ import {
   pendingOrderInfoState,
   type InfoStep,
 } from "../pendingOrderInfoState.ts";
+import { preSelectedRegionState } from "../preSelectedRegionState.ts";
 import { createManualOrderDirect } from "../../../scenes/manual-order.ts";
 import { getBotInstance } from "../../../botInstance.ts";
 import { emojiIds } from "../../../shared/locales/emojies.ts";
@@ -193,7 +194,17 @@ export async function ConfirmOrderCallback(context: Context) {
     }
     if (plan.requiresRegion) steps.push("region");
 
-    if (steps.length === 0) {
+    // If region was already selected via inline keyboard button, pre-fill it
+    const preRegion = preSelectedRegionState.get(userId);
+    const preFilledCollected: Partial<Record<InfoStep, string>> = {};
+    let effectiveSteps = steps;
+    if (preRegion && preRegion.planId === planId) {
+      preFilledCollected.region = preRegion.region;
+      effectiveSteps = steps.filter((s) => s !== "region");
+      preSelectedRegionState.delete(userId);
+    }
+
+    if (effectiveSteps.length === 0) {
       // No info needed – create the order immediately
       await createManualOrderDirect(
         getBotInstance(),
@@ -201,6 +212,7 @@ export async function ConfirmOrderCallback(context: Context) {
         planId,
         product.deliveryType,
         (text, opts) => context.editText(text, opts),
+        preFilledCollected,
       );
       return;
     }
@@ -210,17 +222,17 @@ export async function ConfirmOrderCallback(context: Context) {
       planId,
       deliveryType: product.deliveryType,
       phase: "info",
-      steps,
+      steps: effectiveSteps,
       currentStep: 0,
-      collected: {},
+      collected: preFilledCollected,
       discount: hasDiscount ? pendingDiscount : undefined,
     });
 
     const stepIndicator = t("manualOrderStep", {
       current: 1,
-      total: steps.length,
+      total: effectiveSteps.length,
     });
-    const firstPromptKey = getPromptKey(steps[0]);
+    const firstPromptKey = getPromptKey(effectiveSteps[0]);
     const message = `${t("manualOrderInfoRequired")}\n\n${stepIndicator}\n\n${t(firstPromptKey as any)}`;
 
     await context.editText(message, {

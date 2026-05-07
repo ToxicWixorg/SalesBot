@@ -8,7 +8,9 @@ import {
 import { InventoryRepository } from "../../../repositories/InventoryRepository.ts";
 import { orderConfirmationKeyboard } from "../../../shared/keyboards/index.ts";
 import { enterQuantityKeyboard } from "../../../shared/keyboards/products/inventoryOrder.ts";
+import { regionSelectionKeyboard } from "../../../shared/keyboards/products/regionSelect.ts";
 import { pendingQuantityState } from "../quantityOrderState.ts";
+import { preSelectedRegionState } from "../preSelectedRegionState.ts";
 
 /** Delivery types fulfilled from the inventory pool */
 const INVENTORY_TYPES = ["automatic", "code", "family_join"] as const;
@@ -60,15 +62,12 @@ export async function SelectPlanCallback(context: Context) {
     const availableStock = await InventoryRepository.countAvailable(product.id);
 
     if (availableStock === 0) {
-      await context.editText(
-        t("quantityExceedsStock", { stock: 0 }),
-        {
-          parse_mode: "HTML",
-          reply_markup: enterQuantityKeyboard(t, product.id)
-            .row()
-            .text(t("btnNotifyStock"), `notify_stock_${product.id}`),
-        },
-      );
+      await context.editText(t("quantityExceedsStock", { stock: 0 }), {
+        parse_mode: "HTML",
+        reply_markup: enterQuantityKeyboard(t, product.id)
+          .row()
+          .text(t("btnNotifyStock"), `notify_stock_${product.id}`),
+      });
       return;
     }
 
@@ -105,6 +104,26 @@ export async function SelectPlanCallback(context: Context) {
   }
 
   // ── Non-inventory: original confirm-order flow ───────────────────────────
+
+  // If the product requires a region AND has predefined region options,
+  // show an inline keyboard for region selection before the order summary.
+  const regions =
+    (product.regions as Array<{ flag: string; name: string }> | null) ?? [];
+  if (plan.requiresRegion && regions.length > 0) {
+    // Clear any stale pre-selected region for this plan
+    preSelectedRegionState.delete(userId);
+
+    const message =
+      `${t("selectRegion")}\n\n` + `📦 ${product.name}\n` + `📋 ${plan.name}`;
+
+    await context.editText(message, {
+      reply_markup: regionSelectionKeyboard(t, planId, regions),
+      parse_mode: "HTML",
+    });
+    return;
+  }
+
+  // ── Standard non-inventory: show order summary directly ─────────────────
   let message = `${t("orderSummary")}\n\n`;
   message += `📦 ${product.name}\n`;
   message += `📋 ${plan.name}\n`;

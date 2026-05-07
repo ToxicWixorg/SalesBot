@@ -120,6 +120,13 @@
       "when": 1747238400000,
       "tag": "0016_bot_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1778112000000,
+      "tag": "0017_product_regions",
+      "breakpoints": true
     }
   ]
 }

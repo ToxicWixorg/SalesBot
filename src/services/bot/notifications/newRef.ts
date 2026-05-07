@@ -43,7 +43,6 @@ export async function sendNewRefNotification(
       message_thread_id: config.NEWUSERS_TOPIC_ID,
       parse_mode: "HTML",
     });
-    console.log(`[FORUM] New user notification sent for user ${user.id}`);
   } catch (error) {
     console.error("[FORUM] Failed to send new user notification:", error);
   }

@@ -119,6 +119,11 @@ export const productsTable = pgTable(
 
     customEmojiId: text("custom_emoji_id"),
 
+    // Regions available for this product (e.g. [{flag:"🇪🇬", name:"Egypt"}])
+    regions: jsonb("regions")
+      .$type<{ flag: string; name: string }[]>()
+      .default([]),
+
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },

@@ -21,18 +21,21 @@
 در گروه Forum خود، **3 Topic** ایجاد کنید:
 
 #### Topic 1: Support Tickets 🎫
+
 ```
 نام: 🎫 Support Tickets
 رنگ: آبی (اختیاری)
 ```
 
 #### Topic 2: Order Issues 📦
+
 ```
-نام: 📦 Order Issues  
+نام: 📦 Order Issues
 رنگ: قرمز (اختیاری)
 ```
 
 #### Topic 3: Problem Reports ⚠️
+
 ```
 نام: ⚠️ Problem Reports
 رنگ: نارنجی (اختیاری)
@@ -80,6 +83,7 @@ bot.on("message", (ctx) => {
 ```
 
 سپس:
+
 1. بات را اجرا کنید
 2. در گروه یک پیام ارسال کنید
 3. در Console، Chat ID را ببینید
@@ -101,6 +105,7 @@ bot.on("message", (ctx) => {
 ```
 
 سپس:
+
 1. بات را اجرا کنید
 2. در **Topic 1** (Support Tickets) یک پیام بفرستید
 3. در Console Topic ID را ببینید و یادداشت کنید
@@ -111,6 +116,7 @@ bot.on("message", (ctx) => {
 8. کد موقت را حذف کنید
 
 **معمولاً Topic ID ها به این شکل هستند:**
+
 - Topic 1 (General/اولین topic) = ID: `1` (این یک default است)
 - Topic 2 (Support Tickets) = ID: `2`
 - Topic 3 (Order Issues) = ID: `3`
@@ -131,6 +137,7 @@ REPORTS_TOPIC_ID=4
 ```
 
 ⚠️ **نکته مهم:**
+
 - `SUPPORT_GROUP_ID` همیشه با `-100` شروع می‌شود
 - Topic ID ها عدد صحیح مثبت هستند
 
@@ -139,6 +146,7 @@ REPORTS_TOPIC_ID=4
 ### 7️⃣ تست سیستم
 
 #### تست 1: ایجاد تیکت
+
 ```
 1. بات را اجرا کنید: npm run dev
 2. در بات به /start بروید
@@ -150,6 +158,7 @@ REPORTS_TOPIC_ID=4
 ```
 
 #### تست 2: پاسخ پشتیبانی
+
 ```
 1. در Forum Group، روی تیکت کلیک کنید
 2. در Thread پاسخ بدهید: "سلام، چطور می‌تونم کمکتون کنم؟"
@@ -158,6 +167,7 @@ REPORTS_TOPIC_ID=4
 ```
 
 #### تست 3: پاسخ کاربر
+
 ```
 1. در لیست تیکت‌های خود، تیکت را انتخاب کنید
 2. روی "💬 پاسخ" کلیک کنید
@@ -190,12 +200,14 @@ REPORTS_TOPIC_ID=4
 ### مشکل: تیکت در Forum ارسال نمی‌شود
 
 **دلایل احتمالی:**
+
 1. ❌ Chat ID اشتباه است
 2. ❌ بات در گروه نیست
 3. ❌ بات Admin نیست
 4. ❌ Topic ID اشتباه است
 
 **راه حل:**
+
 ```bash
 # لاگ‌های بات را بررسی کنید:
 npm run dev
@@ -211,11 +223,13 @@ npm run dev
 ### مشکل: پیام پشتیبانی به کاربر نمی‌رسد
 
 **دلایل احتمالی:**
+
 1. ❌ Handler فعال نیست
 2. ❌ پیام در Topic اشتباه فرستاده شده
 3. ❌ Thread ID پیدا نشده
 
 **راه حل:**
+
 ```typescript
 // موقتاً این لاگ را اضافه کنید:
 console.log("[DEBUG] Forum message received");
@@ -227,6 +241,7 @@ console.log("[DEBUG] Thread ID:", ctx.message.reply_to_message?.message_id);
 ### مشکل: Topic ID اشتباه است
 
 **راه حل:**
+
 1. تمام Topic ID ها را با روش بالا دوباره پیدا کنید
 2. در `.env` آنها را بروز کنید
 3. بات را restart کنید
@@ -236,6 +251,7 @@ console.log("[DEBUG] Thread ID:", ctx.message.reply_to_message?.message_id);
 ## 📞 نیاز به کمک؟
 
 اگر مشکلی دارید:
+
 1. لاگ‌های Console را بررسی کنید
 2. مستندات کامل را بخوانید: `TICKET_SYSTEM_GUIDE.md`
 3. از خود سیستم تیکتینگ استفاده کنید! 😄

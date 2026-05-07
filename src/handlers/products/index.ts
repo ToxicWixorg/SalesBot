@@ -6,6 +6,7 @@ import { CategoriesCallback } from "./callbacks/Categories.ts";
 import { CategoryCallBack } from "./callbacks/Category.ts";
 import { BuyProductCallback } from "./callbacks/BuyProduct.ts";
 import { SelectPlanCallback } from "./callbacks/SelectPlan.ts";
+import { SelectRegionCallback } from "./callbacks/SelectRegion.ts";
 import { CancelOrderCallback } from "./callbacks/CancelOrder.ts";
 import { ConfirmOrderCallback } from "./callbacks/ConfirmOrder.ts";
 import { AddDiscountCallback } from "./callbacks/AddDiscount.ts";
@@ -36,6 +37,9 @@ export const productsComposer = new Composer()
   })
   .callbackQuery(/^select_plan_(\d+)$/, async (context) => {
     return await SelectPlanCallback(context);
+  })
+  .callbackQuery(/^select_region_(\d+)_(\d+)$/, async (context) => {
+    return await SelectRegionCallback(context);
   })
   .callbackQuery(/^confirm_order_(\d+)$/, async (context) => {
     return await ConfirmOrderCallback(context);

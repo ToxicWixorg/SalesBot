@@ -6,7 +6,7 @@
 export type InfoStep = "email" | "loginUsername" | "loginPassword" | "region";
 
 /** Which phase of the order flow we're in */
-export type OrderFlowPhase = "info" | "slot";
+export type OrderFlowPhase = "info" | "slot" | "review" | "payment";
 
 export interface PendingOrderInfo {
   planId: number;
@@ -29,6 +29,11 @@ export interface PendingOrderInfo {
     originalPrice: number;
     code: string;
   };
+  /**
+   * Set while the user is re-editing a single step (from review screen).
+   * After they type, return directly to review instead of continuing steps.
+   */
+  editingStep?: InfoStep;
 }
 
 /** userId → state */

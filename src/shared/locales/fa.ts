@@ -383,6 +383,16 @@ export const fa = {
   errorFetchingOrderDetails: `${e.cross} خطا در دریافت جزئیات سفارش`,
   errorReschedulingOrder: `${e.cross} خطا در تغییر زمان`,
   errorRenewingOrder: `${e.cross} خطا در تمدید سفارش`,
+  renewScreenTitle: "🔄 تمدید سرویس",
+  renewWalletSuccess: (data: {
+    orderId: number;
+    productName: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>تمدید با موفقیت انجام شد!</b>\n\n` +
+    `📦 ${data.productName}\n` +
+    `🎫 شماره سفارش: #${data.orderId}\n\n` +
+    `👛 موجودی باقی‌مانده: ${data.remainingBalance} تومان`,
   errorOpeningTicket: `${e.cross} خطا در باز کردن تیکت`,
   errorReportingProblem: `${e.cross} خطا در گزارش مشکل`,
 
@@ -547,6 +557,39 @@ export const fa = {
   manualOrderLoginPasswordPrompt: `${e.lock} <b>رمز عبور</b> اکانت رو وارد کن:`,
   manualOrderRegionPrompt: `${e.earth} <b>منطقه مورد نظر</b> رو وارد کن (مثلاً: US، EU، Asia):`,
   manualOrderNeedsLabel: "اطلاعات مورد نیاز",
+  selectRegion: `${e.earth} <b>انتخاب منطقه</b>\n\nمنطقه مورد نظرت رو انتخاب کن:`,
+  selectedRegion: "منطقه انتخاب‌شده",
+  orderInfoReviewTitle: `${e.clipboard} <b>بررسی اطلاعات سفارش</b>`,
+  orderInfoReviewPrompt: "اطلاعات زیر رو تأیید کن یا ویرایش کن:",
+  btnConfirmInfo: `${e.checkBold} تأیید و ادامه`,
+  paymentSummaryTitle: `${e.wallet} <b>پرداخت سفارش</b>`,
+  paymentPrompt: "برای تکمیل خرید، روش پرداخت رو انتخاب کن:",
+  paymentOriginalPrice: "قیمت اصلی",
+  paymentDiscount: "تخفیف",
+  paymentFinalPrice: "قیمت نهایی",
+  paymentWalletBalance: "موجودی کیف پول",
+  btnPayWallet: `${e.wallet} پرداخت از کیف پول`,
+  btnPayCard: `💳 پرداخت با کارت`,
+  btnPayZarinpal: `🟢 درگاه زرین‌پال`,
+  btnPayCrypto: `🪙 پرداخت با USDT (کریپتو)`,
+  payCardInstructions: (data: { amount: string }) =>
+    `💳 <b>پرداخت با کارت بانکی</b>\n\n` +
+    `💰 مبلغ: <b>${data.amount}</b> تومان\n\n` +
+    `شماره کارت‌های زیر رو کپی کن و مبلغ رو واریز کن:`,
+  payCardConfirmNote: `پس از واریز، دکمه «✅ واریز کردم» رو بزن.`,
+  btnConfirmCardPayment: `✅ واریز کردم`,
+  payCardPending: (data: { orderId: number }) =>
+    `${e.checkBold} <b>سفارش ثبت شد!</b>\n\n` +
+    `${e.id} سفارش: #${data.orderId}\n\n` +
+    `${e.hourglass} پس از تأیید واریز توسط ادمین، سفارشت پردازش می‌شه.\n` +
+    `معمولاً ظرف <b>۱ تا ۲۴ ساعت</b> تأیید می‌شه.`,
+  payCryptoConfirmNote: `پس از انجام تراکنش، دکمه «✅ پرداخت کردم» رو بزن.`,
+  btnConfirmCryptoPayment: `✅ پرداخت کردم`,
+  payCryptoPending: (data: { orderId: number }) =>
+    `${e.checkBold} <b>سفارش ثبت شد!</b>\n\n` +
+    `${e.id} سفارش: #${data.orderId}\n\n` +
+    `${e.hourglass} پس از تأیید تراکنش توسط ادمین، سفارشت پردازش می‌شه.\n` +
+    `معمولاً ظرف <b>۳۰ دقیقه تا ۲ ساعت</b> تأیید می‌شه.`,
   btnCancelManualOrder: `لغو سفارش`,
   manualOrderCancelled: `${e.cross} سفارش لغو شد.`,
   manualOrderPending: (data: {
@@ -658,7 +701,6 @@ export const fa = {
     `${e.cross} حداکثر <b>${data.max}</b> عدد در هر سفارش می‌توانید خریداری کنید.`,
   warrantyDays: (data: { days: number }) => `گارانتی: <b>${data.days} روز</b>`,
   termsTitle: `قوانین و شرایط`,
-  btnPayWallet: `💳 پرداخت از کیف پول`,
   btnChangeQuantity: `✏️ تغییر تعداد`,
   inventoryOrderSummary: (data: {
     productName: string;
@@ -695,4 +737,15 @@ export const fa = {
     data.map((item) => `<b>#${item.index}</b>\n${item.content}`).join("\n\n") +
     `${e.truck} باز هم یه فروشگاه ما سر بزنید \n` +
     `${e.sparkles} مشتاقانه منتظر شما هستیم `,
+
+  adminConfirmRechargeMsg: (
+    userLabel: string,
+    opts: any,
+    formatNum: (num: number) => string,
+    methodLabel: string,
+  ) =>
+    `💵 <b>درخواست شارژ کیف پول</b>\n\n` +
+    `👤 کاربر: ${userLabel} (<code>${opts.userId}</code>)\n` +
+    `💰 مبلغ: <b>${formatNum(opts.amount)}</b> تومان\n` +
+    `🔑 روش: ${methodLabel}\n`,
 } satisfies LanguageMap;

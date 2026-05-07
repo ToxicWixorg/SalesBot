@@ -378,6 +378,16 @@ export const ru = {
   orderTicketComingSoon: "Система тикетов скоро появится",
   orderNotRenewable: "Этот продукт нельзя продлить",
   orderRenewComingSoon: "Функция продления скоро появится",
+  renewScreenTitle: "🔄 Продление сервиса",
+  renewWalletSuccess: (data: {
+    orderId: number;
+    productName: string;
+    remainingBalance: string;
+  }) =>
+    `✅ <b>Продление выполнено успешно!</b>\n\n` +
+    `📦 ${data.productName}\n` +
+    `🎫 Заказ #${data.orderId}\n\n` +
+    `👛 Остаток баланса: ${data.remainingBalance} томан`,
   orderCannotReschedule: "Этот заказ нельзя перенести",
   orderRescheduleComingSoon: "Функция переноса скоро появится",
   orderReportComingSoon: "Система сообщений о проблемах скоро появится",
@@ -549,6 +559,39 @@ export const ru = {
   manualOrderLoginPasswordPrompt: `${e.lock} Введи <b>пароль</b> аккаунта:`,
   manualOrderRegionPrompt: `${e.earth} Введи желаемый <b>регион</b> (например: US, EU, Asia):`,
   manualOrderNeedsLabel: "Необходимые данные",
+  selectRegion: `${e.earth} <b>Выбор региона</b>\n\nВыбери нужный регион:`,
+  selectedRegion: "Выбранный регион",
+  orderInfoReviewTitle: `${e.clipboard} <b>Проверка данных заказа</b>`,
+  orderInfoReviewPrompt: "Подтверди данные ниже или отредактируй их:",
+  btnConfirmInfo: `${e.checkBold} Подтвердить и продолжить`,
+  paymentSummaryTitle: `${e.wallet} <b>Оплата заказа</b>`,
+  paymentPrompt: "Выбери способ оплаты для завершения заказа:",
+  paymentOriginalPrice: "Исходная цена",
+  paymentDiscount: "Скидка",
+  paymentFinalPrice: "Итоговая цена",
+  paymentWalletBalance: "Баланс кошелька",
+  btnPayWallet: `${e.wallet} Оплатить с кошелька`,
+  btnPayCard: `💳 Оплатить картой`,
+  btnPayZarinpal: `🟢 Шлюз ZarinPal`,
+  btnPayCrypto: `🪙 Оплатить USDT (крипто)`,
+  payCardInstructions: (data: { amount: string }) =>
+    `💳 <b>Оплата картой</b>\n\n` +
+    `💰 Сумма: <b>${data.amount}</b> Toман\n\n` +
+    `Скопируй один из номеров карты ниже и переведи сумму:`,
+  payCardConfirmNote: `После перевода нажми кнопку «✅ Я перевёл».`,
+  btnConfirmCardPayment: `✅ Я перевёл`,
+  payCardPending: (data: { orderId: number }) =>
+    `${e.checkBold} <b>Заказ оформлен!</b>\n\n` +
+    `${e.id} Заказ: #${data.orderId}\n\n` +
+    `${e.hourglass} Заказ будет обработан после подтверждения перевода администратором.\n` +
+    `Обычно подтверждается в течение <b>1–24 часов</b>.`,
+  payCryptoConfirmNote: `После выполнения транзакции нажми кнопку «✅ Я оплатил».`,
+  btnConfirmCryptoPayment: `✅ Я оплатил`,
+  payCryptoPending: (data: { orderId: number }) =>
+    `${e.checkBold} <b>Заказ оформлен!</b>\n\n` +
+    `${e.id} Заказ: #${data.orderId}\n\n` +
+    `${e.hourglass} Заказ будет обработан после подтверждения транзакции администратором.\n` +
+    `Обычно подтверждается в течение <b>30 минут – 2 часов</b>.`,
   btnCancelManualOrder: `❌ Отменить заказ`,
   manualOrderCancelled: `${e.cross} Заказ отменён.`,
   manualOrderPending: (data: {
@@ -642,7 +685,6 @@ export const ru = {
   warrantyDays: (data: { days: number }) =>
     `Гарантия: <b>${data.days} дней</b>`,
   termsTitle: `Условия и правила`,
-  btnPayWallet: `💳 Оплатить с кошелька`,
   btnChangeQuantity: `✏️ Изменить количество`,
   inventoryOrderSummary: (data: {
     productName: string;
@@ -697,4 +739,14 @@ export const ru = {
   // Feature disabled messages
   referralDisabled: `🔒 <b>Реферальная система недоступна</b>\n\nРеферальная программа временно отключена.`,
   shopDisabled: `🔒 <b>Магазин недоступен</b>\n\nМагазин временно отключён. Попробуйте позже.`,
+  adminConfirmRechargeMsg: (
+    userLabel: string,
+    opts: any,
+    formatNum: (num: number) => string,
+    methodLabel: string,
+  ) =>
+    `💵 <b>Wallet Recharge Request</b>\n\n` +
+    `👤 User: ${userLabel} (<code>${opts.userId}</code>)\n` +
+    `💰 Amount: <b>${formatNum(opts.amount)}</b> Toman\n` +
+    `🔑 Method: ${methodLabel}\n`,
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

@@ -31,10 +31,8 @@ export async function sendNewsMessage(
       parse_mode: options?.parse_mode ?? "HTML",
       disable_web_page_preview: options?.disable_web_page_preview ?? false,
     });
-    console.log(`[FORUM] News message sent to topic ${config.NEWS_TOPIC_ID}`);
     return result;
   } catch (error) {
-    console.error("[FORUM] Failed to send news message:", error);
     throw error;
   }
 }

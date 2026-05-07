@@ -74,12 +74,6 @@ export const TICKET_TOPICS = {
 
 export type TicketType = keyof typeof TICKET_TOPICS;
 
-// console.log("📝 Config loaded:", {
-//   NODE_ENV: config.NODE_ENV,
-//   REDIS_HOST: config.REDIS_HOST,
-//   REDIS_PORT: config.REDIS_PORT,
-//   DATABASE_URL: config.DATABASE_URL.substring(0, 30) + "...",
-// });
 
 export const Bot_Topics = {
   new_users: config.NEWUSERS_TOPIC_ID,
