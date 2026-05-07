@@ -127,6 +127,13 @@
       "when": 1778112000000,
       "tag": "0017_product_regions",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1778198400000,
+      "tag": "0018_plan_regions",
+      "breakpoints": true
     }
   ]
 }
