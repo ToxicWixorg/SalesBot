@@ -167,6 +167,7 @@ async function notifyAdminNewOrder(
     scheduledSlot?: string;
   },
 ) {
+  const t = i18n.buildT("fa");
   const userLabel = data.username
     ? `@${data.username}`
     : data.firstName || "User";
@@ -179,19 +180,20 @@ async function notifyAdminNewOrder(
     `🚚 Delivery: ${data.deliveryType}\n` +
     `💰 Amount: ${data.finalPrice.toLocaleString()} Toman\n`;
 
-  if (data.paymentMethod) description += `💳 Payment: ${data.paymentMethod}\n`;
+  if (data.paymentMethod)
+    description += `${t("adminOrderPayment")}: ${data.paymentMethod}\n`;
   if (data.collected.email)
-    description += `📧 Email: ${data.collected.email}\n`;
+    description += `${t("adminOrderEmail")}: ${data.collected.email}\n`;
   if (data.collected.password)
-    description += `🔑 Email Password: ${data.collected.password}\n`;
+    description += `${t("adminOrderEmailPassword")}: ${data.collected.password}\n`;
   if (data.collected.loginUsername)
-    description += `👤 Username: ${data.collected.loginUsername}\n`;
+    description += `${t("adminOrderUsername")}: ${data.collected.loginUsername}\n`;
   if (data.collected.loginPassword)
-    description += `🔐 Password: ${data.collected.loginPassword}\n`;
+    description += `${t("adminOrderLoginPassword")}: ${data.collected.loginPassword}\n`;
   if (data.collected.region)
-    description += `🌍 Region: ${data.collected.region}\n`;
+    description += `${t("adminOrderRegion")}: ${data.collected.region}\n`;
   if (data.scheduledSlot)
-    description += `📅 Scheduled: ${data.scheduledSlot}\n`;
+    description += `${t("adminOrderScheduled")}: ${data.scheduledSlot}\n`;
 
   description += `\n⏰ ${new Date().toLocaleString("en-GB")}`;
 
