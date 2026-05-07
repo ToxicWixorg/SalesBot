@@ -173,7 +173,7 @@ export const fa = {
   rechargeRateUnavailable: `${e.cross} قیمت لحظه‌ای USDT در دسترس نیست. کمی صبر کن و دوباره تلاش کن.`,
   rechargeCryptoInvalidTxId: `${e.cross} TxID نامعتبره (باید حداقل ۱۰ کاراکتر باشه). دوباره بفرست.`,
   rechargeZarinpalInstructions: `${e.clipboard} روی دکمه «پرداخت» بزن، مبلغ رو پرداخت کن، بعد دکمه «بررسی پرداخت» رو بزن.`,
-  btnVerifyPayment: `${e.checkBold} بررسی پرداخت`,
+  btnVerifyPayment: `بررسی پرداخت`,
   rechargeZarinpalVerifying: `${e.hourglass} در حال بررسی پرداخت...`,
   rechargeZarinpalSuccess: (amount: string) =>
     `${e.party} <b>پرداخت تأیید شد!</b>\n\n${e.gem} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
@@ -576,7 +576,7 @@ export const fa = {
   paymentDiscount: "تخفیف",
   paymentFinalPrice: "قیمت نهایی",
   paymentWalletBalance: "موجودی کیف پول",
-  btnPayWallet: `${e.wallet} پرداخت از کیف پول`,
+  btnPayWallet: `پرداخت از کیف پول`,
   btnPayCard: `💳 پرداخت با کارت`,
   btnPayZarinpal: `🟢 درگاه زرین‌پال`,
   btnPayCrypto: `🪙 پرداخت با USDT (کریپتو)`,
