@@ -122,8 +122,24 @@ export async function SelectPlanCallback(context: Context) {
     // Clear any stale pre-selected region for this plan
     preSelectedRegionState.delete(userId);
 
-    const message =
-      `${t("selectRegion")}\n\n` + `📦 ${product.name}\n` + `📋 ${plan.name}`;
+    let message = `${t("selectRegion")}\n\n`;
+    message += `📦 ${product.name}\n`;
+    message += `📋 ${plan.name}\n`;
+
+    if (plan.duration) {
+      const unitKey = plan.durationUnit || "day";
+      let durationUnit = "";
+      if (unitKey === "day") durationUnit = t("duration_day");
+      else if (unitKey === "month") durationUnit = t("duration_month");
+      else if (unitKey === "year") durationUnit = t("duration_year");
+      message += `⏱️ ${plan.duration} ${durationUnit}\n`;
+    }
+
+    // If regions have different prices, show a note; otherwise show plan price
+    const hasPriceVariance = regions.some((r) => "price" in r && r.price);
+    if (!hasPriceVariance) {
+      message += `\n💰 ${t("total")} ${Number(plan.price).toLocaleString()} ${t("currency")}`;
+    }
 
     await context.editText(message, {
       reply_markup: regionSelectionKeyboard(t, planId, regions),
