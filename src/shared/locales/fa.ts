@@ -553,6 +553,7 @@ export const fa = {
   manualOrderStep: (data: { current: number; total: number }) =>
     `${e.pin} مرحله ${data.current} از ${data.total}`,
   manualOrderEmailPrompt: `${e.mail} <b>آدرس ایمیل</b> اکانت رو وارد کن:`,
+  manualOrderPasswordPrompt: `${e.lock} <b>رمز عبور</b> اکانت رو وارد کن:\n\n مطمئن شوید ایمیل رو رمز درست و معتبر باشند تا در فرایند سفارش مشکلی ایجاد نشود با تشکر.`,
   manualOrderLoginUsernamePrompt: `${e.person} <b>نام کاربری</b> اکانت رو وارد کن:`,
   manualOrderLoginPasswordPrompt: `${e.lock} <b>رمز عبور</b> اکانت رو وارد کن:`,
   manualOrderRegionPrompt: `${e.earth} <b>منطقه مورد نظر</b> رو وارد کن (مثلاً: US، EU، Asia):`,
@@ -561,7 +562,7 @@ export const fa = {
   selectedRegion: "منطقه انتخاب‌شده",
   orderInfoReviewTitle: `${e.clipboard} <b>بررسی اطلاعات سفارش</b>`,
   orderInfoReviewPrompt: "اطلاعات زیر رو تأیید کن یا ویرایش کن:",
-  btnConfirmInfo: `${e.checkBold} تأیید و ادامه`,
+  btnConfirmInfo: `✅ تایید و ادامه`,
   paymentSummaryTitle: `${e.wallet} <b>پرداخت سفارش</b>`,
   paymentPrompt: "برای تکمیل خرید، روش پرداخت رو انتخاب کن:",
   paymentOriginalPrice: "قیمت اصلی",

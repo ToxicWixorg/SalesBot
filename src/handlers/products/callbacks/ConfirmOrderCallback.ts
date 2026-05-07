@@ -21,6 +21,7 @@ import { createManualOrderDirect } from "../../../scenes/manual-order.ts";
  */
 const promptKeyMap: Record<InfoStep, string> = {
   email: "manualOrderEmailPrompt",
+  password: "manualOrderPasswordPrompt",
   loginUsername: "manualOrderLoginUsernamePrompt",
   loginPassword: "manualOrderLoginPasswordPrompt",
   region: "manualOrderRegionPrompt",
@@ -102,6 +103,7 @@ export async function ConfirmOrderCallback(context: any): Promise<void> {
   }
   if (product.requiresEmail || plan.requiresEmail) {
     steps.push("email");
+    steps.push("password");
   }
   if (product.requiresLogin || plan.requiresLogin) {
     steps.push("loginUsername");

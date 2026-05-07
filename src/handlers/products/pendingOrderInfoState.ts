@@ -4,7 +4,12 @@ import type { AppliedDiscount } from "./discountOrderState.ts";
  * Steps of info collection for manual/scheduled orders.
  * Each step corresponds to a piece of information we ask the user.
  */
-export type InfoStep = "email" | "loginUsername" | "loginPassword" | "region";
+export type InfoStep =
+  | "email"
+  | "password"
+  | "loginUsername"
+  | "loginPassword"
+  | "region";
 
 /**
  * Full state object kept for a user while their order is being built.

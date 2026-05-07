@@ -433,6 +433,7 @@ export function setupManualOrderScene(bot: AnyBot) {
 
     await ctx.editText(t("manualOrderCancelled"), {
       reply_markup: new InlineKeyboard().text(t("btnMainMenu"), "categories"),
+      parse_mode: "HTML",
     });
   });
 
