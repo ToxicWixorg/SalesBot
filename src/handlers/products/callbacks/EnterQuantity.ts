@@ -116,10 +116,15 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
 
     enterQuantityState.set(userId, { planId, productId: plan.productId });
 
-    await ctx.editText(t("enterQuantityPrompt"), {
-      parse_mode: "HTML",
-      reply_markup: new InlineKeyboard().text(t("btnCancel"), "cancel_order"),
-    });
+    const available = await InventoryRepository.countAvailable(plan.productId);
+
+    await ctx.editText(
+      t("enterQuantityPrompt") + `\n\n${t("stock")} <b>${available}</b>`,
+      {
+        parse_mode: "HTML",
+        reply_markup: new InlineKeyboard().text(t("btnCancel"), "cancel_order"),
+      },
+    );
   });
 
   // ── 3. Confirm inventory order (confirm_inv_{planId}_{qty}) ────────────────

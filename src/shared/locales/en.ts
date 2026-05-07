@@ -554,6 +554,7 @@ export const en = {
   manualOrderStep: (data: { current: number; total: number }) =>
     `${e.pin} Step ${data.current} of ${data.total}`,
   manualOrderEmailPrompt: `${e.mail} Enter the account <b>email address</b>:`,
+  manualOrderPasswordPrompt: `${e.lock} <b>رمز عبور</b> اکانت رو وارد کن:\n\n مطمئن شوید ایمیل رو رمز درست و معتبر باشند تا در فرایند سفارش مشکلی ایجاد نشود با تشکر.`,
   manualOrderLoginUsernamePrompt: `${e.person} Enter the account <b>username</b>:`,
   manualOrderLoginPasswordPrompt: `${e.lock} Enter the account <b>password</b>:`,
   manualOrderRegionPrompt: `${e.earth} Enter the desired <b>region</b> (e.g. US, EU, Asia):`,
@@ -717,6 +718,7 @@ export const en = {
     `${e.fire} با تشکر از خرید شما دوست عزیز \n\n` +
     `${e.bag} سفارش شما آماده \n\n` +
     data.map((item) => `<b>#${item.index}</b>\n${item.content}`).join("\n\n") +
+    "\n\n\n" +
     `${e.truck} باز هم یه فروشگاه ما سر بزنید \n` +
     `${e.sparkles} مشتاقانه منتظر شما هستیم `,
 
@@ -748,4 +750,5 @@ export const en = {
     `👤 User: ${userLabel} (<code>${opts.userId}</code>)\n` +
     `💰 Amount: <b>${formatNum(opts.amount)}</b> Toman\n` +
     `🔑 Method: ${methodLabel}\n`,
+  regionNotFound: "region not found ❌",
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

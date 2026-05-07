@@ -181,6 +181,8 @@ async function notifyAdminNewOrder(
   if (data.paymentMethod) description += `💳 Payment: ${data.paymentMethod}\n`;
   if (data.collected.email)
     description += `📧 Email: ${data.collected.email}\n`;
+  if (data.collected.password)
+    description += `🔑 Email Password: ${data.collected.password}\n`;
   if (data.collected.loginUsername)
     description += `👤 Username: ${data.collected.loginUsername}\n`;
   if (data.collected.loginPassword)
@@ -269,6 +271,7 @@ async function finishManualOrder(
   // Build delivery payload from collected info
   const delivery: Record<string, string> = {};
   if (state.collected.email) delivery.email = state.collected.email;
+  if (state.collected.password) delivery.password = state.collected.password;
   if (state.collected.loginUsername)
     delivery.loginUsername = state.collected.loginUsername;
   if (state.collected.loginPassword)
@@ -1132,6 +1135,7 @@ async function finishManualOrderWithSlot(
 
   const delivery: Record<string, string> = {};
   if (state.collected.email) delivery.email = state.collected.email;
+  if (state.collected.password) delivery.password = state.collected.password;
   if (state.collected.loginUsername)
     delivery.loginUsername = state.collected.loginUsername;
   if (state.collected.loginPassword)
@@ -1257,6 +1261,7 @@ async function createPendingPaymentOrder(
 
   const delivery: Record<string, string> = {};
   if (state.collected.email) delivery.email = state.collected.email;
+  if (state.collected.password) delivery.password = state.collected.password;
   if (state.collected.loginUsername)
     delivery.loginUsername = state.collected.loginUsername;
   if (state.collected.loginPassword)

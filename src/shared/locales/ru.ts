@@ -555,6 +555,7 @@ export const ru = {
   manualOrderStep: (data: { current: number; total: number }) =>
     `${e.pin} Шаг ${data.current} из ${data.total}`,
   manualOrderEmailPrompt: `${e.mail} Введи <b>email</b> аккаунта:`,
+  manualOrderPasswordPrompt: `${e.lock} <b>رمز عبور</b> اکانت رو وارد کن:\n\n مطمئن شوید ایمیل رو رمز درست و معتبر باشند تا در فرایند سفارش مشکلی ایجاد نشود با تشکر.`,
   manualOrderLoginUsernamePrompt: `${e.person} Введи <b>имя пользователя</b> аккаунта:`,
   manualOrderLoginPasswordPrompt: `${e.lock} Введи <b>пароль</b> аккаунта:`,
   manualOrderRegionPrompt: `${e.earth} Введи желаемый <b>регион</b> (например: US, EU, Asia):`,
@@ -749,4 +750,5 @@ export const ru = {
     `👤 User: ${userLabel} (<code>${opts.userId}</code>)\n` +
     `💰 Amount: <b>${formatNum(opts.amount)}</b> Toman\n` +
     `🔑 Method: ${methodLabel}\n`,
+  regionNotFound: "refion not found ❌",
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

@@ -567,9 +567,19 @@ export function setupWalletRechargeScene(bot: AnyBot) {
           ? `\n\n✅ <b>Approved</b> — ${ctx.from.firstName}`
           : `\n\n❌ <b>Rejected</b> — ${ctx.from.firstName}`;
 
-      await ctx.editText(original + resultLine, {
-        reply_markup: new InlineKeyboard(),
-      });
+      if (msg?.caption !== undefined) {
+        await ctx.bot.api.editMessageCaption({
+          chat_id: msg.chat.id,
+          message_id: msg.message_id,
+          caption: original + resultLine,
+          parse_mode: "HTML",
+          reply_markup: new InlineKeyboard().toJSON(),
+        });
+      } else {
+        await ctx.editText(original + resultLine, {
+          reply_markup: new InlineKeyboard(),
+        });
+      }
     } catch (err) {
       console.error("[RECHARGE-ADMIN] edit message error:", err);
     }
