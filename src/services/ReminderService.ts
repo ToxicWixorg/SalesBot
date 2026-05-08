@@ -18,7 +18,7 @@ import { i18n } from "../shared/locales/index.ts";
 import { config } from "../config.ts";
 import { ScheduleRepository } from "../repositories/ScheduleRepository.ts";
 import { OrderRepository } from "../repositories/OrderRepository.ts";
-import { TicketService } from "./bot/ticket.ts";
+import { SessionChatRepository } from "../repositories/SessionChatRepository.ts";
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -161,8 +161,6 @@ async function checkAndStartSessions(bot: AnyBot) {
 
   if (sessions.length === 0) return;
 
-  const ticketService = new TicketService(bot.api);
-
   for (const row of sessions) {
     const { schedule, user, order, product } = row;
 
@@ -170,24 +168,18 @@ async function checkAndStartSessions(bot: AnyBot) {
     if (!userId || !order?.id) continue;
 
     try {
-      // 1. Auto-create an order ticket so admin can chat with the user
-      const ticket = await ticketService.createTicket({
-        userId: Number(userId),
-        type: "order",
+      // 1. Create a session chat so admin can message the user
+      const sessionChat = await SessionChatRepository.create({
+        scheduleId: schedule.id,
         orderId: order.id,
-        title: `Session: ${product?.name ?? "Product"} — ${schedule.timeSlot}`,
-        description:
-          `🚀 Session started automatically.\n` +
-          `Time slot: ${schedule.timeSlot}\n` +
-          `Please send login credentials in this thread.`,
-        priority: "high",
+        userId: Number(userId),
       });
 
       // 2. Update order status → in_progress
       await OrderRepository.updateStatus(order.id, "in_progress");
 
-      // 3. Mark schedule as started & link ticket
-      await ScheduleRepository.markSessionStartNotified(schedule.id, ticket.id);
+      // 3. Mark schedule as session-started
+      await ScheduleRepository.markSessionStartNotified(schedule.id);
 
       // 4. Notify user
       const lang = user?.languageCode ?? "en";
@@ -213,7 +205,7 @@ async function checkAndStartSessions(bot: AnyBot) {
           `📦 Product: <b>${product?.name ?? "—"}</b>\n` +
           `⏰ Time slot: <b>${schedule.timeSlot}</b>\n` +
           `🆔 Order: #${order.id}\n` +
-          `🎫 Ticket: <code>${ticket.ticketNumber}</code>\n\n` +
+          `💬 Session Chat: #${sessionChat.id}\n\n` +
           `Send login credentials to the user now.`;
 
         await bot.api.sendMessage({
@@ -225,7 +217,7 @@ async function checkAndStartSessions(bot: AnyBot) {
       }
 
       console.log(
-        `[ReminderService] Session started for user ${userId}, order ${order.id}, ticket ${ticket.id}`,
+        `[ReminderService] Session started for user ${userId}, order ${order.id}, sessionChat ${sessionChat.id}`,
       );
     } catch (err) {
       console.error(

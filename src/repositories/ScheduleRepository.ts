@@ -196,13 +196,12 @@ export const ScheduleRepository = {
     });
   },
 
-  /** Mark a schedule as session-started and link its auto-created ticket */
-  async markSessionStartNotified(id: number, ticketId: number) {
+  /** Mark a schedule as session-started and set status to in_progress */
+  async markSessionStartNotified(id: number) {
     await db
       .update(schedulesTable)
       .set({
         sessionStartNotified: true,
-        sessionTicketId: ticketId,
         status: "in_progress",
         updatedAt: new Date(),
       })
@@ -332,5 +331,32 @@ export const ScheduleRepository = {
       .where(eq(schedulesTable.id, id))
       .returning();
     return row;
+  },
+
+  /**
+   * Returns the unique days-of-week (0=Sun … 6=Sat) that have at least one
+   * active template. Used to build the day-of-week picker shown to users after
+   * payment for custom_schedule products.
+   */
+  async getAvailableDays(productId?: number): Promise<number[]> {
+    const templates = await this.getActiveTemplates(productId);
+    const days = new Set<number>();
+    for (const tpl of templates) {
+      const dow = (tpl.daysOfWeek ?? [0, 1, 2, 3, 4, 5, 6]) as number[];
+      for (const d of dow) days.add(d);
+    }
+    return Array.from(days).sort((a, b) => a - b);
+  },
+
+  /**
+   * Returns the next calendar date (YYYY-MM-DD) that falls on the given
+   * day-of-week (0=Sun … 6=Sat). If today is that day, returns today.
+   */
+  getNextDateForDayOfWeek(dayOfWeek: number): string {
+    const now = new Date();
+    const daysAhead = (dayOfWeek - now.getDay() + 7) % 7;
+    const target = new Date(now);
+    target.setDate(now.getDate() + daysAhead);
+    return target.toISOString().split("T")[0]!;
   },
 };

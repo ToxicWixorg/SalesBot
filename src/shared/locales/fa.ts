@@ -633,6 +633,8 @@ export const fa = {
     `${e.cross} <b>بازه‌ای موجود نیست</b>\n\n` +
     `متأسفم، امروز هیچ بازه زمانی آزادی برای این محصول وجود نداره.\n` +
     `فردا دوباره تلاش کن یا با پشتیبانی تماس بگیر.`,
+  schedulePickDay: `${e.calendar} لطفاً روز هفته‌ای رو که می‌خوای انتخاب کن:`,
+  schedulePickDayNoSlots: `${e.cross} متأسفم، هیچ روزی با بازه زمانی فعال وجود نداره.`,
   scheduleBooked: (data: {
     orderId: number;
     productName: string;

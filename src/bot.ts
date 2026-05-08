@@ -12,9 +12,10 @@ import { setupWalletHandlers } from "./handlers/wallet.ts";
 import { setupWalletRechargeScene } from "./scenes/wallet-recharge.ts";
 import { supportHandler } from "./handlers/support.ts";
 import { setupTicketScenes } from "./scenes/support-tickets.ts";
-import { setupManualOrderScene } from "./scenes/manual-order.ts";
+import { setupManualOrderScene } from "./scenes/manualOrders/index.ts";
 import { setupEnterQuantityHandler } from "./handlers/products/callbacks/EnterQuantity.ts";
 import { setBotInstance } from "./botInstance.ts";
+import { setupFallbackHandler } from "./handlers/fallback.ts";
 
 // Validate BOT_TOKEN
 if (!config.BOT_TOKEN) {
@@ -60,4 +61,8 @@ supportHandler(bot);
 
 // Setup wallet handlers after tickets
 setupWalletHandlers(bot);
+
+// Fallback: send main menu for any unhandled text message
+setupFallbackHandler(bot);
+
 setupWalletRechargeScene(bot);

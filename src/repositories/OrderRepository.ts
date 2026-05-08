@@ -79,6 +79,34 @@ export class OrderRepository {
   }
 
   /**
+   * بعد از انتخاب اسلات، سفارش زمان‌بندی شده را به وضعیت "scheduled" تغییر ده
+   * و اطلاعات اسلات را ذخیره کن.
+   */
+  static async scheduleOrder(
+    id: number,
+    slot: { date: string; timeSlot: string; templateId: number },
+  ): Promise<Order> {
+    const scheduledTime = new Date(
+      `${slot.date}T${slot.timeSlot.split("-")[0]}:00`,
+    );
+    const [result] = await db
+      .update(ordersTable)
+      .set({
+        status: "scheduled",
+        scheduledTime,
+        schedule: {
+          templateId: slot.templateId,
+          date: slot.date,
+          timeSlot: slot.timeSlot,
+        },
+        updatedAt: new Date(),
+      })
+      .where(eq(ordersTable.id, id))
+      .returning();
+    return result;
+  }
+
+  /**
    * سفارش را تحویل شده علامت‌گذاری کن
    */
   static async markAsDelivered(id: number, delivery: any): Promise<Order> {

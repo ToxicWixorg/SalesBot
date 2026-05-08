@@ -635,6 +635,8 @@ export const ru = {
     `${e.cross} <b>Слотов нет</b>\n\n` +
     `К сожалению, сегодня нет доступных временных слотов для этого продукта.\n` +
     `Попробуй завтра или обратись в поддержку.`,
+  schedulePickDay: `${e.calendar} Пожалуйста, выбери день недели:`,
+  schedulePickDayNoSlots: `${e.cross} Извини, нет активных дней с доступными слотами.`,
   scheduleBooked: (data: {
     orderId: number;
     productName: string;

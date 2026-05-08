@@ -14,7 +14,10 @@ import {
 } from "../pendingOrderInfoState.ts";
 import { appliedDiscountState } from "../discountOrderState.ts";
 import { preSelectedRegionState } from "../preSelectedRegionState.ts";
-import { createManualOrderDirect } from "../../../scenes/manual-order.ts";
+import {
+  createManualOrderDirect,
+  showPaymentScreen,
+} from "../../../scenes/manualOrders/index.ts";
 
 /**
  * Maps each InfoStep to its i18n prompt key.
@@ -30,13 +33,12 @@ const promptKeyMap: Record<InfoStep, string> = {
 /**
  * Handler for `confirm_order_{planId}` callback.
  *
- * Flow:
- *   1. Resolve plan + product
- *   2. Read pre-selected region and applied discount
- *   3. Pre-check if wallet has any balance at all (optional hint)
- *   4. Build the list of info steps the user must complete
- *   5a. No steps → delegate to createManualOrderDirect (payment screen)
- *   5b. Steps exist → push PendingOrderInfo state and send first prompt
+ * Flow for custom_schedule products (زمان‌بندی):
+ *   payment → info collection → review → day picker → slot picker → done
+ *
+ * Flow for all other delivery types:
+ *   info collection → review → payment → done
+ *   (or: payment directly if no info steps required)
  */
 export async function ConfirmOrderCallback(context: any): Promise<void> {
   const planId = parseInt(context.queryData[1]);
@@ -117,6 +119,28 @@ export async function ConfirmOrderCallback(context: any): Promise<void> {
   }
 
   // ── No info steps → go straight to payment ────────────────────────────────
+  // For custom_schedule: payment always comes FIRST (before info collection),
+  // so we go to payment regardless of whether there are info steps.
+  if (product.deliveryType === "custom_schedule") {
+    const state: PendingOrderInfo = {
+      planId,
+      deliveryType: product.deliveryType,
+      phase: "payment",
+      steps,
+      currentStep: 0,
+      collected: preCollected,
+      discount: hasDiscount ? discount : undefined,
+      regionPrice,
+    };
+    pendingOrderInfoState.set(userId, state);
+    await showPaymentScreen(
+      (text, opts) => context.editText(text, opts),
+      userId,
+      state,
+    );
+    return;
+  }
+
   if (steps.length === 0) {
     await createManualOrderDirect(
       getBotInstance(),
