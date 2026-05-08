@@ -134,6 +134,13 @@
       "when": 1778198400000,
       "tag": "0018_plan_regions",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1778284800000,
+      "tag": "0019_session_chats",
+      "breakpoints": true
     }
   ]
 }
