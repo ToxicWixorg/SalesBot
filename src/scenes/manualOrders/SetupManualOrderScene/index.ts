@@ -32,6 +32,8 @@ import { appliedDiscountState } from "../../../handlers/products/discountOrderSt
 import { getPromptKey } from "../Helpers/getPromptKey";
 import { showDayPicker } from "../Helpers/showDayPicker";
 import { showSlotPicker } from "../Helpers/showSlotPicker";
+import { finishManualOrderWithSlot } from "../Helpers/finishManualOrderWithSlot";
+import { notifyAdminNewOrder } from "../Helpers/notifyAdminNewOrder";
 import { ScheduleRepository } from "../../../repositories/ScheduleRepository";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -95,12 +97,7 @@ async function createPendingPaymentOrder(
   };
 }
 
-export function setupManualOrderScene(
-  bot: AnyBot,
-  showSlotPicker: any,
-  finishManualOrderWithSlot: any,
-  notifyAdminNewOrder: any,
-) {
+export function setupManualOrderScene(bot: AnyBot) {
   /** User cancels info collection or slot selection mid-flow */
   bot.callbackQuery("cancel_manual_order", async (ctx) => {
     return await CancelManualOrderCallback(ctx);
