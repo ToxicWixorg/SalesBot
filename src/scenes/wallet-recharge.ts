@@ -31,10 +31,6 @@ export function clearRechargeState(userId: number) {
   rechargeState.delete(userId);
 }
 
-export function hasRechargeState(userId: number): boolean {
-  return rechargeState.has(userId);
-}
-
 // ─────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────
