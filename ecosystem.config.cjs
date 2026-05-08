@@ -1,10 +1,10 @@
 module.exports = {
   apps: [
     {
-      name: "sales-bot",
+      name: "sales-bot-demo",
       script: "bun",
       args: "run start",
-      cwd: "/root/bot",
+      cwd: "/root/proj/bot",
       autorestart: true,
       watch: false,
       max_memory_restart: "1G",
