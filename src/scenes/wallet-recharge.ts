@@ -586,6 +586,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
   });
 
   bot.on("message", async (ctx) => {
+    console.log("messageHandler", ctx);
     const userId = ctx.from?.id;
     if (!userId) return;
 
