@@ -1,6 +1,6 @@
 import { type AnyBot, Context, InlineKeyboard } from "gramio";
-import { UserRepository } from "../../../repositories/UserRepository.ts";
-import { i18n } from "../../../shared/locales/index.ts";
+import { UserRepository } from "../../../../repositories/UserRepository.ts";
+import { i18n } from "../../../../shared/locales/index.ts";
 import { pendingOrderInfoState } from "../../../../handlers/products/pendingOrderInfoState.ts";
 import { pendingPaymentState } from "../../../../handlers/products/pendingPaymentState.ts";
 import { notifyAdminNewOrder } from "../../Helpers/notifyAdminNewOrder.ts";

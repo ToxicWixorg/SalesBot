@@ -12,7 +12,8 @@ import { appliedDiscountState } from "../../handlers/products/discountOrderState
 import { preSelectedRegionState } from "../../handlers/products/preSelectedRegionState.ts";
 import { showSlotPicker } from "./Helpers/showSlotPicker.ts";
 
-export { showPaymentScreen } from "./ShowPaymentScreen.ts";
+import { showPaymentScreen } from "./ShowPaymentScreen.ts";
+export { showPaymentScreen };
 
 export { sendStepPrompt } from "./SendStepPrompt.ts";
 
