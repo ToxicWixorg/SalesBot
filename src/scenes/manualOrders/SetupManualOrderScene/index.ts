@@ -254,9 +254,12 @@ export function setupManualOrderScene(bot: AnyBot) {
     const state = pendingOrderInfoState.get(userId);
     if (!state || state.phase !== "day") return;
 
-    const match = ctx.queryData.match(/^slot_day_([0-6])$/);
-    if (!match) return;
-    const dayOfWeek = parseInt(match[1]!);
+    // When registered with a regex, ctx.queryData is the array of match groups
+    const dayStr = Array.isArray(ctx.queryData)
+      ? ctx.queryData[1]
+      : ctx.queryData;
+    const dayOfWeek = parseInt(dayStr as string);
+    if (isNaN(dayOfWeek)) return;
 
     const user = await UserRepository.findById(userId);
     const t = i18n.buildT(user?.languageCode ?? "fa");

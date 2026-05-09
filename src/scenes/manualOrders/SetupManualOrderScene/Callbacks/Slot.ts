@@ -22,9 +22,20 @@ export async function SlotCallback(
   const state = pendingOrderInfoState.get(userId);
   if (!state || state.phase !== "slot") return;
 
-  const match = ctx.queryData.match(/^slot_(\d+)_(\d{4}-\d{2}-\d{2})$/);
-  if (!match) return;
-  const [, templateIdStr, date] = match as [string, string, string];
+  // When registered with a regex, ctx.queryData is the array of match groups
+  let templateIdStr: string;
+  let date: string;
+  if (Array.isArray(ctx.queryData)) {
+    templateIdStr = ctx.queryData[1] as string;
+    date = ctx.queryData[2] as string;
+  } else {
+    const match = (ctx.queryData as string).match(
+      /^slot_(\d+)_(\d{4}-\d{2}-\d{2})$/,
+    );
+    if (!match) return;
+    templateIdStr = match[1]!;
+    date = match[2]!;
+  }
   const templateId = parseInt(templateIdStr);
 
   // Re-check slot availability (protect against race condition)
