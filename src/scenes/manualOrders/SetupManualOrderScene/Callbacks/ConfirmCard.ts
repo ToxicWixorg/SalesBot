@@ -1,4 +1,4 @@
-import { AnyBot, Context, InlineKeyboard } from "gramio";
+import { type AnyBot, Context, InlineKeyboard } from "gramio";
 import { UserRepository } from "../../../../repositories";
 import { i18n } from "../../../../shared/locales";
 import { pendingOrderInfoState } from "../../../../handlers/products/pendingOrderInfoState";

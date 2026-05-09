@@ -68,6 +68,14 @@ export const startComposer = new Composer()
 
     let user = await UserRepository.findById(userId);
 
+    if (user) {
+      user = await UserRepository.update(userId, {
+        username,
+        firstName,
+        lastName,
+      });
+    }
+
     if (!user) {
       const startPayload = context.args;
       let referrerId: number | null = null;

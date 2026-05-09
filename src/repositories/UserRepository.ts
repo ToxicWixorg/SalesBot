@@ -43,9 +43,7 @@ export class UserRepository {
     return result;
   }
 
-  /**
-   * کاربر جدید ایجاد کن یا اگه وجود داشت برگردون (upsert)
-   */
+
   static async create(
     user: InsertUser,
   ): Promise<{ user: User; isNew: boolean }> {
