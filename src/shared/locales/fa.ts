@@ -759,4 +759,5 @@ export const fa = {
     `💰 مبلغ: <b>${formatNum(opts.amount)}</b> تومان\n` +
     `🔑 روش: ${methodLabel}\n`,
   regionNotFound: "ریجن پیدا نشد ❌",
+  rechargeCardSaveFailed: "خطا در ذخیره فایل",
 } satisfies LanguageMap;

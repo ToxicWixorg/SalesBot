@@ -1,4 +1,5 @@
 import { InlineKeyboard, type AnyBot } from "gramio";
+import { db } from "../db/index.ts";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
 import { PaymentRepository } from "../repositories/PaymentRepository.ts";
@@ -6,6 +7,7 @@ import { i18n } from "../shared/locales/index.ts";
 import { config } from "../config.ts";
 import { ticketState, ticketReplyState } from "./support-tickets.ts";
 import { ReplyError } from "ioredis";
+import { walletTopupsTable } from "../db/schema.ts";
 
 // ─────────────────────────────────────────────────────────
 // State Management
@@ -149,6 +151,25 @@ async function notifyAdmin(
   } catch (err) {
     console.error("[wallet-recharge] notifyAdmin error:", err);
   }
+}
+
+async function createPendingCardTopup(opts: {
+  userId: number;
+  amount: number;
+  receiptFileId: string;
+}) {
+  const [topup] = await db
+    .insert(walletTopupsTable)
+    .values({
+      userId: opts.userId,
+      amount: opts.amount.toString() as any,
+      currency: "IRR",
+      receiptPath: `telegram-file-id:${opts.receiptFileId}`,
+      status: "pending",
+    })
+    .returning();
+
+  return topup;
 }
 
 /** اعمال شارژ و اطلاع به کاربر */
@@ -676,15 +697,20 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       const fileId = photo[photo.length - 1].file_id;
       rechargeState.delete(userId);
 
-      await notifyAdmin(bot, {
-        userId,
-        username: ctx.from?.username ?? null,
-        firstName: ctx.from?.firstName ?? null,
-        amount: state.amount,
-        method: "card",
-        evidence: fileId,
-        evidenceType: "photo",
-      });
+      try {
+        await createPendingCardTopup({
+          userId,
+          amount: state.amount,
+          receiptFileId: fileId,
+        });
+      } catch (err) {
+        console.error(
+          "[wallet-recharge] failed to create pending card topup:",
+          err,
+        );
+        await ctx.reply(t("rechargeCardSaveFailed"), { parse_mode: "HTML" });
+        return;
+      }
 
       await ctx.reply(t("rechargePendingApproval"), {
         parse_mode: "HTML",

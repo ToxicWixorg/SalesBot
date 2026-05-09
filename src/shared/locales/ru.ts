@@ -759,5 +759,7 @@ export const ru = {
     `👤 User: ${userLabel} (<code>${opts.userId}</code>)\n` +
     `💰 Amount: <b>${formatNum(opts.amount)}</b> Toman\n` +
     `🔑 Method: ${methodLabel}\n`,
-  regionNotFound: "refion not found ❌",
+  regionNotFound: "Регион не найден ❌",
+
+  rechargeCardSaveFailed: "Ошибка при сохранении файла",
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

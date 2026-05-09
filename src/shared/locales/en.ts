@@ -759,5 +759,7 @@ export const en = {
     `👤 User: ${userLabel} (<code>${opts.userId}</code>)\n` +
     `💰 Amount: <b>${formatNum(opts.amount)}</b> Toman\n` +
     `🔑 Method: ${methodLabel}\n`,
-  regionNotFound: "region not found ❌",
+  regionNotFound: "Region not found ❌",
+
+  rechargeCardSaveFailed: "Failed to save the file",
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

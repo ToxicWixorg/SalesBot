@@ -309,6 +309,34 @@ export type InsertWalletTransaction =
   typeof walletTransactionsTable.$inferInsert;
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🧾 WALLET TOPUPS (card-to-card receipts awaiting admin approval)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+export const walletTopupsTable = pgTable(
+  "wallet_topups",
+  {
+    id: serial("id").primaryKey(),
+    userId: bigint("user_id", { mode: "number" })
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+    currency: text("currency").default("IRR"),
+    receiptPath: text("receipt_path").notNull(), // telegram file id / local path / URL
+    status: text("status").default("pending"), // pending | approved | rejected
+    notes: text("notes"),
+    approvedBy: integer("approved_by").references(() => adminsTable.id),
+    approvedAt: timestamp("approved_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    userIdIdx: index("wallet_topups_user_id_idx").on(table.userId),
+    statusIdx: index("wallet_topups_status_idx").on(table.status),
+  }),
+);
+
+export type WalletTopup = typeof walletTopupsTable.$inferSelect;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 🎫 TICKETS (Forum-Based System) ━━━━━━
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
