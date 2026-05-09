@@ -5,6 +5,7 @@ import { i18n } from "../shared/locales/index";
 import { UserRepository } from "../repositories/UserRepository";
 import { config } from "../config";
 import { emojiIds } from "../shared/locales/emojies.ts";
+import { mainMenuKeyboard } from "../shared/keyboards/main-menu.ts";
 
 /**
  * State management for ticket creation
@@ -177,12 +178,13 @@ export function setupTicketScenes(bot: AnyBot) {
     if (!userId) {
       return;
     }
-    // Non-text messages (photos, etc.) are not for tickets — pass to next handler
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode || "en");
+
     if (!context.text) {
       return next();
     }
 
-    // ========== HANDLE FORUM GROUP (SUPERGROUP) ==========
     if (context.chat?.type === "supergroup") {
       const chatId = context.chat.id.toString();
       const supportGroupId = config.SUPPORT_GROUP_ID?.replace("-100", "");
@@ -191,7 +193,6 @@ export function setupTicketScenes(bot: AnyBot) {
         return;
       }
 
-      // Try different paths to find reply_to_message and message_thread_id
       const message =
         (context as any).update?.message || (context as any).payload;
 
@@ -245,13 +246,18 @@ export function setupTicketScenes(bot: AnyBot) {
       const state = ticketState.get(userId);
 
       if (!state || state.step !== "message") {
-        return next();
+        const username = context.from.username || null;
+        const firstName = context.from.firstName || null;
+        const userName = firstName || username || "User";
+        return context.send(t("main_menu", userName), {
+          reply_markup: mainMenuKeyboard(t),
+          parse_mode: "HTML",
+        });
       }
 
       await handleTicketCreation(context, userId, state);
       return;
     }
-
   });
 
   async function handleTicketCreation(

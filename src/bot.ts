@@ -15,6 +15,7 @@ import { setupTicketScenes } from "./scenes/support-tickets.ts";
 import { setupManualOrderScene } from "./scenes/manualOrders/index.ts";
 import { setupEnterQuantityHandler } from "./handlers/products/callbacks/EnterQuantity.ts";
 import { setBotInstance } from "./botInstance.ts";
+import { setupAdminSetupHandler } from "./handlers/adminSetup.ts";
 
 // Validate BOT_TOKEN
 if (!config.BOT_TOKEN) {
@@ -47,6 +48,9 @@ export const bot = new Bot(config.BOT_TOKEN)
 
 // Set bot singleton (must be before scenes that need getBotInstance)
 setBotInstance(bot);
+
+// Setup admin password setup handler (highest priority — before other message handlers)
+setupAdminSetupHandler(bot);
 
 // Setup manual order scene (must run before ticket scenes)
 setupManualOrderScene(bot);
