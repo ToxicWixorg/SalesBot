@@ -246,6 +246,7 @@ export function setupTicketScenes(bot: AnyBot) {
       const state = ticketState.get(userId);
 
       if (!state || state.step !== "message") {
+        if (context.text.startsWith("/")) return next?.();
         const username = context.from.username || null;
         const firstName = context.from.firstName || null;
         const userName = firstName || username || "User";
