@@ -1,5 +1,5 @@
 import { db } from "../db/index.ts";
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, and } from "drizzle-orm";
 import { sessionChatsTable, sessionChatMessagesTable } from "../db/schema.ts";
 import type { SessionChat, SessionChatMessage } from "../db/schema.ts";
 
@@ -43,6 +43,21 @@ export const SessionChatRepository = {
       .select()
       .from(sessionChatsTable)
       .where(eq(sessionChatsTable.orderId, orderId));
+    return chat ?? null;
+  },
+
+  /** Find the open session chat for a user (if any) */
+  async findOpenByUserId(userId: number): Promise<SessionChat | null> {
+    const [chat] = await db
+      .select()
+      .from(sessionChatsTable)
+      .where(
+        and(
+          eq(sessionChatsTable.userId, userId),
+          eq(sessionChatsTable.status, "open"),
+        ),
+      )
+      .limit(1);
     return chat ?? null;
   },
 

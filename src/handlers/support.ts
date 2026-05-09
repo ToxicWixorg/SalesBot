@@ -6,6 +6,7 @@ import { i18n } from "../shared/locales/index";
 import { UserRepository } from "../repositories/UserRepository";
 import { supportKeyboard } from "../shared/keyboards";
 import { emojiIds } from "../shared/locales/emojies.ts";
+import { SessionChatRepository } from "../repositories/SessionChatRepository.ts";
 
 export const supportHandler = (bot: AnyBot) => {
   /**
@@ -353,6 +354,52 @@ export const supportHandler = (bot: AnyBot) => {
       show_alert: true,
       parse_mode: "HTML",
     });
+  });
+
+  /**
+   * Handle user messages during an active session chat
+   * Forwards the message to admin and saves it to DB
+   */
+  bot.on("message", async (ctx, next) => {
+    if (!ctx.text) return next();
+    // Skip messages from groups/channels
+    if (ctx.chat?.type !== "private") return next();
+
+    const userId = ctx.from?.id;
+    if (!userId) return next();
+
+    const sessionChat = await SessionChatRepository.findOpenByUserId(userId);
+    if (!sessionChat) return next();
+
+    // Save message to DB
+    await SessionChatRepository.addMessage({
+      sessionChatId: sessionChat.id,
+      senderType: "user",
+      senderId: userId,
+      text: ctx.text,
+    });
+
+    // Forward to admin group
+    if (config.SUPPORT_GROUP_ID && config.ORDERS_TOPIC_ID) {
+      const user = await UserRepository.findById(userId);
+      const displayName = user?.username
+        ? `@${user.username}`
+        : (user?.firstName ?? String(userId));
+
+      await bot.api.sendMessage({
+        chat_id: Number(config.SUPPORT_GROUP_ID),
+        message_thread_id: config.ORDERS_TOPIC_ID,
+        text:
+          `💬 <b>Session Chat #${sessionChat.id}</b>\n` +
+          `👤 ${displayName} (<code>${userId}</code>)\n` +
+          `📦 Order: #${sessionChat.orderId}\n\n` +
+          `${ctx.text}`,
+        parse_mode: "HTML",
+      });
+    }
+
+    // Acknowledge to user (optional — just consume the message silently)
+    return; // do NOT call next() so other handlers don't also process this message
   });
 
   /**
