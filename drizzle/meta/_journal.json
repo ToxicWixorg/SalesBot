@@ -141,6 +141,13 @@
       "when": 1778284800000,
       "tag": "0019_session_chats",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1778328000000,
+      "tag": "0020_wallet_topups",
+      "breakpoints": true
     }
   ]
 }
