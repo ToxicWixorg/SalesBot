@@ -74,7 +74,8 @@ export const en = {
   duration_year: "Year",
 
   walletTitle: `${e.wallet} Wallet`,
-  walletBalance: (balance: string) => `Balance: <b>${balance}</b> Toman ` + e.Toman,
+  walletBalance: (balance: string) =>
+    `Balance: <b>${balance}</b> Toman ` + e.Toman,
   walletEmpty: `${e.wallet} Your wallet is currently empty ${e.sparkles} Top it up and get started!`,
   btnRechargeWallet: ` Top Up Wallet`,
   btnTransactionHistory: ` Transaction History`,
@@ -95,7 +96,8 @@ export const en = {
   rechargeTooLow: (min: string) =>
     `${e.reject} Top-up amount must be at least <b>${min}</b> Toman ` + e.Toman,
   rechargeTooHigh: (max: string) =>
-    `${e.reject} Top-up amount cannot be more than <b>${max}</b> Toman ` + e.Toman,
+    `${e.reject} Top-up amount cannot be more than <b>${max}</b> Toman ` +
+    e.Toman,
 
   // Crypto Payment
   rechargeCryptoTitle: `${e.wallet} Crypto Payment`,
@@ -148,7 +150,8 @@ export const en = {
   txSourceAdminAdjustment: `${e.settings} Admin Adjustment`,
 
   // ── کلیدهای جدید شارژ کیف پول ──────────────────────────
-  rechargeAmount: (amount: string) => `💰 Amount: <b>${amount}</b> Toman ` + e.Toman,
+  rechargeAmount: (amount: string) =>
+    `💰 Amount: <b>${amount}</b> Toman ` + e.Toman,
   rechargeMethodSelectTitle: (amount: string) =>
     `${e.wallet} Amount <b>${amount}</b> Toman ${e.Toman}\n\nSelect a payment method:`,
   rechargeCardNumbers: `Card Numbers`,
@@ -243,7 +246,7 @@ export const en = {
   settingsTitle: `${e.settings} Settings`,
   settingsDescription: `${e.info} Manage your account from here.`,
   btnAccountInfo: `👤 Account Info`,
-  btnNotificationSettings: `🔔 Notification Settings`,
+  btnNotificationSettings: `Notification Settings`,
   btnPrivacy: ` Privacy`,
   btnAbout: `ℹ About Us`,
 

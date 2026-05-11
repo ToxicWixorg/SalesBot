@@ -247,7 +247,7 @@ export const fa = {
   settingsTitle: `${e.settings} تنظیمات`,
   settingsDescription: `${e.info} از اینجا می‌تونی حسابت رو مدیریت کنی.`,
   btnAccountInfo: `👤 اطلاعات حساب`,
-  btnNotificationSettings: `🔔 تنظیمات اعلان‌ها`,
+  btnNotificationSettings: `تنظیمات اعلان‌ها`,
   btnPrivacy: ` حریم خصوصی`,
   btnAbout: `ℹ درباره ما`,
 

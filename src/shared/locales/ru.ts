@@ -146,7 +146,7 @@ export const ru = {
   settingsTitle: `${e.settings} Настройки`,
   settingsDescription: `${e.info} Управляйте вашим аккаунтом здесь.`,
   btnAccountInfo: `👤 Информация об аккаунте`,
-  btnNotificationSettings: `🔔 Настройки уведомлений`,
+  btnNotificationSettings: `Настройки уведомлений`,
   btnPrivacy: ` Конфиденциальность`,
   btnAbout: `ℹ О нас`,
 
@@ -161,7 +161,7 @@ export const ru = {
   btnOrdersFilterCompleted: `Завершённые`,
   btnOrdersFilterAll: `Все`,
   orderDetailsTitle: `${e.clipboard} Детали заказа`,
-  orderNumber: "🆔 Номер заказа",
+  orderNumber: `${e.id} Номер заказа`,
   orderStatus: "Статус",
   orderNotFound: "Заказ не найден",
 
