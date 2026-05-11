@@ -45,7 +45,7 @@ function buildJoinKeyboard(
     keyboard.url(channel.channelName, channel.channelUrl).row();
   }
   keyboard.text(t("btnIJoined"), "check_membership", {
-    icon_custom_emoji_id: undefined, //emojiIds.checkBold,
+    icon_custom_emoji_id: emojiIds.checkBold,
   });
   return keyboard;
 }

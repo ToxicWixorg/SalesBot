@@ -82,8 +82,9 @@ export function paymentKeyboard(
   }
 
   if (
-    opts.settings?.cryptoEnabled &&
-    opts.settings.cryptoAddress &&
+    opts.settings?.nowpaymentsEnabled &&
+    opts.settings.nowpaymentsApiKey &&
+    opts.settings.nowpaymentsIpnCallbackUrl &&
     (opts.settings.cryptoExchangeRate ?? 0) > 0
   ) {
     kb.text(t("btnPayCrypto"), `pay_crypto_${planId}`).row();

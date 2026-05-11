@@ -11,6 +11,16 @@ export type PendingPaymentInfo = {
   zarinpalAuthority?: string;
   /** Direct ZarinPal payment URL shown to the user */
   zarinpalPayUrl?: string;
+  /** NOWPayments payment id for crypto verification */
+  nowpaymentsPaymentId?: string;
+  /** NOWPayments order id */
+  nowpaymentsOrderId?: string;
+  /** Optional checkout URL returned by NOWPayments */
+  nowpaymentsPayUrl?: string;
+  /** Pay-to address returned by NOWPayments */
+  nowpaymentsPayAddress?: string;
+  /** Expected pay amount in selected crypto */
+  nowpaymentsPayAmount?: string;
 };
 
 /** userId → payment state */

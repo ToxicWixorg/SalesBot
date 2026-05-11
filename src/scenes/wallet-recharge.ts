@@ -1,5 +1,6 @@
 import { InlineKeyboard, type AnyBot } from "gramio";
 import { db } from "../db/index.ts";
+import { and, eq } from "drizzle-orm";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
 import { PaymentRepository } from "../repositories/PaymentRepository.ts";
@@ -7,7 +8,18 @@ import { i18n } from "../shared/locales/index.ts";
 import { config } from "../config.ts";
 import { ticketState, ticketReplyState } from "./support-tickets.ts";
 import { ReplyError } from "ioredis";
-import { walletTopupsTable } from "../db/schema.ts";
+import {
+  nowpaymentsWalletPaymentsTable,
+  walletTopupsTable,
+  walletTransactionsTable,
+  zarinpalWalletPaymentsTable,
+  type NowpaymentsWalletPayment,
+  usersTable,
+  type PaymentSettings,
+  type ZarinpalWalletPayment,
+} from "../db/schema.ts";
+import { cancelKeyboard } from "../shared/keyboards/back.ts";
+import { emojiIds } from "../shared/locales/emojies.ts";
 
 // ─────────────────────────────────────────────────────────
 // State Management
@@ -19,11 +31,16 @@ type RechargeState =
   | { step: "enter_amount" }
   | { step: "select_method"; amount: number }
   | { step: "waiting_receipt"; amount: number }
-  | { step: "waiting_txid"; amount: number; usdtAmount: number }
+  | {
+      step: "waiting_nowpayments";
+      amount: number;
+      walletPaymentId: number;
+      paymentUrl: string;
+    }
   | {
       step: "waiting_zarinpal";
       amount: number;
-      authority: string;
+      walletPaymentId: number;
       paymentUrl: string;
     };
 
@@ -42,6 +59,468 @@ const MAX_AMOUNT = 50_000_000;
 
 function formatNum(n: number): string {
   return n.toLocaleString("fa-IR");
+}
+
+function normalizeZarinpalCallbackUrl(url: string | null | undefined) {
+  const normalized = url?.trim();
+  return normalized ? normalized : null;
+}
+
+function buildZarinpalGatewayUrls(settings: PaymentSettings) {
+  return {
+    requestUrl: settings.zarinpalSandbox
+      ? "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
+      : "https://api.zarinpal.com/pg/v4/payment/request.json",
+    verifyUrl: settings.zarinpalSandbox
+      ? "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"
+      : "https://api.zarinpal.com/pg/v4/payment/verify.json",
+    startPayUrl: settings.zarinpalSandbox
+      ? "https://sandbox.zarinpal.com/pg/StartPay/"
+      : "https://www.zarinpal.com/pg/StartPay/",
+  };
+}
+
+function buildWalletZarinpalCallbackUrl(baseUrl: string, paymentId: number) {
+  const url = new URL(baseUrl);
+  url.searchParams.set("walletPaymentId", String(paymentId));
+  return url.toString();
+}
+
+function normalizeNowpaymentsPayCurrency(settings: PaymentSettings) {
+  if (settings.nowpaymentsPayCurrency?.trim()) {
+    return settings.nowpaymentsPayCurrency.trim().toLowerCase();
+  }
+
+  const network = (settings.cryptoNetwork ?? "TRC20").toUpperCase();
+  if (network === "ERC20") return "usdterc20";
+  if (network === "BEP20") return "usdtbsc";
+  return "usdttrc20";
+}
+
+function buildNowpaymentsIpnUrl(baseUrl: string, walletPaymentId: number) {
+  const url = new URL(baseUrl);
+  url.searchParams.set("walletPaymentId", String(walletPaymentId));
+  return url.toString();
+}
+
+function buildZarinpalVerificationKeyboard(
+  t: ReturnType<typeof i18n.buildT>,
+  paymentUrl: string | null | undefined,
+  walletPaymentId: number,
+) {
+  const keyboard = new InlineKeyboard();
+
+  if (paymentUrl) {
+    keyboard.url(t("btnPayNow"), paymentUrl).row();
+  }
+
+  keyboard
+    .text(t("btnVerifyPayment"), `recharge_verify_zarinpal:${walletPaymentId}`)
+    .row()
+    .text(t("btnCancel"), "recharge_cancel");
+
+  return keyboard;
+}
+
+async function createPendingZarinpalWalletPayment(opts: {
+  userId: number;
+  amount: number;
+}) {
+  const [payment] = await db
+    .insert(zarinpalWalletPaymentsTable)
+    .values({
+      userId: opts.userId,
+      amount: opts.amount.toFixed(2),
+      status: "pending",
+      updatedAt: new Date(),
+    })
+    .returning();
+
+  return payment;
+}
+
+async function createPendingNowpaymentsWalletPayment(opts: {
+  userId: number;
+  amount: number;
+  payCurrency: string;
+}) {
+  const orderId = `wallet-${opts.userId}-${Date.now()}-${Math.floor(
+    Math.random() * 1_000_000,
+  )}`;
+
+  const [payment] = await db
+    .insert(nowpaymentsWalletPaymentsTable)
+    .values({
+      userId: opts.userId,
+      amount: opts.amount.toFixed(2),
+      orderId,
+      payCurrency: opts.payCurrency,
+      paymentStatus: "waiting",
+      updatedAt: new Date(),
+    })
+    .returning();
+
+  return payment;
+}
+
+async function attachNowpaymentsWalletGatewayRequest(opts: {
+  paymentId: number;
+  nowpaymentsPaymentId: string;
+  payAddress: string | null;
+  payAmount: string | null;
+  paymentUrl: string | null;
+  paymentStatus: string;
+}) {
+  const [payment] = await db
+    .update(nowpaymentsWalletPaymentsTable)
+    .set({
+      nowpaymentsPaymentId: opts.nowpaymentsPaymentId,
+      payAddress: opts.payAddress,
+      payAmount: opts.payAmount,
+      paymentUrl: opts.paymentUrl,
+      paymentStatus: opts.paymentStatus,
+      updatedAt: new Date(),
+    })
+    .where(eq(nowpaymentsWalletPaymentsTable.id, opts.paymentId))
+    .returning();
+
+  return payment;
+}
+
+async function markNowpaymentsWalletPaymentFailed(paymentId: number) {
+  await db
+    .update(nowpaymentsWalletPaymentsTable)
+    .set({ paymentStatus: "failed", updatedAt: new Date() })
+    .where(eq(nowpaymentsWalletPaymentsTable.id, paymentId));
+}
+
+async function getNowpaymentsWalletPaymentForUser(
+  paymentId: number,
+  userId: number,
+) {
+  const [payment] = await db
+    .select()
+    .from(nowpaymentsWalletPaymentsTable)
+    .where(
+      and(
+        eq(nowpaymentsWalletPaymentsTable.id, paymentId),
+        eq(nowpaymentsWalletPaymentsTable.userId, userId),
+      ),
+    )
+    .limit(1);
+
+  return payment;
+}
+
+async function refreshNowpaymentsWalletPaymentStatus(opts: {
+  settings: PaymentSettings;
+  payment: NowpaymentsWalletPayment;
+}) {
+  if (!opts.settings.nowpaymentsApiKey || !opts.payment.nowpaymentsPaymentId) {
+    throw new Error("NOWPayments API key/payment id is missing");
+  }
+
+  const resp = await fetch(
+    `https://api.nowpayments.io/v1/payment/${opts.payment.nowpaymentsPaymentId}`,
+    {
+      method: "GET",
+      headers: {
+        "x-api-key": opts.settings.nowpaymentsApiKey,
+      },
+      signal: AbortSignal.timeout(10_000),
+    },
+  );
+
+  const data = (await resp.json()) as any;
+  const paymentStatus = String(
+    data?.payment_status ?? opts.payment.paymentStatus,
+  );
+
+  const [updated] = await db
+    .update(nowpaymentsWalletPaymentsTable)
+    .set({
+      paymentStatus,
+      payAddress:
+        data?.pay_address !== undefined
+          ? String(data.pay_address)
+          : opts.payment.payAddress,
+      payAmount:
+        data?.pay_amount !== undefined
+          ? String(data.pay_amount)
+          : opts.payment.payAmount,
+      callbackPayload: data,
+      updatedAt: new Date(),
+    })
+    .where(eq(nowpaymentsWalletPaymentsTable.id, opts.payment.id))
+    .returning();
+
+  return {
+    paymentStatus,
+    updatedPayment: updated,
+  };
+}
+
+async function creditNowpaymentsWalletPayment(
+  bot: AnyBot,
+  payment: NowpaymentsWalletPayment,
+) {
+  if (payment.creditedAt) {
+    return { alreadyCredited: true };
+  }
+
+  let credited = false;
+
+  await db.transaction(async (tx) => {
+    const [freshPayment] = await tx
+      .select()
+      .from(nowpaymentsWalletPaymentsTable)
+      .where(eq(nowpaymentsWalletPaymentsTable.id, payment.id))
+      .limit(1);
+
+    if (!freshPayment || freshPayment.creditedAt) {
+      return;
+    }
+
+    const [freshUser] = await tx
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, freshPayment.userId))
+      .limit(1);
+
+    if (!freshUser) {
+      throw new Error(
+        "User not found while finalizing NOWPayments wallet payment",
+      );
+    }
+
+    const amount = parseFloat(String(freshPayment.amount ?? "0"));
+    const currentBalance = parseFloat(String(freshUser.walletBalance ?? "0"));
+    const newBalance = parseFloat((currentBalance + amount).toFixed(2));
+
+    await tx
+      .update(usersTable)
+      .set({ walletBalance: newBalance.toFixed(2), updatedAt: new Date() })
+      .where(eq(usersTable.id, freshUser.id));
+
+    await tx.insert(walletTransactionsTable).values({
+      userId: freshUser.id,
+      amount: amount.toFixed(2),
+      type: "credit",
+      source: "recharge",
+      description: `NOWPayments wallet recharge (#${freshPayment.id}) - Payment ID: ${freshPayment.nowpaymentsPaymentId ?? "-"}`,
+      balanceBefore: currentBalance.toFixed(2),
+      balanceAfter: newBalance.toFixed(2),
+    });
+
+    await tx
+      .update(nowpaymentsWalletPaymentsTable)
+      .set({
+        paymentStatus: "finished",
+        creditedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(nowpaymentsWalletPaymentsTable.id, freshPayment.id));
+
+    credited = true;
+  });
+
+  if (credited) {
+    await notifyRechargeApplied(
+      bot,
+      payment.userId,
+      parseFloat(String(payment.amount ?? "0")),
+    );
+  }
+
+  return { alreadyCredited: !credited };
+}
+
+async function attachZarinpalWalletGatewayRequest(opts: {
+  paymentId: number;
+  authority: string;
+  paymentUrl: string;
+  callbackUrl: string;
+}) {
+  const [payment] = await db
+    .update(zarinpalWalletPaymentsTable)
+    .set({
+      authority: opts.authority,
+      paymentUrl: opts.paymentUrl,
+      callbackUrl: opts.callbackUrl,
+      updatedAt: new Date(),
+    })
+    .where(eq(zarinpalWalletPaymentsTable.id, opts.paymentId))
+    .returning();
+
+  return payment;
+}
+
+async function markZarinpalWalletPaymentFailed(paymentId: number) {
+  await db
+    .update(zarinpalWalletPaymentsTable)
+    .set({ status: "failed", updatedAt: new Date() })
+    .where(eq(zarinpalWalletPaymentsTable.id, paymentId));
+}
+
+async function getZarinpalWalletPaymentForUser(
+  paymentId: number,
+  userId: number,
+) {
+  const [payment] = await db
+    .select()
+    .from(zarinpalWalletPaymentsTable)
+    .where(
+      and(
+        eq(zarinpalWalletPaymentsTable.id, paymentId),
+        eq(zarinpalWalletPaymentsTable.userId, userId),
+      ),
+    )
+    .limit(1);
+
+  return payment;
+}
+
+async function markZarinpalWalletPaymentVerified(
+  paymentId: number,
+  refId: string,
+) {
+  const [payment] = await db
+    .update(zarinpalWalletPaymentsTable)
+    .set({
+      status: "verified",
+      refId,
+      verifiedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(eq(zarinpalWalletPaymentsTable.id, paymentId))
+    .returning();
+
+  return payment;
+}
+
+async function verifyZarinpalWalletAuthority(opts: {
+  settings: PaymentSettings;
+  amount: number;
+  authority: string;
+}) {
+  const { verifyUrl } = buildZarinpalGatewayUrls(opts.settings);
+  const resp = await fetch(verifyUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      merchant_id: opts.settings.zarinpalMerchantId,
+      amount: Math.round(opts.amount) * 10,
+      authority: opts.authority,
+    }),
+    signal: AbortSignal.timeout(10_000),
+  });
+
+  const data = (await resp.json()) as any;
+  return {
+    code: data?.data?.code ?? -1,
+    refId:
+      data?.data?.ref_id !== undefined
+        ? String(data.data.ref_id)
+        : opts.authority,
+  };
+}
+
+async function notifyRechargeApplied(
+  bot: AnyBot,
+  userId: number,
+  amount: number,
+) {
+  const user = await UserRepository.findById(userId);
+  const t = i18n.buildT(user?.languageCode || "fa");
+
+  try {
+    await (bot.api as any).sendMessage({
+      chat_id: userId,
+      text: t("rechargeApproved", formatNum(amount)),
+      parse_mode: "HTML",
+      reply_markup: new InlineKeyboard().text(t("btnWallet"), "wallet"),
+    });
+  } catch (err) {
+    console.error("[wallet-recharge] applyRecharge notify error:", err);
+  }
+}
+
+async function creditZarinpalWalletPayment(
+  bot: AnyBot,
+  payment: ZarinpalWalletPayment,
+  refId: string,
+) {
+  if (payment.status === "credited") {
+    return { alreadyCredited: true };
+  }
+
+  let credited = false;
+
+  await db.transaction(async (tx) => {
+    const [freshPayment] = await tx
+      .select()
+      .from(zarinpalWalletPaymentsTable)
+      .where(eq(zarinpalWalletPaymentsTable.id, payment.id))
+      .limit(1);
+
+    if (!freshPayment || freshPayment.status === "credited") {
+      return;
+    }
+
+    const [freshUser] = await tx
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, freshPayment.userId))
+      .limit(1);
+
+    if (!freshUser) {
+      throw new Error(
+        "User not found while finalizing ZarinPal wallet payment",
+      );
+    }
+
+    const amount = parseFloat(String(freshPayment.amount ?? "0"));
+    const currentBalance = parseFloat(String(freshUser.walletBalance ?? "0"));
+    const newBalance = parseFloat((currentBalance + amount).toFixed(2));
+
+    await tx
+      .update(usersTable)
+      .set({ walletBalance: newBalance.toFixed(2), updatedAt: new Date() })
+      .where(eq(usersTable.id, freshUser.id));
+
+    await tx.insert(walletTransactionsTable).values({
+      userId: freshUser.id,
+      amount: amount.toFixed(2),
+      type: "credit",
+      source: "recharge",
+      description: `Zarinpal wallet recharge (#${freshPayment.id}) - RefId: ${refId}`,
+      balanceBefore: currentBalance.toFixed(2),
+      balanceAfter: newBalance.toFixed(2),
+    });
+
+    await tx
+      .update(zarinpalWalletPaymentsTable)
+      .set({
+        status: "credited",
+        refId,
+        verifiedAt: freshPayment.verifiedAt ?? new Date(),
+        creditedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(zarinpalWalletPaymentsTable.id, freshPayment.id));
+
+    credited = true;
+  });
+
+  if (credited) {
+    await notifyRechargeApplied(
+      bot,
+      payment.userId,
+      parseFloat(String(payment.amount ?? "0")),
+    );
+  }
+
+  return { alreadyCredited: !credited };
 }
 
 /** قیمت لحظه‌ای USDT به تومان — Nobitex اول، Wallex fallback */
@@ -188,19 +667,7 @@ async function applyRecharge(
     description,
   );
 
-  const user = await UserRepository.findById(userId);
-  const t = i18n.buildT(user?.languageCode || "fa");
-
-  try {
-    await (bot.api as any).sendMessage({
-      chat_id: userId,
-      text: t("rechargeApproved", formatNum(amount)),
-      parse_mode: "HTML",
-      reply_markup: new InlineKeyboard().text(t("btnWallet"), "wallet"),
-    });
-  } catch (err) {
-    console.error("[wallet-recharge] applyRecharge notify error:", err);
-  }
+  await notifyRechargeApplied(bot, userId, amount);
 }
 
 // ─────────────────────────────────────────────────────────
@@ -208,7 +675,6 @@ async function applyRecharge(
 // ─────────────────────────────────────────────────────────
 
 export function setupWalletRechargeScene(bot: AnyBot) {
-  // ── 1. Entry: کاربر "شارژ کیف پول" زد ─────────────────
   bot.callbackQuery("wallet_recharge", async (ctx) => {
     const user = await UserRepository.findById(ctx.from.id);
     const t = i18n.buildT(user?.languageCode || "fa");
@@ -221,7 +687,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
         `${t("rechargeMinAmount", formatNum(MIN_AMOUNT))}\n` +
         `${t("rechargeMaxAmount", formatNum(MAX_AMOUNT))}`,
       {
-        reply_markup: new InlineKeyboard().text(t("btnCancel"), "wallet"),
+        reply_markup: cancelKeyboard(t, "wallet"),
         parse_mode: "HTML",
       },
     );
@@ -273,10 +739,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
         `💳 <b>${t("rechargeCardNumbers")}</b>\n${cardsText}\n` +
         `📸 ${t("rechargeCardSendReceipt")}`,
       {
-        reply_markup: new InlineKeyboard().text(
-          t("btnCancel"),
-          "recharge_cancel",
-        ),
+        reply_markup: cancelKeyboard(t, "recharge_cancel"),
         parse_mode: "HTML",
       },
     );
@@ -299,7 +762,14 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     }
 
     const settings = await PaymentRepository.getSettings();
-    if (!settings?.zarinpalEnabled || !settings.zarinpalMerchantId) {
+    const callbackBaseUrl = normalizeZarinpalCallbackUrl(
+      settings?.zarinpalCallbackUrl,
+    );
+    if (
+      !settings?.zarinpalEnabled ||
+      !settings.zarinpalMerchantId ||
+      !callbackBaseUrl
+    ) {
       await ctx.answerCallbackQuery({
         text: t("rechargeMethodDisabled"),
         show_alert: true,
@@ -309,20 +779,29 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     await ctx.answerCallbackQuery();
 
-    const apiUrl = settings.zarinpalSandbox
-      ? "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
-      : "https://api.zarinpal.com/pg/v4/payment/request.json";
+    const { requestUrl, startPayUrl } = buildZarinpalGatewayUrls(settings);
+    let walletPaymentId: number | null = null;
 
     try {
-      const botInfo = await (bot.api as any).getMe();
-      const resp = await fetch(apiUrl, {
+      const payment = await createPendingZarinpalWalletPayment({
+        userId,
+        amount: state.amount,
+      });
+      walletPaymentId = payment.id;
+
+      const callbackUrl = buildWalletZarinpalCallbackUrl(
+        callbackBaseUrl,
+        payment.id,
+      );
+
+      const resp = await fetch(requestUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           merchant_id: settings.zarinpalMerchantId,
           amount: state.amount * 10, // تومان به ریال
           description: `شارژ کیف پول - کاربر ${userId}`,
-          callback_url: `https://t.me/${botInfo.username}`,
+          callback_url: callbackUrl,
         }),
         signal: AbortSignal.timeout(10_000),
       });
@@ -332,16 +811,19 @@ export function setupWalletRechargeScene(bot: AnyBot) {
         throw new Error(JSON.stringify(data?.errors));
 
       const authority: string = data.data.authority;
-      const gateway = settings.zarinpalSandbox
-        ? "https://sandbox.zarinpal.com/pg/StartPay/"
-        : "https://www.zarinpal.com/pg/StartPay/";
+      const paymentUrl = startPayUrl + authority;
 
-      const paymentUrl = gateway + authority;
+      await attachZarinpalWalletGatewayRequest({
+        paymentId: payment.id,
+        authority,
+        paymentUrl,
+        callbackUrl,
+      });
 
       rechargeState.set(userId, {
         step: "waiting_zarinpal",
         amount: state.amount,
-        authority,
+        walletPaymentId: payment.id,
         paymentUrl,
       });
 
@@ -350,16 +832,25 @@ export function setupWalletRechargeScene(bot: AnyBot) {
           `${t("rechargeAmount", formatNum(state.amount))}\n\n` +
           `${t("rechargeZarinpalInstructions")}`,
         {
-          reply_markup: new InlineKeyboard()
-            .url(t("btnPayNow"), paymentUrl)
-            .row()
-            .text(t("btnVerifyPayment"), "recharge_verify_zarinpal")
-            .row()
-            .text(t("btnCancel"), "recharge_cancel"),
+          reply_markup: buildZarinpalVerificationKeyboard(
+            t,
+            paymentUrl,
+            payment.id,
+          ),
           parse_mode: "HTML",
         },
       );
     } catch (err) {
+      if (walletPaymentId) {
+        await markZarinpalWalletPaymentFailed(walletPaymentId).catch(
+          (updateError) => {
+            console.error(
+              "[wallet-recharge] failed to update zarinpal payment after request error:",
+              updateError,
+            );
+          },
+        );
+      }
       console.error("[wallet-recharge] Zarinpal request error:", err);
       await ctx.editText(t("rechargeZarinpalFailed"), {
         reply_markup: new InlineKeyboard().text(t("btnCancel"), "wallet"),
@@ -384,7 +875,12 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     }
 
     const settings = await PaymentRepository.getSettings();
-    if (!settings?.cryptoEnabled || !settings.cryptoAddress) {
+    const nowpaymentsReady =
+      !!settings?.nowpaymentsEnabled &&
+      !!settings.nowpaymentsApiKey &&
+      !!settings.nowpaymentsIpnCallbackUrl;
+
+    if (!nowpaymentsReady) {
       await ctx.answerCallbackQuery({
         text: t("rechargeMethodDisabled"),
         show_alert: true,
@@ -410,39 +906,137 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     const usdtAmount = state.amount / rate;
 
-    rechargeState.set(userId, {
-      step: "waiting_txid",
-      amount: state.amount,
-      usdtAmount,
-    });
+    const payCurrency = normalizeNowpaymentsPayCurrency(settings);
+    let walletPaymentId: number | null = null;
 
-    await ctx.editText(
-      `${t("rechargeCryptoTitle")}\n\n` +
-        `${t("rechargeAmount", formatNum(state.amount))}\n\n` +
-        `${t("rechargeCryptoAddress", settings.cryptoAddress)}\n\n` +
-        `${t("rechargeCryptoAmount", usdtAmount.toFixed(4))}\n` +
-        `${t("rechargeCryptoNetwork", settings.cryptoNetwork ?? "TRC20")}\n` +
-        `${t("rechargeUsdtRate", formatNum(Math.round(rate)))}\n\n` +
-        `${t("rechargeCryptoInstructions")}\n\n` +
-        `${t("rechargeCryptoSendTxId")}`,
-      {
-        reply_markup: new InlineKeyboard().text(
-          t("btnCancel"),
-          "recharge_cancel",
-        ),
+    try {
+      const payment = await createPendingNowpaymentsWalletPayment({
+        userId,
+        amount: state.amount,
+        payCurrency,
+      });
+      walletPaymentId = payment.id;
+
+      const ipnUrl = buildNowpaymentsIpnUrl(
+        settings.nowpaymentsIpnCallbackUrl!,
+        payment.id,
+      );
+
+      const createResp = await fetch("https://api.nowpayments.io/v1/payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": settings.nowpaymentsApiKey!,
+        },
+        body: JSON.stringify({
+          price_amount: Number(usdtAmount.toFixed(4)),
+          price_currency: "usd",
+          pay_currency: payCurrency,
+          ipn_callback_url: ipnUrl,
+          order_id: payment.orderId,
+          order_description: `Wallet recharge for user ${userId}`,
+        }),
+        signal: AbortSignal.timeout(12_000),
+      });
+
+      const data = (await createResp.json()) as any;
+
+      if (!createResp.ok || !data?.payment_id) {
+        throw new Error(
+          `NOWPayments create payment failed: ${JSON.stringify(data)}`,
+        );
+      }
+
+      const nowPaymentId = String(data.payment_id);
+      const paymentStatus = String(data.payment_status ?? "waiting");
+      const payAddress =
+        data.pay_address !== undefined ? String(data.pay_address) : null;
+      const payAmount =
+        data.pay_amount !== undefined ? String(data.pay_amount) : null;
+      const paymentUrl =
+        data.invoice_url !== undefined
+          ? String(data.invoice_url)
+          : data.payment_url !== undefined
+            ? String(data.payment_url)
+            : null;
+
+      await attachNowpaymentsWalletGatewayRequest({
+        paymentId: payment.id,
+        nowpaymentsPaymentId: nowPaymentId,
+        payAddress,
+        payAmount,
+        paymentUrl,
+        paymentStatus,
+      });
+
+      rechargeState.set(userId, {
+        step: "waiting_nowpayments",
+        amount: state.amount,
+        walletPaymentId: payment.id,
+        paymentUrl: paymentUrl ?? "",
+      });
+
+      const paymentBlock = payAddress
+        ? `${t("rechargeCryptoAddress", payAddress)}\n\n`
+        : "";
+      const payAmountLine = payAmount
+        ? `${t("rechargeCryptoAmount", Number(payAmount).toFixed(6))}\n`
+        : `${t("rechargeCryptoAmount", usdtAmount.toFixed(4))}\n`;
+
+      const keyboard = new InlineKeyboard();
+      if (paymentUrl) {
+        keyboard.url(t("btnPayNow"), paymentUrl).row();
+      }
+      keyboard
+        .text(t("btnVerifyPayment"), `recharge_verify_crypto:${payment.id}`)
+        .row()
+        .text(t("btnCancel"), "recharge_cancel");
+
+      await ctx.editText(
+        `${t("rechargeCryptoTitle")}\n\n` +
+          `${t("rechargeAmount", formatNum(state.amount))}\n\n` +
+          paymentBlock +
+          payAmountLine +
+          `${t("rechargeCryptoNetwork", settings.cryptoNetwork ?? "TRC20")}\n` +
+          `${t("rechargeUsdtRate", formatNum(Math.round(rate)))}\n\n` +
+          `${t("rechargeCryptoInstructions")}`,
+        {
+          reply_markup: keyboard,
+          parse_mode: "HTML",
+        },
+      );
+      return;
+    } catch (err) {
+      if (walletPaymentId) {
+        await markNowpaymentsWalletPaymentFailed(walletPaymentId).catch(
+          (updateError) => {
+            console.error(
+              "[wallet-recharge] failed to update nowpayments payment after request error:",
+              updateError,
+            );
+          },
+        );
+      }
+      console.error("[wallet-recharge] NOWPayments request error:", err);
+      await ctx.editText(t("rechargePaymentFailed"), {
+        reply_markup: new InlineKeyboard().text(t("btnCancel"), "wallet"),
         parse_mode: "HTML",
-      },
-    );
+      });
+    }
   });
 
-  // ── 5. بررسی پرداخت زرین‌پال ─────────────────────────
-  bot.callbackQuery("recharge_verify_zarinpal", async (ctx) => {
+  bot.callbackQuery(/^recharge_verify_crypto:(\d+)$/, async (ctx) => {
     const userId = ctx.from.id;
-    const state = rechargeState.get(userId);
+    const walletPaymentId = parseInt(ctx.queryData[1], 10);
     const user = await UserRepository.findById(userId);
     const t = i18n.buildT(user?.languageCode || "fa");
 
-    if (!state || state.step !== "waiting_zarinpal") {
+    const payment = await getNowpaymentsWalletPaymentForUser(
+      walletPaymentId,
+      userId,
+    );
+
+    if (!payment) {
       await ctx.answerCallbackQuery({
         text: t("rechargeSessionExpired"),
         show_alert: true,
@@ -452,62 +1046,196 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     await ctx.answerCallbackQuery({ text: t("rechargeZarinpalVerifying") });
 
+    if (payment.creditedAt || payment.paymentStatus === "finished") {
+      const creditResult = await creditNowpaymentsWalletPayment(bot, payment);
+      rechargeState.delete(userId);
+
+      await ctx.editText(
+        t(
+          "rechargeZarinpalSuccess",
+          formatNum(parseFloat(String(payment.amount ?? "0"))),
+        ),
+        {
+          reply_markup: new InlineKeyboard().text(t("btnWallet"), "wallet"),
+          parse_mode: "HTML",
+        },
+      );
+      if (creditResult.alreadyCredited) return;
+      return;
+    }
+
+    const settings = await PaymentRepository.getSettings();
+    if (!settings?.nowpaymentsApiKey || !settings.nowpaymentsEnabled) {
+      await ctx.reply(t("rechargeMethodDisabled"), { parse_mode: "HTML" });
+      return;
+    }
+
+    try {
+      const { paymentStatus, updatedPayment } =
+        await refreshNowpaymentsWalletPaymentStatus({
+          settings,
+          payment,
+        });
+
+      if (paymentStatus.toLowerCase() !== "finished") {
+        await ctx.editText(
+          t("rechargePaymentPending") +
+            `\n\nStatus: <code>${paymentStatus}</code>`,
+          {
+            parse_mode: "HTML",
+            reply_markup: new InlineKeyboard()
+              .text(
+                t("btnVerifyPayment"),
+                `recharge_verify_crypto:${payment.id}`,
+              )
+              .row()
+              .text(t("btnCancel"), "recharge_cancel"),
+          },
+        );
+        return;
+      }
+
+      await creditNowpaymentsWalletPayment(bot, updatedPayment ?? payment);
+      rechargeState.delete(userId);
+
+      await ctx.editText(
+        t(
+          "rechargeZarinpalSuccess",
+          formatNum(parseFloat(String(payment.amount ?? "0"))),
+        ),
+        {
+          reply_markup: new InlineKeyboard().text(t("btnWallet"), "wallet"),
+          parse_mode: "HTML",
+        },
+      );
+    } catch (err) {
+      console.error("[wallet-recharge] NOWPayments verify error:", err);
+      await ctx.reply(t("rechargePaymentFailed"), { parse_mode: "HTML" });
+    }
+  });
+
+  // ── 5. بررسی پرداخت زرین‌پال ─────────────────────────
+  bot.callbackQuery(/^recharge_verify_zarinpal:(\d+)$/, async (ctx) => {
+    const userId = ctx.from.id;
+    const walletPaymentId = parseInt(ctx.queryData[1], 10);
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode || "fa");
+    const payment = await getZarinpalWalletPaymentForUser(
+      walletPaymentId,
+      userId,
+    );
+
+    if (!payment) {
+      await ctx.answerCallbackQuery({
+        text: t("rechargeSessionExpired"),
+        show_alert: true,
+      });
+      return;
+    }
+
+    await ctx.answerCallbackQuery({ text: t("rechargeZarinpalVerifying") });
+
+    if (payment.status === "credited") {
+      rechargeState.delete(userId);
+      await ctx.editText(
+        t(
+          "rechargeZarinpalSuccess",
+          formatNum(parseFloat(String(payment.amount ?? "0"))),
+        ),
+        {
+          reply_markup: new InlineKeyboard().text(t("btnWallet"), "wallet"),
+          parse_mode: "HTML",
+        },
+      );
+      return;
+    }
+
+    if (payment.status === "cancelled" || payment.status === "failed") {
+      await ctx.editText(
+        t("rechargeZarinpalFailed") + "\n\n" + t("rechargeZarinpalRetry"),
+        {
+          reply_markup: buildZarinpalVerificationKeyboard(
+            t,
+            payment.paymentUrl ?? "",
+            payment.id,
+          ),
+          parse_mode: "HTML",
+        },
+      );
+      return;
+    }
+
     const settings = await PaymentRepository.getSettings();
     if (!settings?.zarinpalMerchantId) {
       await ctx.reply(t("rechargeZarinpalFailed"), { parse_mode: "HTML" });
       return;
     }
 
-    const verifyUrl = settings.zarinpalSandbox
-      ? "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"
-      : "https://api.zarinpal.com/pg/v4/payment/verify.json";
-
     try {
-      const resp = await fetch(verifyUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          merchant_id: settings.zarinpalMerchantId,
-          amount: state.amount * 10,
-          authority: state.authority,
-        }),
-        signal: AbortSignal.timeout(10_000),
-      });
+      let refId = payment.refId ?? payment.authority ?? String(walletPaymentId);
 
-      const data = (await resp.json()) as any;
-      const code: number = data?.data?.code ?? -1;
+      if (payment.status !== "verified") {
+        if (!payment.authority) {
+          throw new Error("ZarinPal authority is missing for wallet payment");
+        }
 
-      if (code === 100 || code === 101) {
-        const refId: string = String(data?.data?.ref_id ?? state.authority);
+        const result = await verifyZarinpalWalletAuthority({
+          settings,
+          amount: parseFloat(String(payment.amount ?? "0")),
+          authority: payment.authority,
+        });
+
+        if (result.code !== 100 && result.code !== 101) {
+          await ctx.editText(
+            t("rechargeZarinpalFailed") + "\n\n" + t("rechargeZarinpalRetry"),
+            {
+              reply_markup: buildZarinpalVerificationKeyboard(
+                t,
+                payment.paymentUrl ?? "",
+                payment.id,
+              ),
+              parse_mode: "HTML",
+            },
+          );
+          return;
+        }
+
+        refId = result.refId;
+        await markZarinpalWalletPaymentVerified(payment.id, refId);
+      }
+
+      const creditResult = await creditZarinpalWalletPayment(
+        bot,
+        payment,
+        refId,
+      );
+
+      if (creditResult.alreadyCredited || payment.status === "verified") {
         rechargeState.delete(userId);
-        await applyRecharge(
-          bot,
-          userId,
-          state.amount,
-          "zarinpal",
-          `Zarinpal RefId: ${refId}`,
-        );
         await ctx.editText(
-          t("rechargeZarinpalSuccess", formatNum(state.amount)),
+          t(
+            "rechargeZarinpalSuccess",
+            formatNum(parseFloat(String(payment.amount ?? "0"))),
+          ),
           {
             reply_markup: new InlineKeyboard().text(t("btnWallet"), "wallet"),
             parse_mode: "HTML",
           },
         );
-      } else {
-        await ctx.editText(
-          t("rechargeZarinpalFailed") + "\n\n" + t("rechargeZarinpalRetry"),
-          {
-            reply_markup: new InlineKeyboard()
-              .url(t("btnPayNow"), state.paymentUrl)
-              .row()
-              .text(t("btnVerifyPayment"), "recharge_verify_zarinpal")
-              .row()
-              .text(t("btnCancel"), "recharge_cancel"),
-            parse_mode: "HTML",
-          },
-        );
+        return;
       }
+
+      rechargeState.delete(userId);
+      await ctx.editText(
+        t(
+          "rechargeZarinpalSuccess",
+          formatNum(parseFloat(String(payment.amount ?? "0"))),
+        ),
+        {
+          reply_markup: new InlineKeyboard().text(t("btnWallet"), "wallet"),
+          parse_mode: "HTML",
+        },
+      );
     } catch (err) {
       console.error("[wallet-recharge] Zarinpal verify error:", err);
       await ctx.reply(t("rechargeZarinpalFailed"), { parse_mode: "HTML" });
@@ -656,18 +1384,40 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       let hasMethod = false;
 
       if (settings?.cardEnabled && cards.length > 0) {
-        keyboard.text(t("btnRechargeCard"), "recharge_card").row();
+        keyboard
+          .text(t("btnRechargeCard"), "recharge_card", {
+            icon_custom_emoji_id: emojiIds.card,
+          })
+          .row();
         hasMethod = true;
       }
-      if (settings?.zarinpalEnabled && settings.zarinpalMerchantId) {
-        keyboard.text(t("btnRechargeZarinpal"), "recharge_zarinpal").row();
+      if (
+        settings?.zarinpalEnabled &&
+        settings.zarinpalMerchantId &&
+        normalizeZarinpalCallbackUrl(settings.zarinpalCallbackUrl)
+      ) {
+        keyboard
+          .text(t("btnRechargeZarinpal"), "recharge_zarinpal", {
+            icon_custom_emoji_id: emojiIds.zarinpal,
+          })
+          .row();
         hasMethod = true;
       }
-      if (settings?.cryptoEnabled && settings.cryptoAddress) {
-        keyboard.text(t("btnRechargeCrypto"), "recharge_crypto").row();
+      if (
+        settings?.nowpaymentsEnabled &&
+        settings.nowpaymentsApiKey &&
+        settings.nowpaymentsIpnCallbackUrl
+      ) {
+        keyboard
+          .text(t("btnRechargeCrypto"), "recharge_crypto", {
+            icon_custom_emoji_id: emojiIds.usdt,
+          })
+          .row();
         hasMethod = true;
       }
-      keyboard.text(t("btnCancel"), "wallet");
+      keyboard.text(t("btnCancel"), "wallet", {
+        icon_custom_emoji_id: emojiIds.back,
+      });
 
       if (!hasMethod) {
         rechargeState.delete(userId);
@@ -718,42 +1468,10 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       });
       return;
     }
-
-    // ─ 8c. TxID کریپتو ────────────────────────────────────
-    if (state.step === "waiting_txid") {
-      const txId = ctx.text?.trim();
-      if (!txId || txId.length < 10) {
-        await ctx.reply(t("rechargeCryptoInvalidTxId"), { parse_mode: "HTML" });
-        return;
-      }
-
-      rechargeState.delete(userId);
-
-      await notifyAdmin(bot, {
-        userId,
-        username: ctx.from?.username ?? null,
-        firstName: ctx.from?.firstName ?? null,
-        amount: state.amount,
-        method: "crypto",
-        evidence: txId,
-        evidenceType: "text",
-        usdtAmount: state.usdtAmount,
-      });
-
-      await ctx.reply(t("rechargePendingApproval"), {
-        parse_mode: "HTML",
-        reply_markup: new InlineKeyboard().text(t("btnWallet"), "wallet"),
-      });
-      return;
-    }
   });
 }
 
-// ─────────────────────────────────────────────────────────
-// توابع کمکی برای استفاده از سایر قسمت‌ها
-// ─────────────────────────────────────────────────────────
 
-/** افزایش موجودی از ریفرال */
 export async function addReferralCredit(
   bot: AnyBot,
   userId: number,
@@ -769,7 +1487,6 @@ export async function addReferralCredit(
   );
 }
 
-/** افزایش موجودی از جایزه */
 export async function addRewardCredit(
   userId: number,
   amount: number,

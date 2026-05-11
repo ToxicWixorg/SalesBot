@@ -84,7 +84,13 @@ export function setupTicketScenes(bot: AnyBot) {
       step: "message",
     });
 
-    const keyboard = new InlineKeyboard().text(t("btnCancel"), "cancel_ticket");
+    const keyboard = new InlineKeyboard().text(
+      t("btnCancel"),
+      "cancel_ticket",
+      {
+        icon_custom_emoji_id: emojiIds.reject,
+      },
+    );
 
     await context.send(t("ticketOrderPrompt"), {
       reply_markup: keyboard,

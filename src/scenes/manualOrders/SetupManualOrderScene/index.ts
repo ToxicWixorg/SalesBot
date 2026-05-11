@@ -26,7 +26,7 @@ import { finishManualOrder } from "../Helpers/finishManualOrder";
 import { PayZarinpalCallback } from "./Callbacks/PayZarinpal";
 import { VerifyZarinpalOrderCallback } from "./Callbacks/VerifyZarinpalOrder";
 import { PayCryptoCallback } from "./Callbacks/PayCrypto";
-import { ConfirmCryptoCallback } from "./Callbacks/ConfirmCrypto";
+import { VerifyCryptoOrderCallback } from "./Callbacks/VerifyCryptoOrder";
 import { sendStepPrompt } from "../SendStepPrompt";
 import { appliedDiscountState } from "../../../handlers/products/discountOrderState";
 import { getPromptKey } from "../Helpers/getPromptKey";
@@ -237,9 +237,9 @@ export function setupManualOrderScene(bot: AnyBot) {
     return await PayCryptoCallback(ctx);
   });
 
-  /** User confirms crypto transfer done */
-  bot.callbackQuery(/^confirm_crypto_(\d+)$/, async (ctx) => {
-    return await ConfirmCryptoCallback(ctx, createPendingPaymentOrder, bot);
+  /** Verify NOWPayments crypto order payment */
+  bot.callbackQuery(/^verify_crypto_order_(\d+)$/, async (ctx) => {
+    return await VerifyCryptoOrderCallback(ctx, createPendingPaymentOrder, bot);
   });
 
   /** User wants to re-edit a specific field */

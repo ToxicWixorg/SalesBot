@@ -468,7 +468,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
     }
   });
 
-  // ── Crypto: show address ──────────────────────────────────────────────────
+  // ── Crypto (NOWPayments): create payment ─────────────────────────────────
   bot.callbackQuery(/^renew_crypto_(\d+)$/, async (ctx) => {
     await ctx.answerCallbackQuery();
     const orderId = parseInt(ctx.queryData[1]);
@@ -482,7 +482,12 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
     const t = i18n.buildT(user?.languageCode ?? "fa");
 
     const settings = await PaymentRepository.getSettings();
-    if (!settings?.cryptoEnabled || !settings.cryptoAddress) {
+    if (
+      !settings?.nowpaymentsEnabled ||
+      !settings.nowpaymentsApiKey ||
+      !settings.nowpaymentsIpnCallbackUrl ||
+      (settings.cryptoExchangeRate ?? 0) <= 0
+    ) {
       await ctx.answerCallbackQuery({
         text: t("rechargeMethodDisabled"),
         show_alert: true,
@@ -490,77 +495,205 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       return;
     }
 
-    const usdtAmount =
-      settings.cryptoExchangeRate && settings.cryptoExchangeRate > 0
-        ? (info.finalPrice / settings.cryptoExchangeRate).toFixed(4)
-        : "?";
+    const network = (settings.cryptoNetwork ?? "TRC20").toUpperCase();
+    const payCurrency = settings.nowpaymentsPayCurrency?.trim()
+      ? settings.nowpaymentsPayCurrency.trim().toLowerCase()
+      : network === "ERC20"
+        ? "usdterc20"
+        : network === "BEP20"
+          ? "usdtbsc"
+          : "usdttrc20";
 
-    const msg =
-      `🪙 <b>${t("rechargeCryptoTitle")}</b>\n\n` +
-      `${t("rechargeCryptoAddress", settings.cryptoAddress)}\n\n` +
-      `${t("rechargeCryptoAmount", usdtAmount)}\n` +
-      (settings.cryptoNetwork
-        ? `${t("rechargeCryptoNetwork", settings.cryptoNetwork)}\n\n`
-        : "\n") +
-      t("payCryptoConfirmNote" as any);
+    const usdtAmount = (info.finalPrice / settings.cryptoExchangeRate).toFixed(
+      4,
+    );
 
-    await ctx.editText(msg, {
-      parse_mode: "HTML",
-      reply_markup: new InlineKeyboard()
-        .text(
-          t("btnConfirmCryptoPayment" as any),
-          `renew_confirm_crypto_${orderId}`,
-        )
+    const nowpaymentsOrderId = `renew-${userId}-${orderId}-${Date.now()}`;
+
+    try {
+      const ipnUrl = new URL(settings.nowpaymentsIpnCallbackUrl);
+      ipnUrl.searchParams.set("flow", "renew");
+      ipnUrl.searchParams.set("userId", String(userId));
+      ipnUrl.searchParams.set("orderId", String(orderId));
+
+      const resp = await fetch("https://api.nowpayments.io/v1/payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": settings.nowpaymentsApiKey,
+        },
+        body: JSON.stringify({
+          price_amount: Number(usdtAmount),
+          price_currency: "usd",
+          pay_currency: payCurrency,
+          ipn_callback_url: ipnUrl.toString(),
+          order_id: nowpaymentsOrderId,
+          order_description: `Renewal payment for user ${userId}, order ${orderId}`,
+        }),
+        signal: AbortSignal.timeout(12_000),
+      });
+
+      const data = (await resp.json()) as any;
+      if (!resp.ok || !data?.payment_id) {
+        throw new Error(JSON.stringify(data));
+      }
+
+      const payAddress =
+        data.pay_address !== undefined ? String(data.pay_address) : "-";
+      const payAmount =
+        data.pay_amount !== undefined ? String(data.pay_amount) : usdtAmount;
+      const payUrl =
+        data.invoice_url !== undefined
+          ? String(data.invoice_url)
+          : data.payment_url !== undefined
+            ? String(data.payment_url)
+            : undefined;
+
+      renewalPendingState.set(userId, {
+        ...info,
+        nowpaymentsPaymentId: String(data.payment_id),
+        nowpaymentsOrderId,
+        nowpaymentsPayUrl: payUrl,
+        nowpaymentsPayAddress: payAddress,
+        nowpaymentsPayAmount: payAmount,
+      });
+
+      const keyboard = new InlineKeyboard();
+      if (payUrl) {
+        keyboard.url(t("btnPayNow"), payUrl).row();
+      }
+
+      keyboard
+        .text(t("btnVerifyPayment"), `renew_verify_crypto_${orderId}`)
         .row()
-        .text(t("btnBackToOrders"), `order_renew_${orderId}`),
-    });
+        .text(t("btnBackToOrders"), `order_renew_${orderId}`);
+
+      const msg =
+        `🪙 <b>${t("rechargeCryptoTitle")}</b>\n\n` +
+        `${t("rechargeCryptoAddress", payAddress)}\n\n` +
+        `${t("rechargeCryptoAmount", Number(payAmount).toFixed(6))}\n` +
+        (settings.cryptoNetwork
+          ? `${t("rechargeCryptoNetwork", settings.cryptoNetwork)}\n\n`
+          : "\n") +
+        t("rechargeCryptoInstructions");
+
+      await ctx.editText(msg, {
+        parse_mode: "HTML",
+        reply_markup: keyboard,
+      });
+    } catch (err) {
+      console.error("[RENEW] NOWPayments request error:", err);
+      await ctx.editText(t("rechargePaymentFailed"), {
+        parse_mode: "HTML",
+        reply_markup: new InlineKeyboard().text(
+          t("btnBackToOrders"),
+          `order_${orderId}`,
+        ),
+      });
+    }
   });
 
-  // ── Crypto: confirm ───────────────────────────────────────────────────────
-  bot.callbackQuery(/^renew_confirm_crypto_(\d+)$/, async (ctx) => {
-    await ctx.answerCallbackQuery();
+  // ── Crypto (NOWPayments): verify ─────────────────────────────────────────
+  bot.callbackQuery(/^renew_verify_crypto_(\d+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery({ text: "⏳..." });
     const orderId = parseInt(ctx.queryData[1]);
     const userId = ctx.from?.id;
     if (!userId) return;
 
     const info = renewalPendingState.get(userId);
-    if (!info || info.originalOrderId !== orderId) return;
+    if (!info || info.originalOrderId !== orderId || !info.nowpaymentsPaymentId)
+      return;
 
     const user = await UserRepository.findById(userId);
     const t = i18n.buildT(user?.languageCode ?? "fa");
 
-    const result = await createRenewalOrder(
-      userId,
-      info,
-      "crypto",
-      "pending_payment",
-    );
-    if (!result) {
-      await ctx.editText(t("errorRenewingOrder"), { parse_mode: "HTML" });
+    const settings = await PaymentRepository.getSettings();
+    if (!settings?.nowpaymentsEnabled || !settings.nowpaymentsApiKey) {
+      await ctx.reply(t("rechargeMethodDisabled"), { parse_mode: "HTML" });
       return;
     }
 
-    renewalPendingState.delete(userId);
+    try {
+      const resp = await fetch(
+        `https://api.nowpayments.io/v1/payment/${info.nowpaymentsPaymentId}`,
+        {
+          method: "GET",
+          headers: {
+            "x-api-key": settings.nowpaymentsApiKey,
+          },
+          signal: AbortSignal.timeout(10_000),
+        },
+      );
 
-    await notifyAdminRenewal(bot, {
-      userId,
-      username: user?.username ?? null,
-      firstName: user?.firstName ?? null,
-      orderId: result.order.id,
-      originalOrderId: orderId,
-      productName: result.product.name,
-      planName: result.plan.name,
-      finalPrice: info.finalPrice,
-      paymentMethod: "crypto",
-      delivery: info.delivery,
-    });
+      const data = (await resp.json()) as any;
+      const paymentStatus = String(
+        data?.payment_status ?? "unknown",
+      ).toLowerCase();
 
-    await ctx.editText(t("payCryptoPending" as any, result.order.id as any), {
-      parse_mode: "HTML",
-      reply_markup: new InlineKeyboard()
-        .text(t("btnMyOrders"), "orders")
-        .row()
-        .text(t("btnBackToMenu"), "categories"),
-    });
+      if (paymentStatus !== "finished") {
+        const kb = new InlineKeyboard();
+        if (info.nowpaymentsPayUrl) {
+          kb.url(t("btnPayNow"), info.nowpaymentsPayUrl).row();
+        }
+        kb.text(t("btnVerifyPayment"), `renew_verify_crypto_${orderId}`).row();
+        kb.text(t("btnBackToOrders"), `order_renew_${orderId}`);
+
+        await ctx.editText(
+          `${t("rechargePaymentPending")}\n\nStatus: <code>${paymentStatus}</code>`,
+          {
+            parse_mode: "HTML",
+            reply_markup: kb,
+          },
+        );
+        return;
+      }
+
+      const result = await createRenewalOrder(
+        userId,
+        info,
+        "crypto",
+        "pending_admin",
+        String(data?.payment_id ?? info.nowpaymentsPaymentId),
+      );
+      if (!result) {
+        await ctx.editText(t("errorRenewingOrder"), { parse_mode: "HTML" });
+        return;
+      }
+
+      renewalPendingState.delete(userId);
+
+      await notifyAdminRenewal(bot, {
+        userId,
+        username: user?.username ?? null,
+        firstName: user?.firstName ?? null,
+        orderId: result.order.id,
+        originalOrderId: orderId,
+        productName: result.product.name,
+        planName: result.plan.name,
+        finalPrice: info.finalPrice,
+        paymentMethod: "nowpayments",
+        delivery: info.delivery,
+      });
+
+      await ctx.editText(
+        t("rechargeZarinpalSuccess", info.finalPrice.toLocaleString()),
+        {
+          parse_mode: "HTML",
+          reply_markup: new InlineKeyboard()
+            .text(t("btnMyOrders"), "orders")
+            .row()
+            .text(t("btnBackToMenu"), "categories"),
+        },
+      );
+    } catch (err) {
+      console.error("[RENEW] NOWPayments verify error:", err);
+      await ctx.editText(t("rechargePaymentFailed"), {
+        parse_mode: "HTML",
+        reply_markup: new InlineKeyboard().text(
+          t("btnBackToOrders"),
+          `order_${orderId}`,
+        ),
+      });
+    }
   });
-}
+}

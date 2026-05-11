@@ -165,18 +165,18 @@ export const supportHandler = (bot: AnyBot) => {
       if (ticket.status !== "closed" && ticket.status !== "resolved") {
         keyboard
           .text(t("btnReplyToTicket"), `reply_ticket_${ticket.id}`, {
-            icon_custom_emoji_id: undefined, //emojiIds.chat,
+            icon_custom_emoji_id: emojiIds.chat,
           })
           .row();
       }
 
       keyboard
         .text(t("btnViewMessages"), `ticket_messages_${ticket.id}`, {
-          icon_custom_emoji_id: undefined, //emojiIds.chat,
+          icon_custom_emoji_id: emojiIds.chat,
         })
         .row()
         .text(t("btnBackToTickets"), "my_tickets", {
-          icon_custom_emoji_id: undefined, //emojiIds.back,
+          icon_custom_emoji_id: emojiIds.back,
         });
 
       await ctx.editText(message, {

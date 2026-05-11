@@ -9,52 +9,61 @@ import { OrderOpenTicketCallback } from "./callbacks/OrderOpenTicket.ts";
 import { OrderRenewCallback } from "./callbacks/OrderRenew.ts";
 import { OrderRescheduleCallback } from "./callbacks/OrderReschedule.ts";
 import { OrderReportPeroblemCallback } from "./callbacks/OrderReportProblem.ts";
+import { e } from "../../shared/locales/emojies.ts";
 
 function getOrderStatusInfo(status: string) {
   const statusMap: Record<
     string,
     { emoji: string; text: string; color: string }
   > = {
-    pending_payment: { emoji: "⏳", text: "در انتظار پرداخت", color: "🟡" },
-    paid: { emoji: "✅", text: "پرداخت شده", color: "🟢" },
-    pending_admin: { emoji: "👨‍💼", text: "در انتظار بررسی", color: "🟡" },
-    waiting_schedule: {
-      emoji: "📅",
-      text: "نیاز به انتخاب زمان",
-      color: "🟠",
+    pending_payment: {
+      emoji: e.time,
+      text: "در انتظار پرداخت",
+      color: e.pending,
     },
-    scheduled: { emoji: "🗓️", text: "زمان‌بندی شده", color: "🔵" },
-    reminder_sent: { emoji: "🔔", text: "یادآوری ارسال شد", color: "🔵" },
+    paid: { emoji: e.confirm, text: "پرداخت شده", color: e.confirm },
+    pending_admin: {
+      emoji: e.admin,
+      text: "در انتظار بررسی",
+      color: e.pending,
+    },
+    waiting_schedule: {
+      emoji: e.date,
+      text: "نیاز به انتخاب زمان",
+      color: e.needData,
+    },
+    scheduled: { emoji: e.date, text: "زمان‌بندی شده", color: e.active },
+    reminder_sent: { emoji: e.bell, text: "یادآوری ارسال شد", color: e.active },
     waiting_user_online: {
-      emoji: "👤",
+      emoji: e.user,
       text: "در انتظار حضور شما",
-      color: "🟡",
+      color: e.pending,
     },
     user_not_responding: {
-      emoji: "⚠️",
+      emoji: e.warning,
       text: "پاسخ داده نشده",
-      color: "🟠",
+      color: e.needData,
     },
     waiting_invite: {
-      emoji: "📨",
+      emoji: e.incoming,
       text: "در انتظار ارسال دعوتنامه",
-      color: "🔵",
+      color: e.active,
     },
-    invite_sent: { emoji: "📧", text: "دعوتنامه ارسال شد", color: "🟢" },
+    invite_sent: { emoji: "📧", text: "دعوتنامه ارسال شد", color: e.complete },
     waiting_user_action: {
       emoji: "🔄",
       text: "نیاز به اقدام شما",
-      color: "🟡",
+      color: e.pending,
     },
     join_link_sent: { emoji: "🔗", text: "لینک Join ارسال شد", color: "🟢" },
     in_queue: { emoji: "⏰", text: "در صف انتظار", color: "🟡" },
-    in_progress: { emoji: "🔄", text: "در حال انجام", color: "🔵" },
-    active: { emoji: "✨", text: "فعال", color: "🟢" },
-    expiring_soon: { emoji: "⚡", text: "نزدیک به پایان", color: "🟠" },
-    completed: { emoji: "✅", text: "تکمیل شده", color: "🟢" },
-    cancelled: { emoji: "❌", text: "لغو شده", color: "🔴" },
-    refunded: { emoji: "💰", text: "بازگشت وجه", color: "🟣" },
-    failed: { emoji: "⛔", text: "ناموفق", color: "🔴" },
+    in_progress: { emoji: "🔄", text: "در حال انجام", color: e.active },
+    active: { emoji: e.sparkles, text: "فعال", color: e.active },
+    expiring_soon: { emoji: "⚡", text: "نزدیک به پایان", color: e.needData },
+    completed: { emoji: e.confirm, text: "تکمیل شده", color: e.complete },
+    cancelled: { emoji: e.reject, text: "لغو شده", color: "🔴" },
+    refunded: { emoji: e.wallet, text: "بازگشت وجه", color: "🟣" },
+    failed: { emoji: e.failed, text: "ناموفق", color: "🔴" },
     rescheduled: { emoji: "🔄", text: "زمان تغییر کرد", color: "🔵" },
   };
 

@@ -4,7 +4,7 @@ import type { fa } from "./fa";
 
 export const en = {
   // Language Selection
-  selectLanguage: `${e.earth} <b>Select your language:</b>`,
+  selectLanguage: `${e.earth} <b>Select your preferred language:</b>`,
   languageSelected: (lang: string) =>
     `${e.checkBold} Language changed to <b>${lang}</b>`,
 
@@ -12,7 +12,7 @@ export const en = {
   greeting: (name: string) => `Hello <b>${name}</b>! ${e.sparkles}`,
   welcome: (name: string) =>
     `${e.crown} Hello <b>${name}</b>, welcome!\n\n` +
-    `${e.gem} Find the best digital services at the best prices here.\n`,
+    `${e.diamond} Find the best digital services at the best prices here.\n`,
 
   // Main Menu
   mainMenu: `${e.home} Main Menu`,
@@ -20,166 +20,162 @@ export const en = {
   main_menu: (name: string) =>
     `${e.crown} Hello <b>${name}</b>!\n\n` +
     `${e.sparkles} Welcome to our digital store!\n\n` +
-    `${e.gem} Premium subscriptions, AI accounts and digital services — all at the best prices.\n\n` +
+    `${e.diamond} Premium subscriptions, AI accounts, and digital services — all at the best prices.\n\n` +
     `Choose an option:`,
 
   // Buttons
-  btnProducts: `🛍️ Products`,
-  btnMyOrders: `📦 My Orders`,
-  btnWallet: `💰 Wallet`,
-  btnInviteFriends: `👥 Invite Friends`,
-  btnDiscountCode: `🎁 Discount Code`,
-  btnSupport: `💬 Support`,
-  btnSettings: `⚙️ Settings`,
-  btnBack: `🔙 Back`,
-  btnCancel: `❌ Cancel`,
-  btnMainMenu: `🏠 Main Menu`,
-  btnChangeLanguage: `🌐 Change Language`,
-  btnNotifications: `🔔 Notifications`,
-  btnYes: `✅ Yes`,
-  btnNo: `❌ No`,
-  btnConfirm: `✅ Confirm`,
+  btnProducts: `Products`,
+  btnMyOrders: `My Orders`,
+  btnWallet: `Wallet`,
+  btnInviteFriends: ` Invite Friends`,
+  btnDiscountCode: ` Discount Code`,
+  btnSupport: ` Support`,
+  btnSettings: ` Settings`,
+  btnBack: ` Back`,
+  btnCancel: ` Cancel`,
+  btnMainMenu: ` Main Menu`,
+  btnChangeLanguage: ` Change Language`,
+  btnNotifications: ` Notifications`,
+  btnYes: ` Yes`,
+  btnNo: ` No`,
+  btnConfirm: ` Confirm`,
 
   // Products
-  btnBuyProduct: `🛍️ Buy`,
-  btnNotifyStock: `🔔 Notify Stock`,
-  btnConfirmOrder: `✅ Confirm Order`,
-  btnAddDiscountCode: `🎫 Add Discount Code`,
+  btnBuyProduct: ` Buy`,
+  btnNotifyStock: ` Notify Me`,
+  btnConfirmOrder: ` Confirm Order`,
+  btnAddDiscountCode: ` Add Discount Code`,
   productsTitle: `${e.bag} Products`,
   selectCategory: `${e.tag} Select a category:`,
-  categoryProducts: (category: string) => `Products in <b>${category}</b>:`,
-  noProducts: `${e.cross} No products available in this category.`,
-  productDetails: `${e.box} Product Details`,
+  categoryProducts: (category: string) => `<b>${category}</b> products:`,
+  noProducts: `${e.reject} No products available in this category.`,
+  productDetails: `${e.bag} Product Details`,
   price: `${e.wallet} Price:`,
-  stock: `${e.box} Stock:`,
+  stock: `${e.bag} Stock:`,
   available: `${e.checkBold} Available`,
-  outOfStock: `${e.cross} Out of Stock`,
-  productNotFound: `${e.cross} Product not found`,
-  planNotFound: `${e.cross} Plan not found`,
-  categoryNotFound: `${e.cross} Category not found`,
-  noPlansAvailable: `${e.cross} No plans available`,
-  insufficientBalanceAlert: `${e.cross} Insufficient balance`,
+  outOfStock: `${e.reject} Out of Stock`,
+  productNotFound: `${e.reject} Product not found`,
+  planNotFound: `${e.reject} Plan not found`,
+  categoryNotFound: `${e.reject} Category not found`,
+  noPlansAvailable: `${e.reject} No plans available`,
+  insufficientBalanceAlert: `${e.reject} Insufficient balance`,
   deliveryTime: `${e.clock} Delivery Time:`,
   deliveryType: `${e.truck} Delivery Type:`,
   deliveryAutomatic: `${e.zap} Instant (Automatic)`,
-  deliveryManual: `${e.person} Manual (1-24 hours)`,
-  deliveryCoordination: `${e.calendar} Requires Coordination`,
-  selectPlan: `${e.clipboard} Select your plan:`,
+  deliveryManual: `${e.user} Manual (1 to 24 hours)`,
+  deliveryCoordination: `${e.date} Requires coordination`,
+  selectPlan: `${e.clipboard} Select your preferred plan:`,
   orderSummary: `${e.clipboard} Order Summary:`,
   total: `${e.wallet} Total:`,
-  currency: "USD",
+  currency: "Toman",
   oneTime: "One-time",
-  duration_day: "day(s)",
-  duration_month: "month(s)",
-  duration_year: "year(s)",
+  duration_day: "Day",
+  duration_month: "Month",
+  duration_year: "Year",
 
-  // Wallet
   walletTitle: `${e.wallet} Wallet`,
-  walletBalance: (balance: string) => `Balance: <b>${balance}</b> USD`,
-  walletEmpty: `${e.wallet} Your wallet is empty ${e.sparkles} Top it up and get started!`,
-  btnRechargeWallet: `💳 Top Up Wallet`,
-  btnTransactionHistory: `📊 Transaction History`,
+  walletBalance: (balance: string) => `Balance: <b>${balance}</b> ` + e.Toman,
+  walletEmpty: `${e.wallet} Your wallet is currently empty ${e.sparkles} Top it up and get started!`,
+  btnRechargeWallet: ` Top Up Wallet`,
+  btnTransactionHistory: ` Transaction History`,
 
   // Wallet Recharge
-  rechargeWalletTitle: `${e.card} Top Up Wallet`,
-  rechargeSelectMethod: `Select a top-up method:`,
-  btnRechargeCrypto: `🪙 Crypto Payment (USDT)`,
-  btnRechargeCard: `💳 Card Payment`,
-  btnRechargeZarinpal: `💰 Zarinpal Gateway`,
+  rechargeWalletTitle: `${e.card} Wallet Top-up`,
+  rechargeSelectMethod: `Choose a top-up method:`,
+  btnRechargeCrypto: ` Crypto Payment (USDT)`,
+  btnRechargeCard: ` Card Payment`,
+  btnRechargeZarinpal: ` Zarinpal Gateway`,
 
-  rechargeEnterAmount: `${e.wallet} Enter the top-up amount:`,
-  rechargeEnterAmountUsdt: `${e.coin} Enter USDT amount:`,
-  rechargeMinAmount: (amount: string) => `Minimum top-up: <b>${amount}</b> USD`,
-  rechargeMaxAmount: (amount: string) => `Maximum top-up: <b>${amount}</b> USD`,
-  rechargeMinAmountUsdt: (amount: string) =>
-    `Minimum amount: <b>${amount}</b> USDT`,
-  rechargeMaxAmountUsdt: (amount: string) =>
-    `Maximum amount: <b>${amount}</b> USDT`,
-  rechargeInvalidAmount: `${e.cross} Invalid amount entered`,
+  rechargeEnterAmount: `${e.wallet} Enter top-up amount:`,
+  rechargeMinAmount: (amount: string) =>
+    `Minimum top-up amount: <b>${amount}</b> ` + e.Toman,
+  rechargeMaxAmount: (amount: string) =>
+    `Maximum top-up amount: <b>${amount}</b> ` + e.Toman,
+  rechargeInvalidAmount: `${e.reject} Invalid amount entered`,
   rechargeTooLow: (min: string) =>
-    `${e.cross} Top-up amount must be at least <b>${min}</b> USD`,
+    `${e.reject} Top-up amount must be at least <b>${min}</b> ${e.Toman}`,
   rechargeTooHigh: (max: string) =>
-    `${e.cross} Top-up amount cannot exceed <b>${max}</b> USD`,
+    `${e.reject} Top-up amount cannot be more than <b>${max}</b> ${e.Toman}`,
 
   // Crypto Payment
-  rechargeCryptoTitle: `${e.coin} Crypto Payment`,
+  rechargeCryptoTitle: `${e.wallet} Crypto Payment`,
   rechargeCryptoAddress: (address: string) =>
-    `Wallet Address:\n\n<code>${address}</code>`,
-  rechargeCryptoAmount: (amount: string) => `USDT Amount: <b>${amount}</b>`,
+    `Wallet address:\n\n<code>${address}</code>`,
+  rechargeCryptoAmount: (amount: string) => `USDT amount: <b>${amount}</b>`,
   rechargeCryptoNetwork: (network: string) => `Network: <b>${network}</b>`,
   rechargeCryptoInstructions:
-    `${e.clipboard} <b>Payment Instructions:</b>\n\n` +
+    `${e.clipboard} <b>Payment instructions:</b>\n\n` +
     `1. Send the USDT amount to the address above\n` +
-    `2. Send the TxID (transaction ID)\n` +
+    `2. Send me the TxID (transaction hash)\n` +
     `3. Wait up to 30 minutes for confirmation`,
-  rechargeCryptoSendTxId: `Send the TxID (transaction ID):`,
-  rechargeCryptoTxIdReceived: `${e.checkBold} Transaction ID received\n\n${e.hourglass} Verifying payment...\nThis process may take up to 30 minutes.`,
+  rechargeCryptoSendTxId: `Send TxID (transaction hash):`,
+  rechargeCryptoTxIdReceived: `${e.checkBold} Transaction ID received\n\n${e.time} Verifying payment...\nThis process may take up to 30 minutes.`,
   rechargeCryptoVerified: (amount: string) =>
-    `${e.party} <b>Payment confirmed!</b>\n\n${e.gem} <b>${amount}</b> USD has been added to your wallet.`,
-  rechargeCryptoFailed: `${e.cross} Payment verification failed. Please contact support.`,
+    `${e.party} <b>Payment confirmed!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
+  rechargeCryptoFailed: `${e.reject} Payment verification failed. Please contact support.`,
 
   // Card/Zarinpal Payment
   rechargeCardTitle: `${e.card} Card Payment`,
   rechargeZarinpalTitle: `${e.wallet} Zarinpal Gateway`,
   rechargePaymentLink: (amount: string) =>
-    `Amount: <b>${amount}</b>\n\nClick the button below to go to the payment gateway:`,
-  btnPayNow: `💳 Pay Now`,
-  rechargePaymentPending: `${e.hourglass} Waiting for payment...\n\nPlease complete the payment in your browser.`,
+    `Amount: <b>${amount}</b> Toman\n\nClick the button below to continue to the payment gateway:`,
+  btnPayNow: `💳 Pay`,
+  rechargePaymentPending: `${e.time} Waiting for payment...\n\nPlease complete the payment in your browser.`,
   rechargePaymentSuccess: (amount: string) =>
-    `${e.party} <b>Payment successful!</b>\n\n${e.gem} <b>${amount}</b> has been added to your wallet.`,
-  rechargePaymentFailed: `${e.cross} Payment failed. Please try again.`,
-  rechargePaymentCancelled: `${e.warn} Payment was cancelled.`,
+    `${e.party} <b>Payment successful!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
+  rechargePaymentFailed: `${e.reject} Payment failed. Please try again.`,
+  rechargePaymentCancelled: `${e.warning} Payment cancelled.`,
 
   // Transaction History
   transactionHistoryTitle: `${e.chart} Transaction History`,
-  transactionHistoryEmpty: `${e.chart} No transactions yet — make your first purchase!`,
+  transactionHistoryEmpty: `${e.chart} You don't have any transactions yet — place your first order!`,
   transactionType: "Type:",
   transactionAmount: "Amount:",
   transactionDate: "Date:",
   transactionDescription: "Description:",
 
   // Transaction Types
-  txTypeCredit: "Plus Credit",
-  txTypeDebit: "Minus Debit",
+  txTypeCredit: " Credit",
+  txTypeDebit: " Debit",
 
   // Transaction Sources
   txSourcePurchase: `${e.bag} Purchase`,
   txSourceRecharge: `${e.card} Top-up`,
-  txSourceRefund: `${e.bounce} Refund`,
-  txSourceReferral: `${e.users} Referral Reward`,
+  txSourceRefund: `${e.wallet} Refund`,
+  txSourceReferral: `${e.gift} Referral Reward`,
   txSourceReward: `${e.gift} Reward`,
-  txSourcePerk: `${e.target} Perk Reward`,
+  txSourcePerk: `${e.target} پاداش Perk`,
   txSourceAdminAdjustment: `${e.settings} Admin Adjustment`,
 
-  // ── New wallet recharge keys ─────────────────────────────
-  rechargeAmount: (amount: string) => `💰 Amount: <b>${amount}</b> Toman`,
+  // ── کلیدهای جدید شارژ کیف پول ──────────────────────────
+  rechargeAmount: (amount: string) => `💰 Amount: <b>${amount}</b> ` + e.Toman,
   rechargeMethodSelectTitle: (amount: string) =>
-    `${e.wallet} Amount: <b>${amount}</b> Toman\n\nSelect payment method:`,
+    `${e.wallet} Amount <b>${amount}</b> ${e.Toman}\n\nSelect a payment method:`,
   rechargeCardNumbers: `Card Numbers`,
-  rechargeCardSendReceipt: `After transferring the amount, send a photo of your receipt here.`,
-  rechargeCardExpectPhoto: `${e.cross} Please send a photo of your payment receipt (image, not text).`,
-  rechargePendingApproval: `${e.checkBold} Your request has been submitted!\n\n${e.hourglass} Waiting for admin approval — usually within 30 minutes.`,
+  rechargeCardSendReceipt: `After transferring the amount, send your payment receipt image here.`,
+  rechargeCardExpectPhoto: `${e.reject} Please send a photo of the payment receipt (image only, not text).`,
+  rechargePendingApproval: `${e.checkBold} Your request has been registered!\n\n${e.time} Please wait for admin approval — usually under 30 minutes.`,
   rechargeApproved: (amount: string) =>
-    `${e.party} <b>Recharge approved!</b>\n\n${e.gem} <b>${amount}</b> Toman has been added to your wallet.`,
-  rechargeRejected: `${e.cross} <b>Recharge request rejected.</b>\n\nContact support if needed.`,
-  rechargeSessionExpired: `${e.warn} Session expired. Please start again from the wallet.`,
-  rechargeMethodDisabled: `${e.cross} This payment method is currently unavailable.`,
-  rechargeNoMethodAvailable: `${e.cross} No payment methods are currently active. Try again later.`,
+    `${e.party} <b>Top-up approved!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
+  rechargeRejected: `${e.reject} <b>Top-up request rejected.</b>\n\nContact support if needed.`,
+  rechargeSessionExpired: `${e.warning} Session expired. Please start again from wallet section.`,
+  rechargeMethodDisabled: `${e.reject} This payment method is currently disabled.`,
+  rechargeNoMethodAvailable: `${e.reject} No payment method is currently available. Please try again later.`,
   rechargeUsdtRate: (rate: string) => `📈 Live rate: <b>${rate}</b> Toman/USDT`,
-  rechargeRateUnavailable: `${e.cross} Live USDT rate is unavailable. Please wait and try again.`,
-  rechargeCryptoInvalidTxId: `${e.cross} Invalid TxID (must be at least 10 characters). Please resend.`,
-  rechargeZarinpalInstructions: `${e.clipboard} Click Pay, complete the payment, then click Verify Payment.`,
+  rechargeRateUnavailable: `${e.reject} Live USDT rate is unavailable. Please wait and try again.`,
+  rechargeCryptoInvalidTxId: `${e.reject} Invalid TxID (must be at least 10 characters). Please send it again.`,
+  rechargeZarinpalInstructions: `${e.clipboard} Click "Pay", complete the payment, then click "Verify Payment".`,
   btnVerifyPayment: `Verify Payment`,
-  rechargeZarinpalVerifying: `${e.hourglass} Verifying payment...`,
+  rechargeZarinpalVerifying: `${e.time} Verifying payment...`,
   rechargeZarinpalSuccess: (amount: string) =>
-    `${e.party} <b>Payment confirmed!</b>\n\n${e.gem} <b>${amount}</b> Toman has been added to your wallet.`,
-  rechargeZarinpalFailed: `${e.cross} Payment not confirmed or not yet processed.`,
-  rechargeZarinpalRetry: `Try paying again or check again.`,
+    `${e.party} <b>Payment confirmed!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
+  rechargeZarinpalFailed: `${e.reject} Payment is not confirmed or has not been recorded yet.`,
+  rechargeZarinpalRetry: `Try paying again or verify again.`,
 
   // Language Names
   langEnglish: `${e.flag_en} English`,
-  langPersian: `${e.flag_ir} فارسی`,
-  langRussian: `${e.flag_ru} Русский`,
+  langPersian: `${e.flag_ir} Persian`,
+  langRussian: `${e.flag_ru} Russian`,
 
   // Invite Friends (Referral)
   inviteBanner: (data: {
@@ -187,72 +183,72 @@ export const en = {
     totalRewards: string;
     referralLink: string;
   }) =>
-    `${e.crown} <b>Invite Friends and Earn!</b>\n\n` +
-    `${e.users} Successful Referrals: <b>${data.totalReferrals}</b>\n` +
-    `${e.gem} Total Rewards: <b>${data.totalRewards}</b>\n\n` +
-    `<b>Your Referral Link:</b>\n` +
+    `${e.crown} <b>Invite friends and earn rewards!</b>\n\n` +
+    `${e.user} Successful referrals: <b>${data.totalReferrals}</b>\n` +
+    `${e.diamond} Total rewards: <b>${data.totalRewards}</b> Toman\n\n` +
+    `🔗 <b>Your personal link:</b>\n` +
     `<code>${data.referralLink}</code>\n\n` +
     `${e.sparkles} <b>How it works:</b>\n` +
-    `1. Share the link with your friends\n` +
-    `2. When they join, you get rewarded\n` +
+    `1. Send your link to your friends\n` +
+    `2. When they join, you earn rewards\n` +
     `3. Rewards are added directly to your wallet\n\n` +
-    `${e.gem} Reward per referral: <b>10,000</b> Toman`,
-  btnShareInviteLink: `📤 Share Link`,
-  btnCopyLink: `📋 Copy Link`,
-  btnViewReferrals: `👥 Referral List`,
+    `${e.diamond} Reward per referral: <b>10,000</b> Toman`,
+  btnShareInviteLink: ` Share Link`,
+  btnCopyLink: ` Copy Link`,
+  btnViewReferrals: ` Referred Users`,
   inviteShareText: `${e.gift} Join using this link and get a special discount!`,
   inviteLinkCopied: (link: string) =>
     `${e.checkBold} Link copied!\n\n<code>${link}</code>\n\nSend this link to your friends.`,
-  noReferralsYet: `${e.users} You haven't invited anyone yet — start and earn!`,
-  referralListTitle: `${e.users} <b>Referral List</b>`,
+  noReferralsYet: `${e.user} You haven't referred anyone yet — start now and earn rewards!`,
+  referralListTitle: `${e.user} <b>Referred Users</b>`,
   andMore: (count: number) => `and <b>${count}</b> more...`,
   referralRewardNotification: (data: { userName: string; amount: string }) =>
-    `${e.party} A new user (<b>${data.userName}</b>) joined through your referral link!\n` +
-    `${e.gem} <b>${data.amount}</b> has been added to your account.`,
+    `${e.party} A new user (<b>${data.userName}</b>) joined via your referral link!\n` +
+    `${e.diamond} <b>${data.amount}</b> Toman has been added to your wallet.`,
 
   // Discount Codes
   discountCodeInfo:
     `${e.gift} <b>Discount Code</b>\n\n` +
-    `Use discount codes to get a lower price on your purchases.\n\n` +
-    `You can enter a code during checkout or verify it here.`,
-  btnEnterDiscountCode: `✏️ Enter Discount Code`,
-  btnDiscountHistory: `📊 Usage History`,
+    `Use discount codes to reduce your purchase price.\n\n` +
+    `You can apply a code during checkout or validate it here.`,
+  btnEnterDiscountCode: ` Enter Discount Code`,
+  btnDiscountHistory: ` Usage History`,
   enterDiscountCodePrompt: `${e.pencil} Enter your discount code:\n\nExample: <code>SUMMER2024</code>`,
-  btnTryAgain: `🔄 Try Again`,
+  btnTryAgain: ` Try Again`,
   discountCodeValid: (data: {
     code: string;
     type: string;
     value: string;
     description: string;
   }) =>
-    `${e.checkBold} <b>Valid discount code!</b>\n\n` +
+    `${e.checkBold} <b>Discount code is valid!</b>\n\n` +
     `${e.ticket} Code: <code>${data.code}</code>\n` +
     `${e.tag} Type: ${data.type}\n` +
-    `${e.gem} Value: ${data.value}\n` +
+    `${e.diamond} Value: ${data.value}\n` +
     `${e.clipboard} Description: ${data.description}\n\n` +
     `Use this code during checkout.`,
   discountCodeInvalid: (reason: string) =>
-    `${e.cross} <b>Invalid discount code</b>\n\n${reason}`,
+    `${e.reject} <b>Invalid discount code</b>\n\n${reason}`,
   discountTypePercentage: "Percentage",
-  discountTypeFixed: "Fixed Amount",
+  discountTypeFixed: "Fixed amount",
   noDescription: "No description",
-  noDiscountHistory: `${e.chart} You haven't used any discount codes yet — start saving!`,
+  noDiscountHistory: `${e.chart} You haven't used any discount codes yet — make your first one count!`,
   discountHistoryTitle: `${e.chart} <b>Discount Code History</b>`,
-  discountAmount: "Discount Amount",
-  orderId: "Order Number",
+  discountAmount: "Discount amount",
+  orderId: "Order ID",
 
   // Settings
-  userNotFound: `${e.cross} User not found`,
-  userIdentificationError: `${e.cross} Unable to identify user`,
+  userNotFound: `❌ User not found`,
+  userIdentificationError: `${e.reject} Error identifying user`,
   settingsTitle: `${e.settings} Settings`,
   settingsDescription: `${e.info} Manage your account from here.`,
   btnAccountInfo: `👤 Account Info`,
   btnNotificationSettings: `🔔 Notification Settings`,
-  btnPrivacy: `🔒 Privacy`,
-  btnAbout: `ℹ️ About`,
+  btnPrivacy: ` Privacy`,
+  btnAbout: `ℹ About Us`,
 
   // Account Info
-  accountInfoTitle: `${e.person} Account Info`,
+  accountInfoTitle: `${e.user} Account Info`,
   accountInfoData: (data: {
     userId: string;
     username: string;
@@ -262,100 +258,97 @@ export const en = {
     totalSpent: string;
     totalReferrals: number;
   }) =>
-    `${e.crown} <b>Your Account</b>\n\n` +
+    `${e.crown} <b>Your Account Information</b>\n\n` +
     `${e.id} ID: <code>${data.userId}</code>\n` +
-    `${e.person} Username: ${data.username ? `@${data.username}` : "None"}\n` +
+    `${e.user} Username: ${data.username ? `@${data.username}` : "Not set"}\n` +
     `${e.tag} Name: ${data.firstName}\n` +
-    `${e.calendar} Joined: ${data.joinDate}\n\n` +
+    `${e.date} Joined: ${data.joinDate}\n\n` +
     `${e.chart} <b>Stats:</b>\n` +
-    `${e.bag} Purchases: <b>${data.totalOrders}</b>\n` +
-    `${e.gem} Total Spent: <b>${data.totalSpent}</b>\n` +
-    `${e.users} Referrals: <b>${data.totalReferrals}</b>`,
+    `${e.bag} Orders: <b>${data.totalOrders}</b>\n` +
+    `${e.diamond} Total spent: <b>${data.totalSpent}</b> Toman\n` +
+    `${e.user} Referrals: <b>${data.totalReferrals}</b>`,
 
   // Notification Settings
   notificationSettingsTitle: `${e.bell} Notification Settings`,
-  notificationSettingsDescription: `${e.info} Choose which notifications to receive:`,
-  btnToggleOrderNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} Order Notifications`,
-  btnToggleWalletNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} Wallet Notifications`,
+  notificationSettingsDescription: `${e.info} Choose which notifications you want to receive:`,
+  btnToggleOrderNotifications: (enabled: boolean) => `Order notifications`,
+  btnToggleWalletNotifications: (enabled: boolean) => ` Wallet notifications`,
   btnTogglePromotionNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} Promotion Notifications`,
+    `Promotion notifications`,
   btnToggleReferralNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} Referral Notifications`,
+    `Referral notifications`,
   btnToggleStockNotifications: (enabled: boolean) =>
-    `${enabled ? "✅" : "❌"} Stock Notifications`,
+    ` Product stock notifications`,
   notificationToggled: (type: string, enabled: boolean) =>
-    `${enabled ? `${e.checkBold} Enabled` : `${e.cross} Disabled`}: ${type}`,
+    `${enabled ? `${e.checkBold} Enabled` : `${e.reject} Disabled`}: ${type}`,
   allNotificationsEnabled: `${e.checkBold} All notifications are enabled`,
-  allNotificationsDisabled: `${e.cross} All notifications are disabled`,
+  allNotificationsDisabled: `${e.reject} All notifications are disabled`,
 
   // Privacy
   privacyTitle: `${e.lock} Privacy`,
   privacyDescription: `${e.shield} Manage your personal data:`,
-  btnClearHistory: `🗑️ Clear History`,
-  btnDeleteAccount: `❌ Delete Account`,
-  btnExportData: `📤 Export My Data`,
+  btnClearHistory: ` Clear History`,
+  btnDeleteAccount: `Delete Account`,
+  btnExportData: ` Export My Data`,
   clearHistoryConfirm:
-    `${e.warn} <b>Are you sure?</b>\n\n` +
-    `Your history will be cleared — this action cannot be undone.`,
+    `${e.warning} <b>Are you sure?</b>\n\n` +
+    `Your history will be deleted — this action cannot be undone.`,
   clearHistorySuccess: `${e.checkBold} History cleared successfully.`,
-  clearHistoryCancelled: `${e.cross} Action cancelled.`,
+  clearHistoryCancelled: `${e.reject} Operation cancelled.`,
   deleteAccountConfirm:
-    `${e.warn} <b>Warning!</b>\n\n` +
+    `${e.warning} <b>Warning!</b>\n\n` +
     `Are you sure you want to delete your account?\n\n` +
-    `${e.cross} All of the following will be <b>permanently</b> deleted:\n` +
-    `- Orders\n- Wallet\n- Referrals\n\n` +
+    `${e.reject} The following will be permanently deleted:\n` +
+    `• Orders\n• Wallet\n• Referrals\n\n` +
     `This action is <b>irreversible</b>!`,
   deleteAccountSuccess: `${e.checkBold} Your account has been deleted.\n\nWe hope to see you again!`,
   deleteAccountCancelled: `${e.checkBold} Your account was not deleted.`,
-  exportDataProcessing: ` Preparing your data...`,
+  exportDataProcessing: `Preparing your data...`,
   exportDataReady: `${e.checkBold} Your data is ready!`,
 
   // About
-  aboutTitle: `${e.info} About`,
+  aboutTitle: `${e.info} About Us`,
   aboutDescription:
-    `${e.robot} <b>Digital Services Store Bot</b>\n\n` +
-    `${e.gem} The best services at the best prices with the fastest delivery.\n\n` +
+    `${e.robot} <b>Digital Services Sales Bot</b>\n\n` +
+    `${e.diamond} Best services, best prices, and fastest delivery.\n\n` +
     `${e.mail} <b>Contact us:</b>\n` +
-    `- Support: @TajEzat\n` +
-    `- Channel: @ZendeBadParsi\n\n` +
+    `• Support: @TajEzat\n` +
+    `• Channel: @ZendeBadParsi\n\n` +
     `${e.tag} Version: 1.0.0`,
 
-  // Orders
-  ordersTitle: `${e.box} My Orders`,
-  ordersEmpty: `${e.box} You haven't placed any orders yet!\n\nBrowse products and make your first purchase.`,
-  ordersTotal: `${e.chart} Total Orders`,
-  ordersActive: `${e.blue} Active Orders`,
-  ordersCompleted: `${e.green} Completed Orders`,
+  ordersTitle: `${e.bag} My Orders`,
+  ordersEmpty: `${e.bag} You haven't placed any orders yet!\n\nBrowse products and make your first purchase.`,
+  ordersTotal: `${e.chart} Total orders`,
+  ordersActive: `${e.active} Active orders`,
+  ordersCompleted: `${e.complete} Completed orders`,
   ordersSelectFilter: `Choose a filter:`,
 
   // Orders Filter Buttons
-  btnOrdersFilterActive: `🔵 Active`,
-  btnOrdersFilterCompleted: `🟢 Completed`,
-  btnOrdersFilterAll: `📋 All`,
+  btnOrdersFilterActive: `Active`,
+  btnOrdersFilterCompleted: `Completed`,
+  btnOrdersFilterAll: `All`,
 
   // Orders List
-  ordersActiveTitle: `${e.blue} Active Orders`,
-  ordersCompletedTitle: `${e.green} Completed Orders`,
+  ordersActiveTitle: `${e.active} Active Orders`,
+  ordersCompletedTitle: `${e.complete} Completed Orders`,
   ordersAllTitle: `${e.clipboard} All Orders`,
-  ordersSelectOne: `${e.pin} Click on an order to view details:`,
+  ordersSelectOne: `${e.pin} Tap an order to view details:`,
   ordersNoActive: `${e.info} You have no active orders`,
   ordersNoCompleted: `${e.info} You have no completed orders`,
 
   // Order Details
-  orderDetailsTitle: `${e.box} Order Details`,
-  orderNumber: "Order Number",
-  orderProduct: "Product",
+  orderDetailsTitle: `${e.clipboard} Order Details`,
+  orderNumber: "🆔 Order Number",
+  orderProduct: e.bag + " Product",
   orderStatus: "Status",
-  orderTotalPrice: "Original Price",
-  orderDiscount: "Discount",
-  orderWalletUsed: "Wallet Used",
-  orderFinalPrice: "Final Price",
-  orderCreatedAt: "Created At",
-  orderDeliveredAt: "Delivered At",
-  orderScheduledTime: "Scheduled Time",
-  orderNotes: "Notes",
+  orderTotalPrice: e.wallet + " Original Price",
+  orderDiscount: e.gift + " Discount",
+  orderWalletUsed: e.card + " Wallet",
+  orderFinalPrice: e.confirm + " Final Price",
+  orderCreatedAt: e.date + " Created At",
+  orderDeliveredAt: e.date + " Delivered At",
+  orderScheduledTime: e.time + " Scheduled Time",
+  orderNotes: e.note + " Notes",
 
   // Order Delivery Info
   orderDeliveryInfo: "Delivery Info",
@@ -365,129 +358,129 @@ export const en = {
   orderDeliveryInstructions: "Instructions",
 
   // Order Buttons
-  btnOrderOpenTicket: `💬 Open Ticket`,
-  btnOrderRenew: `🔄 Renew`,
-  btnOrderReschedule: `📅 Reschedule`,
-  btnOrderReportProblem: `⚠️ Report Problem`,
-  btnBackToOrders: `🔙 Back to Orders`,
+  btnOrderOpenTicket: `Open Ticket`,
+  btnOrderRenew: `Renew`,
+  btnOrderReschedule: `Reschedule`,
+  btnOrderReportProblem: `Report Problem`,
+  btnBackToOrders: `Back to Orders`,
 
   // Order Actions
   orderNotFound: "Order not found",
-  orderAccessDenied: "Access to this order is not allowed",
-  orderTicketComingSoon: "Ticket system coming soon",
+  orderAccessDenied: "You are not allowed to access this order",
+  orderTicketComingSoon: "Ticket system will be available soon",
   orderNotRenewable: "This product cannot be renewed",
-  orderRenewComingSoon: "Renewal feature coming soon",
+  orderRenewComingSoon: "Renewal will be available soon",
+  orderCannotReschedule: "This order cannot be rescheduled",
+  orderRescheduleComingSoon: "Rescheduling will be available soon",
+  orderReportComingSoon: "Problem reporting will be available soon",
+  errorFetchingOrders: `${e.reject} Error fetching orders`,
+  errorFetchingOrderDetails: `${e.reject} Error fetching order details`,
+  errorReschedulingOrder: `${e.reject} Error rescheduling order`,
+  errorRenewingOrder: `${e.reject} Error renewing order`,
   renewScreenTitle: "🔄 Renew Service",
   renewWalletSuccess: (data: {
     orderId: number;
     productName: string;
     remainingBalance: string;
   }) =>
-    `✅ <b>Renewal Successful!</b>\n\n` +
+    `✅ <b>Renewal completed successfully!</b>\n\n` +
     `📦 ${data.productName}\n` +
-    `🎫 Order #${data.orderId}\n\n` +
+    `🎫 Order number: #${data.orderId}\n\n` +
     `👛 Remaining balance: ${data.remainingBalance} Toman`,
-  orderCannotReschedule: "This order cannot be rescheduled",
-  orderRescheduleComingSoon: "Reschedule feature coming soon",
-  orderReportComingSoon: "Problem report system coming soon",
-  errorFetchingOrders: `${e.cross} Error fetching orders`,
-  errorFetchingOrderDetails: `${e.cross} Error fetching order details`,
-  errorReschedulingOrder: `${e.cross} Error rescheduling order`,
-  errorRenewingOrder: `${e.cross} Error renewing order`,
-  errorOpeningTicket: `${e.cross} Error opening ticket`,
-  errorReportingProblem: `${e.cross} Error reporting problem`,
+  errorOpeningTicket: `${e.reject} Error opening ticket`,
+  errorReportingProblem: `${e.reject} Error reporting problem`,
 
   // Support & Tickets
   supportMenuText:
     `${e.chat} <b>Support Center</b>\n\nHow can I help you?\n\n` +
-    `- Submit a support ticket\n` +
-    `- Report a problem\n` +
-    `- View tickets`,
+    `• Submit a support ticket\n` +
+    `• Report a problem\n` +
+    `• View your tickets`,
 
-  btnNewSupportTicket: `🎫 New Ticket`,
-  btnNewReportTicket: `⚠️ Report Problem`,
-  btnMyTickets: `📋 My Tickets`,
-  btnViewMyTickets: `👁️ View Tickets`,
-  btnBackToMain: `🏠 Main Menu`,
-  btnReplyToTicket: `💬 Reply`,
-  btnViewMessages: `💬 View Messages`,
-  btnBackToTickets: `🔙 Back to Tickets`,
-  btnViewTicket: `👁️ View Ticket`,
-  btnViewOrder: `📦 View Order`,
+  btnNewSupportTicket: `New Ticket`,
+  btnNewReportTicket: `Report Problem`,
+  btnMyTickets: `My Tickets`,
+  btnViewMyTickets: `View Tickets`,
+  btnBackToMain: `Main Menu`,
+  btnReplyToTicket: `Reply`,
+  btnViewMessages: `View Messages`,
+  btnBackToTickets: `Back to Tickets`,
+  btnViewTicket: `View Ticket`,
+  btnViewOrder: `View Order`,
 
   // Ticket Creation
   ticketSupportPrompt:
-    `${e.ticket} <b>New Support Ticket</b>\n\n` +
-    `Describe your question or issue in detail.\n` +
+    `${e.chat} <b>New Support Ticket</b>\n\n` +
+    `Please describe your question or issue in detail.\n` +
     `Our team will respond as soon as possible.`,
 
   ticketOrderPrompt:
-    `${e.box} <b>Order Problem</b>\n\n` +
-    `Describe the issue with your order in detail.`,
+    `${e.chat} <b>Order Issue</b>\n\n` +
+    `Please describe your order issue in detail.`,
 
   ticketReportPrompt:
-    `${e.warn} <b>Report a Problem</b>\n\n` +
-    `Describe the problem you encountered in detail.`,
+    `${e.warning} <b>Problem Report</b>\n\n` +
+    `Please describe the problem you faced in detail.`,
 
-  ticketMessageTooShort: `${e.cross} Please provide more detail (at least 10 characters)`,
-  ticketMessageEmpty: `${e.cross} Message cannot be empty`,
+  ticketMessageTooShort: `${e.reject} Please provide more details (at least 10 characters)`,
+  ticketMessageEmpty: `${e.reject} Message cannot be empty`,
 
   ticketCreatedSuccess: (data: { ticketNumber: string }) =>
-    `${e.checkBold} <b>Ticket created!</b>\n\nTicket number: <b>${data.ticketNumber}</b>\n\nOur support team has been notified and will respond shortly.`,
+    `${e.checkBold} <b>Ticket created!</b>\n\nTicket number: <b>${data.ticketNumber}</b>\n\nOur support team has been notified and will reply soon.`,
 
-  ticketCreateError: `${e.cross} Failed to create ticket. Try again or contact support directly.`,
+  ticketCreateError: `${e.reject} Failed to create ticket. Please try again or contact support directly.`,
 
-  ticketOrderNotFound: `${e.cross} Order not found`,
+  ticketOrderNotFound: `${e.reject} Order not found`,
 
   // Ticket List
   ticketListTitle: `${e.clipboard} <b>Your Tickets</b>`,
-  ticketListEmpty: `${e.chat} You have no tickets yet — having a problem? Open a ticket!`,
+  ticketListEmpty: `${e.chat} You don't have any tickets yet — need help? Open one!`,
   ticketListShowingFirst10: "Showing first 10 tickets",
-  ticketListError: `${e.cross} Failed to load tickets. Please try again.`,
+  ticketListError: `${e.reject} Failed to load tickets. Please try again.`,
 
   // Ticket Details
-  ticketNotFound: `${e.cross} Ticket not found`,
-  ticketNotYours: `${e.cross} This ticket does not belong to you`,
+  ticketNotFound: `${e.reject} Ticket not found`,
+  ticketNotYours: `${e.reject} This ticket does not belong to you`,
   ticketAlreadyClosed: `${e.lock} This ticket is closed`,
-  ticketLoadError: `${e.cross} Failed to load ticket. Please try again.`,
+  ticketLoadError: `${e.reject} Failed to load ticket. Please try again.`,
 
   status: "Status",
   created: "Created",
   order: "Order",
   messages: "Messages",
-  lastMessage: "Last Message",
+  lastMessage: "Last message",
 
   // Ticket Statuses
-  ticketStatus_open: `${e.green} Open`,
-  ticketStatus_waiting_user: `${e.yellow} Waiting for your reply`,
-  ticketStatus_waiting_support: `${e.orange} Waiting for support`,
-  ticketStatus_in_progress: `${e.blue} In Progress`,
+  ticketStatus_open: `${e.active} Open`,
+  ticketStatus_waiting_user: `${e.pending} Waiting for your reply`,
+  ticketStatus_waiting_support: `${e.admin} Waiting for support`,
+  ticketStatus_in_progress: `${e.pending} In progress`,
   ticketStatus_resolved: `${e.checkBold} Resolved`,
   ticketStatus_closed: `${e.lock} Closed`,
-  ticketStatus_blocked: `${e.no} Blocked`,
+  ticketStatus_blocked: `${e.failed} Blocked`,
 
   // Ticket Reply
   ticketReplyPrompt: (data: { ticketNumber: string }) =>
     `${e.chat} <b>Reply to ${data.ticketNumber}</b>\n\nType your message:`,
 
-  ticketReplySent: `${e.checkBold} Message sent!\n\nI'll notify you when a reply arrives.`,
+  ticketReplySent: `${e.checkBold} Your message has been sent!\n\nI'll notify you when a reply arrives.`,
 
-  ticketReplyError: `${e.cross} Failed to send message. Please try again.`,
+  ticketReplyError: `${e.reject} Failed to send message. Please try again.`,
 
-  ticketCreationCancelled: `${e.cross} Ticket creation cancelled`,
+  ticketCreationCancelled: `${e.reject} Ticket creation cancelled`,
 
   // Ticket Messages
   ticketMessages: "Messages",
-  ticketNoMessages: "No messages in this ticket yet",
-  ticketMessagesError: `${e.cross} Failed to load messages`,
+  ticketNoMessages: "There are no messages in this ticket yet",
+  ticketMessagesError: `${e.reject} Failed to load messages`,
   ticketShowingLast5Messages: "Showing last 5 messages",
   you: "You",
   support: "Support",
 
   // Purchase / Order Completion
   insufficientBalance: (data: { required: string; current: string }) =>
-    `${e.cross} <b>Insufficient balance</b>\n\nRequired: <b>${data.required}</b>\nYour balance: <b>${data.current}</b>\n\nTop up your wallet and try again.`,
-  noConfigAvailable: `${e.cross} No VPN config available for this plan at the moment. Please contact support.`,
+    `😥 Insufficient balance\n\nRequired: ${data.required} Toman\nYour balance: ${data.current} Toman\n\nTop up your wallet and try again.`,
+  noConfigAvailable: `${e.reject} VPN config is not currently available for this plan. Please contact support.`,
   orderSuccess: (data: {
     orderId: number;
     productName: string;
@@ -498,20 +491,20 @@ export const en = {
     `${e.party} <b>Purchase successful!</b>\n\n` +
     `${e.bag} Product: ${data.productName}\n` +
     `${e.clipboard} Plan: ${data.planName}\n` +
-    `${e.gem} Amount: <b>${data.amount}</b>\n` +
-    `${e.wallet} Remaining balance: <b>${data.remainingBalance}</b>\n` +
+    `${e.diamond} Amount: <b>${data.amount}</b> Toman\n` +
+    `${e.wallet} Remaining balance: <b>${data.remainingBalance}</b> Toman\n` +
     `${e.id} Order: #${data.orderId}`,
   vpnConfigMessage: (data: { configData: string; label?: string }) =>
     `${e.key} <b>Your VPN Config</b>${data.label ? ` (${data.label})` : ""}\n\n` +
     `<code>${data.configData}</code>\n\n` +
-    `Tap the config above to copy it, then paste it into your VPN app.`,
-  btnMyOrders2: `📦 My Orders`,
-  btnBackToMenu: `🏠 Main Menu`,
+    `Tap the config above to copy it, then import it in your VPN app.`,
+  btnMyOrders2: `My Orders`,
+  btnBackToMenu: `Main Menu`,
 
   // Discount code during order flow
   enterDiscountCodeForOrder: `${e.ticket} <b>Add Discount Code</b>\n\nEnter your discount code:\n\nExample: <code>SUMMER2024</code>`,
-  btnSkipDiscount: `⚡ Continue without discount`,
-  btnRemoveDiscount: `🗑️ Remove Discount`,
+  btnSkipDiscount: `Continue without discount code`,
+  btnRemoveDiscount: `Remove discount`,
   discountCodeAppliedToOrder: (data: {
     code: string;
     discountAmount: string;
@@ -519,8 +512,8 @@ export const en = {
   }) =>
     `${e.checkBold} <b>Discount code applied!</b>\n\n` +
     `${e.ticket} Code: <code>${data.code}</code>\n` +
-    `${e.gem} Discount: -<b>${data.discountAmount}</b>\n` +
-    `${e.wallet} New Total: <b>${data.finalPrice}</b>`,
+    `${e.diamond} Discount: -<b>${data.discountAmount}</b> Toman\n` +
+    `${e.wallet} New amount: <b>${data.finalPrice}</b> Toman`,
   orderSummaryWithDiscount: (data: {
     productName: string;
     planName: string;
@@ -534,30 +527,30 @@ export const en = {
     `${e.bag} Product: ${data.productName}\n` +
     `${e.tag} Plan: ${data.planName}\n` +
     (data.duration ? `${e.clock} Duration: ${data.duration}\n` : "") +
-    `\n${e.wallet} Original Price: <b>${data.originalPrice}</b>\n` +
-    `${e.ticket} Discount (${data.code}): -<b>${data.discountAmount}</b>\n` +
-    `${e.checkBold} Final Price: <b>${data.finalPrice}</b>`,
-  discountNotApplicableForProduct: `${e.cross} This discount code is not valid for this product.`,
+    `\n${e.wallet} Original price: <b>${data.originalPrice}</b> Toman\n` +
+    `${e.ticket} Discount (${data.code}): -<b>${data.discountAmount}</b> Toman\n` +
+    `${e.checkBold} Final price: <b>${data.finalPrice}</b> Toman`,
+  discountNotApplicableForProduct: `${e.reject} This discount code is not valid for this product.`,
   discountInsufficientBalanceWithDiscount: (data: {
     required: string;
     current: string;
   }) =>
-    `${e.cross} <b>Insufficient balance</b>\n\nRequired (after discount): <b>${data.required}</b>\nYour balance: <b>${data.current}</b>\n\nPlease top up your wallet.`,
+    `${e.reject} <b>Insufficient balance</b>\n\nRequired (after discount): <b>${data.required}</b> Toman\nYour balance: <b>${data.current}</b> Toman\n\nTop up your wallet.`,
 
   // Force Join Channels/Groups
-  joinChannelRequired: `${e.flag_en} <b>Membership Required</b>\n\nTo use the bot, please join the following channels/groups first:`,
-  btnIJoined: `✅ I've joined — check`,
-  joinChannelNotJoinedAlert: `You haven't joined all required channels yet. Join them and try again.`,
+  joinChannelRequired: `${e.flag_ir} <b>Required Membership</b>\n\nTo use this bot, first join the following channels/groups:`,
+  btnIJoined: `I joined — Check`,
+  joinChannelNotJoinedAlert: ` You still haven’t joined all required channels. Join them and try again.`,
 
-  // Manual / Scheduled Order Flow
-  manualOrderInfoRequired: `${e.clipboard} <b>Required Information</b>\n\nPlease enter the following details to process your order:`,
+  // ── فلوی سفارش دستی / زمان‌بندی‌شده ──────────────────────────────────────
+  manualOrderInfoRequired: `${e.clipboard} <b>Required Information</b>\n\nTo process your order, enter the following details:`,
   manualOrderStep: (data: { current: number; total: number }) =>
     `${e.pin} Step ${data.current} of ${data.total}`,
-  manualOrderEmailPrompt: `${e.mail} Enter the account <b>email address</b>:`,
-  manualOrderPasswordPrompt: `${e.lock} <b>رمز عبور</b> اکانت رو وارد کن:\n\n مطمئن شوید ایمیل رو رمز درست و معتبر باشند تا در فرایند سفارش مشکلی ایجاد نشود با تشکر.`,
-  manualOrderLoginUsernamePrompt: `${e.person} Enter the account <b>username</b>:`,
-  manualOrderLoginPasswordPrompt: `${e.lock} Enter the account <b>password</b>:`,
-  manualOrderRegionPrompt: `${e.earth} Enter the desired <b>region</b> (e.g. US, EU, Asia):`,
+  manualOrderEmailPrompt: `${e.mail} <b>Enter account email address:</b>`,
+  manualOrderPasswordPrompt: `${e.lock} <b>Enter account password:</b>\n\nPlease ensure your email and password are correct and valid to avoid order processing issues. Thank you.`,
+  manualOrderLoginUsernamePrompt: `${e.user} <b>Enter account username:</b>`,
+  manualOrderLoginPasswordPrompt: `${e.lock} <b>Enter account password:</b>`,
+  manualOrderRegionPrompt: `${e.earth} <b>Enter preferred region</b> (e.g., US, EU, Asia):`,
   manualOrderNeedsLabel: "Required Information",
   adminOrderEmail: "📧 Email",
   adminOrderEmailPassword: "🔑 Email Password",
@@ -565,42 +558,42 @@ export const en = {
   adminOrderLoginPassword: "🔐 Password",
   adminOrderRegion: "🌍 Region",
   adminOrderPayment: "💳 Payment",
-  adminOrderScheduled: "📅 Scheduled",
-  selectRegion: `${e.earth} <b>Select Region</b>\n\nChoose your desired region:`,
-  selectedRegion: "Selected Region",
-  orderInfoReviewTitle: `${e.clipboard} <b>Review Order Info</b>`,
-  orderInfoReviewPrompt: "Confirm the details below or edit them:",
-  btnConfirmInfo: ` Confirm & Continue`,
+  adminOrderScheduled: "📅 Schedule",
+  selectRegion: `${e.earth} <b>Select Region</b>\n\nChoose your preferred region:`,
+  selectedRegion: "Selected region",
+  orderInfoReviewTitle: `${e.clipboard} <b>Review Order Information</b>`,
+  orderInfoReviewPrompt: "Confirm or edit the details below:",
+  btnConfirmInfo: `✅ Confirm and Continue`,
   paymentSummaryTitle: `${e.wallet} <b>Order Payment</b>`,
   paymentPrompt: "Choose a payment method to complete your order:",
-  paymentOriginalPrice: "Original Price",
+  paymentOriginalPrice: "Original price",
   paymentDiscount: "Discount",
-  paymentFinalPrice: "Final Price",
-  paymentWalletBalance: "Wallet Balance",
-  btnPayWallet: `Pay from Wallet`,
-  btnPayCard: `💳 Pay by Card`,
-  btnPayZarinpal: `🟢 ZarinPal Gateway`,
+  paymentFinalPrice: "Final price",
+  paymentWalletBalance: "Wallet balance",
+  btnPayWallet: `Pay with Wallet`,
+  btnPayCard: `💳 Pay with Card`,
+  btnPayZarinpal: `🟢 Zarinpal Gateway`,
   btnPayCrypto: `🪙 Pay with USDT (Crypto)`,
   payCardInstructions: (data: { amount: string }) =>
     `💳 <b>Card Payment</b>\n\n` +
     `💰 Amount: <b>${data.amount}</b> Toman\n\n` +
     `Copy one of the card numbers below and transfer the amount:`,
-  payCardConfirmNote: `After transferring, tap "✅ I've transferred" button.`,
-  btnConfirmCardPayment: `✅ I've transferred`,
+  payCardConfirmNote: `After transferring, click "✅ I Have Paid".`,
+  btnConfirmCardPayment: `✅ I Have Paid`,
   payCardPending: (data: { orderId: number }) =>
     `${e.checkBold} <b>Order placed!</b>\n\n` +
     `${e.id} Order: #${data.orderId}\n\n` +
-    `${e.hourglass} Your order will be processed after admin confirms the transfer.\n` +
-    `Usually confirmed within <b>1–24 hours</b>.`,
-  payCryptoConfirmNote: `After completing the transaction, tap "✅ I've paid" button.`,
-  btnConfirmCryptoPayment: `✅ I've paid`,
+    `${e.time} Your order will be processed after admin confirms your payment.\n` +
+    `Usually confirmed within <b>1 to 24 hours</b>.`,
+  payCryptoConfirmNote: `After making the transaction, click "✅ I Have Paid".`,
+  btnConfirmCryptoPayment: `✅ I Have Paid`,
   payCryptoPending: (data: { orderId: number }) =>
     `${e.checkBold} <b>Order placed!</b>\n\n` +
     `${e.id} Order: #${data.orderId}\n\n` +
-    `${e.hourglass} Your order will be processed after admin verifies the transaction.\n` +
-    `Usually confirmed within <b>30 minutes – 2 hours</b>.`,
-  btnCancelManualOrder: `❌ Cancel Order`,
-  manualOrderCancelled: `${e.cross} Order cancelled.`,
+    `${e.time} Your order will be processed after admin confirms the transaction.\n` +
+    `Usually confirmed within <b>30 minutes to 2 hours</b>.`,
+  btnCancelManualOrder: `Cancel Order`,
+  manualOrderCancelled: `${e.reject} Order cancelled.`,
   manualOrderPending: (data: {
     orderId: number;
     productName: string;
@@ -611,11 +604,11 @@ export const en = {
     `${e.checkBold} <b>Order placed!</b>\n\n` +
     `${e.bag} Product: ${data.productName}\n` +
     `${e.clipboard} Plan: ${data.planName}\n` +
-    `${e.gem} Amount: <b>${data.amount}</b>\n` +
-    `${e.wallet} Remaining balance: <b>${data.remainingBalance}</b>\n` +
+    `${e.diamond} Amount: <b>${data.amount}</b> Toman\n` +
+    `${e.wallet} Remaining balance: <b>${data.remainingBalance}</b> Toman\n` +
     `${e.id} Order: #${data.orderId}\n\n` +
-    `${e.hourglass} Your order has been received by our team.\n` +
-    `It will be processed and delivered within <b>1-24 hours</b>.`,
+    `${e.time} Your order has reached our team.\n` +
+    `It will be processed and updated within <b>1 to 24 hours</b>.`,
   orderDeliveredNotification: (data: {
     orderId: number;
     productName: string;
@@ -623,19 +616,19 @@ export const en = {
     `${e.party} <b>Your order is ready!</b>\n\n` +
     `${e.bag} Product: ${data.productName}\n` +
     `${e.id} Order: #${data.orderId}\n\n` +
-    `Access details are available in My Orders then Order Details.`,
+    `Your access details are available in My Orders → Order Details.`,
 
-  // Time Slot Selection
+  // ── انتخاب بازه زمانی ────────────────────────────────────────────────────
   schedulePickSlot: (data: { date: string }) =>
-    `${e.calendar} <b>Select a Time Slot</b>\n\nChoose an available slot for <b>${data.date}</b>:\n\n${e.checkBold} = Available  |  ${e.cross} = Taken`,
+    `${e.date} <b>Select Time Slot</b>\n\nChoose an available slot for <b>${data.date}</b>:\n\n${e.checkBold} = available  |  ${e.reject} = full`,
   scheduleSlotFree: "Available",
-  scheduleSlotFullAlert: `${e.cross} This slot is full. Please choose another.`,
+  scheduleSlotFullAlert: `${e.reject} This slot is full. Please choose another one.`,
   scheduleNoSlotsToday:
-    `${e.cross} <b>No slots available</b>\n\n` +
+    `${e.reject} <b>No slots available</b>\n\n` +
     `Sorry, there are no available time slots for this product today.\n` +
     `Please try again tomorrow or contact support.`,
-  schedulePickDay: `${e.calendar} Please select a day of the week:`,
-  schedulePickDayNoSlots: `${e.cross} Sorry, there are no active days with available slots.`,
+  schedulePickDay: `${e.date} Please choose your preferred day of the week:`,
+  schedulePickDayNoSlots: `${e.reject} Sorry, no days with active time slots are available.`,
   scheduleBooked: (data: {
     orderId: number;
     productName: string;
@@ -648,13 +641,13 @@ export const en = {
     `${e.party} <b>Time slot booked!</b>\n\n` +
     `${e.bag} Product: ${data.productName}\n` +
     `${e.clipboard} Plan: ${data.planName}\n` +
-    `${e.calendar} Date: <b>${data.date}</b>\n` +
+    `${e.date} Date: <b>${data.date}</b>\n` +
     `${e.clock} Time: <b>${data.timeSlot}</b>\n` +
-    `${e.gem} Amount: <b>${data.amount}</b>\n` +
-    `${e.wallet} Remaining balance: <b>${data.remainingBalance}</b>\n` +
+    `${e.diamond} Amount: <b>${data.amount}</b> Toman\n` +
+    `${e.wallet} Remaining balance: <b>${data.remainingBalance}</b> Toman\n` +
     `${e.id} Order: #${data.orderId}\n\n` +
-    `${e.bell} I'll remind you <b>${e.clock} 15 minutes</b> before the session starts.\n` +
-    `Track your session status in <b>My Orders</b>.`,
+    `${e.bell} <b>${e.clock} 15 minutes</b> before start, I’ll send you a reminder.\n` +
+    `Track session status in <b>My Orders</b>.`,
   scheduleReminderNotification: (data: {
     orderId: number;
     productName: string;
@@ -664,7 +657,7 @@ export const en = {
     `Your <b>${data.productName}</b> session starts in <b>15 minutes</b>.\n` +
     `${e.clock} Time: <b>${data.timeSlot}</b>\n` +
     `${e.id} Order: #${data.orderId}\n\n` +
-    `${e.rocket} Get ready — our team will contact you soon.`,
+    `${e.rocket} Be ready — our team will contact you shortly.`,
   sessionStartedUser: (data: {
     orderId: number;
     productName: string;
@@ -674,26 +667,45 @@ export const en = {
     `${e.bag} Product: <b>${data.productName}</b>\n` +
     `${e.clock} Slot: <b>${data.timeSlot}</b>\n` +
     `${e.id} Order: #${data.orderId}\n\n` +
-    `${e.key} The admin will send you the login details in this chat.\n` +
-    `${e.sparkles} Ready? Let's go!`,
+    `${e.key} The admin will send your login details in this chat.\n` +
+    `${e.sparkles} Ready? Let’s go!`,
+
+  // Blocked user
+  userBlocked:
+    `⛔ <b>Your access is restricted</b>\n\n` +
+    `Your account has been blocked by management. If this is a mistake, contact support.`,
+  userBlockedWithReason: (reason: string) =>
+    `⛔ <b>Your access is restricted</b>\n\n` +
+    `📝 Reason: ${reason}\n\n` +
+    `If this is a mistake, contact support.`,
+
+  // Maintenance mode
+  botMaintenance:
+    `🔧 <b>Bot is temporarily unavailable</b>\n\n` +
+    `We are under maintenance or updating. We’ll be back soon. Thanks for your patience ༉`,
+  botMaintenanceCustom: (msg: string) => `🔧 ${msg}`,
+
+  // Feature disabled messages
+  referralDisabled: `🔒 <b>Referral system is disabled</b>\n\nThe invite-friends program is currently temporarily disabled.`,
+  shopDisabled: `🔒 <b>Shop is disabled</b>\n\nThe shop is currently temporarily disabled. Please try again later.`,
 
   // ── Stock notification ──────────────────────────────────────────────────────
-  stockSubscribed: `🔔 We'll notify you when it's back in stock!`,
-  stockAlreadySubscribed: `✅ You're already subscribed. We'll let you know when it's available.`,
+  stockSubscribed: `🔔 Subscribed! We’ll notify you when it’s back in stock.`,
+  stockAlreadySubscribed: `✅ You already subscribed. We’ll notify you once it’s in stock.`,
   stockRestocked: (data: { productName: string }) =>
-    `🎉 <b>Back in stock!</b>\n\n📦 <b>${data.productName}</b> is available again.\n\n🛍 Buy now before it sells out!`,
+    `🎉 <b>Back in stock!</b>\n\n📦 ${data.productName} is available again.\n\n🛍 Buy it now!`,
 
   // ── Inventory order flow ──────────────────────────────────────────────────
-  enterQuantityPrompt: `📦 Enter the desired quantity:`,
-  enterQuantityHint: `⚠️ Please enter a number only`,
-  quantityInvalid: `${e.cross} Invalid quantity. Please enter a positive whole number.`,
+  enterQuantityPrompt: `📦 Enter desired quantity:`,
+  enterQuantityHint: `⚠️ Enter numbers only`,
+  quantityInvalid: `${e.reject} Invalid quantity entered. Please enter a positive number.`,
   quantityExceedsStock: (data: { stock: number }) =>
-    `${e.cross} Not enough stock. Available: <b>${data.stock}</b>`,
+    `${e.reject} Not enough stock. Current stock: <b>${data.stock}</b> units`,
   quantityExceedsLimit: (data: { max: number }) =>
-    `${e.cross} You can purchase a maximum of <b>${data.max}</b> items per order.`,
+    `${e.reject} You can purchase a maximum of <b>${data.max}</b> units per order.`,
   warrantyDays: (data: { days: number }) =>
     `Warranty: <b>${data.days} days</b>`,
-  termsTitle: `Terms & Conditions`,
+  termsTitle: `Terms and Conditions`,
   btnChangeQuantity: `✏️ Change Quantity`,
   inventoryOrderSummary: (data: {
     productName: string;
@@ -706,7 +718,7 @@ export const en = {
     `📦 Product: <b>${data.productName}</b>\n` +
     `🔢 Quantity: <b>${data.qty}</b>\n` +
     `💰 Unit price: <b>${data.unitPrice} ${data.currency}</b>\n` +
-    `💵 Total: <b>${data.total} ${data.currency}</b>`,
+    `💵 Total amount: <b>${data.total} ${data.currency}</b>`,
   inventoryOrderSuccess: (data: {
     orderId: number;
     productName: string;
@@ -715,51 +727,32 @@ export const en = {
     remainingBalance: string;
     currency: string;
   }) =>
-    `${e.party} <b>Order completed!</b>\n\n` +
+    `${e.party} <b>Order placed successfully!</b>\n\n` +
     `📦 Product: <b>${data.productName}</b>\n` +
     `🔢 Quantity: <b>${data.qty}</b>\n` +
-    `💵 Amount paid: <b>${data.total} ${data.currency}</b>\n` +
+    `💵 Paid amount: <b>${data.total} ${data.currency}</b>\n` +
     `${e.wallet} Remaining balance: <b>${data.remainingBalance} ${data.currency}</b>\n` +
-    `${e.id} Order: #${data.orderId}`,
+    `${e.id} Order ID: #${data.orderId}`,
   inventoryDeliveryHeader: (data: { productName: string }) =>
     `${e.key} <b>Delivery: ${data.productName}</b>`,
+
   inventoryDeliveryItem: (data: { index: number; content: string }[]) =>
-    `${e.fire} با تشکر از خرید شما دوست عزیز \n\n` +
-    `${e.bag} سفارش شما آماده \n\n` +
+    `${e.fire} Thank you for your purchase, dear customer \n\n` +
+    `${e.bag} Your order is ready \n\n` +
     data.map((item) => `<b>#${item.index}</b>\n${item.content}`).join("\n\n") +
-    "\n\n\n" +
-    `${e.truck} باز هم یه فروشگاه ما سر بزنید \n` +
-    `${e.sparkles} مشتاقانه منتظر شما هستیم `,
+    `${e.truck} Visit our shop again \n` +
+    `${e.sparkles} We look forward to seeing you again `,
 
-  // Blocked user
-  userBlocked:
-    `⛔ <b>Your access has been restricted</b>\n\n` +
-    `Your account has been suspended by administration. If you believe this is a mistake, please contact support.`,
-  userBlockedWithReason: (reason: string) =>
-    `⛔ <b>Your access has been restricted</b>\n\n` +
-    `📝 Reason: ${reason}\n\n` +
-    `If you believe this is a mistake, please contact support.`,
-
-  // Maintenance mode
-  botMaintenance:
-    `🔧 <b>Bot is temporarily unavailable</b>\n\n` +
-    `We are performing maintenance or updates. We'll be back shortly. Thank you for your patience ༉`,
-  botMaintenanceCustom: (msg: string) => `🔧 ${msg}`,
-
-  // Feature disabled messages
-  referralDisabled: `🔒 <b>Referral System Unavailable</b>\n\nThe referral program is temporarily disabled.`,
-  shopDisabled: `🔒 <b>Shop Unavailable</b>\n\nThe shop is temporarily disabled. Please try again later.`,
-  adminConfirmRechargeMsg: (
+  adminConfirmrechargeMsg: (
     userLabel: string,
     opts: any,
     formatNum: (num: number) => string,
     methodLabel: string,
   ) =>
-    `💵 <b>Wallet Recharge Request</b>\n\n` +
+    `💵 <b>Wallet Top-up Request</b>\n\n` +
     `👤 User: ${userLabel} (<code>${opts.userId}</code>)\n` +
     `💰 Amount: <b>${formatNum(opts.amount)}</b> Toman\n` +
     `🔑 Method: ${methodLabel}\n`,
   regionNotFound: "Region not found ❌",
-
-  rechargeCardSaveFailed: "Failed to save the file",
+  rechargeCardSaveFailed: e.warning + "Failed to save file",
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

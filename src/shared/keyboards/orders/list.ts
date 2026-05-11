@@ -5,10 +5,10 @@ import { emojiIds } from "../../locales/emojies.ts";
 export function ordersListKeyboard(t: TFunction): InlineKeyboard {
   return new InlineKeyboard()
     .text(t("btnOrdersFilterActive"), "orders_filter_active", {
-      icon_custom_emoji_id: emojiIds.blue,
+      icon_custom_emoji_id: emojiIds.activeOrder,
     })
     .text(t("btnOrdersFilterCompleted"), "orders_filter_completed", {
-      icon_custom_emoji_id: emojiIds.green,
+      icon_custom_emoji_id: emojiIds.completeOrder,
     })
     .row()
     .text(t("btnOrdersFilterAll"), "orders_filter_all", {

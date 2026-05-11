@@ -10,6 +10,11 @@ export interface RenewalPendingInfo {
   delivery: Record<string, string>;
   zarinpalAuthority?: string;
   zarinpalPayUrl?: string;
+  nowpaymentsPaymentId?: string;
+  nowpaymentsOrderId?: string;
+  nowpaymentsPayUrl?: string;
+  nowpaymentsPayAddress?: string;
+  nowpaymentsPayAmount?: string;
 }
 
 export const renewalPendingState = new Map<number, RenewalPendingInfo>();

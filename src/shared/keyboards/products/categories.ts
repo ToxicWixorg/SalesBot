@@ -25,7 +25,7 @@ export function categoriesKeyboard(
 
   keyboard.row();
   keyboard.text(t("btnMainMenu"), "main_menu", {
-    icon_custom_emoji_id: undefined, //emojiIds.home,
+    icon_custom_emoji_id: emojiIds.home,
   });
 
   return keyboard;

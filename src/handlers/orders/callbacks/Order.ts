@@ -30,7 +30,6 @@ export async function OrderCallback(
       return;
     }
 
-    // بررسی مالکیت سفارش
     if (Number(order.userId) !== userId) {
       await context.answerCallbackQuery({
         text: t("orderAccessDenied"),
@@ -43,58 +42,57 @@ export async function OrderCallback(
     const statusInfo = getOrderStatusInfo(order.status);
 
     let message = `${t("orderDetailsTitle")}\n\n`;
-    message += `🆔 ${t("orderNumber")}: #${order.id}\n`;
-    message += `📦 ${t("orderProduct")}: ${product?.name || "-"}\n`;
+    message += `${t("orderNumber")}: #${order.id}\n`;
+    message += `${t("orderProduct")}: ${product?.name || "-"}\n`;
     message += `${statusInfo.color} ${t("orderStatus")}: ${statusInfo.emoji} ${statusInfo.text}\n`;
     message += `\n`;
-    message += `💰 ${t("orderTotalPrice")}: ${formatPrice(order.totalPrice)} تومان\n`;
+    message += `${t("orderTotalPrice")}: ${formatPrice(order.totalPrice)} تومان\n`;
 
     if (Number(order.discountAmount) > 0) {
-      message += `🎁 ${t("orderDiscount")}: ${formatPrice(order.discountAmount)} تومان\n`;
+      message += `${t("orderDiscount")}: ${formatPrice(order.discountAmount)} تومان\n`;
     }
 
     if (Number(order.walletUsed) > 0) {
-      message += `💳 ${t("orderWalletUsed")}: ${formatPrice(order.walletUsed)} تومان\n`;
+      message += `${t("orderWalletUsed")}: ${formatPrice(order.walletUsed)} تومان\n`;
     }
 
-    message += `✅ ${t("orderFinalPrice")}: ${formatPrice(order.finalPrice)} تومان\n`;
+    message += `${t("orderFinalPrice")}: ${formatPrice(order.finalPrice)} تومان\n`;
     message += `\n`;
-    message += `📅 ${t("orderCreatedAt")}: ${formatDate(order.createdAt)}\n`;
+    message += `${t("orderCreatedAt")}: ${formatDate(order.createdAt)}\n`;
 
     if (order.deliveredAt) {
-      message += `✨ ${t("orderDeliveredAt")}: ${formatDate(order.deliveredAt)}\n`;
+      message += `${t("orderDeliveredAt")}: ${formatDate(order.deliveredAt)}\n`;
     }
 
     if (order.scheduledTime) {
-      message += `🗓️ ${t("orderScheduledTime")}: ${formatDate(order.scheduledTime)}\n`;
+      message += `${t("orderScheduledTime")}: ${formatDate(order.scheduledTime)}\n`;
     }
 
-    // نمایش اطلاعات تحویل
     if (order.delivery && order.status === "completed") {
       message += `\n━━━━━━━━━━━━━━━━\n`;
-      message += `📬 ${t("orderDeliveryInfo")}\n\n`;
+      message += `${t("orderDeliveryInfo")}\n\n`;
 
       const delivery = order.delivery as any;
 
       if (delivery.code) {
-        message += `🔐 ${t("orderDeliveryCode")}: \`${delivery.code}\`\n`;
+        message += `${t("orderDeliveryCode")}: \`${delivery.code}\`\n`;
       }
 
       if (delivery.email) {
-        message += `📧 ${t("orderDeliveryEmail")}: ${delivery.email}\n`;
+        message += `${t("orderDeliveryEmail")}: ${delivery.email}\n`;
       }
 
       if (delivery.link) {
-        message += `🔗 ${t("orderDeliveryLink")}: ${delivery.link}\n`;
+        message += `${t("orderDeliveryLink")}: ${delivery.link}\n`;
       }
 
       if (delivery.instructions) {
-        message += `\n📝 ${t("orderDeliveryInstructions")}:\n${delivery.instructions}\n`;
+        message += `\n${t("orderDeliveryInstructions")}:\n${delivery.instructions}\n`;
       }
     }
 
     if (order.notes) {
-      message += `\n📝 ${t("orderNotes")}: ${order.notes}\n`;
+      message += `\n${t("orderNotes")}: ${order.notes}\n`;
     }
 
     await context.editText(message, {

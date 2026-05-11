@@ -30,7 +30,6 @@ export async function MyOrderCallback(context: Context) {
       return;
     }
 
-    // گروه‌بندی سفارشات بر اساس وضعیت
     const activeOrders = orders.filter((o) =>
       [
         "paid",

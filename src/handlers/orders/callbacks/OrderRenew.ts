@@ -98,8 +98,9 @@ export async function OrderRenewCallback(context: any) {
       kb.text(t("btnPayZarinpal"), `renew_zarinpal_${orderId}`).row();
     }
     if (
-      settings?.cryptoEnabled &&
-      settings.cryptoAddress &&
+      settings?.nowpaymentsEnabled &&
+      settings.nowpaymentsApiKey &&
+      settings.nowpaymentsIpnCallbackUrl &&
       (settings.cryptoExchangeRate ?? 0) > 0
     ) {
       kb.text(t("btnPayCrypto"), `renew_crypto_${orderId}`).row();
