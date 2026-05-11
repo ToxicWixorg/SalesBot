@@ -89,7 +89,7 @@ export function setupWalletHandlers(bot: AnyBot) {
 
       msg += `━━━━━━━━━━━━━━━\n`;
       msg += `${typeLabel} ${sourceLabel}\n`;
-      msg += `${t("transactionAmount")} ${sign}${tx.amount} ${e.Toman}\n`;
+      msg += `${t("transactionAmount")} ${sign}${tx.amount} ${t("Toman")} ${e.Toman}\n`;
       msg += `${t("transactionDate")} ${new Date(tx.createdAt || "").toLocaleDateString("fa-IR")}\n`;
       if (tx.description) {
         msg += `${t("transactionDescription")} ${tx.description}\n`;

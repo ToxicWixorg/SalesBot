@@ -78,7 +78,8 @@ export const ru = {
 
   // Wallet
   walletTitle: `${e.wallet} Кошелёк`,
-  walletBalance: (balance: string) => `Баланс: <b>${balance}</b> ` + e.Toman,
+  walletBalance: (balance: string) =>
+    `Баланс: <b>${balance}</b> Toman ` + e.Toman,
   walletEmpty: `${e.wallet} Ваш кошелёк пуст ${e.sparkles} Пополните его и начните!`,
   btnRechargeWallet: ` Пополнить кошелёк`,
   btnTransactionHistory: ` История транзакций`,
@@ -91,14 +92,14 @@ export const ru = {
   btnRechargeZarinpal: ` Шлюз Zarinpal`,
   rechargeEnterAmount: `${e.wallet} Введите сумму пополнения:`,
   rechargeMinAmount: (amount: string) =>
-    `Минимальная сумма пополнения: <b>${amount}</b> ` + e.Toman,
+    `Минимальная сумма пополнения: <b>${amount}</b> Toman ` + e.Toman,
   rechargeMaxAmount: (amount: string) =>
-    `Максимальная сумма пополнения: <b>${amount}</b> ` + e.Toman,
+    `Максимальная сумма пополнения: <b>${amount}</b> Toman ` + e.Toman,
   rechargeInvalidAmount: `${e.reject} Неверная сумма`,
   rechargeTooLow: (min: string) =>
-    `${e.reject} Сумма должна быть не менее <b>${min}</b> ${e.Toman}`,
+    `${e.reject} Сумма должна быть не менее <b>${min}</b> Toman ${e.Toman}`,
   rechargeTooHigh: (max: string) =>
-    `${e.reject} Сумма не может превышать <b>${max}</b> ${e.Toman}`,
+    `${e.reject} Сумма не может превышать <b>${max}</b> Toman ${e.Toman}`,
 
   rechargeCryptoTitle: `${e.wallet} Крипто-оплата`,
   rechargeCryptoAddress: (address: string) =>
@@ -197,9 +198,10 @@ export const ru = {
   chooseAction: "",
   txSourcePerk: `${e.target} Бонус Perk`,
 
-  rechargeAmount: (amount: string) => `💰 Сумма: <b>${amount}</b> ` + e.Toman,
+  rechargeAmount: (amount: string) =>
+    `💰 Сумма: <b>${amount}</b> Toman ` + e.Toman,
   rechargeMethodSelectTitle: (amount: string) =>
-    `${e.wallet} Сумма <b>${amount}</b> ${e.Toman}\n\nВыберите способ оплаты:`,
+    `${e.wallet} Сумма <b>${amount}</b> Toman ${e.Toman}\n\nВыберите способ оплаты:`,
   rechargeCardNumbers: `Номера карт`,
   rechargeCardSendReceipt: `После перевода отправьте сюда фото чека оплаты.`,
   rechargeCardExpectPhoto: `${e.reject} Пожалуйста, отправьте фото чека (изображение, не текст).`,

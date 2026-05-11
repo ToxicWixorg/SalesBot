@@ -75,7 +75,8 @@ export const fa = {
   duration_year: "سال",
 
   walletTitle: `${e.wallet} کیف پول`,
-  walletBalance: (balance: string) => `موجودی: <b>${balance}</b> ` + e.Toman,
+  walletBalance: (balance: string) =>
+    `موجودی: <b>${balance}</b> تومان ` + e.Toman,
   walletEmpty: `${e.wallet} کیف پولت فعلاً خالیه ${e.sparkles} شارژش کن و شروع کن!`,
   btnRechargeWallet: ` شارژ کیف پول`,
   btnTransactionHistory: ` تاریخچه تراکنش‌ها`,
@@ -89,14 +90,14 @@ export const fa = {
 
   rechargeEnterAmount: `${e.wallet} مبلغ شارژ رو وارد کن:`,
   rechargeMinAmount: (amount: string) =>
-    `حداقل مبلغ شارژ: <b>${amount}</b> ` + e.Toman,
+    `حداقل مبلغ شارژ: <b>${amount}</b> تومان ` + e.Toman,
   rechargeMaxAmount: (amount: string) =>
-    `حداکثر مبلغ شارژ: <b>${amount}</b> ` + e.Toman,
+    `حداکثر مبلغ شارژ: <b>${amount}</b> تومان ` + e.Toman,
   rechargeInvalidAmount: `${e.reject} مبلغ وارد شده نامعتبره`,
   rechargeTooLow: (min: string) =>
-    `${e.reject} مبلغ شارژ باید حداقل <b>${min}</b> ${e.Toman} باشه`,
+    `${e.reject} مبلغ شارژ باید حداقل <b>${min}</b> تومان ${e.Toman} باشه`,
   rechargeTooHigh: (max: string) =>
-    `${e.reject} مبلغ شارژ نمی‌تونه بیشتر از <b>${max}</b> ${e.Toman} باشه`,
+    `${e.reject} مبلغ شارژ نمی‌تونه بیشتر از <b>${max}</b> تومان  ${e.Toman} باشه`,
 
   // Crypto Payment
   rechargeCryptoTitle: `${e.wallet} پرداخت کریپتو`,
@@ -149,9 +150,10 @@ export const fa = {
   txSourceAdminAdjustment: `${e.settings} تعدیل ادمین`,
 
   // ── کلیدهای جدید شارژ کیف پول ──────────────────────────
-  rechargeAmount: (amount: string) => `💰 مبلغ: <b>${amount}</b> ` + e.Toman,
+  rechargeAmount: (amount: string) =>
+    `💰 مبلغ: <b>${amount}</b> تومان ` + e.Toman,
   rechargeMethodSelectTitle: (amount: string) =>
-    `${e.wallet} مبلغ <b>${amount}</b> ${e.Toman}\n\nروش پرداخت رو انتخاب کن:`,
+    `${e.wallet} مبلغ <b>${amount}</b> تومان ${e.Toman}\n\nروش پرداخت رو انتخاب کن:`,
   rechargeCardNumbers: `شماره کارت‌ها`,
   rechargeCardSendReceipt: `بعد از واریز مبلغ، رسید پرداخت (عکس) رو اینجا بفرست.`,
   rechargeCardExpectPhoto: `${e.reject} لطفاً عکس رسید پرداخت رو بفرست (تصویر باشه نه متن).`,
