@@ -6,6 +6,7 @@ export function mainMenuKeyboard(t: TFunction): InlineKeyboard {
   return new InlineKeyboard()
     .text(t("btnProducts"), "products", {
       icon_custom_emoji_id: emojiIds.trolley,
+      style: "primary",
     })
     .text(t("btnMyOrders"), "my_orders", { icon_custom_emoji_id: emojiIds.bag })
     .row()

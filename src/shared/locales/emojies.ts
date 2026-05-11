@@ -113,4 +113,4 @@ export const e = {
   fire: `<tg-emoji emoji-id="${emojiIds.fire}">🔥</tg-emoji>`,
   truck: "🚚",
   id: "🆔",
-};
+} as const;

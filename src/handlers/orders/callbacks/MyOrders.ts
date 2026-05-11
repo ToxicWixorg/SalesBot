@@ -3,6 +3,7 @@ import { UserRepository } from "../../../repositories/UserRepository.ts";
 import { OrderRepository } from "../../../repositories/OrderRepository.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import { ordersListKeyboard } from "../../../shared/keyboards/index.ts";
+import { emojiIds } from "../../../shared/locales/emojies.ts";
 
 export async function MyOrderCallback(context: Context) {
   const userId = context.from.id;
@@ -23,9 +24,14 @@ export async function MyOrderCallback(context: Context) {
       await context.editText(t("ordersEmpty"), {
         parse_mode: "HTML",
         reply_markup: new InlineKeyboard()
-          .text(t("btnProducts"), "products")
+          .text(t("btnProducts"), "products", {
+            icon_custom_emoji_id: emojiIds.trolley,
+            style: "primary",
+          })
           .row()
-          .text(t("btnMainMenu"), "main_menu"),
+          .text(t("btnMainMenu"), "main_menu", {
+            icon_custom_emoji_id: emojiIds.back,
+          }),
       });
       return;
     }
