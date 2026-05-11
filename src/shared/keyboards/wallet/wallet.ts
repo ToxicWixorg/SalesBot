@@ -6,6 +6,7 @@ export function walletKeyboard(t: TFunction): InlineKeyboard {
   return new InlineKeyboard()
     .text(t("btnRechargeWallet"), "wallet_recharge", {
       icon_custom_emoji_id: emojiIds.card,
+      style: "primary",
     })
     .row()
     .text(t("btnTransactionHistory"), "wallet_history", {
