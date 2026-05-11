@@ -148,6 +148,20 @@
       "when": 1778328000000,
       "tag": "0020_wallet_topups",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1778428000000,
+      "tag": "0021_wallet_topups",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1778528000000,
+      "tag": "0022_wallet_topups",
+      "breakpoints": true
     }
   ]
 }
