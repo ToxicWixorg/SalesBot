@@ -153,14 +153,14 @@
       "idx": 21,
       "version": "7",
       "when": 1778428000000,
-      "tag": "0021_wallet_topups",
+      "tag": "0021_zarinpal_wallet_payments",
       "breakpoints": true
     },
     {
       "idx": 22,
       "version": "7",
       "when": 1778528000000,
-      "tag": "0022_wallet_topups",
+      "tag": "0022_nowpayments_wallet_payments",
       "breakpoints": true
     }
   ]
