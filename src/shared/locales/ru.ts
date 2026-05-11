@@ -127,7 +127,7 @@ export const ru = {
 
   // Transactions
   transactionHistoryTitle: `${e.chart} История транзакций`,
-  transactionHistoryEmpty: `${e.chart} У вас пока нет транзакций — сделайте первый заказ!`,
+  transactionHistoryEmpty: `У вас пока нет транзакций — сделайте первый заказ!`,
   transactionType: "Тип:",
   transactionAmount: "Сумма:",
   transactionDate: "Дата:",

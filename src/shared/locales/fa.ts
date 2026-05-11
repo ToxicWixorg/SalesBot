@@ -129,7 +129,7 @@ export const fa = {
 
   // Transaction History
   transactionHistoryTitle: `${e.chart} تاریخچه تراکنش‌ها`,
-  transactionHistoryEmpty: `${e.chart} هنوز تراکنشی نداری — اولین خریدت رو ثبت کن!`,
+  transactionHistoryEmpty: `هنوز تراکنشی نداری — اولین خریدت رو ثبت کن!`,
   transactionType: "نوع:",
   transactionAmount: "مبلغ:",
   transactionDate: "تاریخ:",

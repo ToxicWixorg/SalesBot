@@ -89,7 +89,7 @@ export const e = {
   note: `<tg-emoji emoji-id="${emojiIds.note}">✍️</tg-emoji>`,
   post: `<tg-emoji emoji-id="${emojiIds.post}">📬</tg-emoji>`,
   home: `<tg-emoji emoji-id="${emojiIds.home}">🏠</tg-emoji>`,
-  Toman: "تومان",
+  Toman: `<tg-emoji emoji-id="${emojiIds.Toman}">تومان</tg-emoji>`,
   usdt: "USDT",
   zarinpal: "زرین‌پال",
   flag_en: `<tg-emoji emoji-id="${emojiIds.flag_en}">🇺🇸</tg-emoji>`,

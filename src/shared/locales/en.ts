@@ -128,7 +128,7 @@ export const en = {
 
   // Transaction History
   transactionHistoryTitle: `${e.chart} Transaction History`,
-  transactionHistoryEmpty: `${e.chart} You don't have any transactions yet — place your first order!`,
+  transactionHistoryEmpty: `You don't have any transactions yet — place your first order!`,
   transactionType: "Type:",
   transactionAmount: "Amount:",
   transactionDate: "Date:",
