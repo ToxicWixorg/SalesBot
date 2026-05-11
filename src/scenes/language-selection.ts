@@ -3,8 +3,7 @@ import { InlineKeyboard } from "gramio";
 import { baseComposer } from "../plugins/base.ts";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
-import { chooseLanguage } from "../shared/locales/fa.ts";
-import { emojiIds } from "../shared/locales/emojies.ts";
+import { e, emojiIds } from "../shared/locales/emojies.ts";
 
 export const languageSelectionScene = new Scene("language_selection")
   .extend(baseComposer)
