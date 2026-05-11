@@ -3,6 +3,8 @@ import { InlineKeyboard } from "gramio";
 import { baseComposer } from "../plugins/base.ts";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
+import { chooseLanguage } from "../shared/locales/fa.ts";
+import { emojiIds } from "../shared/locales/emojies.ts";
 
 export const languageSelectionScene = new Scene("language_selection")
   .extend(baseComposer)
@@ -18,13 +20,21 @@ export const languageSelectionScene = new Scene("language_selection")
 
     if (context.scene.step.firstTime) {
       const keyboard = new InlineKeyboard()
-        .text("🇬🇧 English", "lang_en")
-        .text("🇮🇷 فارسی", "lang_fa")
+        .text("English", "lang_en", {
+          icon_custom_emoji_id: emojiIds.flag_en,
+        })
+        .text("فارسی", "lang_fa", {
+          icon_custom_emoji_id: emojiIds.flag_ir,
+        })
         .row()
-        .text("🇷🇺 Русский", "lang_ru");
+        .text("Русский", "lang_ru", {
+          icon_custom_emoji_id: emojiIds.flag_ru,
+        });
 
       return context.send(
-        "🌍 Please select your language:\n🌍 لطفاً زبان خود را انتخاب کنید:\n🌍 Пожалуйста, выберите ваш язык:",
+        `${e.earth} Please select your language :\n` +
+          `${e.earth} لطفاً زبان خود را انتخاب کنید :\n` +
+          `${e.earth} Пожалуйста, выберите ваш язык :\n`,
         {
           reply_markup: keyboard,
           parse_mode: "HTML",
