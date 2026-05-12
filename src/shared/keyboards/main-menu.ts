@@ -4,7 +4,7 @@ import { emojiIds } from "../locales/emojies.ts";
 
 export function mainMenuKeyboard(
   t: TFunction,
-  userRole: string,
+  userRole: string | null,
 ): InlineKeyboard {
   const keyboard = new InlineKeyboard()
     .text(t("btnProducts"), "products", {
@@ -26,7 +26,7 @@ export function mainMenuKeyboard(
       icon_custom_emoji_id: emojiIds.settings,
     });
 
-  if (userRole !== "customer") {
+  if (userRole && userRole !== "customer") {
     keyboard.row().text(t("btnAdminPanel"), "admin_panel", {
       icon_custom_emoji_id: emojiIds.admin,
       style: "success",

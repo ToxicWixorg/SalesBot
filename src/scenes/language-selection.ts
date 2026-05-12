@@ -4,6 +4,7 @@ import { baseComposer } from "../plugins/base.ts";
 import { UserRepository } from "../repositories/UserRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { e, emojiIds } from "../shared/locales/emojies.ts";
+import { mainMenuKeyboard } from "../shared/keyboards/main-menu.ts";
 
 export const languageSelectionScene = new Scene("language_selection")
   .extend(baseComposer)
@@ -70,22 +71,9 @@ export const languageSelectionScene = new Scene("language_selection")
     await context.answer();
 
     const userName = context.from?.firstName || "User";
-    await context.editText(t("welcome", userName), { parse_mode: "HTML" });
-
-    const mainMenuKeyboard = new InlineKeyboard()
-      .text(t("btnProducts"), "products")
-      .text(t("btnMyOrders"), "my_orders")
-      .row()
-      .text(t("btnWallet"), "wallet")
-      .text(t("btnInviteFriends"), "invite")
-      .row()
-      .text(t("btnDiscountCode"), "discount")
-      .text(t("btnSupport"), "support")
-      .row()
-      .text(t("btnSettings"), "settings");
 
     await context.send(t("main_menu", userName), {
-      reply_markup: mainMenuKeyboard,
+      reply_markup: mainMenuKeyboard(t, "customer"),
       parse_mode: "HTML",
     });
 

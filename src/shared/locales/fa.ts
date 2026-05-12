@@ -42,7 +42,7 @@ export const fa = {
   btnSupport: ` پشتیبانی`,
   btnSettings: ` تنظیمات`,
   btnBack: ` بازگشت`,
-  btnCancel: ` لغو`,
+  btnCancel: `لغو`,
   btnMainMenu: ` منوی اصلی`,
   btnChangeLanguage: ` تغییر زبان`,
   btnNotifications: ` اعلان‌ها`,

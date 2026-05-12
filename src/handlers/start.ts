@@ -228,7 +228,7 @@ export const startComposer = new Composer()
       });
     } catch {
       await context.send(t("main_menu", userName), {
-        reply_markup: mainMenuKeyboard(t,user.role),
+        reply_markup: mainMenuKeyboard(t, user.role),
         parse_mode: "HTML",
       });
     }
@@ -254,15 +254,12 @@ export const startComposer = new Composer()
       });
     }
 
-    const userLang =
-      user.languageCode && user.languageCode !== "null"
-        ? user.languageCode
-        : "en";
-    const t = i18n.buildT(userLang);
+    const t = i18n.buildT(user.languageCode || "en");
 
     try {
-      await context.editText(t("main_menu", userName), {
-        reply_markup: mainMenuKeyboard(t),
+      await context.message.delete();
+      await context.send(t("main_menu", userName), {
+        reply_markup: mainMenuKeyboard(t, user.role),
         parse_mode: "HTML",
       });
     } catch (error: any) {

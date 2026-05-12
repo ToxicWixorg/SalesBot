@@ -7,7 +7,7 @@ import { PaymentRepository } from "../repositories/PaymentRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { config } from "../config.ts";
 import { ticketState, ticketReplyState } from "./support-tickets.ts";
-import { ReplyError } from "ioredis";
+
 import {
   nowpaymentsWalletPaymentsTable,
   walletTopupsTable,

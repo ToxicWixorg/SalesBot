@@ -1,15 +1,12 @@
-import { Bot, AnyBot, InlineKeyboard } from "gramio";
-import { TicketService } from "../services/bot/ticket";
-import { TicketRepository } from "../repositories/TicketRepository";
+import { AnyBot, InlineKeyboard } from "gramio";
+import { TicketService } from "../services/bot/ticket.ts";
+import { TicketRepository } from "../repositories/TicketRepository.ts";
 import { i18n } from "../shared/locales/index";
-import { UserRepository } from "../repositories/UserRepository";
-import { config } from "../config";
+import { UserRepository } from "../repositories/UserRepository.ts";
+import { config } from "../config.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
 import { mainMenuKeyboard } from "../shared/keyboards/main-menu.ts";
 
-/**
- * State management for ticket creation
- */
 export const ticketState = new Map<
   number,
   {
@@ -19,247 +16,199 @@ export const ticketState = new Map<
   }
 >();
 
-// Separate state for ticket replies
-export const ticketReplyState = new Map<number, number>(); // userId -> ticketId
+export const ticketReplyState = new Map<number, number>();
 
 export function setupTicketScenes(bot: AnyBot) {
-  bot.callbackQuery("new_support_ticket", async (context) => {
-    const user = await UserRepository.findById(context.from.id);
-    if (!user) {
-      return;
-    }
-    const t = i18n.buildT(user.languageCode || "en");
+  bot
+    .callbackQuery(/^order_open_ticket_(\d+)$/, async (context) => {
+      const user = await UserRepository.findById(context.from.id);
+      if (!user) return;
+      const t = i18n.buildT(user.languageCode || "en");
 
-    ticketState.set(context.from.id, {
-      type: "support",
-      step: "message",
-    });
+      const orderId = parseInt(context.queryData[1]);
 
-    const keyboard = new InlineKeyboard().text(t("btnCancel"), "cancel_ticket");
-
-    await context.editText(t("ticketSupportPrompt"), {
-      reply_markup: keyboard,
-      parse_mode: "HTML",
-    });
-
-    await context.answerCallbackQuery();
-  });
-
-  /**
-   * Start creating a report ticket
-   */
-  bot.callbackQuery("new_report_ticket", async (context) => {
-    const user = await UserRepository.findById(context.from.id);
-    if (!user) return;
-    const t = i18n.buildT(user.languageCode || "en");
-
-    ticketState.set(context.from.id, {
-      type: "report",
-      step: "message",
-    });
-
-    const keyboard = new InlineKeyboard().text(t("btnCancel"), "cancel_ticket");
-
-    await context.editText(t("ticketReportPrompt"), {
-      reply_markup: keyboard,
-      parse_mode: "HTML",
-    });
-
-    await context.answerCallbackQuery();
-  });
-
-  bot.callbackQuery(/^order_open_ticket_(\d+)$/, async (context) => {
-    const user = await UserRepository.findById(context.from.id);
-    if (!user) return;
-    const t = i18n.buildT(user.languageCode || "en");
-
-    const orderId = parseInt(context.queryData[1]);
-
-    ticketState.set(context.from.id, {
-      type: "order",
-      orderId: orderId,
-      step: "message",
-    });
-
-    const keyboard = new InlineKeyboard().text(
-      t("btnCancel"),
-      "cancel_ticket",
-      {
-        icon_custom_emoji_id: emojiIds.reject,
-      },
-    );
-
-    await context.send(t("ticketOrderPrompt"), {
-      reply_markup: keyboard,
-      parse_mode: "HTML",
-    });
-
-    await context.answerCallbackQuery();
-  });
-
-  bot.callbackQuery(/^reply_ticket_(\d+)$/, async (context) => {
-    const user = await UserRepository.findById(context.from.id);
-    if (!user) return;
-    const t = i18n.buildT(user.languageCode || "en");
-
-    const ticketId = parseInt(context.queryData[1]);
-
-    // Check ticket ownership
-    const ticket = await TicketRepository.getTicketById(ticketId);
-    if (!ticket || ticket.userId !== context.from.id) {
-      await context.answerCallbackQuery({
-        text: t("ticketNotYours"),
-        parse_mode: "HTML",
-        show_alert: true,
+      ticketState.set(context.from.id, {
+        type: "order",
+        orderId: orderId,
+        step: "message",
       });
-      return;
-    }
 
-    if (ticket.status === "closed") {
-      await context.answerCallbackQuery({
-        text: t("ticketAlreadyClosed"),
-        parse_mode: "HTML",
-        show_alert: true,
-      });
-      return;
-    }
+      const keyboard = new InlineKeyboard().text(
+        t("btnCancel"),
+        "cancel_ticket",
+        {
+          icon_custom_emoji_id: emojiIds.reject,
+        },
+      );
 
-    if (ticket.status === "pending_admin") {
-      await context.answerCallbackQuery({
-        text: t("waitForAdminReply"),
-        parse_mode: "HTML",
-        show_alert: true,
-      });
-      return;
-    }
-    ticketReplyState.set(context.from.id, ticketId);
-
-    const keyboard = new InlineKeyboard().text(
-      t("btnCancel"),
-      "cancel_ticket_reply",
-    );
-
-    await context.send(
-      t("ticketReplyPrompt", {
-        ticketNumber: ticket.ticketNumber,
-      }),
-      {
+      await context.send(t("ticketOrderPrompt"), {
         reply_markup: keyboard,
         parse_mode: "HTML",
-      },
-    );
+      });
 
-    await context.answerCallbackQuery();
-  });
+      await context.answerCallbackQuery();
+    })
+    .callbackQuery(/^reply_ticket_(\d+)$/, async (context) => {
+      const user = await UserRepository.findById(context.from.id);
+      if (!user) return;
+      const t = i18n.buildT(user.languageCode || "en");
 
-  /**
-   * Cancel ticket creation
-   */
-  bot.callbackQuery(/^cancel_ticket/, async (context) => {
-    const user = await UserRepository.findById(context.from.id);
-    if (!user) return;
-    const t = i18n.buildT(user.languageCode || "en");
+      const ticketId = parseInt(context.queryData[1]);
 
-    ticketState.delete(context.from.id);
-    ticketReplyState.delete(context.from.id);
-
-    const keyboard = new InlineKeyboard().text(
-      t("btnBackToMain"),
-      "main_menu",
-      { icon_custom_emoji_id: emojiIds.home },
-    );
-
-    await context.editText(t("ticketCreationCancelled"), {
-      reply_markup: keyboard,
-      parse_mode: "HTML",
-    });
-
-    await context.answerCallbackQuery();
-  });
-
-  /**
-   * Unified message handler - handles both private chats and forum group
-   */
-  bot.on("message", async (context, next) => {
-    const userId = context.from?.id;
-    if (!userId) {
-      return;
-    }
-    const user = await UserRepository.findById(userId);
-    const t = i18n.buildT(user?.languageCode || "en");
-
-    if (!context.text) {
-      return next();
-    }
-
-    if (context.chat?.type === "supergroup") {
-      const chatId = context.chat.id.toString();
-      const supportGroupId = config.SUPPORT_GROUP_ID?.replace("-100", "");
-
-      if (!config.SUPPORT_GROUP_ID || !chatId.includes(supportGroupId || "")) {
+      const ticket = await TicketRepository.getTicketById(ticketId);
+      if (!ticket || ticket.userId !== context.from.id) {
+        await context.answerCallbackQuery({
+          text: t("ticketNotYours"),
+          parse_mode: "HTML",
+          show_alert: true,
+        });
         return;
       }
 
-      const message =
-        (context as any).update?.message || (context as any).payload;
-
-      const replyToMessageId = message?.reply_to_message?.message_id;
-      const messageThreadId = message?.message_thread_id;
-
-      if (!replyToMessageId && !messageThreadId) {
+      if (ticket.status === "closed") {
+        await context.answerCallbackQuery({
+          text: t("ticketAlreadyClosed"),
+          parse_mode: "HTML",
+          show_alert: true,
+        });
         return;
       }
 
-      const supportUserId = context.from?.id;
-      const messageText = context.text;
-
-      if (!supportUserId || !messageText) {
+      if (ticket.status === "pending_admin") {
+        await context.answerCallbackQuery({
+          text: t("waitForAdminReply"),
+          parse_mode: "HTML",
+          show_alert: true,
+        });
         return;
       }
+      ticketReplyState.set(context.from.id, ticketId);
 
-      try {
-        // Find ticket by thread message ID
-        const ticket = await TicketRepository.getTicketByThreadMessageId(
-          replyToMessageId || messageThreadId!,
-        );
-        if (!ticket) {
-          return;
-        }
+      const keyboard = new InlineKeyboard().text(
+        t("btnCancel"),
+        "cancel_ticket_reply",
+        {
+          icon_custom_emoji_id: emojiIds.reject,
+          style: "danger",
+        },
+      );
 
-        const ticketService = new TicketService(bot.api);
-        await ticketService.sendSupportMessageToUser(
-          ticket.id,
-          supportUserId,
-          messageText,
-        );
-      } catch (error) {
-        console.error("[FORUM] Error handling support reply:", error);
+      await context.send(
+        t("ticketReplyPrompt", {
+          ticketNumber: ticket.ticketNumber,
+        }),
+        {
+          reply_markup: keyboard,
+          parse_mode: "HTML",
+        },
+      );
+
+      await context.answerCallbackQuery();
+    })
+    .callbackQuery(/^cancel_ticket/, async (context) => {
+      const user = await UserRepository.findById(context.from.id);
+      if (!user) return;
+      const t = i18n.buildT(user.languageCode || "en");
+
+      ticketState.delete(context.from.id);
+      ticketReplyState.delete(context.from.id);
+
+      const keyboard = new InlineKeyboard().text(
+        t("btnBackToMain"),
+        "main_menu",
+        { icon_custom_emoji_id: emojiIds.home },
+      );
+
+      await context.editText(t("ticketCreationCancelled"), {
+        reply_markup: keyboard,
+        parse_mode: "HTML",
+      });
+
+      await context.answerCallbackQuery();
+    })
+    .on("message", async (context, next) => {
+      const userId = context.from?.id;
+      if (!userId) {
+        return;
       }
+      const user = await UserRepository.findById(userId);
+      const t = i18n.buildT(user?.languageCode || "en");
 
-      return;
-    }
-
-    if (context.chat?.type === "private") {
-      const inScene = (context as any).scene?.current;
-      if (inScene) {
+      if (!context.text) {
         return next();
       }
 
-      if (ticketReplyState.has(userId)) {
-        await handleTicketReply(context, userId);
+      if (context.chat?.type === "supergroup") {
+        const chatId = context.chat.id.toString();
+        const supportGroupId = config.SUPPORT_GROUP_ID?.replace("-100", "");
+
+        if (
+          !config.SUPPORT_GROUP_ID ||
+          !chatId.includes(supportGroupId || "")
+        ) {
+          return;
+        }
+
+        const message =
+          (context as any).update?.message || (context as any).payload;
+
+        const replyToMessageId = message?.reply_to_message?.message_id;
+        const messageThreadId = message?.message_thread_id;
+
+        if (!replyToMessageId && !messageThreadId) {
+          return;
+        }
+
+        const supportUserId = context.from?.id;
+        const messageText = context.text;
+
+        if (!supportUserId || !messageText) {
+          return;
+        }
+
+        try {
+          // Find ticket by thread message ID
+          const ticket = await TicketRepository.getTicketByThreadMessageId(
+            replyToMessageId || messageThreadId!,
+          );
+          if (!ticket) {
+            return;
+          }
+
+          const ticketService = new TicketService(bot.api);
+          await ticketService.sendSupportMessageToUser(
+            ticket.id,
+            supportUserId,
+            messageText,
+          );
+        } catch (error) {
+          console.error("[FORUM] Error handling support reply:", error);
+        }
+
         return;
       }
 
-      const state = ticketState.get(userId);
+      if (context.chat?.type === "private") {
+        const inScene = (context as any).scene?.current;
+        if (inScene) {
+          return next();
+        }
 
-      if (!state || state.step !== "message") {
-        return next?.();
+        if (ticketReplyState.has(userId)) {
+          await handleTicketReply(context, userId);
+          return;
+        }
+
+        const state = ticketState.get(userId);
+
+        if (!state || state.step !== "message") {
+          return next?.();
+        }
+
+        await handleTicketCreation(context, userId, state);
+        return;
       }
-
-      await handleTicketCreation(context, userId, state);
-      return;
-    }
-  });
+    });
 
   async function handleTicketCreation(
     context: any,
@@ -327,9 +276,6 @@ export function setupTicketScenes(bot: AnyBot) {
     }
   }
 
-  /**
-   * Handle ticket reply
-   */
   async function handleTicketReply(context: any, userId: number) {
     const user = await UserRepository.findById(userId);
     if (!user) return;
@@ -372,3 +318,50 @@ export function setupTicketScenes(bot: AnyBot) {
     }
   }
 }
+
+// .callbackQuery("new_support_ticket", async (context) => {
+//   const user = await UserRepository.findById(context.from.id);
+//   if (!user) {
+//     return;
+//   }
+//   const t = i18n.buildT(user.languageCode || "en");
+
+//   ticketState.set(context.from.id, {
+//     type: "support",
+//     step: "message",
+//   });
+
+//   const keyboard = new InlineKeyboard().text(
+//     t("btnCancel"),
+//     "cancel_ticket",
+//   );
+
+//   await context.editText(t("ticketSupportPrompt"), {
+//     reply_markup: keyboard,
+//     parse_mode: "HTML",
+//   });
+
+//   await context.answerCallbackQuery();
+// })
+// .callbackQuery("new_report_ticket", async (context) => {
+//   const user = await UserRepository.findById(context.from.id);
+//   if (!user) return;
+//   const t = i18n.buildT(user.languageCode || "en");
+
+//   ticketState.set(context.from.id, {
+//     type: "report",
+//     step: "message",
+//   });
+
+//   const keyboard = new InlineKeyboard().text(
+//     t("btnCancel"),
+//     "cancel_ticket",
+//   );
+
+//   await context.editText(t("ticketReportPrompt"), {
+//     reply_markup: keyboard,
+//     parse_mode: "HTML",
+//   });
+
+//   await context.answerCallbackQuery();
+// })

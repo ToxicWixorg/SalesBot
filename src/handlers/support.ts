@@ -4,7 +4,7 @@ import { TicketService } from "../services/bot/ticket";
 import { config } from "../config";
 import { i18n } from "../shared/locales/index";
 import { UserRepository } from "../repositories/UserRepository";
-import { supportKeyboard } from "../shared/keyboards";
+import { backToMainKeyboard, supportKeyboard } from "../shared/keyboards";
 import { emojiIds } from "../shared/locales/emojies.ts";
 import { SessionChatRepository } from "../repositories/SessionChatRepository.ts";
 
@@ -25,7 +25,6 @@ export const supportHandler = (bot: AnyBot) => {
     });
   });
 
-
   bot.callbackQuery("my_tickets", async (ctx) => {
     await ctx.answerCallbackQuery();
 
@@ -39,29 +38,11 @@ export const supportHandler = (bot: AnyBot) => {
       if (tickets.length === 0) {
         await ctx.editText(t("ticketListEmpty"), {
           parse_mode: "HTML",
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: t("btnNewSupportTicket"),
-                  callback_data: "new_support_ticket",
-                  parse_mode: "HTML",
-                },
-              ],
-              [
-                {
-                  text: t("btnBack"),
-                  callback_data: "support",
-                  parse_mode: "HTML",
-                },
-              ],
-            ],
-          },
+          reply_markup: backToMainKeyboard(t),
         });
         return;
       }
 
-      // Show ticket list
       let message = `${t("ticketListTitle")}\n\n`;
 
       for (const ticket of tickets.slice(0, 10)) {
@@ -79,20 +60,17 @@ export const supportHandler = (bot: AnyBot) => {
       supportKeyboard;
       const keyboard = new InlineKeyboard();
 
-      // Add buttons for recent tickets
       for (const ticket of tickets.slice(0, 5)) {
         keyboard
           .text(
             `${ticket.ticketNumber} - ${ticket.status}`,
             `view_ticket_${ticket.id}`,
+            {},
           )
           .row();
       }
 
-      keyboard
-        .text(t("btnNewSupportTicket"), "new_support_ticket")
-        .row()
-        .text(t("btnBack"), "support");
+      keyboard.text(t("btnBack"), "main_menu");
 
       await ctx.editText(message, {
         parse_mode: "HTML",
