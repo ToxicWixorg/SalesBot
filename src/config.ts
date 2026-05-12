@@ -17,6 +17,11 @@ export const config = {
     .default("memory")
     .asEnum(["memory", "redis"]),
 
+  ADMIN_PANEL_URL: env
+    .get("ADMIN_PANEL_URL")
+    .default("http://77.223.214.210:8081")
+    .asString(),
+
   // Support Forum Group (Telegram Forum)
   SUPPORT_GROUP_ID: env.get("SUPPORT_GROUP_ID").asString(), // e.g., "-1001234567890"
 

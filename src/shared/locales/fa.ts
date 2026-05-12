@@ -11,6 +11,13 @@ export const fa = {
 
   btnAdminPanel: "پنل ادمین",
 
+  adminpanelText: (userid: number, userRole: string) =>
+    `${e.id} ایدی عددی شما : ${userid}\n` +
+    `${e.user} نقش شما : ${userRole === "super_admin" ? "مالک" : userRole === "admin" ? "ادمین" : "پشتیبان"}\n\n` +
+    `${e.admin} برای تعامل از دکمه های زیر استفاده کنید:`,
+  adminpanelBtnUrl: "ورود به پنل ادمین",
+  adminpanelBtnEmojies: "ایدی ایموجی پرمیوم",
+
   // Greeting & Welcome
   greeting: (name: string) => `سلام <b>${name}</b>! ${e.sparkles}`,
   welcome: (name: string) =>

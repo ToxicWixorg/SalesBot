@@ -8,8 +8,14 @@ export const en = {
   languageSelected: (lang: string) =>
     `${e.checkBold} Language changed to <b>${lang}</b>`,
 
-  btnAdminPanel : "Admin panel",
+  btnAdminPanel: "Admin panel",
 
+  adminpanelText: (userid: number, userRole: string) =>
+    `${e.id} Your userid : ${userid}\n` +
+    `${e.user} Your Role : ${userRole === "super_admin" ? "Owner" : userRole === "admin" ? "Admin" : "Support"}\n\n` +
+    `${e.admin} Use bottons below:`,
+  adminpanelBtnUrl: "Enter admin panel",
+  adminpanelBtnEmojies: "Premium emoji id",
   // Greeting & Welcome
   greeting: (name: string) => `Hello <b>${name}</b>! ${e.sparkles}`,
   welcome: (name: string) =>

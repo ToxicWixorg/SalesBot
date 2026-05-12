@@ -9,6 +9,7 @@ import { languageSelectionScene } from "../scenes/language-selection.ts";
 import { mainMenuKeyboard } from "../shared/keyboards/index.ts";
 import { sendNewUserNotification } from "../services/bot/notifications/newUser.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
+import { config } from "../config.ts";
 
 function generateReferralCode(userId: number): string {
   return `REF${userId}${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
@@ -291,4 +292,19 @@ export const startComposer = new Composer()
       await context.editReplyMarkup(mainMenuKeyboard(t, user.role));
       return context.answerCallbackQuery("⛔ Staff only");
     }
+
+    const keyboard = new InlineKeyboard()
+      .url(t("adminpanelBtnUrl"), config.ADMIN_PANEL_URL, {
+        style: "success",
+        icon_custom_emoji_id: "5258096772776991776",
+      })
+      .row()
+      .text(t("adminpanelBtnEmojies"), "get_custom_emoji", {
+        icon_custom_emoji_id: "6136464120779638846",
+      });
+
+    await context.send(t("adminpanelText", userId, user.role), {
+      parse_mode: "HTML",
+      reply_markup: keyboard,
+    });
   });
