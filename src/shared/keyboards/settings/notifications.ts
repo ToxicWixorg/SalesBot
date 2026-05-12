@@ -16,26 +16,46 @@ export function notificationSettingsKeyboard(
     .text(
       t("btnToggleOrderNotifications", settings.notifyOrders),
       "settings:toggle:orders",
+      {
+        icon_custom_emoji_id: undefined,
+        style: settings.notifyOrders ? "success" : "danger",
+      },
     )
     .row()
     .text(
       t("btnToggleWalletNotifications", settings.notifyWallet),
       "settings:toggle:wallet",
+      {
+        icon_custom_emoji_id: undefined,
+        style: settings.notifyWallet ? "success" : "danger",
+      },
     )
     .row()
     .text(
       t("btnTogglePromotionNotifications", settings.notifyPromotions),
       "settings:toggle:promotions",
+      {
+        icon_custom_emoji_id: undefined,
+        style: settings.notifyPromotions ? "success" : "danger",
+      },
     )
     .row()
     .text(
       t("btnToggleReferralNotifications", settings.notifyReferrals),
       "settings:toggle:referrals",
+      {
+        icon_custom_emoji_id: undefined,
+        style: settings.notifyReferrals ? "success" : "danger",
+      },
     )
     .row()
     .text(
       t("btnToggleStockNotifications", settings.notifyStock),
       "settings:toggle:stock",
+      {
+        icon_custom_emoji_id: undefined,
+        style: settings.notifyStock ? "success" : "danger",
+      },
     )
     .row()
     .text(t("btnBack"), "settings", { icon_custom_emoji_id: emojiIds.back });
