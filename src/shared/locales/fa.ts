@@ -583,7 +583,7 @@ export const fa = {
   selectedRegion: "منطقه انتخاب‌شده",
   orderInfoReviewTitle: `${e.clipboard} <b>بررسی اطلاعات سفارش</b>`,
   orderInfoReviewPrompt: "اطلاعات زیر رو تأیید کن یا ویرایش کن:",
-  btnConfirmInfo: `${e.confirm} تایید و ادامه`,
+  btnConfirmInfo: `تایید و ادامه`,
   paymentSummaryTitle: `${e.wallet} <b>پرداخت سفارش</b>`,
   paymentPrompt: "برای تکمیل خرید، روش پرداخت رو انتخاب کن:",
   paymentOriginalPrice: "قیمت اصلی",
