@@ -26,6 +26,9 @@ async function getEffectiveStock(product: {
 
 export const productsComposer = new Composer()
   .extend(composer)
+  .command("products", async (context) => {
+    return await ProductsCallback(context);
+  })
   .callbackQuery("products", async (context) => {
     return await ProductsCallback(context);
   })

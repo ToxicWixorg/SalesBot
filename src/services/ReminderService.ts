@@ -40,10 +40,8 @@ export function startReminderService(bot: AnyBot) {
     } catch (err) {
       console.error("[ReminderService] Error:", err);
     }
-  }, 60_000); // every minute
+  }, 60_000); // every 60 seconds
 }
-
-// ─── 15-minute reminder (user + admin) ───────────────────────────────────────
 
 async function checkAndSendReminders(bot: AnyBot) {
   const now = new Date();

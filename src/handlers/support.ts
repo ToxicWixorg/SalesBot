@@ -9,9 +9,7 @@ import { emojiIds } from "../shared/locales/emojies.ts";
 import { SessionChatRepository } from "../repositories/SessionChatRepository.ts";
 
 export const supportHandler = (bot: AnyBot) => {
-  /**
-   * Main support menu - from main menu
-   */
+
   bot.callbackQuery("support", async (ctx) => {
     await ctx.answerCallbackQuery();
 

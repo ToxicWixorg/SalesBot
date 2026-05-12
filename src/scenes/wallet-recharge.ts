@@ -592,7 +592,7 @@ async function notifyAdmin(
 
   const t = i18n.buildT("en");
   let msg = t(
-    "adminConfirmRechargeMsg",
+    "adminConfirmrechargeMsg",
     userLabel,
     opts,
     formatNum,

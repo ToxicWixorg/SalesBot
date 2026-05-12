@@ -13,8 +13,9 @@ export async function MyOrderCallback(context: Context) {
 
   if (!user) {
     return context.answerCallbackQuery({
-      text: t("userNotFound"),
-    });
+          text: t("userNotFound"),
+        })
+      : null;
   }
 
   try {

@@ -4,6 +4,20 @@ import { seedOwnerOnStartup } from "./scripts/seed-owner.ts";
 import { seedCategoriesOnStartup } from "./scripts/seed-categories.ts";
 import { startReminderService } from "./services/ReminderService.ts";
 
+async function setBotCommandsOnStartup() {
+  try {
+    await (bot.api as any).setMyCommands({
+      commands: [
+        { command: "start", description: "شروع / start " },
+        { command: "products", description: "محصولات / products" },
+      ],
+    });
+    console.log("✅ Bot commands set successfully");
+  } catch (error) {
+    console.error("❌ Failed to set bot commands:", error);
+  }
+}
+
 const signals = ["SIGINT", "SIGTERM"];
 
 for (const signal of signals) {
@@ -25,4 +39,5 @@ process.on("unhandledRejection", (error) => {
 await seedOwnerOnStartup();
 
 await bot.start();
+await setBotCommandsOnStartup();
 startReminderService(bot);
