@@ -18,6 +18,7 @@ export function productsListKeyboard(
   }
 
   products.forEach((product) => {
+    console.log("product : ", product);
     const inStock = (product.stock || 0) > 0;
     const opts: { style: "success" | "danger"; icon_custom_emoji_id?: string } =
       {
