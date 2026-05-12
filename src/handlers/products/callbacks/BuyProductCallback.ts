@@ -7,6 +7,7 @@ import {
 } from "../../../repositories/ProductRepository.ts";
 import { productPlansKeyboard } from "../../../shared/keyboards/index.ts";
 import { e } from "../../../shared/locales/emojies.ts";
+import { normalizeCustomEmojiId } from "../../../shared/utils/customEmoji.ts";
 
 export async function BuyProductCallback(
   context: Context,
