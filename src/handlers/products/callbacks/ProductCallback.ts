@@ -3,6 +3,7 @@ import { UserRepository } from "../../../repositories/UserRepository.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import { productDetailsKeyboard } from "../../../shared/keyboards/index.ts";
 import { ProductRepository } from "../../../repositories/ProductRepository.ts";
+import { e } from "../../../shared/locales/emojies.ts";
 
 export async function ProductCallback(
   context: Context,
@@ -28,7 +29,9 @@ export async function ProductCallback(
   const stock = await getEffectiveStock(product);
   const hasStock = stock > 0;
 
-  let message = `<b>${product.name}</b>\n\n`;
+  let message = product.customEmojiId
+    ? `<tg-emoji emoji-id="${product.customEmojiId}">🛍️</tg-emoji>`
+    : e.bag + `<b>${product.name}</b>\n\n`;
   if (product.description) message += `${product.description}\n\n`;
 
   message += `${t("stock")} ${hasStock ? t("available") : t("outOfStock")}\n`;

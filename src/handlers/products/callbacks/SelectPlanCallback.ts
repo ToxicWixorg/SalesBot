@@ -55,8 +55,8 @@ export async function SelectPlanCallback(context: Context) {
     }
 
     enterQuantityState.set(userId, { planId, productId: product.id });
-
-    await context.editText(t("enterQuantityPrompt"), {
+    
+    await context.editText(t("enterQuantityPrompt", available), {
       parse_mode: "HTML",
       reply_markup: enterQuantityKeyboard(t, product.id),
     });

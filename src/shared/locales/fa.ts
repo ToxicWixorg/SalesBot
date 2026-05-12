@@ -710,7 +710,9 @@ export const fa = {
     `🎉 <b>موجودی شارژ شد!</b>\n\n📦 ${data.productName} دوباره موجوده.\n\n🛍 همین الان خرید کن!`,
 
   // ── Inventory order flow ──────────────────────────────────────────────────
-  enterQuantityPrompt: `📦 تعداد موردنظر را وارد کنید:`,
+  enterQuantityPrompt: (available: number) =>
+    `${e.truck} تعداد موجود : ${available}\n` +
+    `${e.trolley} تعداد موردنظر خودتون برای خرید رو به عدد وارد کنید:`,
   enterQuantityHint: `⚠️ فقط عدد وارد کنید`,
   quantityInvalid: `${e.reject} تعداد وارد شده معتبر نیست. لطفاً یک عدد مثبت وارد کنید.`,
   quantityExceedsStock: (data: { stock: number }) =>

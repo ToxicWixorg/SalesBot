@@ -710,7 +710,9 @@ export const en = {
     `🎉 <b>Back in stock!</b>\n\n📦 ${data.productName} is available again.\n\n🛍 Buy it now!`,
 
   // ── Inventory order flow ──────────────────────────────────────────────────
-  enterQuantityPrompt: `📦 Enter desired quantity:`,
+  enterQuantityPrompt: (available: number) =>
+    `${e.truck} Stock : ${available}\n` +
+    `${e.trolley}  Enter desired quantity:`,
   enterQuantityHint: `⚠️ Enter numbers only`,
   quantityInvalid: `${e.reject} Invalid quantity entered. Please enter a positive number.`,
   quantityExceedsStock: (data: { stock: number }) =>

@@ -11,7 +11,10 @@ export function productDetailsKeyboard(
   const keyboard = new InlineKeyboard();
 
   if (hasStock) {
-    keyboard.text(t("btnBuyProduct"), `buy_product_${product.id}`);
+    keyboard.text(t("btnBuyProduct"), `buy_product_${product.id}`, {
+      icon_custom_emoji_id: emojiIds.trolley,
+      style: "success",
+    });
     keyboard.row();
   }
 

@@ -6,6 +6,7 @@ import {
   ProductRepository,
 } from "../../../repositories/ProductRepository.ts";
 import { productPlansKeyboard } from "../../../shared/keyboards/index.ts";
+import { e } from "../../../shared/locales/emojies.ts";
 
 export async function BuyProductCallback(
   context: Context,
@@ -46,8 +47,13 @@ export async function BuyProductCallback(
     return;
   }
 
-  await context.editText(`<b>${product.name}</b>\n\n${t("selectPlan")}`, {
-    parse_mode: "HTML",
-    reply_markup: productPlansKeyboard(t, plans, productId),
-  });
+  await context.editText(
+    product.customEmojiId
+      ? `<tg-emoji emoji-id="${product.customEmojiId}">🛍️</tg-emoji>`
+      : e.bag + `<b>${product.name}</b>\n\n${t("selectPlan")}`,
+    {
+      parse_mode: "HTML",
+      reply_markup: productPlansKeyboard(t, plans, productId),
+    },
+  );
 }

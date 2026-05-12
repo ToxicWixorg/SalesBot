@@ -654,7 +654,9 @@ export const ru = {
   stockRestocked: (data: { productName: string }) =>
     `🎉 <b>Товар снова в наличии!</b>\n\n📦 ${data.productName} снова доступен.\n\n🛍 Покупайте прямо сейчас!`,
 
-  enterQuantityPrompt: `📦 Введите нужное количество:`,
+  enterQuantityPrompt: (available: number) =>
+    `${e.truck} Stock : ${available}\n` +
+    `${e.trolley}  Введите нужное количество:`,
   enterQuantityHint: `⚠️ Вводите только число`,
   quantityInvalid: `${e.reject} Некорректное количество. Введите положительное число.`,
   quantityExceedsStock: (data: { stock: number }) =>
