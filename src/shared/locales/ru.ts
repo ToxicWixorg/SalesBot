@@ -197,7 +197,7 @@ export const ru = {
   btnSkipDiscount: `Продолжить без промокода`,
   btnRemoveDiscount: `Удалить скидку`,
   btnIJoined: `Я вступил — Проверить`,
-  btnConfirmInfo: `✅ Подтвердить и продолжить`,
+  btnConfirmInfo: `Подтвердить и продолжить`,
   btnPayWallet: `Оплатить с кошелька`,
   btnPayCard: `Оплата картой`,
   btnPayZarinpal: `Шлюз Zarinpal`,

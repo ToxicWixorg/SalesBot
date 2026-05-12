@@ -1,6 +1,7 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../shared/locales/index.ts";
 import type { InfoStep, PendingOrderInfo } from "./pendingOrderInfoState.ts";
+import { emojiIds } from "../../shared/locales/emojies.ts";
 
 /** Human-readable Persian label for each info step */
 const stepLabel: Record<InfoStep, string> = {
@@ -40,7 +41,10 @@ export function orderInfoReviewKeyboard(
 ): InlineKeyboard {
   const kb = new InlineKeyboard();
 
-  kb.text(t("btnConfirmInfo"), `confirm_info_${planId}`).row();
+  kb.text(t("btnConfirmInfo"), `confirm_info_${planId}`, {
+    icon_custom_emoji_id: emojiIds.confirm,
+    style: "success",
+  }).row();
 
   for (const step of steps) {
     kb.text(`✏️ ${stepLabel[step]}`, `edit_info_${planId}_${step}`).row();
