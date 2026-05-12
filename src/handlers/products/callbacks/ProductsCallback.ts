@@ -15,18 +15,21 @@ export async function ProductsCallback(context: Context) {
 
   const settings = await getBotSettings();
   if (!settings.shopEnabled) {
-    await context.editText(t("shopDisabled"), { parse_mode: "HTML" });
+    await context.send(t("shopDisabled"), { parse_mode: "HTML" });
+    await context.message.delete();
     return;
   }
 
   const categories = await CategoryRepository.findAll();
   if (categories.length === 0) {
-    await context.editText(t("noProducts"), { parse_mode: "HTML" });
+    await context.send(t("noProducts"), { parse_mode: "HTML" });
+    await context.message.delete();
     return;
   }
 
-  await context.editText(t("selectCategory"), {
+  await context.send(t("selectCategory"), {
     parse_mode: "HTML",
     reply_markup: categoriesKeyboard(t, categories),
   });
+  await context.message.delete();
 }
