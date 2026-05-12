@@ -72,7 +72,7 @@ export function paymentKeyboard(
     kb.text(t("btnPayWallet"), `pay_wallet_${planId}`).row();
   }
 
-  if (opts.settings?.cardEnabled) {
+  if (opts.settings?.cardEnabled && opts.cards.length > 0) {
     kb.text(t("btnPayCard"), `pay_card_${planId}`).row();
   }
 

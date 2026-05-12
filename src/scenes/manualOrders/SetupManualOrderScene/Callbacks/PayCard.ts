@@ -10,12 +10,17 @@ import { pendingOrderInfoState } from "../../../../handlers/products/pendingOrde
 import { pendingPaymentState } from "../../../../handlers/products/pendingPaymentState";
 
 export async function PayCardCallback(ctx: Context) {
-  await ctx.answerCallbackQuery();
   const userId = ctx.from?.id;
   if (!userId) return;
 
   const state = pendingOrderInfoState.get(userId);
-  if (!state || state.phase !== "payment") return;
+  if (!state || state.phase !== "payment") {
+    await ctx.answerCallbackQuery({
+      text: "جلسه پرداخت منقضی شده، لطفاً دوباره سفارش را شروع کنید.",
+      show_alert: true,
+    });
+    return;
+  }
 
   const user = await UserRepository.findById(userId);
   const t = i18n.buildT(user?.languageCode ?? "fa");
@@ -62,4 +67,6 @@ export async function PayCardCallback(ctx: Context) {
       "cancel_manual_order",
     ),
   });
+
+  await ctx.answerCallbackQuery();
 }
