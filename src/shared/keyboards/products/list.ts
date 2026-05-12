@@ -22,9 +22,9 @@ export function productsListKeyboard(
     const opts: { style: "success" | "danger"; icon_custom_emoji_id?: string } =
       {
         style: inStock ? "success" : "danger",
-        ...(product.customEmojiId
-          ? { icon_custom_emoji_id: product.customEmojiId }
-          : {}),
+        icon_custom_emoji_id: product.customEmojiId
+          ? product.customEmojiId
+          : null,
       };
     keyboard.text(product.name, `product_${product.id}`, opts);
     keyboard.row();
