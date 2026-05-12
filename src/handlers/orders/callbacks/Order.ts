@@ -5,6 +5,15 @@ import { ProductRepository } from "../../../repositories/ProductRepository.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import { orderDetailsKeyboard } from "../../../shared/keyboards/index.ts";
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function OrderCallback(
   context: Context,
   getOrderStatusInfo: any,
@@ -72,22 +81,76 @@ export async function OrderCallback(
       message += `\n━━━━━━━━━━━━━━━━\n`;
       message += `${t("orderDeliveryInfo")}\n\n`;
 
-      const delivery = order.delivery as any;
+      const delivery = order.delivery as Record<string, unknown>;
+      let hasDeliveryData = false;
 
-      if (delivery.code) {
-        message += `${t("orderDeliveryCode")}: \`${delivery.code}\`\n`;
+      const addLine = (label: string, rawValue: string, asCode = false) => {
+        const value = rawValue.trim();
+        if (!value) return;
+        hasDeliveryData = true;
+        message += asCode
+          ? `${label}: <code>${escapeHtml(value)}</code>\n`
+          : `${label}: ${escapeHtml(value)}\n`;
+      };
+
+      const items = Array.isArray(delivery.items)
+        ? delivery.items
+            .map((v) => String(v ?? "").trim())
+            .filter((v) => v.length > 0)
+        : [];
+
+      if (items.length > 0) {
+        hasDeliveryData = true;
+        message += `• آیتم‌ها:\n`;
+        for (const [idx, item] of items.entries()) {
+          message += `${idx + 1}. <code>${escapeHtml(item)}</code>\n`;
+        }
       }
 
-      if (delivery.email) {
-        message += `${t("orderDeliveryEmail")}: ${delivery.email}\n`;
+      if (typeof delivery.code === "string") {
+        addLine(t("orderDeliveryCode"), delivery.code, true);
+      }
+      if (typeof delivery.email === "string") {
+        addLine(t("orderDeliveryEmail"), delivery.email);
+      }
+      if (typeof delivery.link === "string") {
+        addLine(t("orderDeliveryLink"), delivery.link);
+      }
+      if (typeof delivery.instructions === "string") {
+        const instructions = delivery.instructions.trim();
+        if (instructions) {
+          hasDeliveryData = true;
+          message += `\n${t("orderDeliveryInstructions")}:\n${escapeHtml(instructions)}\n`;
+        }
       }
 
-      if (delivery.link) {
-        message += `${t("orderDeliveryLink")}: ${delivery.link}\n`;
+      for (const [key, raw] of Object.entries(delivery)) {
+        if (["items", "code", "email", "link", "instructions"].includes(key)) {
+          continue;
+        }
+
+        if (raw === null || raw === undefined) continue;
+
+        if (Array.isArray(raw)) {
+          const values = raw
+            .map((v) => String(v ?? "").trim())
+            .filter((v) => v.length > 0);
+          if (values.length > 0) {
+            addLine(key, values.join(" | "));
+          }
+          continue;
+        }
+
+        if (typeof raw === "object") {
+          addLine(key, JSON.stringify(raw));
+          continue;
+        }
+
+        addLine(key, String(raw));
       }
 
-      if (delivery.instructions) {
-        message += `\n${t("orderDeliveryInstructions")}:\n${delivery.instructions}\n`;
+      if (!hasDeliveryData) {
+        message += `اطلاعات تحویل ثبت نشده است.\n`;
       }
     }
 

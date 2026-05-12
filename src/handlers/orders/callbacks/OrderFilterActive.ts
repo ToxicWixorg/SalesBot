@@ -22,6 +22,7 @@ export async function OrderFilterActiveCallback(
     const orders = await OrderRepository.findByUserId(userId);
     const activeOrders = orders.filter((o) =>
       [
+        "pending_payment",
         "paid",
         "pending_admin",
         "waiting_schedule",

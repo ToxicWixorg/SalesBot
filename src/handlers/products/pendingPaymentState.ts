@@ -7,6 +7,10 @@
 export type PendingPaymentInfo = {
   planId: number;
   finalPrice: number;
+  /** User is in card-to-card flow and must send receipt photo */
+  awaitingCardReceipt?: boolean;
+  /** Telegram file id of uploaded card receipt photo */
+  cardReceiptFileId?: string;
   /** ZarinPal authority token — set when a ZarinPal payment URL was generated */
   zarinpalAuthority?: string;
   /** Direct ZarinPal payment URL shown to the user */

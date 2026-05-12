@@ -38,6 +38,7 @@ export async function MyOrderCallback(context: Context) {
 
     const activeOrders = orders.filter((o) =>
       [
+        "pending_payment",
         "paid",
         "pending_admin",
         "waiting_schedule",

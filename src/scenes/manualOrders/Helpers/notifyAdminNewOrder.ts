@@ -5,6 +5,7 @@ import {
 } from "../../../handlers/products/pendingOrderInfoState";
 import { AnyBot } from "gramio";
 import { i18n } from "../../../shared/locales";
+import { config, TICKET_TOPICS } from "../../../config";
 
 export async function notifyAdminNewOrder(
   bot: AnyBot,
@@ -21,6 +22,7 @@ export async function notifyAdminNewOrder(
     deliveryType: string;
     paymentMethod?: string;
     scheduledSlot?: string;
+    paymentReceiptFileId?: string;
   },
 ) {
   const t = i18n.buildT("fa");
@@ -51,7 +53,7 @@ export async function notifyAdminNewOrder(
 
   try {
     const ticketService = new TicketService(bot.api);
-    await ticketService.createTicket({
+    const ticket = await ticketService.createTicket({
       userId: data.userId,
       type: "order",
       title: `Order #${data.orderId} — ${data.productName} (${data.planName})`,
@@ -59,6 +61,27 @@ export async function notifyAdminNewOrder(
       orderId: data.orderId,
       priority: "high",
     });
+
+    if (
+      data.paymentMethod === "card" &&
+      data.paymentReceiptFileId &&
+      config.SUPPORT_GROUP_ID
+    ) {
+      const receiptCaption =
+        `🧾 <b>Order Card Receipt</b>\n` +
+        `🎫 <b>Ticket:</b> <code>${ticket.ticketNumber}</code>\n` +
+        `🆔 <b>Order:</b> #${data.orderId}\n` +
+        `👤 <b>User:</b> ${userLabel} (<code>${data.userId}</code>)\n` +
+        `💰 <b>Amount:</b> ${data.finalPrice.toLocaleString()} Toman`;
+
+      await (bot.api as any).sendPhoto({
+        chat_id: Number(config.SUPPORT_GROUP_ID),
+        message_thread_id: TICKET_TOPICS.order,
+        photo: data.paymentReceiptFileId,
+        caption: receiptCaption,
+        parse_mode: "HTML",
+      });
+    }
   } catch (err) {
     console.error("[MANUAL-ORDER] Failed to create order ticket:", err);
   }

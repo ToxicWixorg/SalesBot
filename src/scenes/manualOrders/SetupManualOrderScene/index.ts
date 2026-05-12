@@ -1,4 +1,4 @@
-import { AnyBot } from "gramio";
+import { AnyBot, InlineKeyboard } from "gramio";
 import { i18n } from "../../../shared/locales";
 import {
   buildOrderInfoReviewText,
@@ -12,6 +12,7 @@ import {
   PendingOrderInfo,
   pendingOrderInfoState,
 } from "../../../handlers/products/pendingOrderInfoState";
+import { pendingPaymentState } from "../../../handlers/products/pendingPaymentState";
 import {
   OrderRepository,
   ProductPlanRepository,
@@ -34,6 +35,7 @@ import { showSlotPicker } from "../Helpers/showSlotPicker";
 import { finishManualOrderWithSlot } from "../Helpers/finishManualOrderWithSlot";
 import { notifyAdminNewOrder } from "../Helpers/notifyAdminNewOrder";
 import { ScheduleRepository } from "../../../repositories/ScheduleRepository";
+import { emojiIds } from "../../../shared/locales/emojies";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: create an unpaid order (card / crypto / zarinpal flow)
@@ -117,10 +119,72 @@ export function setupManualOrderScene(bot: AnyBot) {
   /** Intercept every incoming text message to collect pending info */
   bot.on("message", async (ctx, next) => {
     const userId = ctx.from?.id;
-    if (!userId || !ctx.text) return next?.();
+    if (!userId) return next?.();
 
     const state = pendingOrderInfoState.get(userId);
     if (!state) return next?.();
+
+    const paymentState = pendingPaymentState.get(userId);
+
+    // ── Card payment receipt flow (fixed order amount) ───────────────────
+    if (state.phase === "payment" && paymentState?.awaitingCardReceipt) {
+      const user = await UserRepository.findById(userId);
+      const t = i18n.buildT(user?.languageCode ?? "fa");
+      const photo = (ctx as any).update?.message?.photo as
+        | { file_id: string }[]
+        | undefined;
+
+      if (!photo || photo.length === 0) {
+        await ctx.reply(t("rechargeCardExpectPhoto" as any), {
+          parse_mode: "HTML",
+        });
+        return;
+      }
+
+      const receiptFileId = photo[photo.length - 1].file_id;
+
+      const result = await createPendingPaymentOrder(userId, state, "card");
+      if (!result) {
+        await ctx.reply(t("errorFetchingOrderDetails"), {
+          parse_mode: "HTML",
+        });
+        return;
+      }
+
+      pendingOrderInfoState.delete(userId);
+      pendingPaymentState.delete(userId);
+
+      await notifyAdminNewOrder(bot, {
+        orderId: result.orderId,
+        userId,
+        username: user?.username ?? null,
+        firstName: user?.firstName ?? null,
+        productName: result.productName,
+        planName: result.planName,
+        finalPrice: result.finalPrice,
+        collected: state.collected,
+        steps: state.steps,
+        deliveryType: "manual",
+        paymentMethod: "card",
+        paymentReceiptFileId: receiptFileId,
+      });
+
+      await ctx.reply(t("payCardPending" as any, result.orderId as any), {
+        parse_mode: "HTML",
+        reply_markup: new InlineKeyboard()
+          .text(t("btnMyOrders"), "orders", {
+            icon_custom_emoji_id: emojiIds.bag,
+          })
+          .row()
+          .text(t("btnBackToMenu"), "categories", {
+            icon_custom_emoji_id: emojiIds.home,
+          }),
+      });
+
+      return;
+    }
+
+    if (!ctx.text) return next?.();
 
     // Ignore text during non-input phases
     if (

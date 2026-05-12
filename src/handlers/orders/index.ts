@@ -1,6 +1,7 @@
 import { Composer } from "gramio";
 import { composer } from "../../plugins/index.ts";
 import { MyOrderCallback } from "./callbacks/MyOrders.ts";
+import { OrderFilterActiveCallback } from "./callbacks/OrderFilterActive.ts";
 import { OrderFilterAllCallback } from "./callbacks/OrderFilterAll.ts";
 import { OrderFilterCompletedCallback } from "./callbacks/OrderFilterCompleted.ts";
 import { OrderCallback } from "./callbacks/Order.ts";
@@ -91,7 +92,7 @@ export const ordersComposer = new Composer()
     return await MyOrderCallback(context);
   })
   .callbackQuery("orders_filter_active", async (context) => {
-    return await OrderFilterAllCallback(
+    return await OrderFilterActiveCallback(
       context,
       getOrderStatusInfo,
       formatDate,

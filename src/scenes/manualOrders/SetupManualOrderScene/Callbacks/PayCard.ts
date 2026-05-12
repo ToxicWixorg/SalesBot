@@ -47,17 +47,19 @@ export async function PayCardCallback(ctx: Context) {
     msg += `🏦 ${card.bankName ?? ""} — ${card.holderName}\n`;
     msg += `<code>${card.cardNumber}</code>\n\n`;
   }
-  // Prompt user to confirm after transferring
-  const cardNoteKey = "payCardConfirmNote" as any;
-  msg += t(cardNoteKey);
+  msg += `📸 ${t("rechargeCardSendReceipt" as any)}`;
 
-  pendingPaymentState.set(userId, { planId: state.planId, finalPrice });
+  pendingPaymentState.set(userId, {
+    planId: state.planId,
+    finalPrice,
+    awaitingCardReceipt: true,
+  });
 
   await ctx.editText(msg, {
     parse_mode: "HTML",
-    reply_markup: new InlineKeyboard()
-      .text(t("btnConfirmCardPayment" as any), `confirm_card_${state.planId}`)
-      .row()
-      .text(t("btnCancelManualOrder"), "cancel_manual_order"),
+    reply_markup: new InlineKeyboard().text(
+      t("btnCancelManualOrder"),
+      "cancel_manual_order",
+    ),
   });
 }
