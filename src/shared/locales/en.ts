@@ -8,6 +8,8 @@ export const en = {
   languageSelected: (lang: string) =>
     `${e.checkBold} Language changed to <b>${lang}</b>`,
 
+  btnAdminPanel : "Admin panel",
+
   // Greeting & Welcome
   greeting: (name: string) => `Hello <b>${name}</b>! ${e.sparkles}`,
   welcome: (name: string) =>
@@ -315,9 +317,8 @@ export const en = {
     `${e.robot} <b>Digital Services Sales Bot</b>\n\n` +
     `${e.diamond} Best services, best prices, and fastest delivery.\n\n` +
     `${e.mail} <b>Contact us:</b>\n` +
-    `• Support: @TajEzat\n` +
-    `• Channel: @ZendeBadParsi\n\n` +
-    `${e.tag} Version: 1.0.0`,
+    `• Support: @r4m_m\n` +
+    `${e.tag} Version: 2.3.5`,
 
   ordersTitle: `${e.bag} My Orders`,
   ordersEmpty: `${e.bag} You haven't placed any orders yet!\n\nBrowse products and make your first purchase.`,

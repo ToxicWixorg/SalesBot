@@ -11,6 +11,8 @@ export const ru = {
   languageSelected: (lang: string) =>
     `${e.checkBold} Язык изменён на <b>${lang}</b>`,
 
+  btnAdminPanel: "َAdmin panel",
+
   // Greeting & Welcome
   greeting: (name: string) => `Привет, <b>${name}</b>! ${e.sparkles}`,
   welcome: (name: string) =>
@@ -378,9 +380,8 @@ export const ru = {
     `${e.robot} <b>Бот продажи цифровых сервисов</b>\n\n` +
     `${e.diamond} Лучшие сервисы, лучшие цены и быстрая доставка.\n\n` +
     `${e.mail} <b>Связь с нами:</b>\n` +
-    `• Поддержка: @TajEzat\n` +
-    `• Канал: @ZendeBadParsi\n\n` +
-    `${e.tag} Версия: 1.0.0`,
+    `• Поддержка: @r4m_m\n` +
+    `${e.tag} Версия: 2.3.5`,
 
   ordersActiveTitle: `${e.active} Активные заказы`,
   ordersCompletedTitle: `${e.complete} Завершённые заказы`,

@@ -143,7 +143,6 @@ export const startComposer = new Composer()
     const t = i18n.buildT(user.languageCode);
     const userName = firstName || username || "User";
 
-    // Check required channel/group membership before showing main menu
     const requiredChannels = await ForceJoinRepository.getActiveChannels();
     if (requiredChannels.length > 0) {
       const unjoined = await getUnjoinedChannels(
@@ -159,15 +158,15 @@ export const startComposer = new Composer()
       }
     }
 
-    await context.send(
-      `<tg-emoji emoji-id="5314310000531766389">©️</tg-emoji> This is a demo , so if you see any bugs or have suggestions, please let us know!`,
-      {
-        parse_mode: "HTML",
-      },
-    );
+    // await context.send(
+    //   `<tg-emoji emoji-id="5314310000531766389">©️</tg-emoji> This is a demo , so if you see any bugs or have suggestions, please let us know!`,
+    //   {
+    //     parse_mode: "HTML",
+    //   },
+    // );
 
     return context.send(t("main_menu", userName), {
-      reply_markup: mainMenuKeyboard(t),
+      reply_markup: mainMenuKeyboard(t, user.role),
       parse_mode: "HTML",
     });
   })
@@ -274,4 +273,22 @@ export const startComposer = new Composer()
     }
 
     await context.answerCallbackQuery();
+  })
+  .callbackQuery("admin_panel", async (context) => {
+    if (!context.from) {
+      return context.answerCallbackQuery("❌ Unable to identify user.");
+    }
+
+    const userId = context.from.id;
+
+    let user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user.languageCode || "en");
+    if (!user) {
+      return context.answerCallbackQuery("❌ Unable to identify user.");
+    }
+
+    if (user.role === "customer") {
+      await context.editReplyMarkup(mainMenuKeyboard(t, user.role));
+      return context.answerCallbackQuery("⛔ Staff only");
+    }
   });

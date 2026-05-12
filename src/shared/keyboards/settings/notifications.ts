@@ -17,7 +17,7 @@ export function notificationSettingsKeyboard(
       t("btnToggleOrderNotifications", settings.notifyOrders),
       "settings:toggle:orders",
       {
-        icon_custom_emoji_id: undefined,
+        icon_custom_emoji_id: emojiIds.bag,
         style: settings.notifyOrders ? "success" : "danger",
       },
     )
@@ -26,7 +26,7 @@ export function notificationSettingsKeyboard(
       t("btnToggleWalletNotifications", settings.notifyWallet),
       "settings:toggle:wallet",
       {
-        icon_custom_emoji_id: undefined,
+        icon_custom_emoji_id: emojiIds.wallet,
         style: settings.notifyWallet ? "success" : "danger",
       },
     )
@@ -35,7 +35,7 @@ export function notificationSettingsKeyboard(
       t("btnTogglePromotionNotifications", settings.notifyPromotions),
       "settings:toggle:promotions",
       {
-        icon_custom_emoji_id: undefined,
+        icon_custom_emoji_id: emojiIds.shield,
         style: settings.notifyPromotions ? "success" : "danger",
       },
     )
@@ -44,7 +44,7 @@ export function notificationSettingsKeyboard(
       t("btnToggleReferralNotifications", settings.notifyReferrals),
       "settings:toggle:referrals",
       {
-        icon_custom_emoji_id: undefined,
+        icon_custom_emoji_id: emojiIds.user,
         style: settings.notifyReferrals ? "success" : "danger",
       },
     )
@@ -53,7 +53,7 @@ export function notificationSettingsKeyboard(
       t("btnToggleStockNotifications", settings.notifyStock),
       "settings:toggle:stock",
       {
-        icon_custom_emoji_id: undefined,
+        icon_custom_emoji_id: emojiIds.tag,
         style: settings.notifyStock ? "success" : "danger",
       },
     )

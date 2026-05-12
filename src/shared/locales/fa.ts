@@ -9,6 +9,8 @@ export const fa = {
   languageSelected: (lang: string) =>
     `${e.checkBold} زبان به <b>${lang}</b> تغییر یافت`,
 
+  btnAdminPanel: "پنل ادمین",
+
   // Greeting & Welcome
   greeting: (name: string) => `سلام <b>${name}</b>! ${e.sparkles}`,
   welcome: (name: string) =>
@@ -312,10 +314,10 @@ export const fa = {
   aboutDescription:
     `${e.robot} <b>ربات فروش سرویس‌های دیجیتال</b>\n\n` +
     `${e.diamond} بهترین سرویس‌ها با بهترین قیمت و سریع‌ترین تحویل.\n\n` +
+    `${e.bag} کیفیت تضمین شده ${e.confirm}.\n\n` +
     `${e.mail} <b>ارتباط با ما:</b>\n` +
-    `• پشتیبانی: @TajEzat\n` +
-    `• کانال: @ZendeBadParsi\n\n` +
-    `${e.tag} نسخه: 1.0.0`,
+    `• پشتیبانی: @r4m_m\n` +
+    `${e.tag} نسخه: 2.3.5`,
 
   ordersTitle: `${e.bag} سفارشات من`,
   ordersEmpty: `${e.bag} هنوز سفارشی ثبت نکردی!\n\nبرو سراغ محصولات و اولین خریدت رو بزن.`,
