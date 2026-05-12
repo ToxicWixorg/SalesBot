@@ -9,7 +9,7 @@ export function supportKeyboard(t: TFunction) {
     })
     .row()
     .text(t("btnNewReportTicket"), "new_report_ticket", {
-      icon_custom_emoji_id: emojiIds.warn,
+      icon_custom_emoji_id: emojiIds.warning,
     })
     .row()
     .text(t("btnMyTickets"), "my_tickets", {

@@ -11,7 +11,7 @@ export function categoriesKeyboard(
 
   categories.reverse().forEach((category, index) => {
     if (category.isActive === false) return;
-    const icon = category.icon || "📦";
+    const icon = category.icon || "";
     const opts = category.customEmojiId
       ? { icon_custom_emoji_id: category.customEmojiId }
       : undefined;

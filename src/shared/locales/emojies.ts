@@ -54,6 +54,7 @@ export const emojiIds = {
   key: "5330115548900501467",
   rocket: "5283080528818360566",
   fire: "5303040337059543238",
+  send: "5332423642850536254",
 } as const;
 
 export const e = {

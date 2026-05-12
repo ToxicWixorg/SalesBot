@@ -25,9 +25,7 @@ export const supportHandler = (bot: AnyBot) => {
     });
   });
 
-  /**
-   * View my tickets
-   */
+
   bot.callbackQuery("my_tickets", async (ctx) => {
     await ctx.answerCallbackQuery();
 
