@@ -36,9 +36,19 @@ export const supportHandler = (bot: AnyBot) => {
       const tickets = await TicketRepository.getUserTickets(ctx.from.id);
 
       if (tickets.length === 0) {
+        const keyboard = new InlineKeyboard()
+          .url(t("btnReportBug"), "https://t.me/TajEzat", {
+            icon_custom_emoji_id: "5258023599419171861",
+            style: "primary",
+          })
+          .row()
+          .text(t("btnBack"), "main_menu", {
+            icon_custom_emoji_id: emojiIds.back,
+          });
+
         await ctx.editText(t("ticketListEmpty"), {
           parse_mode: "HTML",
-          reply_markup: backToMainKeyboard(t),
+          reply_markup: keyboard,
         });
         return;
       }
@@ -57,7 +67,6 @@ export const supportHandler = (bot: AnyBot) => {
       if (tickets.length > 10) {
         message += `\n<i>${t("ticketListShowingFirst10")}</i>`;
       }
-      supportKeyboard;
       const keyboard = new InlineKeyboard();
 
       for (const ticket of tickets.slice(0, 5)) {
@@ -70,7 +79,13 @@ export const supportHandler = (bot: AnyBot) => {
           .row();
       }
 
-      keyboard.text(t("btnBack"), "main_menu");
+      keyboard
+        .url(t("btnReportBug"), "https://t.me/TajEzat", {
+          icon_custom_emoji_id: "5258023599419171861",
+          style: "primary",
+        })
+        .row()
+        .text(t("btnBack"), "main_menu");
 
       await ctx.editText(message, {
         parse_mode: "HTML",

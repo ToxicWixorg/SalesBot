@@ -11,6 +11,8 @@ export const fa = {
 
   btnAdminPanel: "پنل ادمین",
 
+  btnReportBug: "گزارش مشکل ربات",
+
   adminpanelText: (userid: number, userRole: string) =>
     `${e.id} ایدی عددی شما : <code>${userid}</code>\n` +
     `${e.user} نقش شما : <b>${userRole === "super_admin" ? "مالک" : userRole === "admin" ? "ادمین" : "پشتیبان"}</b>\n\n` +
@@ -448,7 +450,7 @@ export const fa = {
 
   // Ticket List
   ticketListTitle: `${e.clipboard} <b>تیکت‌های تو</b>`,
-  ticketListEmpty: `${e.chat} هنوز هیچ تیکتی نداری — نگرانی؟ تیکت باز کن!`,
+  ticketListEmpty: `${e.chat} هنوز هیچ تیکتی نداری — نگرانی؟ تیکت باز کن!\nبرای تیکت زدن به بخش <b>سفارشات من</b> برو و برای سفارشت مورد نظرت تیکت به پشتیبانی بزن`,
   ticketListShowingFirst10: "نمایش ۱۰ تیکت اول",
   ticketListError: `❌ بارگذاری تیکت‌ها با خطا مواجه شد. دوباره تلاش کن.`,
 

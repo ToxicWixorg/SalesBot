@@ -10,6 +10,8 @@ export const en = {
 
   btnAdminPanel: "Admin panel",
 
+  btnReportBug: "Report a bot issue",
+
   adminpanelText: (userid: number, userRole: string) =>
     `${e.id} Your userid : <code>${userid}</code>\n` +
     `${e.user} Your Role : <b>${userRole === "super_admin" ? "Owner" : userRole === "admin" ? "Admin" : "Support"}</b>\n\n` +
