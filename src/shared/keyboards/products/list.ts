@@ -23,8 +23,8 @@ export function productsListKeyboard(
       {
         style: inStock ? "success" : "danger",
         icon_custom_emoji_id: product.customEmojiId
-          ? product.customEmojiId
-          : null,
+          ? `${product.customEmojiId}`
+          : undefined,
       };
     keyboard.text(product.name, `product_${product.id}`, opts);
     keyboard.row();
