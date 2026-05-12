@@ -57,7 +57,11 @@ export const fa = {
   btnAddDiscountCode: ` افزودن کد تخفیف`,
   productsTitle: `${e.bag} محصولات`,
   selectCategory: `${e.tag} یه دسته‌بندی انتخاب کن:`,
-  categoryProducts: (category: string) => `محصولات <b>${category}</b>:`,
+  categoryProducts: (category: string, emoji: string) =>
+    emoji === ""
+      ? e.bag
+      : `<tg-emoji emoji-id="${emoji}">🛍️</tg-emoji> ` +
+        `محصولات <b>${category}</b>:`,
   noProducts: `${e.reject} محصولی در این دسته موجود نیست.`,
   productDetails: `${e.bag} جزئیات محصول`,
   price: `${e.wallet} قیمت:`,

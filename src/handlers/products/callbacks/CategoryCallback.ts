@@ -29,8 +29,12 @@ export async function CategoryCallback(context: Context) {
 
   const message =
     products.length === 0
-      ? `${t("categoryProducts", category.name)}\n\n${t("noProducts")}`
-      : t("categoryProducts", category.name);
+      ? `${t("categoryProducts", category.name, category.customEmojiId ? category.customEmojiId : null)}\n\n${t("noProducts")}`
+      : t(
+          "categoryProducts",
+          category.name,
+          category.customEmojiId ? category.customEmojiId : null,
+        );
 
   await context.editText(message, {
     parse_mode: "HTML",

@@ -58,8 +58,11 @@ export const ru = {
   btnAddDiscountCode: ` Добавить промокод`,
   productsTitle: `${e.bag} Товары`,
   selectCategory: `${e.tag} Выберите категорию:`,
-  categoryProducts: (category: string) =>
-    `Товары в категории <b>${category}</b>:`,
+  categoryProducts: (category: string, emoji: string) =>
+    emoji === ""
+      ? e.bag
+      : `<tg-emoji emoji-id="${emoji}">🛍️</tg-emoji> ` +
+        `Товары в категории <b>${category}</b>:`,
   noProducts: `${e.reject} В этой категории нет товаров.`,
   productDetails: `${e.bag} Детали товара`,
   price: `${e.wallet} Цена:`,
