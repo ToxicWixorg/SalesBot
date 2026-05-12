@@ -133,7 +133,7 @@ export const en = {
   rechargeZarinpalTitle: `${e.wallet} Zarinpal Gateway`,
   rechargePaymentLink: (amount: string) =>
     `Amount: <b>${amount}</b> Toman\n\nClick the button below to continue to the payment gateway:`,
-  btnPayNow: `💳 Pay`,
+  btnPayNow: `Pay`,
   rechargePaymentPending: `${e.time} Waiting for payment...\n\nPlease complete the payment in your browser.`,
   rechargePaymentSuccess: (amount: string) =>
     `${e.party} <b>Payment successful!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
@@ -163,7 +163,7 @@ export const en = {
 
   // ── کلیدهای جدید شارژ کیف پول ──────────────────────────
   rechargeAmount: (amount: string) =>
-    `💰 Amount: <b>${amount}</b> Toman ` + e.Toman,
+    `${e.wallet} Amount: <b>${amount}</b> Toman ` + e.Toman,
   rechargeMethodSelectTitle: (amount: string) =>
     `${e.wallet} Amount <b>${amount}</b> Toman ${e.Toman}\n\nSelect a payment method:`,
   rechargeCardNumbers: `Card Numbers`,
@@ -253,11 +253,11 @@ export const en = {
   orderId: "Order ID",
 
   // Settings
-  userNotFound: `❌ User not found`,
+  userNotFound: `${e.failed}User not found`,
   userIdentificationError: `${e.reject} Error identifying user`,
   settingsTitle: `${e.settings} Settings`,
   settingsDescription: `${e.info} Manage your account from here.`,
-  btnAccountInfo: `👤 Account Info`,
+  btnAccountInfo: `Account Info`,
   btnNotificationSettings: `Notification Settings`,
   btnPrivacy: ` Privacy`,
   btnAbout: `ℹ About Us`,
@@ -352,7 +352,7 @@ export const en = {
 
   // Order Details
   orderDetailsTitle: `${e.clipboard} Order Details`,
-  orderNumber: "🆔 Order Number",
+  orderNumber: `${e.id} Order Number`,
   orderProduct: e.bag + " Product",
   orderStatus: "Status",
   orderTotalPrice: e.wallet + " Original Price",
@@ -397,10 +397,10 @@ export const en = {
     productName: string;
     remainingBalance: string;
   }) =>
-    `✅ <b>Renewal completed successfully!</b>\n\n` +
-    `📦 ${data.productName}\n` +
-    `🎫 Order number: #${data.orderId}\n\n` +
-    `👛 Remaining balance: ${data.remainingBalance} Toman`,
+    `${e.confirm} <b>Renewal completed successfully!</b>\n\n` +
+    `${e.bag} ${data.productName}\n` +
+    `${e.ticket} Order number: #${data.orderId}\n\n` +
+    `${e.wallet} Remaining balance: ${data.remainingBalance} Toman`,
   errorOpeningTicket: `${e.reject} Error opening ticket`,
   errorReportingProblem: `${e.reject} Error reporting problem`,
 
@@ -493,7 +493,7 @@ export const en = {
 
   // Purchase / Order Completion
   insufficientBalance: (data: { required: string; current: string }) =>
-    `😥 Insufficient balance\n\nRequired: ${data.required} Toman\nYour balance: ${data.current} Toman\n\nTop up your wallet and try again.`,
+    `${e.failed} Insufficient balance\n\nRequired: ${data.required} Toman\nYour balance: ${data.current} Toman\n\nTop up your wallet and try again.`,
   noConfigAvailable: `${e.reject} VPN config is not currently available for this plan. Please contact support.`,
   orderSuccess: (data: {
     orderId: number;
@@ -566,18 +566,18 @@ export const en = {
   manualOrderLoginPasswordPrompt: `${e.lock} <b>Enter account password:</b>`,
   manualOrderRegionPrompt: `${e.earth} <b>Enter preferred region</b> (e.g., US, EU, Asia):`,
   manualOrderNeedsLabel: "Required Information",
-  adminOrderEmail: "📧 Email",
-  adminOrderEmailPassword: "🔑 Email Password",
-  adminOrderUsername: "👤 Username",
-  adminOrderLoginPassword: "🔐 Password",
-  adminOrderRegion: "🌍 Region",
-  adminOrderPayment: "💳 Payment",
-  adminOrderScheduled: "📅 Schedule",
+  adminOrderEmail: e.mail + " Email",
+  adminOrderEmailPassword: e.key + " Email Password",
+  adminOrderUsername: e.user + " Username",
+  adminOrderLoginPassword: e.lock + "🔐 Password",
+  adminOrderRegion: e.earth + " Region",
+  adminOrderPayment: e.card + " Payment",
+  adminOrderScheduled: e.date + " Schedule",
   selectRegion: `${e.earth} <b>Select Region</b>\n\nChoose your preferred region:`,
   selectedRegion: "Selected region",
   orderInfoReviewTitle: `${e.clipboard} <b>Review Order Information</b>`,
   orderInfoReviewPrompt: "Confirm or edit the details below:",
-  btnConfirmInfo: `✅ Confirm and Continue`,
+  btnConfirmInfo: `${e.confirm} Confirm and Continue`,
   paymentSummaryTitle: `${e.wallet} <b>Order Payment</b>`,
   paymentPrompt: "Choose a payment method to complete your order:",
   paymentOriginalPrice: "Original price",
@@ -585,22 +585,22 @@ export const en = {
   paymentFinalPrice: "Final price",
   paymentWalletBalance: "Wallet balance",
   btnPayWallet: `Pay with Wallet`,
-  btnPayCard: `💳 Pay with Card`,
-  btnPayZarinpal: `🟢 Zarinpal Gateway`,
-  btnPayCrypto: `🪙 Pay with USDT (Crypto)`,
+  btnPayCard: `Pay with Card`,
+  btnPayZarinpal: `Zarinpal Gateway`,
+  btnPayCrypto: `Pay with USDT (Crypto)`,
   payCardInstructions: (data: { amount: string }) =>
-    `💳 <b>Card Payment</b>\n\n` +
-    `💰 Amount: <b>${data.amount}</b> Toman\n\n` +
+    `${e.card} <b>Card Payment</b>\n\n` +
+    `${e.wallet} Amount: <b>${data.amount}</b> Toman\n\n` +
     `Copy one of the card numbers below and transfer the amount:`,
-  payCardConfirmNote: `After transferring, click "✅ I Have Paid".`,
-  btnConfirmCardPayment: `✅ I Have Paid`,
+  payCardConfirmNote: `After transferring, click "${e.confirm} I Have Paid".`,
+  btnConfirmCardPayment: `I Have Paid`,
   payCardPending: (data: { orderId: number }) =>
     `${e.checkBold} <b>Order placed!</b>\n\n` +
     `${e.id} Order: #${data.orderId}\n\n` +
     `${e.time} Your order will be processed after admin confirms your payment.\n` +
     `Usually confirmed within <b>1 to 24 hours</b>.`,
-  payCryptoConfirmNote: `After making the transaction, click "✅ I Have Paid".`,
-  btnConfirmCryptoPayment: `✅ I Have Paid`,
+  payCryptoConfirmNote: `After making the transaction, click "${e.confirm} I Have Paid".`,
+  btnConfirmCryptoPayment: `I Have Paid`,
   payCryptoPending: (data: { orderId: number }) =>
     `${e.checkBold} <b>Order placed!</b>\n\n` +
     `${e.id} Order: #${data.orderId}\n\n` +
@@ -686,34 +686,34 @@ export const en = {
 
   // Blocked user
   userBlocked:
-    `⛔ <b>Your access is restricted</b>\n\n` +
+    `${e.failed} <b>Your access is restricted</b>\n\n` +
     `Your account has been blocked by management. If this is a mistake, contact support.`,
   userBlockedWithReason: (reason: string) =>
-    `⛔ <b>Your access is restricted</b>\n\n` +
-    `📝 Reason: ${reason}\n\n` +
+    `${e.failed} <b>Your access is restricted</b>\n\n` +
+    `${e.note} Reason: ${reason}\n\n` +
     `If this is a mistake, contact support.`,
 
   // Maintenance mode
   botMaintenance:
-    `🔧 <b>Bot is temporarily unavailable</b>\n\n` +
+    `${e.fixing} <b>Bot is temporarily unavailable</b>\n\n` +
     `We are under maintenance or updating. We’ll be back soon. Thanks for your patience ༉`,
-  botMaintenanceCustom: (msg: string) => `🔧 ${msg}`,
+  botMaintenanceCustom: (msg: string) => `${e.fixing} ${msg}`,
 
   // Feature disabled messages
-  referralDisabled: `🔒 <b>Referral system is disabled</b>\n\nThe invite-friends program is currently temporarily disabled.`,
-  shopDisabled: `🔒 <b>Shop is disabled</b>\n\nThe shop is currently temporarily disabled. Please try again later.`,
+  referralDisabled: `${e.lock} <b>Referral system is disabled</b>\n\nThe invite-friends program is currently temporarily disabled.`,
+  shopDisabled: `${e.lock} <b>Shop is disabled</b>\n\nThe shop is currently temporarily disabled. Please try again later.`,
 
   // ── Stock notification ──────────────────────────────────────────────────────
-  stockSubscribed: `🔔 Subscribed! We’ll notify you when it’s back in stock.`,
-  stockAlreadySubscribed: `✅ You already subscribed. We’ll notify you once it’s in stock.`,
+  stockSubscribed: `${e.lock} Subscribed! We’ll notify you when it’s back in stock.`,
+  stockAlreadySubscribed: `${e.confirm} You already subscribed. We’ll notify you once it’s in stock.`,
   stockRestocked: (data: { productName: string }) =>
-    `🎉 <b>Back in stock!</b>\n\n📦 ${data.productName} is available again.\n\n🛍 Buy it now!`,
+    `${e.party} <b>Back in stock!</b>\n\n${e.bag} ${data.productName} is available again.\n\n🛍 Buy it now!`,
 
   // ── Inventory order flow ──────────────────────────────────────────────────
   enterQuantityPrompt: (available: number) =>
     `${e.truck} Stock : ${available}\n` +
     `${e.trolley}  Enter desired quantity:`,
-  enterQuantityHint: `⚠️ Enter numbers only`,
+  enterQuantityHint: `${e.warning} Enter numbers only`,
   quantityInvalid: `${e.reject} Invalid quantity entered. Please enter a positive number.`,
   quantityExceedsStock: (data: { stock: number }) =>
     `${e.reject} Not enough stock. Current stock: <b>${data.stock}</b> units`,
@@ -722,7 +722,7 @@ export const en = {
   warrantyDays: (data: { days: number }) =>
     `Warranty: <b>${data.days} days</b>`,
   termsTitle: `Terms and Conditions`,
-  btnChangeQuantity: `✏️ Change Quantity`,
+  btnChangeQuantity: `Change Quantity`,
   inventoryOrderSummary: (data: {
     productName: string;
     qty: number;
@@ -731,10 +731,10 @@ export const en = {
     currency: string;
   }) =>
     `${e.clipboard} <b>Order Summary</b>\n\n` +
-    `📦 Product: <b>${data.productName}</b>\n` +
-    `🔢 Quantity: <b>${data.qty}</b>\n` +
-    `💰 Unit price: <b>${data.unitPrice} ${data.currency}</b>\n` +
-    `💵 Total amount: <b>${data.total} ${data.currency}</b>`,
+    `${e.bag} Product: <b>${data.productName}</b>\n` +
+    `${e.trolley} Quantity: <b>${data.qty}</b>\n` +
+    `${e.wallet} Unit price: <b>${data.unitPrice} ${data.currency}</b>\n` +
+    `${e.card} Total amount: <b>${data.total} ${data.currency}</b>`,
   inventoryOrderSuccess: (data: {
     orderId: number;
     productName: string;
@@ -744,9 +744,9 @@ export const en = {
     currency: string;
   }) =>
     `${e.party} <b>Order placed successfully!</b>\n\n` +
-    `📦 Product: <b>${data.productName}</b>\n` +
-    `🔢 Quantity: <b>${data.qty}</b>\n` +
-    `💵 Paid amount: <b>${data.total} ${data.currency}</b>\n` +
+    `${e.bag} Product: <b>${data.productName}</b>\n` +
+    `${e.trolley} Quantity: <b>${data.qty}</b>\n` +
+    `${e.card} Paid amount: <b>${data.total} ${data.currency}</b>\n` +
     `${e.wallet} Remaining balance: <b>${data.remainingBalance} ${data.currency}</b>\n` +
     `${e.id} Order ID: #${data.orderId}`,
   inventoryDeliveryHeader: (data: { productName: string }) =>
@@ -765,10 +765,10 @@ export const en = {
     formatNum: (num: number) => string,
     methodLabel: string,
   ) =>
-    `💵 <b>Wallet Top-up Request</b>\n\n` +
-    `👤 User: ${userLabel} (<code>${opts.userId}</code>)\n` +
-    `💰 Amount: <b>${formatNum(opts.amount)}</b> Toman\n` +
-    `🔑 Method: ${methodLabel}\n`,
+    `${e.Toman} <b>Wallet Top-up Request</b>\n\n` +
+    `${e.user} User: ${userLabel} (<code>${opts.userId}</code>)\n` +
+    `${e.wallet} Amount: <b>${formatNum(opts.amount)}</b> Toman\n` +
+    `${e.key} Method: ${methodLabel}\n`,
   regionNotFound: "Region not found ❌",
   rechargeCardSaveFailed: e.warning + "Failed to save file",
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

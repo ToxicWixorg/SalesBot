@@ -8,6 +8,7 @@ import {
 import { PaymentRepository } from "../../../repositories/PaymentRepository.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import { renewalPendingState } from "../renewState.ts";
+import { emojiIds } from "../../../shared/locales/emojies.ts";
 
 export async function OrderRenewCallback(context: any) {
   await context.answerCallbackQuery();
@@ -89,13 +90,19 @@ export async function OrderRenewCallback(context: any) {
     const kb = new InlineKeyboard();
 
     if (walletBalance >= finalPrice) {
-      kb.text(t("btnPayWallet"), `renew_wallet_${orderId}`).row();
+      kb.text(t("btnPayWallet"), `renew_wallet_${orderId}`, {
+        icon_custom_emoji_id: emojiIds.usdt,
+      }).row();
     }
     if (settings?.cardEnabled && (cards?.length ?? 0) > 0) {
-      kb.text(t("btnPayCard"), `renew_card_${orderId}`).row();
+      kb.text(t("btnPayCard"), `renew_card_${orderId}`, {
+        icon_custom_emoji_id: emojiIds.card,
+      }).row();
     }
     if (settings?.zarinpalEnabled && settings.zarinpalMerchantId) {
-      kb.text(t("btnPayZarinpal"), `renew_zarinpal_${orderId}`).row();
+      kb.text(t("btnPayZarinpal"), `renew_zarinpal_${orderId}`, {
+        icon_custom_emoji_id: emojiIds.zarinpal,
+      }).row();
     }
     if (
       settings?.nowpaymentsEnabled &&

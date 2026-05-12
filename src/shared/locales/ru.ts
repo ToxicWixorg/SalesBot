@@ -131,7 +131,7 @@ export const ru = {
 
   rechargeCardTitle: `${e.card} Оплата картой`,
   rechargeZarinpalTitle: `${e.wallet} Шлюз Zarinpal`,
-  btnPayNow: `💳 Оплатить`,
+  btnPayNow: `Оплатить`,
   rechargePaymentPending: `${e.time} Ожидание оплаты...\n\nПожалуйста, завершите оплату в браузере.`,
   rechargePaymentSuccess: (amount: string) =>
     `${e.party} <b>Оплата успешна!</b>\n\n${e.diamond} <b>${amount}</b> томан добавлено в ваш кошелёк.`,
@@ -157,7 +157,7 @@ export const ru = {
   // Settings
   settingsTitle: `${e.settings} Настройки`,
   settingsDescription: `${e.info} Управляйте вашим аккаунтом здесь.`,
-  btnAccountInfo: `👤 Информация об аккаунте`,
+  btnAccountInfo: `Информация об аккаунте`,
   btnNotificationSettings: `Настройки уведомлений`,
   btnPrivacy: ` Конфиденциальность`,
   btnAbout: `ℹ О нас`,
@@ -199,11 +199,11 @@ export const ru = {
   btnIJoined: `Я вступил — Проверить`,
   btnConfirmInfo: `✅ Подтвердить и продолжить`,
   btnPayWallet: `Оплатить с кошелька`,
-  btnPayCard: `💳 Оплата картой`,
-  btnPayZarinpal: `🟢 Шлюз Zarinpal`,
-  btnPayCrypto: `🪙 Оплата USDT (крипто)`,
-  btnConfirmCardPayment: `✅ Я оплатил`,
-  btnConfirmCryptoPayment: `✅ Я оплатил`,
+  btnPayCard: `Оплата картой`,
+  btnPayZarinpal: `Шлюз Zarinpal`,
+  btnPayCrypto: `Оплата USDT (крипто)`,
+  btnConfirmCardPayment: `Я оплатил`,
+  btnConfirmCryptoPayment: `Я оплатил`,
   btnCancelManualOrder: `Отменить заказ`,
 
   // Remaining full Russian overrides
@@ -211,7 +211,7 @@ export const ru = {
   txSourcePerk: `${e.target} Бонус Perk`,
 
   rechargeAmount: (amount: string) =>
-    `💰 Сумма: <b>${amount}</b> Toman ` + e.Toman,
+    `${e.wallet} Сумма: <b>${amount}</b> Toman ` + e.Toman,
   rechargeMethodSelectTitle: (amount: string) =>
     `${e.wallet} Сумма <b>${amount}</b> Toman ${e.Toman}\n\nВыберите способ оплаты:`,
   rechargeCardNumbers: `Номера карт`,
@@ -329,7 +329,7 @@ export const ru = {
   }) =>
     `${e.reject} <b>Недостаточно средств</b>\n\nТребуется (после скидки): <b>${data.required}</b> томан\nВаш баланс: <b>${data.current}</b> томан\n\nПополните кошелёк.`,
 
-  userNotFound: `❌ Пользователь не найден`,
+  userNotFound: `${e.failed}Пользователь не найден`,
   userIdentificationError: `${e.reject} Ошибка идентификации пользователя`,
   accountInfoTitle: `${e.user} Информация об аккаунте`,
   accountInfoData: (data: {
@@ -440,10 +440,10 @@ export const ru = {
     productName: string;
     remainingBalance: string;
   }) =>
-    `✅ <b>Продление выполнено успешно!</b>\n\n` +
-    `📦 ${data.productName}\n` +
-    `🎫 Номер заказа: #${data.orderId}\n\n` +
-    `👛 Остаток: ${data.remainingBalance} томан`,
+    `${e.confirm} <b>Продление выполнено успешно!</b>\n\n` +
+    `${e.bag} ${data.productName}\n` +
+    `${e.ticket} Номер заказа: #${data.orderId}\n\n` +
+    `${e.wallet} Остаток: ${data.remainingBalance} томан`,
   errorOpeningTicket: `${e.reject} Ошибка открытия тикета`,
   errorReportingProblem: `${e.reject} Ошибка отправки отчёта о проблеме`,
   btnBackToMain: `Главное меню`,
@@ -493,7 +493,7 @@ export const ru = {
   support: "Поддержка",
 
   insufficientBalance: (data: { required: string; current: string }) =>
-    `😥 Недостаточно средств\n\nТребуется: ${data.required} томан\nВаш баланс: ${data.current} томан\n\nПополните кошелёк и попробуйте снова.`,
+    `${e.failed} Недостаточно средств\n\nТребуется: ${data.required} томан\nВаш баланс: ${data.current} томан\n\nПополните кошелёк и попробуйте снова.`,
   noConfigAvailable: `${e.reject} Для этого тарифа сейчас нет доступной VPN-конфигурации. Обратитесь в поддержку.`,
   orderSuccess: (data: {
     orderId: number;
@@ -635,29 +635,29 @@ export const ru = {
     `${e.sparkles} Готовы? Поехали!`,
 
   userBlocked:
-    `⛔ <b>Ваш доступ ограничен</b>\n\n` +
+    `${e.failed} <b>Ваш доступ ограничен</b>\n\n` +
     `Ваш аккаунт заблокирован администрацией. Если это ошибка, свяжитесь с поддержкой.`,
   userBlockedWithReason: (reason: string) =>
-    `⛔ <b>Ваш доступ ограничен</b>\n\n` +
-    `📝 Причина: ${reason}\n\n` +
+    `${e.failed} <b>Ваш доступ ограничен</b>\n\n` +
+    `${e.note} Причина: ${reason}\n\n` +
     `Если это ошибка, свяжитесь с поддержкой.`,
 
   botMaintenance:
-    `🔧 <b>Бот временно недоступен</b>\n\n` +
+    `${e.fixing} <b>Бот временно недоступен</b>\n\n` +
     `Идут технические работы или обновление. Скоро вернёмся. Спасибо за терпение ༉`,
-  botMaintenanceCustom: (msg: string) => `🔧 ${msg}`,
-  referralDisabled: `🔒 <b>Реферальная система отключена</b>\n\nПрограмма приглашений временно недоступна.`,
-  shopDisabled: `🔒 <b>Магазин отключён</b>\n\nСейчас магазин временно недоступен. Попробуйте позже.`,
+  botMaintenanceCustom: (msg: string) => `${e.fixing} ${msg}`,
+  referralDisabled: `${e.lock} <b>Реферальная система отключена</b>\n\nПрограмма приглашений временно недоступна.`,
+  shopDisabled: `${e.lock} <b>Магазин отключён</b>\n\nСейчас магазин временно недоступен. Попробуйте позже.`,
 
-  stockSubscribed: `🔔 Подписка оформлена! Мы сообщим, когда товар появится в наличии.`,
-  stockAlreadySubscribed: `✅ Вы уже подписаны. Мы уведомим вас, когда товар появится.`,
+  stockSubscribed: `${e.bell} Подписка оформлена! Мы сообщим, когда товар появится в наличии.`,
+  stockAlreadySubscribed: `${e.confirm} Вы уже подписаны. Мы уведомим вас, когда товар появится.`,
   stockRestocked: (data: { productName: string }) =>
-    `🎉 <b>Товар снова в наличии!</b>\n\n📦 ${data.productName} снова доступен.\n\n🛍 Покупайте прямо сейчас!`,
+    `${e.party} <b>Товар снова в наличии!</b>\n\n${e.bag} ${data.productName} снова доступен.\n\n🛍 Покупайте прямо сейчас!`,
 
   enterQuantityPrompt: (available: number) =>
     `${e.truck} Stock : ${available}\n` +
     `${e.trolley}  Введите нужное количество:`,
-  enterQuantityHint: `⚠️ Вводите только число`,
+  enterQuantityHint: `${e.warning} Вводите только число`,
   quantityInvalid: `${e.reject} Некорректное количество. Введите положительное число.`,
   quantityExceedsStock: (data: { stock: number }) =>
     `${e.reject} Недостаточно товара на складе. Доступно: <b>${data.stock}</b> шт.`,
@@ -666,7 +666,7 @@ export const ru = {
   warrantyDays: (data: { days: number }) =>
     `Гарантия: <b>${data.days} дней</b>`,
   termsTitle: `Правила и условия`,
-  btnChangeQuantity: `✏️ Изменить количество`,
+  btnChangeQuantity: `Изменить количество`,
   inventoryOrderSummary: (data: {
     productName: string;
     qty: number;

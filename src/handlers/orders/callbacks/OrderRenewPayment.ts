@@ -15,6 +15,7 @@ import { WalletRepository } from "../../../repositories/WalletRepository.ts";
 import { TicketService } from "../../../services/bot/ticket.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import { renewalPendingState } from "../renewState.ts";
+import { emojiIds } from "../../../shared/locales/emojies.ts";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: create a new renewal order from state
@@ -236,6 +237,10 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
         .text(
           t("btnConfirmCardPayment" as any),
           `renew_confirm_card_${orderId}`,
+          {
+            icon_custom_emoji_id: emojiIds.confirm,
+            style: "primary",
+          },
         )
         .row()
         .text(t("btnBackToOrders"), `order_renew_${orderId}`),
@@ -351,7 +356,10 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
         {
           parse_mode: "HTML",
           reply_markup: new InlineKeyboard()
-            .url(t("btnPayNow"), payUrl)
+            .url(t("btnPayNow"), payUrl, {
+              icon_custom_emoji_id: emojiIds.card,
+              style: "success",
+            })
             .row()
             .text(t("btnVerifyPayment"), `renew_verify_zarinpal_${orderId}`)
             .row()
@@ -448,7 +456,10 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
           {
             parse_mode: "HTML",
             reply_markup: new InlineKeyboard()
-              .url(t("btnPayNow"), info.zarinpalPayUrl!)
+              .url(t("btnPayNow"), info.zarinpalPayUrl!, {
+                icon_custom_emoji_id: emojiIds.card,
+                style: "success",
+              })
               .row()
               .text(t("btnVerifyPayment"), `renew_verify_zarinpal_${orderId}`)
               .row()
@@ -560,7 +571,12 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
 
       const keyboard = new InlineKeyboard();
       if (payUrl) {
-        keyboard.url(t("btnPayNow"), payUrl).row();
+        keyboard
+          .url(t("btnPayNow"), payUrl, {
+            icon_custom_emoji_id: emojiIds.card,
+            style: "success",
+          })
+          .row();
       }
 
       keyboard
@@ -633,7 +649,10 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       if (paymentStatus !== "finished") {
         const kb = new InlineKeyboard();
         if (info.nowpaymentsPayUrl) {
-          kb.url(t("btnPayNow"), info.nowpaymentsPayUrl).row();
+          kb.url(t("btnPayNow"), info.nowpaymentsPayUrl, {
+            icon_custom_emoji_id: emojiIds.card,
+            style: "success",
+          }).row();
         }
         kb.text(t("btnVerifyPayment"), `renew_verify_crypto_${orderId}`).row();
         kb.text(t("btnBackToOrders"), `order_renew_${orderId}`);

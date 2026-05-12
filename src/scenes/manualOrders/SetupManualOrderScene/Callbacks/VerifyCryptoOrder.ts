@@ -99,7 +99,12 @@ export async function VerifyCryptoOrderCallback(
 
     const keyboard = new InlineKeyboard();
     if (payState.nowpaymentsPayUrl) {
-      keyboard.url(t("btnPayNow"), payState.nowpaymentsPayUrl).row();
+      keyboard
+        .url(t("btnPayNow"), payState.nowpaymentsPayUrl, {
+          icon_custom_emoji_id: emojiIds.card,
+          style: "success",
+        })
+        .row();
     }
 
     keyboard

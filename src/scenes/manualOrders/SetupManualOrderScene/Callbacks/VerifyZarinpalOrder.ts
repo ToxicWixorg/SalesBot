@@ -97,7 +97,10 @@ export async function VerifyZarinpalOrderCallback(
         {
           parse_mode: "HTML",
           reply_markup: new InlineKeyboard()
-            .url(t("btnPayNow"), payState.zarinpalPayUrl!)
+            .url(t("btnPayNow"), payState.zarinpalPayUrl!, {
+              icon_custom_emoji_id: emojiIds.card,
+              style: "success",
+            })
             .row()
             .text(
               t("btnVerifyPayment"),

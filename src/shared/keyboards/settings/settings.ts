@@ -5,7 +5,7 @@ import { emojiIds } from "../../locales/emojies.ts";
 export function settingsKeyboard(t: TFunction): InlineKeyboard {
   return new InlineKeyboard()
     .text(t("btnAccountInfo"), "settings:account_info", {
-      icon_custom_emoji_id: emojiIds.person,
+      icon_custom_emoji_id: emojiIds.user,
     })
     .row()
     .text(t("btnChangeLanguage"), "change_language", {

@@ -111,7 +111,12 @@ function buildZarinpalVerificationKeyboard(
   const keyboard = new InlineKeyboard();
 
   if (paymentUrl) {
-    keyboard.url(t("btnPayNow"), paymentUrl).row();
+    keyboard
+      .url(t("btnPayNow"), paymentUrl, {
+        icon_custom_emoji_id: emojiIds.card,
+        style: "success",
+      })
+      .row();
   }
 
   keyboard
@@ -985,7 +990,12 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
       const keyboard = new InlineKeyboard();
       if (paymentUrl) {
-        keyboard.url(t("btnPayNow"), paymentUrl).row();
+        keyboard
+          .url(t("btnPayNow"), paymentUrl, {
+            icon_custom_emoji_id: emojiIds.card,
+            style: "success",
+          })
+          .row();
       }
       keyboard
         .text(t("btnVerifyPayment"), `recharge_verify_crypto:${payment.id}`)
@@ -1470,7 +1480,6 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     }
   });
 }
-
 
 export async function addReferralCredit(
   bot: AnyBot,

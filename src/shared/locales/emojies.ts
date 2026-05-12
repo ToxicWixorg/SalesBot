@@ -55,6 +55,7 @@ export const emojiIds = {
   rocket: "5283080528818360566",
   fire: "5303040337059543238",
   send: "5332423642850536254",
+  fixing: "5213214428958306222",
 } as const;
 
 export const e = {
@@ -112,6 +113,7 @@ export const e = {
   key: `<tg-emoji emoji-id="${emojiIds.key}">🔑</tg-emoji>`,
   rocket: `<tg-emoji emoji-id="${emojiIds.rocket}">🚀</tg-emoji>`,
   fire: `<tg-emoji emoji-id="${emojiIds.fire}">🔥</tg-emoji>`,
+  fixing: `<tg-emoji emoji-id="${emojiIds.fixing}">🔧</tg-emoji>`,
   truck: "🚚",
   id: "🆔",
 } as const;

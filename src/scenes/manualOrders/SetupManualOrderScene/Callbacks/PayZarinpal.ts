@@ -8,6 +8,7 @@ import { pendingOrderInfoState } from "../../../../handlers/products/pendingOrde
 import { PaymentRepository } from "../../../../repositories/PaymentRepository";
 import { appliedDiscountState } from "../../../../handlers/products/discountOrderState";
 import { pendingPaymentState } from "../../../../handlers/products/pendingPaymentState";
+import { emojiIds } from "../../../../shared/locales/emojies";
 
 export async function PayZarinpalCallback(ctx: Context, bot: AnyBot) {
   await ctx.answerCallbackQuery();
@@ -77,7 +78,10 @@ export async function PayZarinpalCallback(ctx: Context, bot: AnyBot) {
       {
         parse_mode: "HTML",
         reply_markup: new InlineKeyboard()
-          .url(t("btnPayNow"), payUrl)
+          .url(t("btnPayNow"), payUrl, {
+            icon_custom_emoji_id: emojiIds.card,
+            style: "success",
+          })
           .row()
           .text(t("btnVerifyPayment"), `verify_zarinpal_order_${state.planId}`)
           .row()

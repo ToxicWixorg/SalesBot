@@ -134,7 +134,7 @@ export const fa = {
   rechargeZarinpalTitle: `${e.wallet} درگاه زرین‌پال`,
   rechargePaymentLink: (amount: string) =>
     `مبلغ: <b>${amount}</b> تومان\n\nروی دکمه زیر کلیک کن تا به درگاه پرداخت بری:`,
-  btnPayNow: `💳 پرداخت`,
+  btnPayNow: `پرداخت`,
   rechargePaymentPending: `${e.time} در انتظار پرداخت...\n\nلطفاً پرداخت رو در مرورگر کامل کن.`,
   rechargePaymentSuccess: (amount: string) =>
     `${e.party} <b>پرداخت موفق!</b>\n\n${e.diamond} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
@@ -164,7 +164,7 @@ export const fa = {
 
   // ── کلیدهای جدید شارژ کیف پول ──────────────────────────
   rechargeAmount: (amount: string) =>
-    `💰 مبلغ: <b>${amount}</b> تومان ` + e.Toman,
+    `${e.wallet} مبلغ: <b>${amount}</b> تومان ` + e.Toman,
   rechargeMethodSelectTitle: (amount: string) =>
     `${e.wallet} مبلغ <b>${amount}</b> تومان ${e.Toman}\n\nروش پرداخت رو انتخاب کن:`,
   rechargeCardNumbers: `شماره کارت‌ها`,
@@ -255,11 +255,11 @@ export const fa = {
   orderId: "شماره سفارش",
 
   // Settings
-  userNotFound: `❌ کاربر پیدا نشد`,
+  userNotFound: `${e.failed}کاربر پیدا نشد`,
   userIdentificationError: `${e.reject} خطا در شناسایی کاربر`,
   settingsTitle: `${e.settings} تنظیمات`,
   settingsDescription: `${e.info} از اینجا می‌تونی حسابت رو مدیریت کنی.`,
-  btnAccountInfo: `👤 اطلاعات حساب`,
+  btnAccountInfo: `اطلاعات حساب`,
   btnNotificationSettings: `تنظیمات اعلان‌ها`,
   btnPrivacy: ` حریم خصوصی`,
   btnAbout: `ℹ درباره ما`,
@@ -352,7 +352,7 @@ export const fa = {
 
   // Order Details
   orderDetailsTitle: `${e.clipboard} جزئیات سفارش`,
-  orderNumber: "🆔 شماره سفارش",
+  orderNumber: `${e.id} شماره سفارش`,
   orderProduct: e.bag + " محصول",
   orderStatus: "وضعیت",
   orderTotalPrice: e.wallet + " قیمت اولیه",
@@ -397,10 +397,10 @@ export const fa = {
     productName: string;
     remainingBalance: string;
   }) =>
-    `✅ <b>تمدید با موفقیت انجام شد!</b>\n\n` +
-    `📦 ${data.productName}\n` +
-    `🎫 شماره سفارش: #${data.orderId}\n\n` +
-    `👛 موجودی باقی‌مانده: ${data.remainingBalance} تومان`,
+    `${e.confirm} <b>تمدید با موفقیت انجام شد!</b>\n\n` +
+    `${e.bag} ${data.productName}\n` +
+    `${e.ticket} شماره سفارش: #${data.orderId}\n\n` +
+    `${e.wallet} موجودی باقی‌مانده: ${data.remainingBalance} تومان`,
   errorOpeningTicket: `${e.reject} خطا در باز کردن تیکت`,
   errorReportingProblem: `${e.reject} خطا در گزارش مشکل`,
 
@@ -493,7 +493,7 @@ export const fa = {
 
   // Purchase / Order Completion
   insufficientBalance: (data: { required: string; current: string }) =>
-    `😥 موجودی کافی نیست\n\nنیاز: ${data.required} تومان\nموجودی تو: ${data.current} تومان\n\nکیف پولت رو شارژ کن و دوباره تلاش کن.`,
+    `${e.failed} موجودی کافی نیست\n\nنیاز: ${data.required} تومان\nموجودی تو: ${data.current} تومان\n\nکیف پولت رو شارژ کن و دوباره تلاش کن.`,
   noConfigAvailable: `${e.reject} در حال حاضر کانفیگ VPN برای این پلن موجود نیست. با پشتیبانی تماس بگیر.`,
   orderSuccess: (data: {
     orderId: number;
@@ -566,18 +566,18 @@ export const fa = {
   manualOrderLoginPasswordPrompt: `${e.lock} <b>رمز عبور</b> اکانت رو وارد کن:`,
   manualOrderRegionPrompt: `${e.earth} <b>منطقه مورد نظر</b> رو وارد کن (مثلاً: US، EU، Asia):`,
   manualOrderNeedsLabel: "اطلاعات مورد نیاز",
-  adminOrderEmail: "📧 ایمیل",
-  adminOrderEmailPassword: "🔑 رمز ایمیل",
-  adminOrderUsername: "👤 نام کاربری",
-  adminOrderLoginPassword: "🔐 رمز عبور",
-  adminOrderRegion: "🌍 منطقه",
-  adminOrderPayment: "💳 پرداخت",
-  adminOrderScheduled: "📅 زمان‌بندی",
+  adminOrderEmail: `${e.mail} ایمیل`,
+  adminOrderEmailPassword: `${e.key} رمز ایمیل`,
+  adminOrderUsername: `${e.user} نام کاربری`,
+  adminOrderLoginPassword: e.lock + " رمز عبور",
+  adminOrderRegion: e.earth + " منطقه",
+  adminOrderPayment: e.card + " پرداخت",
+  adminOrderScheduled: e.date + " زمان‌بندی",
   selectRegion: `${e.earth} <b>انتخاب منطقه</b>\n\nمنطقه مورد نظرت رو انتخاب کن:`,
   selectedRegion: "منطقه انتخاب‌شده",
   orderInfoReviewTitle: `${e.clipboard} <b>بررسی اطلاعات سفارش</b>`,
   orderInfoReviewPrompt: "اطلاعات زیر رو تأیید کن یا ویرایش کن:",
-  btnConfirmInfo: `✅ تایید و ادامه`,
+  btnConfirmInfo: `${e.confirm} تایید و ادامه`,
   paymentSummaryTitle: `${e.wallet} <b>پرداخت سفارش</b>`,
   paymentPrompt: "برای تکمیل خرید، روش پرداخت رو انتخاب کن:",
   paymentOriginalPrice: "قیمت اصلی",
@@ -585,22 +585,22 @@ export const fa = {
   paymentFinalPrice: "قیمت نهایی",
   paymentWalletBalance: "موجودی کیف پول",
   btnPayWallet: `پرداخت از کیف پول`,
-  btnPayCard: `💳 پرداخت با کارت`,
-  btnPayZarinpal: `🟢 درگاه زرین‌پال`,
-  btnPayCrypto: `🪙 پرداخت با USDT (کریپتو)`,
+  btnPayCard: `پرداخت با کارت`,
+  btnPayZarinpal: `درگاه زرین‌پال`,
+  btnPayCrypto: `پرداخت با USDT (کریپتو)`,
   payCardInstructions: (data: { amount: string }) =>
-    `💳 <b>پرداخت با کارت بانکی</b>\n\n` +
-    `💰 مبلغ: <b>${data.amount}</b> تومان\n\n` +
+    `${e.card} <b>پرداخت با کارت بانکی</b>\n\n` +
+    `${e.wallet} مبلغ: <b>${data.amount}</b> تومان\n\n` +
     `شماره کارت‌های زیر رو کپی کن و مبلغ رو واریز کن:`,
-  payCardConfirmNote: `پس از واریز، دکمه «✅ واریز کردم» رو بزن.`,
-  btnConfirmCardPayment: `✅ واریز کردم`,
+  payCardConfirmNote: `پس از واریز، دکمه «${e.confirm} واریز کردم» رو بزن.`,
+  btnConfirmCardPayment: `واریز کردم`,
   payCardPending: (data: { orderId: number }) =>
     `${e.checkBold} <b>سفارش ثبت شد!</b>\n\n` +
     `${e.id} سفارش: #${data.orderId}\n\n` +
     `${e.time} پس از تأیید واریز توسط ادمین، سفارشت پردازش می‌شه.\n` +
     `معمولاً ظرف <b>۱ تا ۲۴ ساعت</b> تأیید می‌شه.`,
-  payCryptoConfirmNote: `پس از انجام تراکنش، دکمه «✅ پرداخت کردم» رو بزن.`,
-  btnConfirmCryptoPayment: `✅ پرداخت کردم`,
+  payCryptoConfirmNote: `پس از انجام تراکنش، دکمه «${e.confirm} پرداخت کردم» رو بزن.`,
+  btnConfirmCryptoPayment: `پرداخت کردم`,
   payCryptoPending: (data: { orderId: number }) =>
     `${e.checkBold} <b>سفارش ثبت شد!</b>\n\n` +
     `${e.id} سفارش: #${data.orderId}\n\n` +
@@ -686,34 +686,34 @@ export const fa = {
 
   // Blocked user
   userBlocked:
-    `⛔ <b>دسترسی شما محدود شده</b>\n\n` +
+    `${e.failed} <b>دسترسی شما محدود شده</b>\n\n` +
     `حساب شما توسط مدیریت مسدود شده. در صورت وجود اشتباه با پشتیبانی تماس بگیرید.`,
   userBlockedWithReason: (reason: string) =>
-    `⛔ <b>دسترسی شما محدود شده</b>\n\n` +
-    `📝 دلیل: ${reason}\n\n` +
+    `${e.failed} <b>دسترسی شما محدود شده</b>\n\n` +
+    `${e.note} دلیل: ${reason}\n\n` +
     `در صورت وجود اشتباه با پشتیبانی تماس بگیرید.`,
 
   // Maintenance mode
   botMaintenance:
-    `🔧 <b>ربات موقتاً در دسترس نیست</b>\n\n` +
+    `${e.fixing} <b>ربات موقتاً در دسترس نیست</b>\n\n` +
     `در حال تعمیر یا بهروزرسانی هستیم. یکم کم برمیگردیم. ممنون صبرت هستیم ༉`,
-  botMaintenanceCustom: (msg: string) => `🔧 ${msg}`,
+  botMaintenanceCustom: (msg: string) => `${e.fixing} ${msg}`,
 
   // Feature disabled messages
-  referralDisabled: `🔒 <b>سیستم رفرال غیرفعال است</b>\n\nدر حال حاضر برنامه دعوت از دوستان موقتاً غیرفعال شده است.`,
-  shopDisabled: `🔒 <b>فروشگاه غیرفعال است</b>\n\nدر حال حاضر فروشگاه موقتاً غیرفعال شده است. لطفاً بعداً دوباره امتحان کنید.`,
+  referralDisabled: `${e.lock} <b>سیستم رفرال غیرفعال است</b>\n\nدر حال حاضر برنامه دعوت از دوستان موقتاً غیرفعال شده است.`,
+  shopDisabled: `${e.lock} <b>فروشگاه غیرفعال است</b>\n\nدر حال حاضر فروشگاه موقتاً غیرفعال شده است. لطفاً بعداً دوباره امتحان کنید.`,
 
   // ── Stock notification ──────────────────────────────────────────────────────
-  stockSubscribed: `🔔 موجود شد بهت خبر می‌دیم!`,
-  stockAlreadySubscribed: `✅ قبلاً ثبت‌نام کردی. وقتی موجود شه خبر می‌دیم.`,
+  stockSubscribed: `${e.bell} موجود شد بهت خبر می‌دیم!`,
+  stockAlreadySubscribed: `${e.confirm} قبلاً ثبت‌نام کردی. وقتی موجود شه خبر می‌دیم.`,
   stockRestocked: (data: { productName: string }) =>
-    `🎉 <b>موجودی شارژ شد!</b>\n\n📦 ${data.productName} دوباره موجوده.\n\n🛍 همین الان خرید کن!`,
+    `${e.party} <b>موجودی شارژ شد!</b>\n\n${e.bag} ${data.productName} دوباره موجوده.\n\n🛍 همین الان خرید کن!`,
 
   // ── Inventory order flow ──────────────────────────────────────────────────
   enterQuantityPrompt: (available: number) =>
     `${e.truck} تعداد موجود : ${available}\n` +
     `${e.trolley} تعداد موردنظر خودتون برای خرید رو به عدد وارد کنید:`,
-  enterQuantityHint: `⚠️ فقط عدد وارد کنید`,
+  enterQuantityHint: `${e.warning} فقط عدد وارد کنید`,
   quantityInvalid: `${e.reject} تعداد وارد شده معتبر نیست. لطفاً یک عدد مثبت وارد کنید.`,
   quantityExceedsStock: (data: { stock: number }) =>
     `${e.reject} موجودی کافی نیست. موجودی فعلی: <b>${data.stock}</b> عدد`,
@@ -721,7 +721,7 @@ export const fa = {
     `${e.reject} حداکثر <b>${data.max}</b> عدد در هر سفارش می‌توانید خریداری کنید.`,
   warrantyDays: (data: { days: number }) => `گارانتی: <b>${data.days} روز</b>`,
   termsTitle: `قوانین و شرایط`,
-  btnChangeQuantity: `✏️ تغییر تعداد`,
+  btnChangeQuantity: `تغییر تعداد`,
   inventoryOrderSummary: (data: {
     productName: string;
     qty: number;
@@ -730,10 +730,10 @@ export const fa = {
     currency: string;
   }) =>
     `${e.clipboard} <b>خلاصه سفارش</b>\n\n` +
-    `📦 محصول: <b>${data.productName}</b>\n` +
-    `🔢 تعداد: <b>${data.qty}</b>\n` +
-    `💰 قیمت واحد: <b>${data.unitPrice} ${data.currency}</b>\n` +
-    `💵 مبلغ نهایی: <b>${data.total} ${data.currency}</b>`,
+    `${e.bag} محصول: <b>${data.productName}</b>\n` +
+    `${e.trolley} تعداد: <b>${data.qty}</b>\n` +
+    `${e.wallet} قیمت واحد: <b>${data.unitPrice} ${data.currency}</b>\n` +
+    `${e.card} مبلغ نهایی: <b>${data.total} ${data.currency}</b>`,
   inventoryOrderSuccess: (data: {
     orderId: number;
     productName: string;
@@ -743,9 +743,9 @@ export const fa = {
     currency: string;
   }) =>
     `${e.party} <b>سفارش با موفقیت انجام شد!</b>\n\n` +
-    `📦 محصول: <b>${data.productName}</b>\n` +
-    `🔢 تعداد: <b>${data.qty}</b>\n` +
-    `💵 مبلغ پرداخت شده: <b>${data.total} ${data.currency}</b>\n` +
+    `${e.bag} محصول: <b>${data.productName}</b>\n` +
+    `${e.trolley} تعداد: <b>${data.qty}</b>\n` +
+    `${e.card} مبلغ پرداخت شده: <b>${data.total} ${data.currency}</b>\n` +
     `${e.wallet} موجودی باقی‌مانده: <b>${data.remainingBalance} ${data.currency}</b>\n` +
     `${e.id} شماره سفارش: #${data.orderId}`,
   inventoryDeliveryHeader: (data: { productName: string }) =>
@@ -764,10 +764,10 @@ export const fa = {
     formatNum: (num: number) => string,
     methodLabel: string,
   ) =>
-    `💵 <b>درخواست شارژ کیف پول</b>\n\n` +
-    `👤 کاربر: ${userLabel} (<code>${opts.userId}</code>)\n` +
-    `💰 مبلغ: <b>${formatNum(opts.amount)}</b> تومان\n` +
-    `🔑 روش: ${methodLabel}\n`,
+    `${e.Toman} <b>درخواست شارژ کیف پول</b>\n\n` +
+    `${e.user} کاربر: ${userLabel} (<code>${opts.userId}</code>)\n` +
+    `${e.wallet} مبلغ: <b>${formatNum(opts.amount)}</b> تومان\n` +
+    `${e.key} روش: ${methodLabel}\n`,
   regionNotFound: "ریجن پیدا نشد ❌",
   rechargeCardSaveFailed: e.warning + "خطا در ذخیره فایل",
 } satisfies LanguageMap;

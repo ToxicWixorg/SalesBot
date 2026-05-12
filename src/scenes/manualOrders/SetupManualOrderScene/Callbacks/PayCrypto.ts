@@ -8,6 +8,7 @@ import { pendingOrderInfoState } from "../../../../handlers/products/pendingOrde
 import { PaymentRepository } from "../../../../repositories/PaymentRepository";
 import { appliedDiscountState } from "../../../../handlers/products/discountOrderState";
 import { pendingPaymentState } from "../../../../handlers/products/pendingPaymentState";
+import { emojiIds } from "../../../../shared/locales/emojies";
 
 export async function PayCryptoCallback(ctx: any) {
   await ctx.answerCallbackQuery();
@@ -108,7 +109,12 @@ export async function PayCryptoCallback(ctx: any) {
 
     const keyboard = new InlineKeyboard();
     if (payUrl) {
-      keyboard.url(t("btnPayNow"), payUrl).row();
+      keyboard
+        .url(t("btnPayNow"), payUrl, {
+          icon_custom_emoji_id: emojiIds.card,
+          style: "success",
+        })
+        .row();
     }
     keyboard
       .text(t("btnVerifyPayment"), `verify_crypto_order_${state.planId}`)
