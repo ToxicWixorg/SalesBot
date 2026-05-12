@@ -133,4 +133,38 @@ export async function SelectPlanCallback(context: Context) {
     });
     return;
   }
+
+  {
+    const regions: Array<{ flag: string; name: string; price?: string }> =
+      plan.regions && plan.regions.length > 0 ? plan.regions : [];
+
+    if (regions.length > 0) {
+      await context.editText(t("selectRegion"), {
+        parse_mode: "HTML",
+        reply_markup: regionSelectionKeyboard(t, planId, regions),
+      });
+      return;
+    }
+
+    const price = parseFloat(plan.price as string);
+    let duration = t("oneTime");
+    if (plan.duration) {
+      const unitKey = plan.durationUnit ?? "day";
+      let unitLabel = "";
+      if (unitKey === "day") unitLabel = t("duration_day");
+      else if (unitKey === "month") unitLabel = t("duration_month");
+      else if (unitKey === "year") unitLabel = t("duration_year");
+      duration = `${plan.duration} ${unitLabel}`;
+    }
+
+    let message = `${t("orderSummary")}\n\n`;
+    message += `📦 ${product.name}\n`;
+    message += `📋 ${plan.name} — ${duration}\n`;
+    message += `\n${t("total")} <b>${price.toLocaleString()}</b> ${t("currency")}`;
+
+    await context.editText(message, {
+      parse_mode: "HTML",
+      reply_markup: orderConfirmationKeyboard(t, planId),
+    });
+  }
 }
