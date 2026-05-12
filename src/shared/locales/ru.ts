@@ -3,6 +3,7 @@ import { e } from "./emojies";
 import type { fa } from "./fa";
 import { en } from "./en";
 
+import { normalizeCustomEmojiId } from "../utils/customEmoji.ts";
 export const ru = {
   ...en,
 
@@ -60,11 +61,13 @@ export const ru = {
   btnAddDiscountCode: ` Добавить промокод`,
   productsTitle: `${e.bag} Товары`,
   selectCategory: `${e.tag} Выберите категорию:`,
-  categoryProducts: (category: string, emoji: string) =>
-    emoji === ""
-      ? e.bag
-      : `<tg-emoji emoji-id="${emoji}">🛍️</tg-emoji> ` +
-        `Товары в категории <b>${category}</b>:`,
+  categoryProducts: (category: string, emoji: string | null) => {
+    const safeEmoji = normalizeCustomEmojiId(emoji);
+    return safeEmoji
+      ? `<tg-emoji emoji-id="${safeEmoji}">🛍️</tg-emoji> ` +
+          `Товары <b>${category}</b>:`
+      : `${e.bag} Товары <b>${category}</b>:`;
+  },
   noProducts: `${e.reject} В этой категории нет товаров.`,
   productDetails: `${e.bag} Детали товара`,
   price: `${e.wallet} Цена:`,

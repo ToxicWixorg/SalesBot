@@ -47,10 +47,13 @@ export async function BuyProductCallback(
     return;
   }
 
+  const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
+  const title = safeEmojiId
+    ? `<tg-emoji emoji-id="${safeEmojiId}">🛍️</tg-emoji> `
+    : e.bag;
+
   await context.editText(
-    product.customEmojiId
-      ? `<tg-emoji emoji-id="${product.customEmojiId}">🛍️</tg-emoji>`
-      : e.bag + `<b>${product.name}</b>\n\n${t("selectPlan")}`,
+    `${title}<b>${product.name}</b>\n\n${t("selectPlan")}`,
     {
       parse_mode: "HTML",
       reply_markup: productPlansKeyboard(t, plans, productId),

@@ -1,5 +1,6 @@
 ﻿import type { ShouldFollowLanguageStrict } from "@gramio/i18n";
 import { e } from "./emojies";
+import { normalizeCustomEmojiId } from "../utils/customEmoji.ts";
 import type { fa } from "./fa";
 
 export const en = {
@@ -57,11 +58,13 @@ export const en = {
   btnAddDiscountCode: ` Add Discount Code`,
   productsTitle: `${e.bag} Products`,
   selectCategory: `${e.tag} Select a category:`,
-  categoryProducts: (category: string, emoji: string) =>
-    emoji === ""
-      ? e.bag
-      : `<tg-emoji emoji-id="${emoji}">🛍️</tg-emoji> ` +
-        `<b>${category}</b> products:`,
+  categoryProducts: (category: string, emoji: string | null) => {
+    const safeEmoji = normalizeCustomEmojiId(emoji);
+    return safeEmoji
+      ? `<tg-emoji emoji-id="${safeEmoji}">🛍️</tg-emoji> ` +
+          `<b>${category}</b> products:`
+      : `${e.bag} <b>${category}</b> products:`;
+  },
   noProducts: `${e.reject} No products available in this category.`,
   productDetails: `${e.bag} Product Details`,
   price: `${e.wallet} Price:`,

@@ -2,6 +2,7 @@ import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../locales/index.ts";
 import type { ProductPlan } from "../../../db/schema.ts";
 import { emojiIds } from "../../locales/emojies.ts";
+import { normalizeCustomEmojiId } from "../../utils/customEmoji.ts";
 
 export function productPlansKeyboard(
   t: TFunction,
@@ -24,8 +25,9 @@ export function productPlansKeyboard(
       duration = `${plan.duration} ${durationUnit}`;
     }
 
-    const opts = plan.customEmojiId
-      ? { icon_custom_emoji_id: plan.customEmojiId }
+    const safeEmojiId = normalizeCustomEmojiId(plan.customEmojiId);
+    const opts = safeEmojiId
+      ? { icon_custom_emoji_id: safeEmojiId }
       : undefined;
 
     keyboard.text(

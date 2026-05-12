@@ -1,14 +1,11 @@
-import { Context } from "gramio";
 import { UserRepository } from "../../../repositories/UserRepository.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import { productDetailsKeyboard } from "../../../shared/keyboards/index.ts";
 import { ProductRepository } from "../../../repositories/ProductRepository.ts";
 import { e } from "../../../shared/locales/emojies.ts";
+import { normalizeCustomEmojiId } from "../../../shared/utils/customEmoji.ts";
 
-export async function ProductCallback(
-  context: Context,
-  getEffectiveStock: any,
-) {
+export async function ProductCallback(context: any, getEffectiveStock: any) {
   if (!context.from || !context.queryData) return;
 
   const productId = Number.parseInt(context.queryData[1]!);
@@ -29,9 +26,13 @@ export async function ProductCallback(
   const stock = await getEffectiveStock(product);
   const hasStock = stock > 0;
 
-  let message = product.customEmojiId
-    ? `<tg-emoji emoji-id="${product.customEmojiId}">🛍️</tg-emoji>`
-    : e.bag + `<b>${product.name}</b>\n\n`;
+  const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
+
+  let message = safeEmojiId
+    ? `<tg-emoji emoji-id="${safeEmojiId}">🛍️</tg-emoji> `
+    : e.bag;
+
+  message += `<b>${product.name}</b>\n\n`;
   if (product.description) message += `${product.description}\n\n`;
 
   message += `${t("stock")} ${hasStock ? t("available") : t("outOfStock")}\n`;

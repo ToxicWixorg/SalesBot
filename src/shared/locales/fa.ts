@@ -1,5 +1,6 @@
 import type { LanguageMap } from "@gramio/i18n";
 import { e } from "./emojies";
+import { normalizeCustomEmojiId } from "../utils/customEmoji.ts";
 // ─── Premium Telegram Emoji IDs ────────────────────────────────────────────
 // Usage: <tg-emoji emoji-id="ID">fallback</tg-emoji>
 
@@ -59,11 +60,13 @@ export const fa = {
   btnAddDiscountCode: ` افزودن کد تخفیف`,
   productsTitle: `${e.bag} محصولات`,
   selectCategory: `${e.tag} یه دسته‌بندی انتخاب کن:`,
-  categoryProducts: (category: string, emoji: string) =>
-    emoji === ""
-      ? e.bag
-      : `<tg-emoji emoji-id="${emoji}">🛍️</tg-emoji> ` +
-        `محصولات <b>${category}</b>:`,
+  categoryProducts: (category: string, emoji: string | null) => {
+    const safeEmoji = normalizeCustomEmojiId(emoji);
+    return safeEmoji
+      ? `<tg-emoji emoji-id="${safeEmoji}">🛍️</tg-emoji> ` +
+          `محصولات <b>${category}</b>:`
+      : `${e.bag} محصولات <b>${category}</b>:`;
+  },
   noProducts: `${e.reject} محصولی در این دسته موجود نیست.`,
   productDetails: `${e.bag} جزئیات محصول`,
   price: `${e.wallet} قیمت:`,

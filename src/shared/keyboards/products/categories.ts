@@ -2,6 +2,7 @@ import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../locales/index.ts";
 import type { Category } from "../../../db/schema.ts";
 import { emojiIds } from "../../locales/emojies.ts";
+import { normalizeCustomEmojiId } from "../../utils/customEmoji.ts";
 
 export function categoriesKeyboard(
   t: TFunction,
@@ -12,8 +13,9 @@ export function categoriesKeyboard(
   categories.reverse().forEach((category, index) => {
     if (category.isActive === false) return;
     const icon = category.icon || "";
-    const opts = category.customEmojiId
-      ? { icon_custom_emoji_id: category.customEmojiId }
+    const safeEmojiId = normalizeCustomEmojiId(category.customEmojiId);
+    const opts = safeEmojiId
+      ? { icon_custom_emoji_id: safeEmojiId }
       : undefined;
     keyboard.text(`${icon} ${category.name}`, `category_${category.id}`, opts);
 
