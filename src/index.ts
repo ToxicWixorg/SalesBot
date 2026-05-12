@@ -8,8 +8,8 @@ async function setBotCommandsOnStartup() {
   try {
     await (bot.api as any).setMyCommands({
       commands: [
-        { command: "start", description: "شروع  start " },
-        { command: "products", description: "محصولات  products" },
+        { command: "start", description: "شروع / start " },
+        { command: "products", description: "محصولات / products" },
       ],
     });
     console.log("✅ Bot commands set successfully");
