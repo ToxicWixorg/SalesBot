@@ -11,8 +11,8 @@ export const en = {
   btnAdminPanel: "Admin panel",
 
   adminpanelText: (userid: number, userRole: string) =>
-    `${e.id} Your userid : ${userid}\n` +
-    `${e.user} Your Role : ${userRole === "super_admin" ? "Owner" : userRole === "admin" ? "Admin" : "Support"}\n\n` +
+    `${e.id} Your userid : <code>${userid}</code>\n` +
+    `${e.user} Your Role : <b>${userRole === "super_admin" ? "Owner" : userRole === "admin" ? "Admin" : "Support"}</b>\n\n` +
     `${e.admin} Use bottons below:`,
   adminpanelBtnUrl: "Enter admin panel",
   adminpanelBtnEmojies: "Premium emoji id",
