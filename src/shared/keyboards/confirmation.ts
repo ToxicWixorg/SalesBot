@@ -14,7 +14,7 @@ export function confirmationKeyboard(
     .text(t("btnYes"), yesCallback, {
       icon_custom_emoji_id: emojiIds.checkBold,
     })
-    .text(t("btnNo"), noCallback, { icon_custom_emoji_id: emojiIds.cross });
+    .text(t("btnNo"), noCallback, { icon_custom_emoji_id: emojiIds.reject });
 }
 
 /**

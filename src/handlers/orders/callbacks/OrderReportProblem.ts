@@ -30,7 +30,6 @@ export async function OrderReportPeroblemCallback(context: Context) {
       return;
     }
 
-    // TODO: پیاده‌سازی سیستم گزارش مشکل
     await context.answerCallbackQuery({
       text: t("orderReportComingSoon"),
       show_alert: true,

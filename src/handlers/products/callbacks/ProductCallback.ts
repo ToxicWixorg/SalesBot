@@ -36,18 +36,6 @@ export async function ProductCallback(
 
   message += `${t("stock")} ${hasStock ? t("available") : t("outOfStock")}\n`;
 
-  message += `${t("deliveryType")} `;
-  if (
-    product.deliveryType === "automatic" ||
-    product.deliveryType === "inventory"
-  ) {
-    message += t("deliveryAutomatic");
-  } else if (product.deliveryType === "manual") {
-    message += t("deliveryManual");
-  } else {
-    message += t("deliveryCoordination");
-  }
-
   if (product.warrantyDays && product.warrantyDays > 0) {
     message += `\n${t("warrantyDays", { days: product.warrantyDays })}`;
   }

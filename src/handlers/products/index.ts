@@ -18,11 +18,9 @@ import { NotifyStockCallback } from "./callbacks/NotifyStockCallback.ts";
 async function getEffectiveStock(product: {
   id: number;
   stock: number | null;
-  deliveryType: string;
 }): Promise<number> {
-  if (product.deliveryType === "inventory") {
-    return InventoryRepository.countAvailable(product.id);
-  }
+  const inventoryStock = await InventoryRepository.countAvailable(product.id);
+  if (inventoryStock > 0) return inventoryStock;
   return product.stock ?? 0;
 }
 

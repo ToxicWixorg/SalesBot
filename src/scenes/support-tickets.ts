@@ -68,9 +68,6 @@ export function setupTicketScenes(bot: AnyBot) {
     await context.answerCallbackQuery();
   });
 
-  /**
-   * Start creating an order ticket
-   */
   bot.callbackQuery(/^order_open_ticket_(\d+)$/, async (context) => {
     const user = await UserRepository.findById(context.from.id);
     if (!user) return;
@@ -100,9 +97,6 @@ export function setupTicketScenes(bot: AnyBot) {
     await context.answerCallbackQuery();
   });
 
-  /**
-   * Reply to existing ticket
-   */
   bot.callbackQuery(/^reply_ticket_(\d+)$/, async (context) => {
     const user = await UserRepository.findById(context.from.id);
     if (!user) return;
@@ -130,7 +124,14 @@ export function setupTicketScenes(bot: AnyBot) {
       return;
     }
 
-    // Store ticket ID for replies
+    if (ticket.status === "pending_admin") {
+      await context.answerCallbackQuery({
+        text: t("waitForAdminReply"),
+        parse_mode: "HTML",
+        show_alert: true,
+      });
+      return;
+    }
     ticketReplyState.set(context.from.id, ticketId);
 
     const keyboard = new InlineKeyboard().text(
@@ -295,7 +296,7 @@ export function setupTicketScenes(bot: AnyBot) {
 
       if (state.orderId) {
         keyboard.text(t("btnViewOrder"), `order_details_${state.orderId}`, {
-          icon_custom_emoji_id: emojiIds.box,
+          icon_custom_emoji_id: emojiIds.bag,
         });
         keyboard.row();
       }
@@ -351,7 +352,7 @@ export function setupTicketScenes(bot: AnyBot) {
 
       const keyboard = new InlineKeyboard()
         .text(t("btnViewTicket"), `view_ticket_${ticketId}`, {
-          icon_custom_emoji_id: emojiIds.eye,
+          icon_custom_emoji_id: emojiIds.chat,
         })
         .row()
         .text(t("btnBackToMain"), "main_menu", {

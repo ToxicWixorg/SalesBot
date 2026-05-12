@@ -131,7 +131,7 @@ export async function finishManualOrder(
     planName: plan.name,
     finalPrice,
     collected: state.collected,
-    deliveryType: product.deliveryType,
+    deliveryType: plan.deliveryType,
     paymentMethod: "wallet",
   });
 

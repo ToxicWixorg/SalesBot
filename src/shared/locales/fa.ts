@@ -67,12 +67,12 @@ export const fa = {
   price: `${e.wallet} قیمت:`,
   stock: `${e.bag} موجودی:`,
   available: `${e.checkBold} موجود`,
-  outOfStock: `${e.reject} ناموجود`,
-  productNotFound: `${e.reject} محصول پیدا نشد`,
-  planNotFound: `${e.reject} پلن پیدا نشد`,
-  categoryNotFound: `${e.reject} دسته‌بندی پیدا نشد`,
-  noPlansAvailable: `${e.reject} پلنی موجود نیست`,
-  insufficientBalanceAlert: `${e.reject} موجودی کافی نیست`,
+  outOfStock: `❌ ناموجود`,
+  productNotFound: `❌ محصول پیدا نشد`,
+  planNotFound: `❌ پلن پیدا نشد`,
+  categoryNotFound: `❌ دسته‌بندی پیدا نشد`,
+  noPlansAvailable: `❌ پلنی موجود نیست`,
+  insufficientBalanceAlert: `❌ موجودی کافی نیست`,
   deliveryTime: `${e.clock} زمان تحویل:`,
   deliveryType: `${e.truck} نوع تحویل:`,
   deliveryAutomatic: `${e.zap} فوری (خودکار)`,
@@ -138,8 +138,8 @@ export const fa = {
   rechargePaymentPending: `${e.time} در انتظار پرداخت...\n\nلطفاً پرداخت رو در مرورگر کامل کن.`,
   rechargePaymentSuccess: (amount: string) =>
     `${e.party} <b>پرداخت موفق!</b>\n\n${e.diamond} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
-  rechargePaymentFailed: `${e.reject} پرداخت ناموفق بود. دوباره تلاش کن.`,
-  rechargePaymentCancelled: `${e.warning} پرداخت لغو شد.`,
+  rechargePaymentFailed: `❌ پرداخت ناموفق بود. دوباره تلاش کن.`,
+  rechargePaymentCancelled: `⚠️ پرداخت لغو شد.`,
 
   // Transaction History
   transactionHistoryTitle: `${e.chart} تاریخچه تراکنش‌ها`,
@@ -174,16 +174,16 @@ export const fa = {
   rechargeApproved: (amount: string) =>
     `${e.party} <b>شارژ تأیید شد!</b>\n\n${e.diamond} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
   rechargeRejected: `${e.reject} <b>درخواست شارژ رد شد.</b>\n\nدر صورت نیاز با پشتیبانی تماس بگیر.`,
-  rechargeSessionExpired: `${e.warning} جلسه منقضی شده. دوباره از کیف پول شروع کن.`,
-  rechargeMethodDisabled: `${e.reject} این روش پرداخت فعلاً غیرفعاله.`,
-  rechargeNoMethodAvailable: `${e.reject} در حال حاضر هیچ روش پرداختی فعال نیست. بعداً امتحان کن.`,
+  rechargeSessionExpired: `⚠️ جلسه منقضی شده. دوباره از کیف پول شروع کن.`,
+  rechargeMethodDisabled: `❌ این روش پرداخت فعلاً غیرفعاله.`,
+  rechargeNoMethodAvailable: `❌ در حال حاضر هیچ روش پرداختی فعال نیست. بعداً امتحان کن.`,
   rechargeUsdtRate: (rate: string) =>
     `📈 نرخ لحظه‌ای: <b>${rate}</b> تومان/USDT`,
-  rechargeRateUnavailable: `${e.reject} قیمت لحظه‌ای USDT در دسترس نیست. کمی صبر کن و دوباره تلاش کن.`,
-  rechargeCryptoInvalidTxId: `${e.reject} TxID نامعتبره (باید حداقل ۱۰ کاراکتر باشه). دوباره بفرست.`,
+  rechargeRateUnavailable: `❌ قیمت لحظه‌ای USDT در دسترس نیست. کمی صبر کن و دوباره تلاش کن.`,
+  rechargeCryptoInvalidTxId: `❌ TxID نامعتبره (باید حداقل ۱۰ کاراکتر باشه). دوباره بفرست.`,
   rechargeZarinpalInstructions: `${e.clipboard} روی دکمه «پرداخت» بزن، مبلغ رو پرداخت کن، بعد دکمه «بررسی پرداخت» رو بزن.`,
   btnVerifyPayment: `بررسی پرداخت`,
-  rechargeZarinpalVerifying: `${e.time} در حال بررسی پرداخت...`,
+  rechargeZarinpalVerifying: `⌛ در حال بررسی پرداخت...`,
   rechargeZarinpalSuccess: (amount: string) =>
     `${e.party} <b>پرداخت تأیید شد!</b>\n\n${e.diamond} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
   rechargeZarinpalFailed: `${e.reject} پرداخت تأیید نشد یا هنوز ثبت نشده.`,
@@ -215,8 +215,8 @@ export const fa = {
   btnViewReferrals: ` لیست دعوت‌شدگان`,
   inviteShareText: `${e.gift} با این لینک عضو شو و تخفیف ویژه بگیر!`,
   inviteLinkCopied: (link: string) =>
-    `${e.checkBold} لینک کپی شد!\n\n<code>${link}</code>\n\nاین لینک رو برای دوستات بفرست.`,
-  noReferralsYet: `${e.user} هنوز کسی رو دعوت نکردی — شروع کن و درآمد داشته باش!`,
+    `✅ لینک کپی شد!\n\nاین لینک رو برای دوستات بفرست.`,
+  noReferralsYet: `👤 هنوز کسی رو دعوت نکردی — شروع کن و درآمد داشته باش!`,
   referralListTitle: `${e.user} <b>لیست دعوت‌شدگان</b>`,
   andMore: (count: number) => `و <b>${count}</b> نفر دیگه...`,
   referralRewardNotification: (data: { userName: string; amount: string }) =>
@@ -249,14 +249,14 @@ export const fa = {
   discountTypePercentage: "درصدی",
   discountTypeFixed: "مبلغ ثابت",
   noDescription: "بدون توضیحات",
-  noDiscountHistory: `${e.chart} هنوز از هیچ کد تخفیفی استفاده نکردی — اولین باری رو ثبت کن!`,
+  noDiscountHistory: `📅 هنوز از هیچ کد تخفیفی استفاده نکردی — اولین باری رو ثبت کن!`,
   discountHistoryTitle: `${e.chart} <b>تاریخچه کدهای تخفیف</b>`,
   discountAmount: "مقدار تخفیف",
   orderId: "شماره سفارش",
 
   // Settings
-  userNotFound: `${e.failed}کاربر پیدا نشد`,
-  userIdentificationError: `${e.reject} خطا در شناسایی کاربر`,
+  userNotFound: `❌ کاربر پیدا نشد`,
+  userIdentificationError: `❌ خطا در شناسایی کاربر`,
   settingsTitle: `${e.settings} تنظیمات`,
   settingsDescription: `${e.info} از اینجا می‌تونی حسابت رو مدیریت کنی.`,
   btnAccountInfo: `اطلاعات حساب`,
@@ -331,7 +331,7 @@ export const fa = {
     `${e.tag} نسخه: 2.3.5`,
 
   ordersTitle: `${e.bag} سفارشات من`,
-  ordersEmpty: `${e.bag} هنوز سفارشی ثبت نکردی!\n\nبرو سراغ محصولات و اولین خریدت رو بزن.`,
+  ordersEmpty: `🛍️ هنوز سفارشی ثبت نکردی!\n\nبرو سراغ محصولات و اولین خریدت رو بزن.`,
   ordersTotal: `${e.chart} کل سفارشات`,
   ordersActive: `${e.active} سفارشات فعال`,
   ordersCompleted: `${e.complete} سفارشات تکمیل‌شده`,
@@ -347,8 +347,8 @@ export const fa = {
   ordersCompletedTitle: `${e.complete} سفارشات تکمیل‌شده`,
   ordersAllTitle: `${e.clipboard} تمام سفارشات`,
   ordersSelectOne: `${e.pin} روی یه سفارش کلیک کن تا جزئیاتش رو ببینی:`,
-  ordersNoActive: `${e.info} هیچ سفارش فعالی نداری`,
-  ordersNoCompleted: `${e.info} هیچ سفارش تکمیل‌شده‌ای نداری`,
+  ordersNoActive: `ℹ️ هیچ سفارش فعالی نداری`,
+  ordersNoCompleted: `ℹ️ هیچ سفارش تکمیل‌شده‌ای نداری`,
 
   // Order Details
   orderDetailsTitle: `${e.clipboard} جزئیات سفارش`,
@@ -387,10 +387,10 @@ export const fa = {
   orderCannotReschedule: "این سفارش قابل تغییر زمان نیست",
   orderRescheduleComingSoon: "امکان تغییر زمان به‌زودی فعال می‌شه",
   orderReportComingSoon: "سیستم گزارش مشکل به‌زودی فعال می‌شه",
-  errorFetchingOrders: `${e.reject} خطا در دریافت سفارشات`,
-  errorFetchingOrderDetails: `${e.reject} خطا در دریافت جزئیات سفارش`,
-  errorReschedulingOrder: `${e.reject} خطا در تغییر زمان`,
-  errorRenewingOrder: `${e.reject} خطا در تمدید سفارش`,
+  errorFetchingOrders: `❌ خطا در دریافت سفارشات`,
+  errorFetchingOrderDetails: `❌ خطا در دریافت جزئیات سفارش`,
+  errorReschedulingOrder: `❌ خطا در تغییر زمان`,
+  errorRenewingOrder: `❌ خطا در تمدید سفارش`,
   renewScreenTitle: "🔄 تمدید سرویس",
   renewWalletSuccess: (data: {
     orderId: number;
@@ -401,8 +401,8 @@ export const fa = {
     `${e.bag} ${data.productName}\n` +
     `${e.ticket} شماره سفارش: #${data.orderId}\n\n` +
     `${e.wallet} موجودی باقی‌مانده: ${data.remainingBalance} تومان`,
-  errorOpeningTicket: `${e.reject} خطا در باز کردن تیکت`,
-  errorReportingProblem: `${e.reject} خطا در گزارش مشکل`,
+  errorOpeningTicket: `❌ خطا در باز کردن تیکت`,
+  errorReportingProblem: `❌ خطا در گزارش مشکل`,
 
   // Support & Tickets
   supportMenuText:
@@ -442,21 +442,22 @@ export const fa = {
   ticketCreatedSuccess: (data: { ticketNumber: string }) =>
     `${e.checkBold} <b>تیکت ایجاد شد!</b>\n\nشماره تیکت: <b>${data.ticketNumber}</b>\n\nتیم پشتیبانی ما مطلع شدن و به‌زودی جواب می‌دن.`,
 
-  ticketCreateError: `${e.reject} ایجاد تیکت با خطا مواجه شد. دوباره امتحان کن یا مستقیم با پشتیبانی تماس بگیر.`,
+  ticketCreateError: `❌ ایجاد تیکت با خطا مواجه شد. دوباره امتحان کن یا مستقیم با پشتیبانی تماس بگیر.`,
 
-  ticketOrderNotFound: `${e.reject} سفارش پیدا نشد`,
+  ticketOrderNotFound: `❌ سفارش پیدا نشد`,
 
   // Ticket List
   ticketListTitle: `${e.clipboard} <b>تیکت‌های تو</b>`,
   ticketListEmpty: `${e.chat} هنوز هیچ تیکتی نداری — نگرانی؟ تیکت باز کن!`,
   ticketListShowingFirst10: "نمایش ۱۰ تیکت اول",
-  ticketListError: `${e.reject} بارگذاری تیکت‌ها با خطا مواجه شد. دوباره تلاش کن.`,
+  ticketListError: `❌ بارگذاری تیکت‌ها با خطا مواجه شد. دوباره تلاش کن.`,
 
   // Ticket Details
-  ticketNotFound: `${e.reject} تیکت پیدا نشد`,
-  ticketNotYours: `${e.reject} این تیکت مال تو نیست`,
-  ticketAlreadyClosed: `${e.lock} این تیکت بسته‌ست`,
-  ticketLoadError: `${e.reject} بارگذاری تیکت با خطا مواجه شد. دوباره تلاش کن.`,
+  ticketNotFound: `❌ تیکت پیدا نشد`,
+  ticketNotYours: `❌ این تیکت مال تو نیست`,
+  ticketAlreadyClosed: `🔒 این تیکت بسته‌ست`,
+  waitForAdminReply: `صبر کنید تا ادمین به تیکت قبلی شما پاسخ بدهد`,
+  ticketLoadError: `❌ بارگذاری تیکت با خطا مواجه شد. دوباره تلاش کن.`,
 
   status: "وضعیت",
   created: "تاریخ ایجاد",
@@ -479,14 +480,14 @@ export const fa = {
 
   ticketReplySent: `${e.checkBold} پیامت ارسال شد!\n\nوقتی جواب بیاد بهت اطلاع می‌دم.`,
 
-  ticketReplyError: `${e.reject} ارسال پیام با خطا مواجه شد. دوباره تلاش کن.`,
+  ticketReplyError: `❌ ارسال پیام با خطا مواجه شد. دوباره تلاش کن.`,
 
   ticketCreationCancelled: `${e.reject} ایجاد تیکت لغو شد`,
 
   // Ticket Messages
   ticketMessages: "پیام‌ها",
   ticketNoMessages: "هنوز پیامی در این تیکت نیست",
-  ticketMessagesError: `${e.reject} بارگذاری پیام‌ها با خطا مواجه شد`,
+  ticketMessagesError: `⚠️ بارگذاری پیام‌ها با خطا مواجه شد`,
   ticketShowingLast5Messages: "نمایش ۵ پیام آخر",
   you: "تو",
   support: "پشتیبانی",
@@ -554,7 +555,7 @@ export const fa = {
   // Force Join Channels/Groups
   joinChannelRequired: `${e.flag_ir} <b>عضویت الزامی</b>\n\nبرای استفاده از ربات، اول توی کانال‌ها/گروه‌های زیر عضو بشو:`,
   btnIJoined: `عضو شدم — بررسی کن`,
-  joinChannelNotJoinedAlert: ` هنوز توی همه کانال‌های لازم عضو نشدی. عضو بشو و دوباره امتحان کن.`,
+  joinChannelNotJoinedAlert: `🔒 هنوز توی همه کانال‌های لازم عضو نشدی. عضو بشو و دوباره امتحان کن.`,
 
   // ── فلوی سفارش دستی / زمان‌بندی‌شده ──────────────────────────────────────
   manualOrderInfoRequired: `${e.clipboard} <b>اطلاعات مورد نیاز</b>\n\nبرای پردازش سفارشت، اطلاعات زیر رو وارد کن:`,
@@ -636,7 +637,7 @@ export const fa = {
   schedulePickSlot: (data: { date: string }) =>
     `${e.date} <b>انتخاب بازه زمانی</b>\n\nیه بازه آزاد برای <b>${data.date}</b> انتخاب کن:\n\n${e.checkBold} = آزاد  |  ${e.reject} = پر`,
   scheduleSlotFree: "جای خالی",
-  scheduleSlotFullAlert: `${e.reject} این بازه پر شد. بازه دیگه‌ای انتخاب کن.`,
+  scheduleSlotFullAlert: `❌ این بازه پر شد. بازه دیگه‌ای انتخاب کن.`,
   scheduleNoSlotsToday:
     `${e.reject} <b>بازه‌ای موجود نیست</b>\n\n` +
     `متأسفم، امروز هیچ بازه زمانی آزادی برای این محصول وجود نداره.\n` +
@@ -704,8 +705,8 @@ export const fa = {
   shopDisabled: `${e.lock} <b>فروشگاه غیرفعال است</b>\n\nدر حال حاضر فروشگاه موقتاً غیرفعال شده است. لطفاً بعداً دوباره امتحان کنید.`,
 
   // ── Stock notification ──────────────────────────────────────────────────────
-  stockSubscribed: `${e.bell} موجود شد بهت خبر می‌دیم!`,
-  stockAlreadySubscribed: `${e.confirm} قبلاً ثبت‌نام کردی. وقتی موجود شه خبر می‌دیم.`,
+  stockSubscribed: `🔔 موجود شد بهت خبر می‌دیم!`,
+  stockAlreadySubscribed: `✅ قبلاً ثبت‌نام کردی. وقتی موجود شه خبر می‌دیم.`,
   stockRestocked: (data: { productName: string }) =>
     `${e.party} <b>موجودی شارژ شد!</b>\n\n${e.bag} ${data.productName} دوباره موجوده.\n\n🛍 همین الان خرید کن!`,
 

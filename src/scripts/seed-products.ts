@@ -43,7 +43,6 @@ async function seedProducts() {
         description:
           "اشتراک Spotify Premium با دسترسی به میلیون‌ها آهنگ بدون تبلیغ",
         categoryId: musicCategory.id,
-        deliveryType: "automatic",
         isActive: true,
         stock: 10,
       })
@@ -57,6 +56,7 @@ async function seedProducts() {
         price: "15000",
         duration: 30,
         durationUnit: "day",
+        deliveryType: "automatic",
         order: 1,
       },
       {
@@ -66,6 +66,7 @@ async function seedProducts() {
         price: "40000",
         duration: 90,
         durationUnit: "day",
+        deliveryType: "automatic",
         order: 2,
       },
     ]);
@@ -90,7 +91,6 @@ async function seedProducts() {
         slug: "chatgpt-plus",
         description: "اشتراک ChatGPT Plus با دسترسی به GPT-4",
         categoryId: aiCategory.id,
-        deliveryType: "manual",
         isActive: true,
         stock: 5,
       })
@@ -104,6 +104,7 @@ async function seedProducts() {
         price: "200000",
         duration: 30,
         durationUnit: "day",
+        deliveryType: "manual",
         order: 1,
       },
     ]);
@@ -128,7 +129,6 @@ async function seedProducts() {
         slug: "premium-vpn",
         description: "VPN پرسرعت با سرورهای متعدد",
         categoryId: vpnCategory.id,
-        deliveryType: "automatic",
         isActive: true,
         stock: 20,
       })
@@ -142,6 +142,7 @@ async function seedProducts() {
         price: "50000",
         duration: 30,
         durationUnit: "day",
+        deliveryType: "automatic",
         order: 1,
       },
       {
@@ -151,6 +152,7 @@ async function seedProducts() {
         price: "250000",
         duration: 180,
         durationUnit: "day",
+        deliveryType: "automatic",
         order: 2,
       },
     ]);

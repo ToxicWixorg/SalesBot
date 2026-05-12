@@ -223,12 +223,12 @@ export const startComposer = new Composer()
 
     try {
       await context.editText(t("main_menu", userName), {
-        reply_markup: mainMenuKeyboard(t),
+        reply_markup: mainMenuKeyboard(t, user.role),
         parse_mode: "HTML",
       });
     } catch {
       await context.send(t("main_menu", userName), {
-        reply_markup: mainMenuKeyboard(t),
+        reply_markup: mainMenuKeyboard(t,user.role),
         parse_mode: "HTML",
       });
     }

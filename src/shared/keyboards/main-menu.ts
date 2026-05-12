@@ -18,7 +18,9 @@ export function mainMenuKeyboard(
       icon_custom_emoji_id: emojiIds.user,
     })
     .row()
-    .text(t("btnSupport"), "support", { icon_custom_emoji_id: emojiIds.chat })
+    .text(t("btnMyTickets"), "my_tickets", {
+      icon_custom_emoji_id: emojiIds.chat,
+    })
     .row()
     .text(t("btnSettings"), "settings", {
       icon_custom_emoji_id: emojiIds.settings,

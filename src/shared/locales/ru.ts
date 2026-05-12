@@ -68,12 +68,12 @@ export const ru = {
   price: `${e.wallet} Цена:`,
   stock: `${e.bag} Наличие:`,
   available: `${e.checkBold} В наличии`,
-  outOfStock: `${e.reject} Нет в наличии`,
-  productNotFound: `${e.reject} Товар не найден`,
-  planNotFound: `${e.reject} Тариф не найден`,
-  categoryNotFound: `${e.reject} Категория не найдена`,
-  noPlansAvailable: `${e.reject} Нет доступных тарифов`,
-  insufficientBalanceAlert: `${e.reject} Недостаточно средств`,
+  outOfStock: `❌ Нет в наличии`,
+  productNotFound: `❌ Товар не найден`,
+  planNotFound: `❌ Тариф не найден`,
+  categoryNotFound: `❌ Категория не найдена`,
+  noPlansAvailable: `❌ Нет доступных тарифов`,
+  insufficientBalanceAlert: `❌ Недостаточно средств`,
   deliveryTime: `${e.clock} Время доставки:`,
   deliveryType: `${e.truck} Тип доставки:`,
   deliveryAutomatic: `${e.zap} Мгновенно (авто)`,
@@ -135,8 +135,8 @@ export const ru = {
   rechargePaymentPending: `${e.time} Ожидание оплаты...\n\nПожалуйста, завершите оплату в браузере.`,
   rechargePaymentSuccess: (amount: string) =>
     `${e.party} <b>Оплата успешна!</b>\n\n${e.diamond} <b>${amount}</b> томан добавлено в ваш кошелёк.`,
-  rechargePaymentFailed: `${e.reject} Ошибка оплаты. Попробуйте снова.`,
-  rechargePaymentCancelled: `${e.warning} Оплата отменена.`,
+  rechargePaymentFailed: `❌ Ошибка оплаты. Попробуйте снова.`,
+  rechargePaymentCancelled: `⚠️ Оплата отменена.`,
 
   // Transactions
   transactionHistoryTitle: `${e.chart} История транзакций`,
@@ -221,18 +221,18 @@ export const ru = {
   rechargeApproved: (amount: string) =>
     `${e.party} <b>Пополнение подтверждено!</b>\n\n${e.diamond} <b>${amount}</b> томан добавлено в ваш кошелёк.`,
   rechargeRejected: `${e.reject} <b>Запрос на пополнение отклонён.</b>\n\nПри необходимости обратитесь в поддержку.`,
-  rechargeSessionExpired: `${e.warning} Сессия истекла. Начните снова из раздела кошелька.`,
-  rechargeMethodDisabled: `${e.reject} Этот способ оплаты сейчас недоступен.`,
-  rechargeNoMethodAvailable: `${e.reject} Сейчас нет активных способов оплаты. Попробуйте позже.`,
+  rechargeSessionExpired: `⚠️Сессия истекла. Начните снова из раздела кошелька.`,
+  rechargeMethodDisabled: `❌ Этот способ оплаты сейчас недоступен.`,
+  rechargeNoMethodAvailable: `❌ Сейчас нет активных способов оплаты. Попробуйте позже.`,
   rechargeUsdtRate: (rate: string) =>
     `📈 Актуальный курс: <b>${rate}</b> томан/USDT`,
-  rechargeRateUnavailable: `${e.reject} Актуальный курс USDT недоступен. Подождите и попробуйте снова.`,
-  rechargeCryptoInvalidTxId: `${e.reject} Неверный TxID (минимум 10 символов). Отправьте ещё раз.`,
+  rechargeRateUnavailable: `❌ Актуальный курс USDT недоступен. Подождите и попробуйте снова.`,
+  rechargeCryptoInvalidTxId: `❌ Неверный TxID (минимум 10 символов). Отправьте ещё раз.`,
   rechargePaymentLink: (amount: string) =>
     `Сумма: <b>${amount}</b> томан\n\nНажмите кнопку ниже, чтобы перейти к оплате:`,
   rechargeZarinpalInstructions: `${e.clipboard} Нажмите «Оплатить», завершите оплату, затем нажмите «Проверить оплату».`,
   btnVerifyPayment: `Проверить оплату`,
-  rechargeZarinpalVerifying: `${e.time} Проверяем оплату...`,
+  rechargeZarinpalVerifying: `⌛ Проверяем оплату...`,
   rechargeZarinpalSuccess: (amount: string) =>
     `${e.party} <b>Оплата подтверждена!</b>\n\n${e.diamond} <b>${amount}</b> томан добавлено в ваш кошелёк.`,
   rechargeZarinpalFailed: `${e.reject} Оплата не подтверждена или ещё не зарегистрирована.`,
@@ -259,7 +259,7 @@ export const ru = {
   btnViewReferrals: ` Список приглашённых`,
   inviteShareText: `${e.gift} Присоединяйся по этой ссылке и получи специальную скидку!`,
   inviteLinkCopied: (link: string) =>
-    `${e.checkBold} Ссылка скопирована!\n\n<code>${link}</code>\n\nОтправьте её друзьям.`,
+    `✅ Ссылка скопирована!\n\nОтправьте её друзьям.`,
   noReferralsYet: `${e.user} У вас пока нет приглашённых — начните сейчас и зарабатывайте!`,
   referralListTitle: `${e.user} <b>Список приглашённых</b>`,
   andMore: (count: number) => `и ещё <b>${count}</b>...`,
@@ -292,7 +292,7 @@ export const ru = {
   discountTypePercentage: "Процент",
   discountTypeFixed: "Фиксированная сумма",
   noDescription: "Без описания",
-  noDiscountHistory: `${e.chart} Вы ещё не использовали промокоды.`,
+  noDiscountHistory: `📅 Вы ещё не использовали промокоды.`,
   discountHistoryTitle: `${e.chart} <b>История промокодов</b>`,
   discountAmount: "Размер скидки",
   orderId: "Номер заказа",
@@ -329,8 +329,8 @@ export const ru = {
   }) =>
     `${e.reject} <b>Недостаточно средств</b>\n\nТребуется (после скидки): <b>${data.required}</b> томан\nВаш баланс: <b>${data.current}</b> томан\n\nПополните кошелёк.`,
 
-  userNotFound: `${e.failed}Пользователь не найден`,
-  userIdentificationError: `${e.reject} Ошибка идентификации пользователя`,
+  userNotFound: `❌Пользователь не найден`,
+  userIdentificationError: `❌ Ошибка идентификации пользователя`,
   accountInfoTitle: `${e.user} Информация об аккаунте`,
   accountInfoData: (data: {
     userId: string;
@@ -397,8 +397,8 @@ export const ru = {
   ordersCompletedTitle: `${e.complete} Завершённые заказы`,
   ordersAllTitle: `${e.clipboard} Все заказы`,
   ordersSelectOne: `${e.pin} Нажмите на заказ, чтобы посмотреть детали:`,
-  ordersNoActive: `${e.info} У вас нет активных заказов`,
-  ordersNoCompleted: `${e.info} У вас нет завершённых заказов`,
+  ordersNoActive: `ℹ️ У вас нет активных заказов`,
+  ordersNoCompleted: `ℹ️ У вас нет завершённых заказов`,
   created: "Дата создания",
   order: "Заказ",
   status: "Статус",
@@ -430,10 +430,10 @@ export const ru = {
   orderCannotReschedule: "Этот заказ нельзя перенести",
   orderRescheduleComingSoon: "Перенос времени скоро будет доступен",
   orderReportComingSoon: "Система отчётов о проблемах скоро будет доступна",
-  errorFetchingOrders: `${e.reject} Ошибка загрузки заказов`,
-  errorFetchingOrderDetails: `${e.reject} Ошибка загрузки деталей заказа`,
-  errorReschedulingOrder: `${e.reject} Ошибка переноса заказа`,
-  errorRenewingOrder: `${e.reject} Ошибка продления заказа`,
+  errorFetchingOrders: `❌ Ошибка загрузки заказов`,
+  errorFetchingOrderDetails: `❌ Ошибка загрузки деталей заказа`,
+  errorReschedulingOrder: `❌ Ошибка переноса заказа`,
+  errorRenewingOrder: `❌ Ошибка продления заказа`,
   renewScreenTitle: "🔄 Продление сервиса",
   renewWalletSuccess: (data: {
     orderId: number;
@@ -444,8 +444,8 @@ export const ru = {
     `${e.bag} ${data.productName}\n` +
     `${e.ticket} Номер заказа: #${data.orderId}\n\n` +
     `${e.wallet} Остаток: ${data.remainingBalance} томан`,
-  errorOpeningTicket: `${e.reject} Ошибка открытия тикета`,
-  errorReportingProblem: `${e.reject} Ошибка отправки отчёта о проблеме`,
+  errorOpeningTicket: `❌ Ошибка открытия тикета`,
+  errorReportingProblem: `❌ Ошибка отправки отчёта о проблеме`,
   btnBackToMain: `Главное меню`,
   btnViewMessages: `Просмотреть сообщения`,
   btnBackToTickets: `Назад к тикетам`,
@@ -465,15 +465,16 @@ export const ru = {
   ticketMessageEmpty: `${e.reject} Сообщение не может быть пустым`,
   ticketCreatedSuccess: (data: { ticketNumber: string }) =>
     `${e.checkBold} <b>Тикет создан!</b>\n\nНомер тикета: <b>${data.ticketNumber}</b>\n\nКоманда поддержки уже уведомлена и скоро ответит.`,
-  ticketCreateError: `${e.reject} Не удалось создать тикет. Попробуйте снова или свяжитесь с поддержкой.`,
-  ticketOrderNotFound: `${e.reject} Заказ не найден`,
+  ticketCreateError: `❌ Не удалось создать тикет. Попробуйте снова или свяжитесь с поддержкой.`,
+  ticketOrderNotFound: `❌ Заказ не найден`,
   ticketListEmpty: `${e.chat} У вас ещё нет тикетов — нужна помощь? Создайте тикет!`,
   ticketListShowingFirst10: "Показаны первые 10 тикетов",
-  ticketListError: `${e.reject} Не удалось загрузить тикеты. Попробуйте снова.`,
-  ticketNotYours: `${e.reject} Этот тикет вам не принадлежит`,
-  ticketAlreadyClosed: `${e.lock} Этот тикет закрыт`,
-  ticketLoadError: `${e.reject} Ошибка загрузки тикета. Попробуйте снова.`,
-  ticketStatus_open: `${e.active} Открыт`,
+  ticketListError: `❌ Не удалось загрузить тикеты. Попробуйте снова.`,
+  ticketNotYours: `❌ Этот тикет вам не принадлежит`,
+  ticketAlreadyClosed: `🔒 Этот тикет закрыт`,
+  waitForAdminReply: `Wait for admin to reply youe last ticket`,
+  ticketLoadError: `❌ Ошибка загрузки тикета. Попробуйте снова.`,
+  ticketStatus_open: `❌ Открыт`,
   ticketStatus_waiting_user: `${e.pending} Ожидает вашего ответа`,
   ticketStatus_waiting_support: `${e.admin} Ожидает поддержки`,
   ticketStatus_in_progress: `${e.pending} В обработке`,
@@ -483,7 +484,7 @@ export const ru = {
   ticketReplyPrompt: (data: { ticketNumber: string }) =>
     `${e.chat} <b>Ответ на ${data.ticketNumber}</b>\n\nВведите сообщение:`,
   ticketReplySent: `${e.checkBold} Ваше сообщение отправлено!\n\nЯ сообщу вам, когда придёт ответ.`,
-  ticketReplyError: `${e.reject} Ошибка отправки сообщения. Попробуйте снова.`,
+  ticketReplyError: `❌ Ошибка отправки сообщения. Попробуйте снова.`,
   ticketCreationCancelled: `${e.reject} Создание тикета отменено`,
   ticketMessages: "Сообщения",
   ticketNoMessages: "В этом тикете пока нет сообщений",
@@ -514,7 +515,7 @@ export const ru = {
     `Нажмите на конфиг выше, чтобы скопировать, затем импортируйте в VPN-приложение.`,
 
   joinChannelRequired: `${e.flag_ir} <b>Обязательная подписка</b>\n\nДля использования бота сначала вступите в следующие каналы/группы:`,
-  joinChannelNotJoinedAlert: ` Вы ещё не вступили во все обязательные каналы. Вступите и попробуйте снова.`,
+  joinChannelNotJoinedAlert: `🔒 Вы ещё не вступили во все обязательные каналы. Вступите и попробуйте снова.`,
 
   manualOrderInfoRequired: `${e.clipboard} <b>Необходимая информация</b>\n\nДля обработки заказа укажите данные ниже:`,
   manualOrderStep: (data: { current: number; total: number }) =>
@@ -586,7 +587,7 @@ export const ru = {
   schedulePickSlot: (data: { date: string }) =>
     `${e.date} <b>Выбор времени</b>\n\nВыберите свободный слот на <b>${data.date}</b>:\n\n${e.checkBold} = свободно  |  ${e.reject} = занято`,
   scheduleSlotFree: "Свободно",
-  scheduleSlotFullAlert: `${e.reject} Этот слот уже занят. Выберите другой.`,
+  scheduleSlotFullAlert: `❌ Этот слот уже занят. Выберите другой.`,
   scheduleNoSlotsToday:
     `${e.reject} <b>Нет доступных слотов</b>\n\n` +
     `К сожалению, сегодня для этого товара нет свободного времени.\n` +
@@ -649,8 +650,8 @@ export const ru = {
   referralDisabled: `${e.lock} <b>Реферальная система отключена</b>\n\nПрограмма приглашений временно недоступна.`,
   shopDisabled: `${e.lock} <b>Магазин отключён</b>\n\nСейчас магазин временно недоступен. Попробуйте позже.`,
 
-  stockSubscribed: `${e.bell} Подписка оформлена! Мы сообщим, когда товар появится в наличии.`,
-  stockAlreadySubscribed: `${e.confirm} Вы уже подписаны. Мы уведомим вас, когда товар появится.`,
+  stockSubscribed: `🔔 Подписка оформлена! Мы сообщим, когда товар появится в наличии.`,
+  stockAlreadySubscribed: `✅ Вы уже подписаны. Мы уведомим вас, когда товар появится.`,
   stockRestocked: (data: { productName: string }) =>
     `${e.party} <b>Товар снова в наличии!</b>\n\n${e.bag} ${data.productName} снова доступен.\n\n🛍 Покупайте прямо сейчас!`,
 

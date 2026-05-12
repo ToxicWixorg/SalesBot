@@ -44,7 +44,7 @@ export async function SelectPlanCallback(context: Context) {
 
   preSelectedRegionState.delete(userId);
 
-  if (product.deliveryType === "automatic") {
+  if (plan.deliveryType === "automatic") {
     const available = await InventoryRepository.countAvailable(product.id);
     if (available <= 0) {
       await context.answerCallbackQuery({
@@ -55,7 +55,7 @@ export async function SelectPlanCallback(context: Context) {
     }
 
     enterQuantityState.set(userId, { planId, productId: product.id });
-    
+
     await context.editText(t("enterQuantityPrompt", available), {
       parse_mode: "HTML",
       reply_markup: enterQuantityKeyboard(t, product.id),
@@ -63,7 +63,7 @@ export async function SelectPlanCallback(context: Context) {
     return;
   }
 
-  if (product.deliveryType === "manual") {
+  if (plan.deliveryType === "manual") {
     console.log("[PlanDetail] ", plan);
     const regions: Array<{ flag: string; name: string; price?: string }> =
       plan.regions && plan.regions.length > 0 ? plan.regions : [];
@@ -99,7 +99,7 @@ export async function SelectPlanCallback(context: Context) {
     return;
   }
 
-  if (product.deliveryType === "custom_schedule") {
+  if (plan.deliveryType === "custom_schedule") {
     const regions: Array<{ flag: string; name: string; price?: string }> =
       plan.regions && plan.regions.length > 0 ? plan.regions : [];
 

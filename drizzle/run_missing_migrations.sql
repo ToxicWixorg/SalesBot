@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Missing Migrations: 0013 → 0017
+-- Missing Migrations: 0013 → 0023
 -- Run this on the server DB if drizzle-kit migrate hasn't been executed yet.
 -- All statements use IF NOT EXISTS / ON CONFLICT so they're safe to re-run.
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -94,3 +94,13 @@ CREATE TABLE IF NOT EXISTS "wallet_topups" (
 
 CREATE INDEX IF NOT EXISTS "wallet_topups_user_id_idx" ON "wallet_topups" ("user_id");
 CREATE INDEX IF NOT EXISTS "wallet_topups_status_idx" ON "wallet_topups" ("status");
+
+-- 0023: move_delivery_type_to_plans
+ALTER TABLE "products" DROP COLUMN IF EXISTS "delivery_type";
+
+ALTER TABLE "product_plans"
+ADD COLUMN IF NOT EXISTS "delivery_type" text NOT NULL DEFAULT 'automatic';
+
+CREATE INDEX IF NOT EXISTS "product_plans_delivery_type_idx"
+ON "product_plans" USING btree ("delivery_type");
+

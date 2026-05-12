@@ -65,12 +65,12 @@ export const en = {
   price: `${e.wallet} Price:`,
   stock: `${e.bag} Stock:`,
   available: `${e.checkBold} Available`,
-  outOfStock: `${e.reject} Out of Stock`,
-  productNotFound: `${e.reject} Product not found`,
-  planNotFound: `${e.reject} Plan not found`,
-  categoryNotFound: `${e.reject} Category not found`,
-  noPlansAvailable: `${e.reject} No plans available`,
-  insufficientBalanceAlert: `${e.reject} Insufficient balance`,
+  outOfStock: `❌ Out of Stock`,
+  productNotFound: `❌ Product not found`,
+  planNotFound: `❌ Plan not found`,
+  categoryNotFound: `❌ Category not found`,
+  noPlansAvailable: `❌ No plans available`,
+  insufficientBalanceAlert: `❌ Insufficient balance`,
   deliveryTime: `${e.clock} Delivery Time:`,
   deliveryType: `${e.truck} Delivery Type:`,
   deliveryAutomatic: `${e.zap} Instant (Automatic)`,
@@ -137,8 +137,8 @@ export const en = {
   rechargePaymentPending: `${e.time} Waiting for payment...\n\nPlease complete the payment in your browser.`,
   rechargePaymentSuccess: (amount: string) =>
     `${e.party} <b>Payment successful!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
-  rechargePaymentFailed: `${e.reject} Payment failed. Please try again.`,
-  rechargePaymentCancelled: `${e.warning} Payment cancelled.`,
+  rechargePaymentFailed: `❌ Payment failed. Please try again.`,
+  rechargePaymentCancelled: `⚠️ Payment cancelled.`,
 
   // Transaction History
   transactionHistoryTitle: `${e.chart} Transaction History`,
@@ -173,15 +173,15 @@ export const en = {
   rechargeApproved: (amount: string) =>
     `${e.party} <b>Top-up approved!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
   rechargeRejected: `${e.reject} <b>Top-up request rejected.</b>\n\nContact support if needed.`,
-  rechargeSessionExpired: `${e.warning} Session expired. Please start again from wallet section.`,
-  rechargeMethodDisabled: `${e.reject} This payment method is currently disabled.`,
-  rechargeNoMethodAvailable: `${e.reject} No payment method is currently available. Please try again later.`,
+  rechargeSessionExpired: `⚠️ Session expired. Please start again from wallet section.`,
+  rechargeMethodDisabled: `❌ This payment method is currently disabled.`,
+  rechargeNoMethodAvailable: `❌ No payment method is currently available. Please try again later.`,
   rechargeUsdtRate: (rate: string) => `📈 Live rate: <b>${rate}</b> Toman/USDT`,
-  rechargeRateUnavailable: `${e.reject} Live USDT rate is unavailable. Please wait and try again.`,
-  rechargeCryptoInvalidTxId: `${e.reject} Invalid TxID (must be at least 10 characters). Please send it again.`,
+  rechargeRateUnavailable: `❌ Live USDT rate is unavailable. Please wait and try again.`,
+  rechargeCryptoInvalidTxId: `❌ Invalid TxID (must be at least 10 characters). Please send it again.`,
   rechargeZarinpalInstructions: `${e.clipboard} Click "Pay", complete the payment, then click "Verify Payment".`,
   btnVerifyPayment: `Verify Payment`,
-  rechargeZarinpalVerifying: `${e.time} Verifying payment...`,
+  rechargeZarinpalVerifying: `⌛ Verifying payment...`,
   rechargeZarinpalSuccess: (amount: string) =>
     `${e.party} <b>Payment confirmed!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
   rechargeZarinpalFailed: `${e.reject} Payment is not confirmed or has not been recorded yet.`,
@@ -213,7 +213,7 @@ export const en = {
   btnViewReferrals: ` Referred Users`,
   inviteShareText: `${e.gift} Join using this link and get a special discount!`,
   inviteLinkCopied: (link: string) =>
-    `${e.checkBold} Link copied!\n\n<code>${link}</code>\n\nSend this link to your friends.`,
+    `✅ Link copied!\n\nSend this link to your friends.`,
   noReferralsYet: `${e.user} You haven't referred anyone yet — start now and earn rewards!`,
   referralListTitle: `${e.user} <b>Referred Users</b>`,
   andMore: (count: number) => `and <b>${count}</b> more...`,
@@ -247,14 +247,14 @@ export const en = {
   discountTypePercentage: "Percentage",
   discountTypeFixed: "Fixed amount",
   noDescription: "No description",
-  noDiscountHistory: `${e.chart} You haven't used any discount codes yet — make your first one count!`,
+  noDiscountHistory: `📅 You haven't used any discount codes yet — make your first one count!`,
   discountHistoryTitle: `${e.chart} <b>Discount Code History</b>`,
   discountAmount: "Discount amount",
   orderId: "Order ID",
 
   // Settings
-  userNotFound: `${e.failed}User not found`,
-  userIdentificationError: `${e.reject} Error identifying user`,
+  userNotFound: `❌ User not found`,
+  userIdentificationError: `❌ Error identifying user`,
   settingsTitle: `${e.settings} Settings`,
   settingsDescription: `${e.info} Manage your account from here.`,
   btnAccountInfo: `Account Info`,
@@ -347,8 +347,8 @@ export const en = {
   ordersCompletedTitle: `${e.complete} Completed Orders`,
   ordersAllTitle: `${e.clipboard} All Orders`,
   ordersSelectOne: `${e.pin} Tap an order to view details:`,
-  ordersNoActive: `${e.info} You have no active orders`,
-  ordersNoCompleted: `${e.info} You have no completed orders`,
+  ordersNoActive: `ℹ️ You have no active orders`,
+  ordersNoCompleted: `ℹ️ You have no completed orders`,
 
   // Order Details
   orderDetailsTitle: `${e.clipboard} Order Details`,
@@ -387,10 +387,10 @@ export const en = {
   orderCannotReschedule: "This order cannot be rescheduled",
   orderRescheduleComingSoon: "Rescheduling will be available soon",
   orderReportComingSoon: "Problem reporting will be available soon",
-  errorFetchingOrders: `${e.reject} Error fetching orders`,
-  errorFetchingOrderDetails: `${e.reject} Error fetching order details`,
-  errorReschedulingOrder: `${e.reject} Error rescheduling order`,
-  errorRenewingOrder: `${e.reject} Error renewing order`,
+  errorFetchingOrders: `❌ Error fetching orders`,
+  errorFetchingOrderDetails: `❌ Error fetching order details`,
+  errorReschedulingOrder: `❌ Error rescheduling order`,
+  errorRenewingOrder: `❌ Error renewing order`,
   renewScreenTitle: "🔄 Renew Service",
   renewWalletSuccess: (data: {
     orderId: number;
@@ -401,8 +401,8 @@ export const en = {
     `${e.bag} ${data.productName}\n` +
     `${e.ticket} Order number: #${data.orderId}\n\n` +
     `${e.wallet} Remaining balance: ${data.remainingBalance} Toman`,
-  errorOpeningTicket: `${e.reject} Error opening ticket`,
-  errorReportingProblem: `${e.reject} Error reporting problem`,
+  errorOpeningTicket: `❌ Error opening ticket`,
+  errorReportingProblem: `❌ Error reporting problem`,
 
   // Support & Tickets
   supportMenuText:
@@ -442,21 +442,22 @@ export const en = {
   ticketCreatedSuccess: (data: { ticketNumber: string }) =>
     `${e.checkBold} <b>Ticket created!</b>\n\nTicket number: <b>${data.ticketNumber}</b>\n\nOur support team has been notified and will reply soon.`,
 
-  ticketCreateError: `${e.reject} Failed to create ticket. Please try again or contact support directly.`,
+  ticketCreateError: `❌ Failed to create ticket. Please try again or contact support directly.`,
 
-  ticketOrderNotFound: `${e.reject} Order not found`,
+  ticketOrderNotFound: `❌ Order not found`,
 
   // Ticket List
   ticketListTitle: `${e.clipboard} <b>Your Tickets</b>`,
   ticketListEmpty: `${e.chat} You don't have any tickets yet — need help? Open one!`,
   ticketListShowingFirst10: "Showing first 10 tickets",
-  ticketListError: `${e.reject} Failed to load tickets. Please try again.`,
+  ticketListError: `❌ Failed to load tickets. Please try again.`,
 
   // Ticket Details
-  ticketNotFound: `${e.reject} Ticket not found`,
-  ticketNotYours: `${e.reject} This ticket does not belong to you`,
-  ticketAlreadyClosed: `${e.lock} This ticket is closed`,
-  ticketLoadError: `${e.reject} Failed to load ticket. Please try again.`,
+  ticketNotFound: `❌ Ticket not found`,
+  ticketNotYours: `❌ This ticket does not belong to you`,
+  ticketAlreadyClosed: `🔒 This ticket is closed`,
+  waitForAdminReply: `Wait for admin to reply youe last ticket`,
+  ticketLoadError: `❌ Failed to load ticket. Please try again.`,
 
   status: "Status",
   created: "Created",
@@ -479,7 +480,7 @@ export const en = {
 
   ticketReplySent: `${e.checkBold} Your message has been sent!\n\nI'll notify you when a reply arrives.`,
 
-  ticketReplyError: `${e.reject} Failed to send message. Please try again.`,
+  ticketReplyError: `❌ Failed to send message. Please try again.`,
 
   ticketCreationCancelled: `${e.reject} Ticket creation cancelled`,
 
@@ -554,7 +555,7 @@ export const en = {
   // Force Join Channels/Groups
   joinChannelRequired: `${e.flag_ir} <b>Required Membership</b>\n\nTo use this bot, first join the following channels/groups:`,
   btnIJoined: `I joined — Check`,
-  joinChannelNotJoinedAlert: ` You still haven’t joined all required channels. Join them and try again.`,
+  joinChannelNotJoinedAlert: `🔒 You still haven’t joined all required channels. Join them and try again.`,
 
   // ── فلوی سفارش دستی / زمان‌بندی‌شده ──────────────────────────────────────
   manualOrderInfoRequired: `${e.clipboard} <b>Required Information</b>\n\nTo process your order, enter the following details:`,
@@ -636,7 +637,7 @@ export const en = {
   schedulePickSlot: (data: { date: string }) =>
     `${e.date} <b>Select Time Slot</b>\n\nChoose an available slot for <b>${data.date}</b>:\n\n${e.checkBold} = available  |  ${e.reject} = full`,
   scheduleSlotFree: "Available",
-  scheduleSlotFullAlert: `${e.reject} This slot is full. Please choose another one.`,
+  scheduleSlotFullAlert: `❌ This slot is full. Please choose another one.`,
   scheduleNoSlotsToday:
     `${e.reject} <b>No slots available</b>\n\n` +
     `Sorry, there are no available time slots for this product today.\n` +
@@ -704,8 +705,8 @@ export const en = {
   shopDisabled: `${e.lock} <b>Shop is disabled</b>\n\nThe shop is currently temporarily disabled. Please try again later.`,
 
   // ── Stock notification ──────────────────────────────────────────────────────
-  stockSubscribed: `${e.lock} Subscribed! We’ll notify you when it’s back in stock.`,
-  stockAlreadySubscribed: `${e.confirm} You already subscribed. We’ll notify you once it’s in stock.`,
+  stockSubscribed: `🔔 Subscribed! We’ll notify you when it’s back in stock.`,
+  stockAlreadySubscribed: `✅ You already subscribed. We’ll notify you once it’s in stock.`,
   stockRestocked: (data: { productName: string }) =>
     `${e.party} <b>Back in stock!</b>\n\n${e.bag} ${data.productName} is available again.\n\n🛍 Buy it now!`,
 

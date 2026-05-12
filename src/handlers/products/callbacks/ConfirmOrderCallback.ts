@@ -121,10 +121,10 @@ export async function ConfirmOrderCallback(context: any): Promise<void> {
   // ── No info steps → go straight to payment ────────────────────────────────
   // For custom_schedule: payment always comes FIRST (before info collection),
   // so we go to payment regardless of whether there are info steps.
-  if (product.deliveryType === "custom_schedule") {
+  if (plan.deliveryType === "custom_schedule") {
     const state: PendingOrderInfo = {
       planId,
-      deliveryType: product.deliveryType,
+      deliveryType: plan.deliveryType,
       phase: "payment",
       steps,
       currentStep: 0,
@@ -146,7 +146,7 @@ export async function ConfirmOrderCallback(context: any): Promise<void> {
       getBotInstance(),
       userId,
       planId,
-      product.deliveryType,
+      plan.deliveryType,
       (text, opts) => context.editText(text, opts),
       preCollected,
     );
@@ -156,7 +156,7 @@ export async function ConfirmOrderCallback(context: any): Promise<void> {
   // ── Store state and send first info-collection prompt ──────────────────────
   const state: PendingOrderInfo = {
     planId,
-    deliveryType: product.deliveryType,
+    deliveryType: plan.deliveryType,
     phase: "info",
     steps,
     currentStep: 0,

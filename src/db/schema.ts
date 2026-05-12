@@ -93,9 +93,6 @@ export const productsTable = pgTable(
     image: text("image"),
     categoryId: integer("category_id").references(() => categoriesTable.id),
 
-    // Delivery Type: automatic, manual, custom_schedule, invite, code, family_join, renewable, reservation
-    deliveryType: text("delivery_type").notNull(),
-
     // Product Requirements
     requiresEmail: boolean("requires_email").default(false),
     requiresOtp: boolean("requires_otp").default(false),
@@ -148,6 +145,9 @@ export const productPlansTable = pgTable(
     price: decimal("price", { precision: 15, scale: 2 }).notNull(),
     duration: integer("duration"), // در روز (null = یکبار)
     durationUnit: text("duration_unit"), // day, month, year
+
+    // Delivery Type: automatic, manual, custom_schedule, invite, code, family_join, renewable, reservation
+    deliveryType: text("delivery_type").notNull().default("automatic"),
 
     // Per-plan delivery requirements (override product-level defaults)
     requiresEmail: boolean("requires_email").default(false),

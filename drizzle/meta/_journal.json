@@ -162,6 +162,13 @@
       "when": 1778528000000,
       "tag": "0022_nowpayments_wallet_payments",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1778614400000,
+      "tag": "0023_move_delivery_type_to_plans",
+      "breakpoints": true
     }
   ]
 }
