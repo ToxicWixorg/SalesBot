@@ -81,6 +81,7 @@ export async function linkSlotToOrder(
     planName: plan.name,
     finalPrice,
     collected: state.collected,
+    steps: state.steps,
     deliveryType: plan.deliveryType,
     paymentMethod: "wallet",
     scheduledSlot: `${slot.date} ${slot.timeSlot}`,

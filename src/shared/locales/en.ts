@@ -219,7 +219,7 @@ export const en = {
   inviteShareText: `${e.gift} Join using this link and get a special discount!`,
   inviteLinkCopied: (link: string) =>
     `✅ Link copied!\n\nSend this link to your friends.`,
-  noReferralsYet: `${e.user} You haven't referred anyone yet — start now and earn rewards!`,
+  noReferralsYet: `👤 You haven't referred anyone yet — start now and earn rewards!`,
   referralListTitle: `${e.user} <b>Referred Users</b>`,
   andMore: (count: number) => `and <b>${count}</b> more...`,
   referralRewardNotification: (data: { userName: string; amount: string }) =>

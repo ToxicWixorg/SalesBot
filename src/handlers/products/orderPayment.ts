@@ -1,6 +1,5 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../shared/locales/index.ts";
-import type { InfoStep } from "./pendingOrderInfoState.ts";
 import type { PaymentSettings, PaymentCardNumber } from "../../db/schema.ts";
 
 export type PaymentSummaryData = {
@@ -8,7 +7,7 @@ export type PaymentSummaryData = {
   planName: string;
   duration: number | null | undefined;
   durationUnit: string | null | undefined;
-  collected: Partial<Record<InfoStep, string>>;
+  collected: Record<string, string>;
   originalPrice: number;
   discountCode?: string;
   discountAmount?: number;

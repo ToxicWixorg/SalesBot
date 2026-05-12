@@ -25,7 +25,7 @@ export async function createManualOrderDirect(
   planId: number,
   deliveryType: string,
   editFn: (text: string, opts?: any) => Promise<any>,
-  preCollected?: Partial<Record<InfoStep, string>>,
+  preCollected?: Record<InfoStep, string>,
 ) {
   const preRegion = preSelectedRegionState.get(userId);
   const regionPrice =

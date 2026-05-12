@@ -1,16 +1,7 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../shared/locales/index.ts";
-import type { InfoStep, PendingOrderInfo } from "./pendingOrderInfoState.ts";
+import type { PendingOrderInfo } from "./pendingOrderInfoState.ts";
 import { emojiIds } from "../../shared/locales/emojies.ts";
-
-/** Human-readable Persian label for each info step */
-const stepLabel: Record<InfoStep, string> = {
-  email: "📧 ایمیل",
-  password: "🔑 رمز ایمیل",
-  loginUsername: "👤 نام کاربری",
-  loginPassword: "🔐 رمز عبور",
-  region: "🌍 منطقه",
-};
 
 /**
  * Builds the review message that shows the user all collected info
@@ -23,8 +14,9 @@ export function buildOrderInfoReviewText(
   let text = `${t("orderInfoReviewTitle")}\n${t("orderInfoReviewPrompt")}\n\n`;
 
   for (const step of state.steps) {
-    const value = state.collected[step] ?? "—";
-    text += `${stepLabel[step]}: <code>${value}</code>\n`;
+    const rawValue = state.collected[step.key] ?? "—";
+    const value = step.sensitive && rawValue !== "—" ? "••••••" : rawValue;
+    text += `${step.label}: <code>${value}</code>\n`;
   }
 
   return text;
@@ -37,7 +29,7 @@ export function buildOrderInfoReviewText(
 export function orderInfoReviewKeyboard(
   t: TFunction,
   planId: number,
-  steps: InfoStep[],
+  steps: PendingOrderInfo["steps"],
 ): InlineKeyboard {
   const kb = new InlineKeyboard();
 
@@ -47,7 +39,7 @@ export function orderInfoReviewKeyboard(
   }).row();
 
   for (const step of steps) {
-    kb.text(`✏️ ${stepLabel[step]}`, `edit_info_${planId}_${step}`).row();
+    kb.text(`✏️ ${step.label}`, `edit_info_${planId}_${step.key}`).row();
   }
 
   kb.text(t("btnCancelManualOrder"), "cancel_manual_order");

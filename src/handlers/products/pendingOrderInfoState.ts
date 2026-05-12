@@ -4,12 +4,16 @@ import type { AppliedDiscount } from "./discountOrderState.ts";
  * Steps of info collection for manual/scheduled orders.
  * Each step corresponds to a piece of information we ask the user.
  */
-export type InfoStep =
-  | "email"
-  | "password"
-  | "loginUsername"
-  | "loginPassword"
-  | "region";
+export type InfoStep = string;
+
+export type RequiredInputField = {
+  key: string;
+  label: string;
+  inputType?: "text" | "email" | "password" | "number" | "url";
+  required?: boolean;
+  sensitive?: boolean;
+  placeholder?: string;
+};
 
 /**
  * Full state object kept for a user while their order is being built.
@@ -30,9 +34,9 @@ export type PendingOrderInfo = {
   planId: number;
   deliveryType: string;
   phase: "info" | "review" | "payment" | "day" | "slot";
-  steps: InfoStep[];
+  steps: RequiredInputField[];
   currentStep: number;
-  collected: Partial<Record<InfoStep, string>>;
+  collected: Record<InfoStep, string>;
   /** Discount already validated and waiting to be applied */
   discount?: AppliedDiscount;
   /** Price override when the user selected a region with its own price */

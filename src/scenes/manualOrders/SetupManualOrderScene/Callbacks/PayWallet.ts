@@ -1,4 +1,3 @@
-import { Context } from "gramio";
 import { pendingOrderInfoState } from "../../../../handlers/products/pendingOrderInfoState";
 import { bot } from "../../../../bot";
 import { appliedDiscountState } from "../../../../handlers/products/discountOrderState";
@@ -11,10 +10,9 @@ import {
   WalletRepository,
 } from "../../../../repositories";
 import { i18n } from "../../../../shared/locales";
-import { InlineKeyboard } from "gramio";
+import { Context, InlineKeyboard } from "gramio";
 import { emojiIds } from "../../../../shared/locales/emojies";
 import { sendStepPrompt } from "../../SendStepPrompt";
-import { getPromptKey } from "../../Helpers/getPromptKey";
 import { showDayPicker } from "../../Helpers/showDayPicker";
 
 export async function PayWalletCallback(ctx: Context, finishManualOrder: any) {
@@ -59,7 +57,7 @@ export async function PayWalletCallback(ctx: Context, finishManualOrder: any) {
             })
             .row()
             .text(t("btnCancelManualOrder"), "cancel_manual_order", {
-              icon_custom_emoji_id: emojiIds.cross,
+              icon_custom_emoji_id: emojiIds.reject,
             }),
         },
       );
@@ -117,7 +115,6 @@ export async function PayWalletCallback(ctx: Context, finishManualOrder: any) {
         t,
         state,
         true, // edit the payment screen
-        getPromptKey,
       );
     } else {
       // No info steps — go straight to day picker

@@ -1,11 +1,19 @@
 import { Context, InlineKeyboard } from "gramio";
 import { UserRepository } from "../../../../repositories";
 import { i18n } from "../../../../shared/locales";
-import {
-  InfoStep,
-  pendingOrderInfoState,
-} from "../../../../handlers/products/pendingOrderInfoState";
-import { getPromptKey } from "../../Helpers/getPromptKey";
+import { pendingOrderInfoState } from "../../../../handlers/products/pendingOrderInfoState";
+
+function resolvePromptText(t: any, key: string, label: string) {
+  const legacyPromptKeyMap: Record<string, string> = {
+    email: "manualOrderEmailPrompt",
+    password: "manualOrderPasswordPrompt",
+    loginUsername: "manualOrderLoginUsernamePrompt",
+    loginPassword: "manualOrderLoginPasswordPrompt",
+    region: "manualOrderRegionPrompt",
+  };
+  const legacy = legacyPromptKeyMap[key];
+  return legacy ? t(legacy as any) : `📝 <b>${label}</b> را وارد کنید:`;
+}
 
 export async function EditInfoCallback(ctx: Context) {
   await ctx.answerCallbackQuery();
@@ -16,17 +24,16 @@ export async function EditInfoCallback(ctx: Context) {
   if (!state) return;
 
   const [, , stepName] = ctx.queryData as [string, string, string];
-  const step = stepName as InfoStep;
-  if (!state.steps.includes(step)) return;
+  const step = state.steps.find((x) => x.key === stepName);
+  if (!step) return;
 
-  state.editingStep = step;
+  state.editingStep = step.key;
   state.phase = "info";
 
   const user = await UserRepository.findById(userId);
   const t = i18n.buildT(user?.languageCode ?? "en");
 
-  const promptKey = getPromptKey(step);
-  await ctx.editText(t(promptKey as any), {
+  await ctx.editText(resolvePromptText(t, step.key, step.label), {
     parse_mode: "HTML",
     reply_markup: new InlineKeyboard().text(
       t("btnCancelManualOrder"),

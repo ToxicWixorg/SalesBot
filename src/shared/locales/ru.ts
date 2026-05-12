@@ -265,7 +265,7 @@ export const ru = {
   inviteShareText: `${e.gift} Присоединяйся по этой ссылке и получи специальную скидку!`,
   inviteLinkCopied: (link: string) =>
     `✅ Ссылка скопирована!\n\nОтправьте её друзьям.`,
-  noReferralsYet: `${e.user} У вас пока нет приглашённых — начните сейчас и зарабатывайте!`,
+  noReferralsYet: `👤 У вас пока нет приглашённых — начните сейчас и зарабатывайте!`,
   referralListTitle: `${e.user} <b>Список приглашённых</b>`,
   andMore: (count: number) => `и ещё <b>${count}</b>...`,
   referralRewardNotification: (data: { userName: string; amount: string }) =>

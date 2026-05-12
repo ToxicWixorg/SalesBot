@@ -1,5 +1,8 @@
 import { TicketService } from "../../../services/bot";
-import { InfoStep } from "../../../handlers/products/pendingOrderInfoState";
+import {
+  InfoStep,
+  RequiredInputField,
+} from "../../../handlers/products/pendingOrderInfoState";
 import { AnyBot } from "gramio";
 import { i18n } from "../../../shared/locales";
 
@@ -13,7 +16,8 @@ export async function notifyAdminNewOrder(
     productName: string;
     planName: string;
     finalPrice: number;
-    collected: Partial<Record<InfoStep, string>>;
+    collected: Record<InfoStep, string>;
+    steps: RequiredInputField[];
     deliveryType: string;
     paymentMethod?: string;
     scheduledSlot?: string;
@@ -34,16 +38,12 @@ export async function notifyAdminNewOrder(
 
   if (data.paymentMethod)
     description += `${t("adminOrderPayment")}: ${data.paymentMethod}\n`;
-  if (data.collected.email)
-    description += `${t("adminOrderEmail")}: ${data.collected.email}\n`;
-  if (data.collected.password)
-    description += `${t("adminOrderEmailPassword")}: ${data.collected.password}\n`;
-  if (data.collected.loginUsername)
-    description += `${t("adminOrderUsername")}: ${data.collected.loginUsername}\n`;
-  if (data.collected.loginPassword)
-    description += `${t("adminOrderLoginPassword")}: ${data.collected.loginPassword}\n`;
-  if (data.collected.region)
-    description += `${t("adminOrderRegion")}: ${data.collected.region}\n`;
+  for (const step of data.steps) {
+    const value = data.collected[step.key];
+    if (!value) continue;
+    const shownValue = step.sensitive ? "••••••" : value;
+    description += `${step.label}: ${shownValue}\n`;
+  }
   if (data.scheduledSlot)
     description += `${t("adminOrderScheduled")}: ${data.scheduledSlot}\n`;
 

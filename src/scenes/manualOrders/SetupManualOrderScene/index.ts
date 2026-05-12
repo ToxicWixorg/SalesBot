@@ -29,7 +29,6 @@ import { PayCryptoCallback } from "./Callbacks/PayCrypto";
 import { VerifyCryptoOrderCallback } from "./Callbacks/VerifyCryptoOrder";
 import { sendStepPrompt } from "../SendStepPrompt";
 import { appliedDiscountState } from "../../../handlers/products/discountOrderState";
-import { getPromptKey } from "../Helpers/getPromptKey";
 import { showDayPicker } from "../Helpers/showDayPicker";
 import { showSlotPicker } from "../Helpers/showSlotPicker";
 import { finishManualOrderWithSlot } from "../Helpers/finishManualOrderWithSlot";
@@ -64,14 +63,11 @@ async function createPendingPaymentOrder(
   const discountAmount = hasDiscount ? pendingDiscount.discountAmount : 0;
   const finalPrice = hasDiscount ? pendingDiscount.finalPrice : originalPrice;
 
-  const delivery: Record<string, string> = {};
-  if (state.collected.email) delivery.email = state.collected.email;
-  if (state.collected.password) delivery.password = state.collected.password;
-  if (state.collected.loginUsername)
-    delivery.loginUsername = state.collected.loginUsername;
-  if (state.collected.loginPassword)
-    delivery.loginPassword = state.collected.loginPassword;
-  if (state.collected.region) delivery.region = state.collected.region;
+  const delivery: Record<string, string> = Object.fromEntries(
+    Object.entries(state.collected).filter(
+      ([, value]) => typeof value === "string" && value.trim() !== "",
+    ),
+  );
 
   const order = await OrderRepository.create({
     userId: userId as any,
@@ -156,7 +152,8 @@ export function setupManualOrderScene(bot: AnyBot) {
 
     // ── Normal info-collection flow ───────────────────────────────────────
     const step = state.steps[state.currentStep];
-    state.collected[step] = answer;
+    if (!step) return next?.();
+    state.collected[step.key] = answer;
     state.currentStep++;
 
     if (state.currentStep >= state.steps.length) {
@@ -189,7 +186,7 @@ export function setupManualOrderScene(bot: AnyBot) {
       // Ask next step
       const user = await UserRepository.findById(userId);
       const t = i18n.buildT(user?.languageCode ?? "en");
-      await sendStepPrompt(ctx, t, state, false, getPromptKey);
+      await sendStepPrompt(ctx, t, state, false);
     }
   });
 
@@ -243,7 +240,47 @@ export function setupManualOrderScene(bot: AnyBot) {
   });
 
   /** User wants to re-edit a specific field */
-  bot.callbackQuery(/^edit_info_(\d+)_(\w+)$/, async (ctx) => {});
+  bot.callbackQuery(/^edit_info_(\d+)_(\w+)$/, async (ctx) => {
+    await ctx.answerCallbackQuery();
+
+    const userId = ctx.from?.id;
+    if (!userId) return;
+
+    const state = pendingOrderInfoState.get(userId);
+    if (!state) return;
+
+    const user = await UserRepository.findById(userId);
+    const t = i18n.buildT(user?.languageCode ?? "fa");
+
+    const stepRaw = Array.isArray(ctx.queryData) ? ctx.queryData[2] : undefined;
+
+    if (!stepRaw) {
+      await ctx.answerCallbackQuery({
+        text: t("errorFetchingOrderDetails"),
+        show_alert: true,
+      });
+      return;
+    }
+
+    const hasStep = state.steps.some((s) => s.key === stepRaw);
+    if (!hasStep) {
+      await ctx.answerCallbackQuery({
+        text: t("errorFetchingOrderDetails"),
+        show_alert: true,
+      });
+      return;
+    }
+
+    state.editingStep = stepRaw;
+    state.phase = "info";
+
+    const stepIndex = state.steps.findIndex((s) => s.key === stepRaw);
+    if (stepIndex >= 0) {
+      state.currentStep = stepIndex;
+    }
+
+    await sendStepPrompt(ctx, t, state, true);
+  });
 
   /** User selected a day of week — slot_day_{0-6} */
   bot.callbackQuery(/^slot_day_([0-6])$/, async (ctx) => {

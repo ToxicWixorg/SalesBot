@@ -69,14 +69,11 @@ export async function finishManualOrder(
   }
 
   // Build delivery payload from collected info
-  const delivery: Record<string, string> = {};
-  if (state.collected.email) delivery.email = state.collected.email;
-  if (state.collected.password) delivery.password = state.collected.password;
-  if (state.collected.loginUsername)
-    delivery.loginUsername = state.collected.loginUsername;
-  if (state.collected.loginPassword)
-    delivery.loginPassword = state.collected.loginPassword;
-  if (state.collected.region) delivery.region = state.collected.region;
+  const delivery: Record<string, string> = Object.fromEntries(
+    Object.entries(state.collected).filter(
+      ([, value]) => typeof value === "string" && value.trim() !== "",
+    ),
+  );
 
   // Create order with pending_admin status
   const order = await OrderRepository.create({
@@ -131,6 +128,7 @@ export async function finishManualOrder(
     planName: plan.name,
     finalPrice,
     collected: state.collected,
+    steps: state.steps,
     deliveryType: plan.deliveryType,
     paymentMethod: "wallet",
   });

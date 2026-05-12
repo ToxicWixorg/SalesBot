@@ -75,6 +75,7 @@ export async function VerifyCryptoOrderCallback(
         planName: result.planName,
         finalPrice: result.finalPrice,
         collected: state.collected,
+        steps: state.steps,
         deliveryType: "manual",
         paymentMethod: "crypto",
       });
