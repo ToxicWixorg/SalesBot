@@ -1,4 +1,5 @@
 import { AnyBot, InlineKeyboard } from "gramio";
+import { db } from "../../../db/index.ts";
 import { i18n } from "../../../shared/locales";
 import {
   buildOrderInfoReviewText,
@@ -36,6 +37,7 @@ import { finishManualOrderWithSlot } from "../Helpers/finishManualOrderWithSlot"
 import { notifyAdminNewOrder } from "../Helpers/notifyAdminNewOrder";
 import { ScheduleRepository } from "../../../repositories/ScheduleRepository";
 import { emojiIds } from "../../../shared/locales/emojies";
+import { walletTopupsTable } from "../../../db/schema.ts";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: create an unpaid order (card / crypto / zarinpal flow)
@@ -95,6 +97,22 @@ async function createPendingPaymentOrder(
   };
 }
 
+async function createPendingOrderCardTopup(opts: {
+  userId: number;
+  orderId: number;
+  amount: number;
+  receiptFileId: string;
+}) {
+  await db.insert(walletTopupsTable).values({
+    userId: opts.userId,
+    amount: opts.amount.toString() as any,
+    currency: "IRR",
+    receiptPath: `telegram-file-id:${opts.receiptFileId}`,
+    status: "pending",
+    notes: `order_payment:${opts.orderId}`,
+  });
+}
+
 export function setupManualOrderScene(bot: AnyBot) {
   /** User cancels info collection or slot selection mid-flow */
   bot.callbackQuery("cancel_manual_order", async (ctx) => {
@@ -145,6 +163,21 @@ export function setupManualOrderScene(bot: AnyBot) {
 
       const result = await createPendingPaymentOrder(userId, state, "card");
       if (!result) {
+        await ctx.reply(t("errorFetchingOrderDetails"), {
+          parse_mode: "HTML",
+        });
+        return;
+      }
+
+      try {
+        await createPendingOrderCardTopup({
+          userId,
+          orderId: result.orderId,
+          amount: result.finalPrice,
+          receiptFileId,
+        });
+      } catch (err) {
+        console.error("[MANUAL-ORDER] failed to create wallet topup:", err);
         await ctx.reply(t("errorFetchingOrderDetails"), {
           parse_mode: "HTML",
         });
