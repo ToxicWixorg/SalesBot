@@ -65,7 +65,7 @@ export function setupTicketScenes(bot: AnyBot) {
         return;
       }
 
-      if (ticket.status === "waiting_admin") {
+      if (ticket.status === "waiting_support") {
         await context.answerCallbackQuery({
           text: t("ticketWaitingAdmin"),
           parse_mode: "HTML",
