@@ -91,17 +91,20 @@ export async function OrderRenewCallback(context: any) {
 
     if (walletBalance >= finalPrice) {
       kb.text(t("btnPayWallet"), `renew_wallet_${orderId}`, {
-        icon_custom_emoji_id: emojiIds.usdt,
+        icon_custom_emoji_id: emojiIds.wallet,
+        style: "success",
       }).row();
     }
     if (settings?.cardEnabled && (cards?.length ?? 0) > 0) {
       kb.text(t("btnPayCard"), `renew_card_${orderId}`, {
         icon_custom_emoji_id: emojiIds.card,
+        style: "success",
       }).row();
     }
     if (settings?.zarinpalEnabled && settings.zarinpalMerchantId) {
       kb.text(t("btnPayZarinpal"), `renew_zarinpal_${orderId}`, {
         icon_custom_emoji_id: emojiIds.zarinpal,
+        style: "success",
       }).row();
     }
     if (
@@ -110,9 +113,15 @@ export async function OrderRenewCallback(context: any) {
       settings.nowpaymentsIpnCallbackUrl &&
       (settings.cryptoExchangeRate ?? 0) > 0
     ) {
-      kb.text(t("btnPayCrypto"), `renew_crypto_${orderId}`).row();
+      kb.text(t("btnPayCrypto"), `renew_crypto_${orderId}`, {
+        icon_custom_emoji_id: emojiIds.usdt,
+        style: "success",
+      }).row();
     }
-    kb.text(t("btnBackToOrders"), `order_${orderId}`);
+    kb.text(t("btnBackToOrders"), `order_${orderId}`, {
+      icon_custom_emoji_id: emojiIds.bag,
+      style: "primary",
+    });
 
     await context.editText(summaryText, {
       parse_mode: "HTML",

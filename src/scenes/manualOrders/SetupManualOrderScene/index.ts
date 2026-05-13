@@ -205,7 +205,7 @@ export function setupManualOrderScene(bot: AnyBot) {
       await ctx.reply(t("payCardPending", String(result.orderId)), {
         parse_mode: "HTML",
         reply_markup: new InlineKeyboard()
-          .text(t("btnMyOrders"), "orders", {
+          .text(t("btnMyOrders"), "my_orders", {
             icon_custom_emoji_id: emojiIds.bag,
           })
           .row()

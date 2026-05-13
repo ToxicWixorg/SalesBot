@@ -289,9 +289,13 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
     await ctx.editText(t("payCardPending", String(result.order.id)), {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard()
-        .text(t("btnMyOrders"), "orders")
+        .text(t("btnMyOrders"), "my_orders", {
+          icon_custom_emoji_id: emojiIds.bag,
+        })
         .row()
-        .text(t("btnBackToMenu"), "categories"),
+        .text(t("btnBackToMenu"), "categories", {
+          icon_custom_emoji_id: emojiIds.home,
+        }),
     });
   });
 
@@ -373,6 +377,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
         reply_markup: new InlineKeyboard().text(
           t("btnBackToOrders"),
           `order_${orderId}`,
+          { icon_custom_emoji_id: emojiIds.bag },
         ),
       });
     }
