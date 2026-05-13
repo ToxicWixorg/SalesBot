@@ -202,7 +202,7 @@ export function setupManualOrderScene(bot: AnyBot) {
         paymentReceiptFileId: receiptFileId,
       });
 
-      await ctx.reply(t("payCardPending" as any, result.orderId as any), {
+      await ctx.reply(t("payCardPending", String(result.orderId)), {
         parse_mode: "HTML",
         reply_markup: new InlineKeyboard()
           .text(t("btnMyOrders"), "orders", {

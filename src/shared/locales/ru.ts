@@ -579,20 +579,20 @@ export const ru = {
   paymentDiscount: "Скидка",
   paymentFinalPrice: "Итоговая цена",
   paymentWalletBalance: "Баланс кошелька",
-  payCardInstructions: (data: { amount: string }) =>
+  payCardInstructions: (amount: string) =>
     `💳 <b>Оплата банковской картой</b>\n\n` +
-    `💰 Сумма: <b>${data.amount}</b> томан\n\n` +
+    `💰 Сумма: <b>${amount}</b> томан\n\n` +
     `Скопируйте номер карты ниже и переведите сумму:`,
   payCardConfirmNote: `После перевода нажмите «✅ Я оплатил».`,
-  payCardPending: (data: { orderId: number }) =>
+  payCardPending: (orderId: string) =>
     `${e.checkBold} <b>Заказ оформлен!</b>\n\n` +
-    `${e.id} Заказ: #${data.orderId}\n\n` +
+    `${e.id} Заказ: #${orderId}\n\n` +
     `${e.time} Заказ будет обработан после подтверждения оплаты админом.\n` +
     `Обычно подтверждение занимает <b>1–24 часа</b>.`,
   payCryptoConfirmNote: `После транзакции нажмите «✅ Я оплатил».`,
-  payCryptoPending: (data: { orderId: number }) =>
+  payCryptoPending: (orderId: string) =>
     `${e.checkBold} <b>Заказ оформлен!</b>\n\n` +
-    `${e.id} Заказ: #${data.orderId}\n\n` +
+    `${e.id} Заказ: #${orderId}\n\n` +
     `${e.time} Заказ будет обработан после подтверждения транзакции админом.\n` +
     `Обычно подтверждение занимает <b>30 минут – 2 часа</b>.`,
   manualOrderCancelled: `${e.reject} Заказ отменён.`,
@@ -753,6 +753,6 @@ export const ru = {
   langEnglish: `${e.flag_en} English`,
   langPersian: `${e.flag_ir} Persian`,
   langRussian: `${e.flag_ru} Русский`,
-  ticketWaitingAdmin : `❌ Ожидание ответа администратора на ваше последнее сообщение`,
+  ticketWaitingAdmin: `❌ Ожидание ответа администратора на ваше последнее сообщение`,
   youCannotReplyToThisTicket: `❌ Вы не можете ответить на этот тикет прямо сейчас.`,
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

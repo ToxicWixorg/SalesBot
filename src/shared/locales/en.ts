@@ -624,22 +624,22 @@ export const en = {
   btnPayCard: `Pay with Card`,
   btnPayZarinpal: `Zarinpal Gateway`,
   btnPayCrypto: `Pay with USDT (Crypto)`,
-  payCardInstructions: (data: { amount: string }) =>
+  payCardInstructions: (amount: string) =>
     `${e.card} <b>Card Payment</b>\n\n` +
-    `${e.wallet} Amount: <b>${data.amount}</b> Toman\n\n` +
+    `${e.wallet} Amount: <b>${amount}</b> Toman\n\n` +
     `Copy one of the card numbers below and transfer the amount:`,
   payCardConfirmNote: `After transferring, click "${e.confirm} I Have Paid".`,
   btnConfirmCardPayment: `I Have Paid`,
-  payCardPending: (data: { orderId: number }) =>
+  payCardPending: (orderId: string) =>
     `${e.checkBold} <b>Order placed!</b>\n\n` +
-    `${e.id} Order: #${data.orderId}\n\n` +
+    `${e.id} Order: #${orderId}\n\n` +
     `${e.time} Your order will be processed after admin confirms your payment.\n` +
     `Usually confirmed within <b>1 to 24 hours</b>.`,
   payCryptoConfirmNote: `After making the transaction, click "${e.confirm} I Have Paid".`,
   btnConfirmCryptoPayment: `I Have Paid`,
-  payCryptoPending: (data: { orderId: number }) =>
+  payCryptoPending: (orderId: string) =>
     `${e.checkBold} <b>Order placed!</b>\n\n` +
-    `${e.id} Order: #${data.orderId}\n\n` +
+    `${e.id} Order: #${orderId}\n\n` +
     `${e.time} Your order will be processed after admin confirms the transaction.\n` +
     `Usually confirmed within <b>30 minutes to 2 hours</b>.`,
   btnCancelManualOrder: `Cancel Order`,

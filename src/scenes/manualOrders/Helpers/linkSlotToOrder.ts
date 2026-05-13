@@ -88,7 +88,7 @@ export async function linkSlotToOrder(
   });
 
   const kb = new InlineKeyboard()
-    .text(t("btnMyOrders"), "orders", { icon_custom_emoji_id: emojiIds.box })
+    .text(t("btnMyOrders"), "orders", { icon_custom_emoji_id: emojiIds.bag })
     .row()
     .text(t("btnBackToMenu"), "categories", {
       icon_custom_emoji_id: emojiIds.home,

@@ -84,7 +84,7 @@ export async function VerifyZarinpalOrderCallback(
           parse_mode: "HTML",
           reply_markup: new InlineKeyboard()
             .text(t("btnMyOrders"), "orders", {
-              icon_custom_emoji_id: emojiIds.box,
+              icon_custom_emoji_id: emojiIds.bag,
             })
             .row()
             .text(t("btnBackToMenu"), "categories", {

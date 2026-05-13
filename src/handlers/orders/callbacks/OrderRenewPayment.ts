@@ -286,7 +286,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       delivery: info.delivery,
     });
 
-    await ctx.editText(t("payCardPending" as any, result.order.id as any), {
+    await ctx.editText(t("payCardPending", String(result.order.id)), {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard()
         .text(t("btnMyOrders"), "orders")

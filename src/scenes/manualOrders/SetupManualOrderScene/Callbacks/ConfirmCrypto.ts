@@ -45,11 +45,11 @@ export async function ConfirmCryptoCallback(
     paymentMethod: "crypto",
   });
 
-  await ctx.editText(t("payCryptoPending" as any, result.orderId as any), {
+  await ctx.editText(t("payCryptoPending", String(result.orderId)), {
     parse_mode: "HTML",
     reply_markup: new InlineKeyboard()
       .text(t("btnMyOrders"), "orders", {
-        icon_custom_emoji_id: emojiIds.box,
+        icon_custom_emoji_id: emojiIds.bag,
       })
       .row()
       .text(t("btnBackToMenu"), "categories", {

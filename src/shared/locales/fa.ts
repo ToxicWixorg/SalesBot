@@ -624,22 +624,22 @@ export const fa = {
   btnPayCard: `پرداخت با کارت`,
   btnPayZarinpal: `درگاه زرین‌پال`,
   btnPayCrypto: `پرداخت با USDT (کریپتو)`,
-  payCardInstructions: (data: { amount: string }) =>
+  payCardInstructions: (amount: string) =>
     `${e.card} <b>پرداخت با کارت بانکی</b>\n\n` +
-    `${e.wallet} مبلغ: <b>${data.amount}</b> تومان\n\n` +
+    `${e.wallet} مبلغ: <b>${amount}</b> تومان\n\n` +
     `شماره کارت‌های زیر رو کپی کن و مبلغ رو واریز کن:`,
   payCardConfirmNote: `پس از واریز، دکمه «${e.confirm} واریز کردم» رو بزن.`,
   btnConfirmCardPayment: `واریز کردم`,
-  payCardPending: (data: { orderId: number }) =>
+  payCardPending: (orderId: string) =>
     `${e.checkBold} <b>سفارش ثبت شد!</b>\n\n` +
-    `${e.id} سفارش: #${data.orderId}\n\n` +
+    `${e.id} سفارش: #${orderId}\n\n` +
     `${e.time} پس از تأیید واریز توسط ادمین، سفارشت پردازش می‌شه.\n` +
     `معمولاً ظرف <b>۱ تا ۲۴ ساعت</b> تأیید می‌شه.`,
   payCryptoConfirmNote: `پس از انجام تراکنش، دکمه «${e.confirm} پرداخت کردم» رو بزن.`,
   btnConfirmCryptoPayment: `پرداخت کردم`,
-  payCryptoPending: (data: { orderId: number }) =>
+  payCryptoPending: (orderId: string) =>
     `${e.checkBold} <b>سفارش ثبت شد!</b>\n\n` +
-    `${e.id} سفارش: #${data.orderId}\n\n` +
+    `${e.id} سفارش: #${orderId}\n\n` +
     `${e.time} پس از تأیید تراکنش توسط ادمین، سفارشت پردازش می‌شه.\n` +
     `معمولاً ظرف <b>۳۰ دقیقه تا ۲ ساعت</b> تأیید می‌شه.`,
   btnCancelManualOrder: `لغو سفارش`,

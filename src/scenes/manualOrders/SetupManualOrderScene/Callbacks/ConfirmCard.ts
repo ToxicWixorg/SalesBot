@@ -47,11 +47,11 @@ export async function ConfirmCardCallback(
     paymentMethod: "card",
   });
 
-  await ctx.editText(t("payCardPending" as any, result.orderId as any), {
+  await ctx.editText(t("payCardPending", String(result.orderId)), {
     parse_mode: "HTML",
     reply_markup: new InlineKeyboard()
       .text(t("btnMyOrders"), "orders", {
-        icon_custom_emoji_id: emojiIds.box,
+        icon_custom_emoji_id: emojiIds.bag,
       })
       .row()
       .text(t("btnBackToMenu"), "categories", {

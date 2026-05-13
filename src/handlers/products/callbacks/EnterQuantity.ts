@@ -118,13 +118,10 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
 
     const available = await InventoryRepository.countAvailable(plan.productId);
 
-    await ctx.editText(
-      t("enterQuantityPrompt") + `\n\n${t("stock")} <b>${available}</b>`,
-      {
-        parse_mode: "HTML",
-        reply_markup: new InlineKeyboard().text(t("btnCancel"), "cancel_order"),
-      },
-    );
+    await ctx.editText(t("enterQuantityPrompt", available), {
+      parse_mode: "HTML",
+      reply_markup: new InlineKeyboard().text(t("btnCancel"), "cancel_order"),
+    });
   });
 
   // ── 3. Confirm inventory order (confirm_inv_{planId}_{qty}) ────────────────
@@ -281,7 +278,7 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
       parse_mode: "HTML",
       reply_markup: new InlineKeyboard()
         .text(t("btnMyOrders"), "my_orders", {
-          icon_custom_emoji_id: emojiIds.box,
+          icon_custom_emoji_id: emojiIds.bag,
         })
         .row()
         .text(t("btnMainMenu"), "categories", {
