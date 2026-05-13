@@ -36,11 +36,11 @@ export async function OrderFilterCompletedCallback(
     for (const order of orders.slice(0, 10)) {
       const product = await ProductRepository.findById(order.productId);
 
-      message += `✅ سفارش #${order.id}\n`;
-      message += `📦 ${product?.name || "محصول"}\n`;
+      message += `✅ ${t("ordersOrderLabel", { orderId: order.id })}\n`;
+      message += `📦 ${product?.name || t("ordersProductFallback")}\n`;
       message += `📅 ${formatDate(order.createdAt)}\n`;
-      message += `✨ تحویل: ${order.deliveredAt ? formatDate(order.deliveredAt) : "-"}\n`;
-      message += `💰 ${formatPrice(order.finalPrice)} تومان\n`;
+      message += `✨ ${t("ordersDeliveredLabel")}: ${order.deliveredAt ? formatDate(order.deliveredAt) : "-"}\n`;
+      message += `💰 ${formatPrice(order.finalPrice)} ${t("currency")}\n`;
       message += `\n`;
     }
 
@@ -49,7 +49,9 @@ export async function OrderFilterCompletedCallback(
     // ایجاد دکمه‌های سفارشات
     const keyboard = ordersListKeyboard(t);
     for (const order of orders.slice(0, 10)) {
-      keyboard.row().text(`📦 سفارش #${order.id}`, `order_${order.id}`);
+      keyboard
+        .row()
+        .text(`📦 ${t("ordersOrderLabel", { orderId: order.id })}`, `order_${order.id}`);
     }
 
     await context.editText(message, {
