@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { db } from "../db/index.ts";
 import {
   categoriesTable,
@@ -182,6 +182,42 @@ const sampleCatalog: SeedCategory[] = [
   },
 ];
 
+async function syncLegacyLocalizedColumns(params: {
+  tableName: "categories" | "products" | "product_plans";
+  id: number;
+  nameFA: string;
+  descriptionFA: string | null;
+}) {
+  const { tableName, id, nameFA, descriptionFA } = params;
+
+  await db.execute(sql`
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = ${tableName}
+          AND column_name = 'name'
+      ) THEN
+        EXECUTE format('UPDATE %I SET name = COALESCE(name, $1) WHERE id = $2', ${tableName})
+        USING ${nameFA}, ${id};
+      END IF;
+
+      IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = ${tableName}
+          AND column_name = 'description'
+      ) THEN
+        EXECUTE format('UPDATE %I SET description = COALESCE(description, $1) WHERE id = $2', ${tableName})
+        USING ${descriptionFA}, ${id};
+      END IF;
+    END $$;
+  `);
+}
+
 async function ensureCategory(category: SeedCategory) {
   const [existing] = await db
     .select()
@@ -206,6 +242,13 @@ async function ensureCategory(category: SeedCategory) {
       .where(eq(categoriesTable.id, existing.id))
       .returning();
 
+    await syncLegacyLocalizedColumns({
+      tableName: "categories",
+      id: existing.id,
+      nameFA: category.name.fa,
+      descriptionFA: category.description.fa || null,
+    });
+
     console.log(`🔄 Category updated: ${category.slug}`);
     return updated ?? existing;
   }
@@ -225,6 +268,13 @@ async function ensureCategory(category: SeedCategory) {
       isActive: true,
     })
     .returning();
+
+  await syncLegacyLocalizedColumns({
+    tableName: "categories",
+    id: created!.id,
+    nameFA: category.name.fa,
+    descriptionFA: category.description.fa || null,
+  });
 
   console.log(`✅ Category created: ${category.slug}`);
   return created!;
@@ -260,6 +310,13 @@ async function ensureProduct(categoryId: number, product: SeedProduct) {
       .where(eq(productsTable.id, existing.id))
       .returning();
 
+    await syncLegacyLocalizedColumns({
+      tableName: "products",
+      id: existing.id,
+      nameFA: product.name.fa,
+      descriptionFA: product.description.fa || null,
+    });
+
     console.log(`🔄 Product updated: ${product.slug}`);
     return updated ?? existing;
   }
@@ -285,6 +342,13 @@ async function ensureProduct(categoryId: number, product: SeedProduct) {
       customEmojiId: product.customEmojiId ?? null,
     })
     .returning();
+
+  await syncLegacyLocalizedColumns({
+    tableName: "products",
+    id: created!.id,
+    nameFA: product.name.fa,
+    descriptionFA: product.description.fa || null,
+  });
 
   console.log(`✅ Product created: ${product.slug}`);
   return created!;
@@ -323,26 +387,43 @@ async function ensurePlan(productId: number, plan: SeedPlan) {
       })
       .where(eq(productPlansTable.id, existing.id));
 
+    await syncLegacyLocalizedColumns({
+      tableName: "product_plans",
+      id: existing.id,
+      nameFA: plan.name.fa,
+      descriptionFA: plan.description.fa || null,
+    });
+
     console.log(`🔄 Plan updated: ${plan.name.fa}`);
     return;
   }
 
-  await db.insert(productPlansTable).values({
-    productId,
+  const [created] = await db
+    .insert(productPlansTable)
+    .values({
+      productId,
+      nameFA: plan.name.fa,
+      nameEN: plan.name.en,
+      nameRU: plan.name.ru,
+      descriptionFA: plan.description.fa || null,
+      descriptionEN: plan.description.en || null,
+      descriptionRU: plan.description.ru || null,
+      price: plan.price,
+      duration: plan.duration,
+      durationUnit: plan.durationUnit,
+      deliveryType: plan.deliveryType,
+      order: plan.order,
+      isActive: true,
+      requiredInputs: plan.requiredInputs,
+      customEmojiId: plan.customEmojiId ?? null,
+    })
+    .returning();
+
+  await syncLegacyLocalizedColumns({
+    tableName: "product_plans",
+    id: created!.id,
     nameFA: plan.name.fa,
-    nameEN: plan.name.en,
-    nameRU: plan.name.ru,
     descriptionFA: plan.description.fa || null,
-    descriptionEN: plan.description.en || null,
-    descriptionRU: plan.description.ru || null,
-    price: plan.price,
-    duration: plan.duration,
-    durationUnit: plan.durationUnit,
-    deliveryType: plan.deliveryType,
-    order: plan.order,
-    isActive: true,
-    requiredInputs: plan.requiredInputs,
-    customEmojiId: plan.customEmojiId ?? null,
   });
 
   console.log(`✅ Plan created: ${plan.name.fa}`);
