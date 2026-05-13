@@ -34,7 +34,11 @@ function getOrderStatusInfo(status: string, t: TFunction) {
       text: t("orderStatus_waiting_schedule"),
       color: e.needData,
     },
-    scheduled: { emoji: e.date, text: t("orderStatus_scheduled"), color: e.active },
+    scheduled: {
+      emoji: e.date,
+      text: t("orderStatus_scheduled"),
+      color: e.active,
+    },
     reminder_sent: {
       emoji: e.bell,
       text: t("orderStatus_reminder_sent"),
@@ -76,7 +80,11 @@ function getOrderStatusInfo(status: string, t: TFunction) {
       text: t("orderStatus_in_progress"),
       color: e.active,
     },
-    active: { emoji: e.sparkles, text: t("orderStatus_active"), color: e.active },
+    active: {
+      emoji: e.sparkles,
+      text: t("orderStatus_active"),
+      color: e.active,
+    },
     expiring_soon: {
       emoji: "⚡",
       text: t("orderStatus_expiring_soon"),
@@ -87,10 +95,18 @@ function getOrderStatusInfo(status: string, t: TFunction) {
       text: t("orderStatus_completed"),
       color: e.complete,
     },
-    cancelled: { emoji: e.reject, text: t("orderStatus_cancelled"), color: "🔴" },
+    cancelled: {
+      emoji: e.reject,
+      text: t("orderStatus_cancelled"),
+      color: "🔴",
+    },
     refunded: { emoji: e.wallet, text: t("orderStatus_refunded"), color: "🟣" },
     failed: { emoji: e.failed, text: t("orderStatus_failed"), color: "🔴" },
-    rescheduled: { emoji: "🔄", text: t("orderStatus_rescheduled"), color: "🔵" },
+    rescheduled: {
+      emoji: "🔄",
+      text: t("orderStatus_rescheduled"),
+      color: "🔵",
+    },
   };
 
   return (

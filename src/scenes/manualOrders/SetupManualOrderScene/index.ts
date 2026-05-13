@@ -143,12 +143,7 @@ export function setupManualOrderScene(bot: AnyBot) {
 
       const receiptFileId = photo[photo.length - 1].file_id;
 
-      const result = await createPendingPaymentOrder(
-        userId,
-        state,
-        "card",
-        `telegram-file-id:${receiptFileId}`,
-      );
+      const result = await createPendingPaymentOrder(userId, state, "card");
       if (!result) {
         await ctx.reply(t("errorFetchingOrderDetails"), {
           parse_mode: "HTML",

@@ -13,7 +13,7 @@ export const en = {
 
   btnReportBug: "Report a bot issue",
 
-  items : "Items",
+  items: "Items",
 
   adminpanelText: (userid: number, userRole: string) =>
     `${e.id} Your userid : <code>${userid}</code>\n` +
@@ -807,4 +807,6 @@ export const en = {
     `${e.key} Method: ${methodLabel}\n`,
   regionNotFound: "Region not found ❌",
   rechargeCardSaveFailed: e.warning + "Failed to save file",
+  ticketWaitingAdmin: `❌ wait for admin reply to your last message`,
+  youCannotReplyToThisTicket: `❌ You cannot reply to this ticket right now.`,
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

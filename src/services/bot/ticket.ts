@@ -50,7 +50,6 @@ export class TicketService {
       });
     }
 
-
     if (config.SUPPORT_GROUP_ID) {
       await this.sendTicketToForum(ticket, user);
     }
@@ -109,7 +108,6 @@ export class TicketService {
         topicId: topicId,
         threadMessageId: sentMessage.message_id,
       });
-
     } catch (error) {
       console.error("[TICKET] Failed to send to forum:", error);
       // Don't throw - ticket is created, just not synced to forum yet
@@ -139,13 +137,13 @@ export class TicketService {
 
     try {
       // Send to forum thread (reply to thread message)
-      await this.botApi.sendMessage({
-        chat_id: Number(config.SUPPORT_GROUP_ID!),
-        text: `👤 <b>${username}:</b>\n${message}`,
-        message_thread_id: ticket.topicId!,
-        reply_to_message_id: ticket.threadMessageId,
-        parse_mode: "HTML",
-      });
+      // await this.botApi.sendMessage({
+      //   chat_id: Number(config.SUPPORT_GROUP_ID!),
+      //   text: `👤 <b>${username}:</b>\n${message}`,
+      //   message_thread_id: ticket.topicId!,
+      //   reply_to_message_id: ticket.threadMessageId,
+      //   parse_mode: "HTML",
+      // });
 
       // Save message to database
       await TicketRepository.addMessage({
@@ -159,7 +157,6 @@ export class TicketService {
       if (ticket.status !== "closed" && ticket.status !== "resolved") {
         await TicketRepository.updateTicketStatus(ticket.id, "waiting_support");
       }
-
     } catch (error) {
       console.error("[TICKET] Failed to send user message to forum:", error);
     }
@@ -194,7 +191,6 @@ export class TicketService {
         text: `🎫 <b>Support Reply (${ticket.ticketNumber}):</b>\n\n${message}`,
         parse_mode: "HTML",
       });
-
     } catch (error) {
       console.error("[TICKET] Failed to send message to user:", error);
     }

@@ -65,23 +65,24 @@ export function setupTicketScenes(bot: AnyBot) {
         return;
       }
 
-      if (ticket.status === "closed") {
+      if (ticket.status === "waiting_admin") {
         await context.answerCallbackQuery({
-          text: t("ticketAlreadyClosed"),
+          text: t("ticketWaitingAdmin"),
           parse_mode: "HTML",
           show_alert: true,
         });
         return;
       }
 
-      if (ticket.status === "pending_admin") {
+      if (ticket.status !== "open" || ticket.status !== "waiting_user") {
         await context.answerCallbackQuery({
-          text: t("waitForAdminReply"),
+          text: t("youCannotReplyToThisTicket"),
           parse_mode: "HTML",
           show_alert: true,
         });
         return;
       }
+
       ticketReplyState.set(context.from.id, ticketId);
 
       const keyboard = new InlineKeyboard().text(

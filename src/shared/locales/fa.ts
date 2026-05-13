@@ -806,4 +806,6 @@ export const fa = {
     `${e.key} روش: ${methodLabel}\n`,
   regionNotFound: "ریجن پیدا نشد ❌",
   rechargeCardSaveFailed: e.warning + "خطا در ذخیره فایل",
+  ticketWaitingAdmin: `❌ در انتظار پاسخ مدیر به آخرین پیام شما`,
+  youCannotReplyToThisTicket: `❌ نمی‌تونی به این تیکت پاسخ بدی`,
 } satisfies LanguageMap;

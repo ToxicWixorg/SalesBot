@@ -51,7 +51,10 @@ export async function OrderFilterCompletedCallback(
     for (const order of orders.slice(0, 10)) {
       keyboard
         .row()
-        .text(`📦 ${t("ordersOrderLabel", { orderId: order.id })}`, `order_${order.id}`);
+        .text(
+          `📦 ${t("ordersOrderLabel", { orderId: order.id })}`,
+          `order_${order.id}`,
+        );
     }
 
     await context.editText(message, {
