@@ -3,10 +3,12 @@ import type { TFunction } from "../../locales/index.ts";
 import type { Category } from "../../../db/schema.ts";
 import { emojiIds } from "../../locales/emojies.ts";
 import { normalizeCustomEmojiId } from "../../utils/customEmoji.ts";
+import { getLocalizedName } from "../../utils/localizedFields.ts";
 
 export function categoriesKeyboard(
   t: TFunction,
   categories: Category[],
+  languageCode = "fa",
 ): InlineKeyboard {
   const keyboard = new InlineKeyboard();
 
@@ -17,7 +19,11 @@ export function categoriesKeyboard(
     const opts = safeEmojiId
       ? { icon_custom_emoji_id: safeEmojiId }
       : undefined;
-    keyboard.text(`${icon} ${category.name}`, `category_${category.id}`, opts);
+    keyboard.text(
+      `${icon} ${getLocalizedName(category, languageCode)}`,
+      `category_${category.id}`,
+      opts,
+    );
 
     // Add row after every 2 categories
     if (index % 2 === 1 && index !== categories.length - 1) {

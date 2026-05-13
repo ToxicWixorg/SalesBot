@@ -175,7 +175,13 @@
       "version": "7",
       "when": 1778714400000,
       "tag": "0024_plan_required_inputs",
-
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1778699220595,
+      "tag": "0025_add_multilang_support",
       "breakpoints": true
     }
   ]

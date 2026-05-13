@@ -4,6 +4,10 @@ import { productDetailsKeyboard } from "../../../shared/keyboards/index.ts";
 import { ProductRepository } from "../../../repositories/ProductRepository.ts";
 import { e } from "../../../shared/locales/emojies.ts";
 import { normalizeCustomEmojiId } from "../../../shared/utils/customEmoji.ts";
+import {
+  getLocalizedDescription,
+  getLocalizedName,
+} from "../../../shared/utils/localizedFields.ts";
 
 export async function ProductCallback(context: any, getEffectiveStock: any) {
   if (!context.from || !context.queryData) return;
@@ -32,8 +36,14 @@ export async function ProductCallback(context: any, getEffectiveStock: any) {
     ? `<tg-emoji emoji-id="${safeEmojiId}">🛍️</tg-emoji> `
     : e.bag;
 
-  message += `<b>${product.name}</b>\n\n`;
-  if (product.description) message += `${product.description}\n\n`;
+  const productName = getLocalizedName(product, user.languageCode);
+  const productDescription = getLocalizedDescription(
+    product,
+    user.languageCode,
+  );
+
+  message += `<b>${productName}</b>\n\n`;
+  if (productDescription) message += `${productDescription}\n\n`;
 
   message += `${t("stock")} ${hasStock ? t("available") : t("outOfStock")}\n`;
 

@@ -4,6 +4,7 @@ import { UserRepository } from "../repositories/UserRepository.ts";
 import { ProductRepository } from "../repositories/ProductRepository.ts";
 import { StockNotificationRepository } from "../repositories/ExtraRepositories.ts";
 import { getBotInstance } from "../botInstance.ts";
+import { getLocalizedName } from "../shared/utils/localizedFields.ts";
 
 /**
  * After inventory items are added to a product, call this to notify
@@ -16,7 +17,8 @@ import { getBotInstance } from "../botInstance.ts";
  * that increases available stock for a product.
  */
 export async function notifyRestockedUsers(productId: number): Promise<void> {
-  const subscribers = await StockNotificationRepository.findActiveByProductId(productId);
+  const subscribers =
+    await StockNotificationRepository.findActiveByProductId(productId);
   if (subscribers.length === 0) return;
 
   const product = await ProductRepository.findById(productId);
@@ -34,6 +36,7 @@ export async function notifyRestockedUsers(productId: number): Promise<void> {
       if (user?.notifyStock === false) continue;
 
       const t = i18n.buildT(user?.languageCode ?? "fa");
+      const productName = getLocalizedName(product, user?.languageCode);
 
       const keyboard = new InlineKeyboard()
         .text(t("btnBuyProduct"), `buy_product_${productId}`)
@@ -42,7 +45,7 @@ export async function notifyRestockedUsers(productId: number): Promise<void> {
 
       await (bot.api as any).sendMessage({
         chat_id: userId,
-        text: t("stockRestocked", { productName: product.name }),
+        text: t("stockRestocked", { productName }),
         parse_mode: "HTML",
         reply_markup: keyboard,
       });

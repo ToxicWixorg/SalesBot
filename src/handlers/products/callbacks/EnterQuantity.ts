@@ -13,6 +13,7 @@ import { WalletRepository } from "../../../repositories/WalletRepository.ts";
 import { DiscountCodeRepository } from "../../../repositories/DiscountCodeRepository.ts";
 import { inventoryOrderSummaryKeyboard } from "../../../shared/keyboards/index.ts";
 import { appliedDiscountState } from "../discountOrderState.ts";
+import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 
 /**
  * Per-user state tracking which product/plan the user is entering a quantity for.
@@ -83,10 +84,13 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
     const finalTotal = hasDiscount
       ? discount.finalPrice * qty
       : unitPrice * qty;
+    const productName = product
+      ? getLocalizedName(product, user?.languageCode)
+      : "";
 
     await ctx.send(
       t("inventoryOrderSummary", {
-        productName: product?.name ?? "",
+        productName,
         qty,
         unitPrice: unitPrice.toLocaleString(),
         total: finalTotal.toLocaleString(),
@@ -150,6 +154,7 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
 
     const product = await ProductRepository.findById(plan.productId);
     if (!product) return;
+    const productName = getLocalizedName(product, user.languageCode);
 
     const discount = appliedDiscountState.get(userId);
     const hasDiscount = discount && discount.planId === planId;
@@ -235,7 +240,7 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
       finalPrice.toFixed(2),
       "purchase",
       order.id,
-      `خرید ${product.name} x${qty}`,
+      `خرید ${productName} x${qty}`,
     );
 
     if (hasDiscount && discount) {
@@ -261,7 +266,7 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
 
     const successMsg = t("inventoryOrderSuccess", {
       orderId: order.id,
-      productName: product.name,
+      productName,
       qty,
       total: finalPrice.toLocaleString(),
       remainingBalance: newBalance.toLocaleString(),
@@ -270,7 +275,7 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
 
     const deliveryMsg =
       deliveryItems.length > 0
-        ? `\n\n${t("inventoryDeliveryHeader", { productName: product.name })}\n` +
+        ? `\n\n${t("inventoryDeliveryHeader", { productName })}\n` +
           t("inventoryDeliveryItem", deliveryItems)
         : "";
 

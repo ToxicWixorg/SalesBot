@@ -50,7 +50,7 @@ export class ProductRepository {
       .select()
       .from(productsTable)
       .where(eq(productsTable.isActive, true))
-      .orderBy(productsTable.name);
+      .orderBy(productsTable.nameFA);
   }
 
   /**
@@ -66,7 +66,7 @@ export class ProductRepository {
           eq(productsTable.isActive, true),
         ),
       )
-      .orderBy(productsTable.name);
+      .orderBy(productsTable.nameFA);
   }
 
   /**
@@ -200,7 +200,7 @@ export class CategoryRepository {
    * تمام دسته‌ها
    */
   static async findAll(): Promise<Category[]> {
-    return db.select().from(categoriesTable).orderBy(categoriesTable.name);
+    return db.select().from(categoriesTable).orderBy(categoriesTable.nameFA);
   }
 
   /**

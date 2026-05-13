@@ -8,9 +8,10 @@ import {
 import { productPlansKeyboard } from "../../../shared/keyboards/index.ts";
 import { e } from "../../../shared/locales/emojies.ts";
 import { normalizeCustomEmojiId } from "../../../shared/utils/customEmoji.ts";
+import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 
 export async function BuyProductCallback(
-  context: Context,
+  context: Context<any>,
   getEffectiveStock: any,
 ) {
   if (!context.from || !context.queryData) return;
@@ -52,12 +53,18 @@ export async function BuyProductCallback(
   const title = safeEmojiId
     ? `<tg-emoji emoji-id="${safeEmojiId}">🛍️</tg-emoji> `
     : e.bag;
+  const productName = getLocalizedName(product, user.languageCode);
 
   await context.editText(
-    `${title}<b>${product.name}</b>\n\n${t("selectPlan")}`,
+    `${title}<b>${productName}</b>\n\n${t("selectPlan")}`,
     {
       parse_mode: "HTML",
-      reply_markup: productPlansKeyboard(t, plans, productId),
+      reply_markup: productPlansKeyboard(
+        t,
+        plans,
+        productId,
+        user.languageCode,
+      ),
     },
   );
 }

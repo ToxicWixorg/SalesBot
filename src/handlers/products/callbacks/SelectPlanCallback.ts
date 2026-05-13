@@ -13,8 +13,9 @@ import {
   orderConfirmationKeyboard,
 } from "../../../shared/keyboards/index.ts";
 import { regionSelectionKeyboard } from "../../../shared/keyboards/products/regionSelect.ts";
+import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 
-export async function SelectPlanCallback(context: Context) {
+export async function SelectPlanCallback(context: Context<any>) {
   if (!context.from || !context.queryData) return;
 
   const planId = Number.parseInt(context.queryData[1]!);
@@ -43,6 +44,8 @@ export async function SelectPlanCallback(context: Context) {
   }
 
   preSelectedRegionState.delete(userId);
+  const productName = getLocalizedName(product, user.languageCode);
+  const planName = getLocalizedName(plan, user.languageCode);
 
   if (plan.deliveryType === "automatic") {
     const available = await InventoryRepository.countAvailable(product.id);
@@ -88,8 +91,8 @@ export async function SelectPlanCallback(context: Context) {
     }
 
     let message = `${t("orderSummary")}\n\n`;
-    message += `📦 ${product.name}\n`;
-    message += `📋 ${plan.name} — ${duration}\n`;
+    message += `📦 ${productName}\n`;
+    message += `📋 ${planName} — ${duration}\n`;
     message += `\n${t("total")} <b>${price.toLocaleString()}</b> ${t("currency")}`;
 
     await context.editText(message, {
@@ -123,8 +126,8 @@ export async function SelectPlanCallback(context: Context) {
     }
 
     let message = `${t("orderSummary")}\n\n`;
-    message += `📦 ${product.name}\n`;
-    message += `📋 ${plan.name} — ${duration}\n`;
+    message += `📦 ${productName}\n`;
+    message += `📋 ${planName} — ${duration}\n`;
     message += `\n${t("total")} <b>${price.toLocaleString()}</b> ${t("currency")}`;
 
     await context.editText(message, {
@@ -158,8 +161,8 @@ export async function SelectPlanCallback(context: Context) {
     }
 
     let message = `${t("orderSummary")}\n\n`;
-    message += `📦 ${product.name}\n`;
-    message += `📋 ${plan.name} — ${duration}\n`;
+    message += `📦 ${productName}\n`;
+    message += `📋 ${planName} — ${duration}\n`;
     message += `\n${t("total")} <b>${price.toLocaleString()}</b> ${t("currency")}`;
 
     await context.editText(message, {

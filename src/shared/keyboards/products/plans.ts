@@ -3,11 +3,13 @@ import type { TFunction } from "../../locales/index.ts";
 import type { ProductPlan } from "../../../db/schema.ts";
 import { emojiIds } from "../../locales/emojies.ts";
 import { normalizeCustomEmojiId } from "../../utils/customEmoji.ts";
+import { getLocalizedName } from "../../utils/localizedFields.ts";
 
 export function productPlansKeyboard(
   t: TFunction,
   plans: ProductPlan[],
   productId: number,
+  languageCode = "fa",
 ): InlineKeyboard {
   const keyboard = new InlineKeyboard();
 
@@ -31,7 +33,7 @@ export function productPlansKeyboard(
       : undefined;
 
     keyboard.text(
-      `${plan.name} - ${plan.price} ${t("currency")} (${duration})`,
+      `${getLocalizedName(plan, languageCode)} - ${plan.price} ${t("currency")} (${duration})`,
       `select_plan_${plan.id}`,
       opts,
     );

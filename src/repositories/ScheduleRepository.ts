@@ -175,7 +175,9 @@ export const ScheduleRepository = {
           productId: ordersTable.productId,
         },
         product: {
-          name: productsTable.name,
+          nameFA: productsTable.nameFA,
+          nameEN: productsTable.nameEN,
+          nameRU: productsTable.nameRU,
         },
       })
       .from(schedulesTable)
@@ -230,7 +232,9 @@ export const ScheduleRepository = {
           status: ordersTable.status,
         },
         product: {
-          name: productsTable.name,
+          nameFA: productsTable.nameFA,
+          nameEN: productsTable.nameEN,
+          nameRU: productsTable.nameRU,
         },
       })
       .from(schedulesTable)
@@ -262,7 +266,9 @@ export const ScheduleRepository = {
           productId: ordersTable.productId,
         },
         product: {
-          name: productsTable.name,
+          nameFA: productsTable.nameFA,
+          nameEN: productsTable.nameEN,
+          nameRU: productsTable.nameRU,
         },
       })
       .from(schedulesTable)
@@ -296,7 +302,9 @@ export const ScheduleRepository = {
           id: ordersTable.id,
         },
         product: {
-          name: productsTable.name,
+          nameFA: productsTable.nameFA,
+          nameEN: productsTable.nameEN,
+          nameRU: productsTable.nameRU,
         },
       })
       .from(schedulesTable)

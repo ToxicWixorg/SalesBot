@@ -7,6 +7,7 @@ import {
 } from "../../../repositories/ProductRepository.ts";
 import { preSelectedRegionState } from "../preSelectedRegionState.ts";
 import { orderConfirmationKeyboard } from "../../../shared/keyboards/index.ts";
+import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 
 export async function SelectRegionCallback(context: Context) {
   if (!context.from || !context.queryData) return;
@@ -32,9 +33,7 @@ export async function SelectRegionCallback(context: Context) {
   if (!product) return;
 
   const regions: Array<{ flag: string; name: string; price?: string }> =
-    plan.regions && plan.regions.length > 0
-      ? plan.regions
-      : [];
+    plan.regions && plan.regions.length > 0 ? plan.regions : [];
 
   const region = regions[regionIndex];
   if (!region) {
@@ -54,6 +53,8 @@ export async function SelectRegionCallback(context: Context) {
   });
 
   const effectivePrice = regionPrice ?? parseFloat(plan.price as string);
+  const productName = getLocalizedName(product, user.languageCode);
+  const planName = getLocalizedName(plan, user.languageCode);
 
   let duration = t("oneTime");
   if (plan.duration) {
@@ -66,8 +67,8 @@ export async function SelectRegionCallback(context: Context) {
   }
 
   let message = `${t("orderSummary")}\n\n`;
-  message += `📦 ${product.name}\n`;
-  message += `📋 ${plan.name} — ${duration}\n`;
+  message += `📦 ${productName}\n`;
+  message += `📋 ${planName} — ${duration}\n`;
   message += `🌍 ${t("selectedRegion")}: ${region.flag} ${region.name}\n`;
   message += `\n${t("total")} <b>${effectivePrice.toLocaleString()}</b> ${t("currency")}`;
 

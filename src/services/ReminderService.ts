@@ -19,6 +19,7 @@ import { config } from "../config.ts";
 import { ScheduleRepository } from "../repositories/ScheduleRepository.ts";
 import { OrderRepository } from "../repositories/OrderRepository.ts";
 import { SessionChatRepository } from "../repositories/SessionChatRepository.ts";
+import { getLocalizedName } from "../shared/utils/localizedFields.ts";
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -63,7 +64,11 @@ async function checkAndSendReminders(bot: AnyBot) {
         languageCode: usersTable.languageCode,
       },
       order: { id: ordersTable.id },
-      product: { name: productsTable.name },
+      product: {
+        nameFA: productsTable.nameFA,
+        nameEN: productsTable.nameEN,
+        nameRU: productsTable.nameRU,
+      },
     })
     .from(schedulesTable)
     .leftJoin(usersTable, eq(schedulesTable.userId, usersTable.id))
@@ -89,6 +94,10 @@ async function checkAndSendReminders(bot: AnyBot) {
 
     const lang = user?.languageCode ?? "en";
     const t = i18n.buildT(lang);
+    const productName = product ? getLocalizedName(product, lang) : "Session";
+    const adminProductName = product
+      ? getLocalizedName(product, "en")
+      : "Session";
 
     try {
       // ── Notify user ──────────────────────────────────────────────────────
@@ -96,7 +105,7 @@ async function checkAndSendReminders(bot: AnyBot) {
         chat_id: userId,
         text: t("scheduleReminderNotification", {
           orderId: order?.id ?? 0,
-          productName: product?.name ?? "Session",
+          productName,
           timeSlot: schedule.timeSlot,
         }),
         parse_mode: "HTML",
@@ -110,7 +119,7 @@ async function checkAndSendReminders(bot: AnyBot) {
         const adminMsg =
           `⚠️ <b>Session in 15 minutes</b>\n\n` +
           `👤 User: ${displayName} (<code>${userId}</code>)\n` +
-          `📦 Product: <b>${product?.name ?? "—"}</b>\n` +
+          `📦 Product: <b>${adminProductName}</b>\n` +
           `⏰ Time slot: <b>${schedule.timeSlot}</b>\n` +
           `🆔 Order: #${order?.id ?? "—"}\n\n` +
           `Please be ready to deliver login credentials.`;
@@ -182,11 +191,15 @@ async function checkAndStartSessions(bot: AnyBot) {
       // 4. Notify user
       const lang = user?.languageCode ?? "en";
       const t = i18n.buildT(lang);
+      const productName = product ? getLocalizedName(product, lang) : "Session";
+      const adminProductName = product
+        ? getLocalizedName(product, "en")
+        : "Session";
       await bot.api.sendMessage({
         chat_id: userId,
         text: t("sessionStartedUser", {
           orderId: order.id,
-          productName: product?.name ?? "Session",
+          productName,
           timeSlot: schedule.timeSlot,
         }),
         parse_mode: "HTML",
@@ -200,7 +213,7 @@ async function checkAndStartSessions(bot: AnyBot) {
         const forumMsg =
           `🚀 <b>Session Started</b>\n\n` +
           `👤 User: ${displayName} (<code>${userId}</code>)\n` +
-          `📦 Product: <b>${product?.name ?? "—"}</b>\n` +
+          `📦 Product: <b>${adminProductName}</b>\n` +
           `⏰ Time slot: <b>${schedule.timeSlot}</b>\n` +
           `🆔 Order: #${order.id}\n` +
           `💬 Session Chat: #${sessionChat.id}\n\n` +

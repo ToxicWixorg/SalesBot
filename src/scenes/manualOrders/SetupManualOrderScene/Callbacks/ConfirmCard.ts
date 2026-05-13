@@ -6,7 +6,7 @@ import { pendingPaymentState } from "../../../../handlers/products/pendingPaymen
 import { emojiIds } from "../../../../shared/locales/emojies";
 
 export async function ConfirmCardCallback(
-  ctx: Context,
+  ctx: Context<any>,
   createPendingPaymentOrder: any,
   notifyAdminNewOrder: any,
   bot: AnyBot,

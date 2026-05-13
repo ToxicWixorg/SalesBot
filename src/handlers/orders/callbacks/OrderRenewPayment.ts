@@ -16,6 +16,7 @@ import { TicketService } from "../../../services/bot/ticket.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import { renewalPendingState } from "../renewState.ts";
 import { emojiIds } from "../../../shared/locales/emojies.ts";
+import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: create a new renewal order from state
@@ -147,6 +148,8 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       await ctx.editText(t("errorRenewingOrder"), { parse_mode: "HTML" });
       return;
     }
+    const productName = getLocalizedName(result.product, user?.languageCode);
+    const planName = getLocalizedName(result.plan, user?.languageCode);
 
     await UserRepository.updateWalletBalance(
       userId,
@@ -158,7 +161,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       info.finalPrice.toFixed(2),
       "purchase",
       result.order.id,
-      `تمدید ${result.product.name} - ${result.plan.name}`,
+      `تمدید ${productName} - ${planName}`,
     );
 
     renewalPendingState.delete(userId);
@@ -169,8 +172,8 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       firstName: user?.firstName ?? null,
       orderId: result.order.id,
       originalOrderId: orderId,
-      productName: result.product.name,
-      planName: result.plan.name,
+      productName,
+      planName,
       finalPrice: info.finalPrice,
       paymentMethod: "wallet",
       delivery: info.delivery,
@@ -184,7 +187,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
         "renewWalletSuccess" as any,
         {
           orderId: result.order.id,
-          productName: result.product.name,
+          productName,
           remainingBalance: newBalance.toFixed(0),
         } as any,
       ),
@@ -270,6 +273,8 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       await ctx.editText(t("errorRenewingOrder"), { parse_mode: "HTML" });
       return;
     }
+    const productName = getLocalizedName(result.product, user?.languageCode);
+    const planName = getLocalizedName(result.plan, user?.languageCode);
 
     renewalPendingState.delete(userId);
 
@@ -279,8 +284,8 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       firstName: user?.firstName ?? null,
       orderId: result.order.id,
       originalOrderId: orderId,
-      productName: result.product.name,
-      planName: result.plan.name,
+      productName,
+      planName,
       finalPrice: info.finalPrice,
       paymentMethod: "card",
       delivery: info.delivery,
@@ -429,6 +434,11 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
           refId,
         );
         if (!result) return;
+        const productName = getLocalizedName(
+          result.product,
+          user?.languageCode,
+        );
+        const planName = getLocalizedName(result.plan, user?.languageCode);
 
         renewalPendingState.delete(userId);
 
@@ -438,8 +448,8 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
           firstName: user?.firstName ?? null,
           orderId: result.order.id,
           originalOrderId: orderId,
-          productName: result.product.name,
-          planName: result.plan.name,
+          productName,
+          planName,
           finalPrice: info.finalPrice,
           paymentMethod: "zarinpal",
           delivery: info.delivery,
@@ -683,6 +693,8 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
         await ctx.editText(t("errorRenewingOrder"), { parse_mode: "HTML" });
         return;
       }
+      const productName = getLocalizedName(result.product, user?.languageCode);
+      const planName = getLocalizedName(result.plan, user?.languageCode);
 
       renewalPendingState.delete(userId);
 
@@ -692,8 +704,8 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
         firstName: user?.firstName ?? null,
         orderId: result.order.id,
         originalOrderId: orderId,
-        productName: result.product.name,
-        planName: result.plan.name,
+        productName,
+        planName,
         finalPrice: info.finalPrice,
         paymentMethod: "nowpayments",
         delivery: info.delivery,

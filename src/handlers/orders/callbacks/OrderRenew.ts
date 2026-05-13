@@ -9,6 +9,7 @@ import { PaymentRepository } from "../../../repositories/PaymentRepository.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import { renewalPendingState } from "../renewState.ts";
 import { emojiIds } from "../../../shared/locales/emojies.ts";
+import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 
 export async function OrderRenewCallback(context: any) {
   await context.answerCallbackQuery();
@@ -51,6 +52,8 @@ export async function OrderRenewCallback(context: any) {
 
     const finalPrice = parseFloat(plan.price as string);
     const walletBalance = parseFloat(user.walletBalance ?? "0");
+    const productName = getLocalizedName(product, user.languageCode);
+    const planName = getLocalizedName(plan, user.languageCode);
 
     // Build delivery map from existing order
     const delivery = (order.delivery ?? {}) as Record<string, string>;
@@ -77,8 +80,8 @@ export async function OrderRenewCallback(context: any) {
 
     const summaryText =
       `🔄 <b>${t("renewScreenTitle" as any)}</b>\n\n` +
-      `📦 ${product.name}\n` +
-      `📋 ${plan.name}\n` +
+      `📦 ${productName}\n` +
+      `📋 ${planName}\n` +
       (delivery && Object.keys(delivery).length > 0
         ? `\n${deliveryLines}\n`
         : "") +

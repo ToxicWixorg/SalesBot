@@ -8,7 +8,7 @@ import {
   categoriesKeyboard,
 } from "../../../shared/keyboards/index.ts";
 
-export async function ProductsCallback(context: Context) {
+export async function ProductsCallback(context: Context<any>) {
   if (!context.from) return;
 
   const user = await UserRepository.findById(context.from.id);
@@ -35,7 +35,7 @@ export async function ProductsCallback(context: Context) {
 
   await context.send(t("selectCategory"), {
     parse_mode: "HTML",
-    reply_markup: categoriesKeyboard(t, categories),
+    reply_markup: categoriesKeyboard(t, categories, user.languageCode),
   });
   await context.message?.delete();
 }

@@ -11,6 +11,7 @@ import {
 } from "../../repositories";
 import { PaymentRepository } from "../../repositories/PaymentRepository";
 import { i18n } from "../../shared/locales";
+import { getLocalizedName } from "../../shared/utils/localizedFields";
 
 export async function showPaymentScreen(
   sendFn: (text: string, opts?: any) => Promise<any>,
@@ -30,6 +31,8 @@ export async function showPaymentScreen(
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
   const hasDiscount =
     pendingDiscount !== undefined && pendingDiscount.planId === state.planId;
+  const productName = getLocalizedName(product, user.languageCode);
+  const planName = getLocalizedName(plan, user.languageCode);
 
   const finalPrice = hasDiscount ? pendingDiscount.finalPrice : originalPrice;
   const walletBalance = parseFloat(user.walletBalance ?? "0");
@@ -44,8 +47,8 @@ export async function showPaymentScreen(
 
   await sendFn(
     buildPaymentSummaryText(t, {
-      productName: product.name,
-      planName: plan.name,
+      productName,
+      planName,
       duration: plan.duration,
       durationUnit: plan.durationUnit,
       collected: state.collected,

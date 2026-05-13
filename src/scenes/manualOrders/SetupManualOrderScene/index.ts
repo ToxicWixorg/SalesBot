@@ -38,6 +38,7 @@ import { notifyAdminNewOrder } from "../Helpers/notifyAdminNewOrder";
 import { ScheduleRepository } from "../../../repositories/ScheduleRepository";
 import { emojiIds } from "../../../shared/locales/emojies";
 import { walletTopupsTable } from "../../../db/schema.ts";
+import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: create an unpaid order (card / crypto / zarinpal flow)
@@ -59,6 +60,9 @@ async function createPendingPaymentOrder(
   if (!plan) return null;
   const product = await ProductRepository.findById(plan.productId);
   if (!product) return null;
+  const user = await UserRepository.findById(userId);
+  const productName = getLocalizedName(product, user?.languageCode);
+  const planName = getLocalizedName(plan, user?.languageCode);
 
   const originalPrice = state.regionPrice ?? parseFloat(plan.price as string);
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
@@ -92,8 +96,8 @@ async function createPendingPaymentOrder(
   return {
     orderId: order.id,
     finalPrice,
-    productName: product.name,
-    planName: plan.name,
+    productName,
+    planName,
   };
 }
 

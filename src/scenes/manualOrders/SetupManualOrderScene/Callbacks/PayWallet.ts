@@ -14,8 +14,12 @@ import { Context, InlineKeyboard } from "gramio";
 import { emojiIds } from "../../../../shared/locales/emojies";
 import { sendStepPrompt } from "../../SendStepPrompt";
 import { showDayPicker } from "../../Helpers/showDayPicker";
+import { getLocalizedName } from "../../../../shared/utils/localizedFields";
 
-export async function PayWalletCallback(ctx: Context, finishManualOrder: any) {
+export async function PayWalletCallback(
+  ctx: Context<any>,
+  finishManualOrder: any,
+) {
   await ctx.answerCallbackQuery();
   const userId = ctx.from?.id;
   if (!userId) return;
@@ -42,6 +46,8 @@ export async function PayWalletCallback(ctx: Context, finishManualOrder: any) {
     const user = freshUser;
     if (!user) return;
     const t = i18n.buildT(user.languageCode || "fa");
+    const productName = getLocalizedName(product, user.languageCode);
+    const planName = getLocalizedName(plan, user.languageCode);
     const currentBalance = parseFloat(freshUser.walletBalance ?? "0");
     if (currentBalance < finalPrice) {
       await ctx.editText(
@@ -90,7 +96,7 @@ export async function PayWalletCallback(ctx: Context, finishManualOrder: any) {
       finalPrice.toFixed(2),
       "purchase",
       order.id,
-      `خرید ${product.name} - ${plan.name}`,
+      `خرید ${productName} - ${planName}`,
     );
 
     if (hasDiscount && pendingDiscount) {

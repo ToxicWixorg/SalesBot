@@ -3,11 +3,13 @@ import type { TFunction } from "../../locales/index.ts";
 import type { Product } from "../../../db/schema.ts";
 import { emojiIds } from "../../locales/emojies.ts";
 import { normalizeCustomEmojiId } from "../../utils/customEmoji.ts";
+import { getLocalizedName } from "../../utils/localizedFields.ts";
 
 export function productsListKeyboard(
   t: TFunction,
   products: Product[],
   categoryId: number,
+  languageCode = "fa",
 ): InlineKeyboard {
   const keyboard = new InlineKeyboard();
 
@@ -27,7 +29,11 @@ export function productsListKeyboard(
         style: inStock ? "success" : "danger",
         icon_custom_emoji_id: safeEmojiId,
       };
-    keyboard.text(product.name, `product_${product.id}`, opts);
+    keyboard.text(
+      getLocalizedName(product, languageCode),
+      `product_${product.id}`,
+      opts,
+    );
     keyboard.row();
   });
 
