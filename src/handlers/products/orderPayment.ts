@@ -1,6 +1,7 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../shared/locales/index.ts";
 import type { PaymentSettings, PaymentCardNumber } from "../../db/schema.ts";
+import { emojiIds } from "../../shared/locales/emojies.ts";
 
 export type PaymentSummaryData = {
   productName: string;
@@ -69,15 +70,24 @@ export function paymentKeyboard(
   const canPayWallet = opts.walletBalance >= opts.finalPrice;
 
   if (canPayWallet) {
-    kb.text(t("btnPayWallet"), `pay_wallet_${planId}`).row();
+    kb.text(t("btnPayWallet"), `pay_wallet_${planId}`, {
+      icon_custom_emoji_id: emojiIds.bag,
+      style: "success",
+    }).row();
   }
 
   if (opts.settings?.cardEnabled && opts.cards.length > 0) {
-    kb.text(t("btnPayCard"), `pay_card_${planId}`).row();
+    kb.text(t("btnPayCard"), `pay_card_${planId}`, {
+      icon_custom_emoji_id: emojiIds.card,
+      style: "success",
+    }).row();
   }
 
   if (opts.settings?.zarinpalEnabled && opts.settings.zarinpalMerchantId) {
-    kb.text(t("btnPayZarinpal"), `pay_zarinpal_${planId}`).row();
+    kb.text(t("btnPayZarinpal"), `pay_zarinpal_${planId}`, {
+      icon_custom_emoji_id: emojiIds.zarinpal,
+      style: "success",
+    }).row();
   }
 
   if (
@@ -86,14 +96,23 @@ export function paymentKeyboard(
     opts.settings.nowpaymentsIpnCallbackUrl &&
     (opts.settings.cryptoExchangeRate ?? 0) > 0
   ) {
-    kb.text(t("btnPayCrypto"), `pay_crypto_${planId}`).row();
+    kb.text(t("btnPayCrypto"), `pay_crypto_${planId}`, {
+      icon_custom_emoji_id: emojiIds.usdt,
+      style: "success",
+    }).row();
   }
 
   if (!canPayWallet) {
-    kb.text(t("btnRechargeWallet"), "wallet").row();
+    kb.text(t("btnRechargeWallet"), "wallet", {
+      icon_custom_emoji_id: emojiIds.wallet,
+      style: "primary",
+    }).row();
   }
 
-  kb.text(t("btnCancelManualOrder"), "cancel_manual_order");
+  kb.text(t("btnCancelManualOrder"), "cancel_manual_order", {
+    icon_custom_emoji_id: emojiIds.reject,
+    style: "danger",
+  });
 
   return kb;
 }
