@@ -6,6 +6,18 @@ import {
   productsTable,
 } from "../db/schema.ts";
 
+type LocalizedText = {
+  fa: string;
+  en: string;
+  ru: string;
+};
+
+const l = (fa: string, en?: string, ru?: string): LocalizedText => ({
+  fa,
+  en: en ?? fa,
+  ru: ru ?? fa,
+});
+
 type RequiredInput = {
   key: string;
   label: string;
@@ -16,8 +28,9 @@ type RequiredInput = {
 };
 
 type SeedPlan = {
-  name: string;
-  description: string;
+  name: LocalizedText;
+  description: LocalizedText;
+  customEmojiId?: string;
   price: string;
   duration: number;
   durationUnit: "day" | "month" | "year";
@@ -35,37 +48,58 @@ type SeedPlan = {
 };
 
 type SeedProduct = {
-  name: string;
+  name: LocalizedText;
   slug: string;
-  description: string;
+  description: LocalizedText;
+  customEmojiId?: string;
   stock: number;
   plans: SeedPlan[];
 };
 
 type SeedCategory = {
-  name: string;
+  name: LocalizedText;
   slug: string;
-  description: string;
+  description: LocalizedText;
   icon: string;
+  customEmojiId?: string;
   products: SeedProduct[];
 };
 
 const sampleCatalog: SeedCategory[] = [
   {
-    name: "هوش مصنوعی",
+    name: l("هوش مصنوعی", "AI", "ИИ"),
     slug: "ai",
-    description: "اشتراک‌های هوش مصنوعی",
+    description: l(
+      "اشتراک‌های هوش مصنوعی",
+      "AI subscriptions",
+      "Подписки на ИИ",
+    ),
     icon: "",
+    customEmojiId: "4938219621594433836",
     products: [
       {
-        name: "ChatGPT Plus",
+        name: l("چت جی پی تی پلاس", "ChatGPT Plus", "ChatGPT Plus"),
         slug: "chatgpt-plus",
-        description: "اشتراک ChatGPT Plus با ورود دستی",
+        description: l(
+          "اشتراک ChatGPT Plus با ورود دستی",
+          "ChatGPT Plus subscription with manual delivery",
+          "Подписка ChatGPT Plus с ручной выдачей",
+        ),
+        customEmojiId: "5796185041717433060",
         stock: 12,
         plans: [
           {
-            name: "ماهانه - ایمیل و رمز",
-            description: "تحویل اکانت با ایمیل و رمز",
+            name: l(
+              "ماهانه - ایمیل و رمز",
+              "Monthly - email & password",
+              "Ежемесячно - email и пароль",
+            ),
+            description: l(
+              "تحویل اکانت با ایمیل و رمز",
+              "Account delivered with email and password",
+              "Выдача аккаунта с email и паролем",
+            ),
+            customEmojiId: undefined,
             price: "290000",
             duration: 30,
             durationUnit: "day",
@@ -95,20 +129,31 @@ const sampleCatalog: SeedCategory[] = [
     ],
   },
   {
-    name: "Music",
+    name: l("موسیقی", "Music", "Музыка"),
     slug: "music",
-    description: "سرویس‌های نیازمند چند فیلد امنیتی",
+    description: l(
+      "سرویس‌های نیازمند چند فیلد امنیتی",
+      "Services requiring multiple security fields",
+      "Сервисы, требующие несколько полей безопасности",
+    ),
     icon: "",
+    customEmojiId: "5363988860747400777",
     products: [
       {
-        name: "Spotify",
+        name: l("اسپاتیفاس", "Spotify", "Spotify"),
         slug: "spotify",
-        description: "",
+        description: l("", "", ""),
+        customEmojiId: "5796304385973686816",
         stock: 8,
         plans: [
           {
-            name: "3 ماهه",
-            description: "تحویل اکانت با ایمیل و رمز",
+            name: l("3 ماهه", "3 months", "3 месяца"),
+            description: l(
+              "تحویل اکانت با ایمیل و رمز",
+              "Account delivered with email and password",
+              "Выдача аккаунта с email и паролем",
+            ),
+            customEmojiId: undefined,
             price: "290000",
             duration: 3,
             durationUnit: "month",
@@ -147,17 +192,38 @@ async function ensureCategory(category: SeedCategory) {
     .limit(1);
 
   if (existing) {
-    console.log(`⏭️  Category exists: ${category.slug}`);
-    return existing;
+    const [updated] = await db
+      .update(categoriesTable)
+      .set({
+        nameFA: category.name.fa,
+        nameEN: category.name.en,
+        nameRU: category.name.ru,
+        descriptionFA: category.description.fa || null,
+        descriptionEN: category.description.en || null,
+        descriptionRU: category.description.ru || null,
+        icon: category.icon || null,
+        customEmojiId: category.customEmojiId ?? null,
+        isActive: true,
+      })
+      .where(eq(categoriesTable.id, existing.id))
+      .returning();
+
+    console.log(`🔄 Category updated: ${category.slug}`);
+    return updated ?? existing;
   }
 
   const [created] = await db
     .insert(categoriesTable)
     .values({
-      name: category.name,
+      nameFA: category.name.fa,
+      nameEN: category.name.en,
+      nameRU: category.name.ru,
       slug: category.slug,
-      description: category.description,
-      icon: category.icon,
+      descriptionFA: category.description.fa || null,
+      descriptionEN: category.description.en || null,
+      descriptionRU: category.description.ru || null,
+      icon: category.icon || null,
+      customEmojiId: category.customEmojiId ?? null,
       isActive: true,
     })
     .returning();
@@ -174,16 +240,42 @@ async function ensureProduct(categoryId: number, product: SeedProduct) {
     .limit(1);
 
   if (existing) {
-    console.log(`⏭️  Product exists: ${product.slug}`);
-    return existing;
+    const [updated] = await db
+      .update(productsTable)
+      .set({
+        nameFA: product.name.fa,
+        nameEN: product.name.en,
+        nameRU: product.name.ru,
+        descriptionFA: product.description.fa || null,
+        descriptionEN: product.description.en || null,
+        descriptionRU: product.description.ru || null,
+        categoryId,
+        isActive: true,
+        stock: product.stock,
+        minStock: 2,
+        requiresEmail: false,
+        requiresOtp: false,
+        requiresLogin: false,
+        requiresRegion: false,
+        customEmojiId: product.customEmojiId ?? null,
+      })
+      .where(eq(productsTable.id, existing.id))
+      .returning();
+
+    console.log(`🔄 Product updated: ${product.slug}`);
+    return updated ?? existing;
   }
 
   const [created] = await db
     .insert(productsTable)
     .values({
-      name: product.name,
+      nameFA: product.name.fa,
+      nameEN: product.name.en,
+      nameRU: product.name.ru,
       slug: product.slug,
-      description: product.description,
+      descriptionFA: product.description.fa || null,
+      descriptionEN: product.description.en || null,
+      descriptionRU: product.description.ru || null,
       categoryId,
       isActive: true,
       stock: product.stock,
@@ -192,6 +284,7 @@ async function ensureProduct(categoryId: number, product: SeedProduct) {
       requiresOtp: false,
       requiresLogin: false,
       requiresRegion: false,
+      customEmojiId: product.customEmojiId ?? null,
     })
     .returning();
 
@@ -206,7 +299,7 @@ async function ensurePlan(productId: number, plan: SeedPlan) {
     .where(
       and(
         eq(productPlansTable.productId, productId),
-        eq(productPlansTable.name, plan.name),
+        eq(productPlansTable.nameFA, plan.name.fa),
       ),
     )
     .limit(1);
@@ -215,7 +308,12 @@ async function ensurePlan(productId: number, plan: SeedPlan) {
     await db
       .update(productPlansTable)
       .set({
-        description: plan.description,
+        nameFA: plan.name.fa,
+        nameEN: plan.name.en,
+        nameRU: plan.name.ru,
+        descriptionFA: plan.description.fa || null,
+        descriptionEN: plan.description.en || null,
+        descriptionRU: plan.description.ru || null,
         price: plan.price,
         duration: plan.duration,
         durationUnit: plan.durationUnit,
@@ -223,17 +321,22 @@ async function ensurePlan(productId: number, plan: SeedPlan) {
         order: plan.order,
         isActive: true,
         requiredInputs: plan.requiredInputs,
+        customEmojiId: plan.customEmojiId ?? null,
       })
       .where(eq(productPlansTable.id, existing.id));
 
-    console.log(`🔄 Plan updated: ${plan.name}`);
+    console.log(`🔄 Plan updated: ${plan.name.fa}`);
     return;
   }
 
   await db.insert(productPlansTable).values({
     productId,
-    name: plan.name,
-    description: plan.description,
+    nameFA: plan.name.fa,
+    nameEN: plan.name.en,
+    nameRU: plan.name.ru,
+    descriptionFA: plan.description.fa || null,
+    descriptionEN: plan.description.en || null,
+    descriptionRU: plan.description.ru || null,
     price: plan.price,
     duration: plan.duration,
     durationUnit: plan.durationUnit,
@@ -241,9 +344,10 @@ async function ensurePlan(productId: number, plan: SeedPlan) {
     order: plan.order,
     isActive: true,
     requiredInputs: plan.requiredInputs,
+    customEmojiId: plan.customEmojiId ?? null,
   });
 
-  console.log(`✅ Plan created: ${plan.name}`);
+  console.log(`✅ Plan created: ${plan.name.fa}`);
 }
 
 async function seedSampleProducts() {
