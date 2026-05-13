@@ -73,16 +73,16 @@ export function setupTicketScenes(bot: AnyBot) {
         });
         return;
       }
-
       if (ticket.status !== "open") {
-        await context.answerCallbackQuery({
-          text: t("youCannotReplyToThisTicket"),
-          parse_mode: "HTML",
-          show_alert: true,
-        });
-        return;
+        if (ticket.status !== "waiting_user") {
+          await context.answerCallbackQuery({
+            text: t("youCannotReplyToThisTicket"),
+            parse_mode: "HTML",
+            show_alert: true,
+          });
+          return;
+        }
       }
-
 
       ticketReplyState.set(context.from.id, ticketId);
 
