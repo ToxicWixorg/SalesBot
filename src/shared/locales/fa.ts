@@ -14,6 +14,8 @@ export const fa = {
 
   btnReportBug: "گزارش مشکل ربات",
 
+  items: "ایتم ها",
+
   adminpanelText: (userid: number, userRole: string) =>
     `${e.id} ایدی عددی شما : <code>${userid}</code>\n` +
     `${e.user} نقش شما : <b>${userRole === "super_admin" ? "مالک" : userRole === "admin" ? "ادمین" : "پشتیبان"}</b>\n\n` +

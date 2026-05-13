@@ -11,64 +11,95 @@ import { OrderRenewCallback } from "./callbacks/OrderRenew.ts";
 import { OrderRescheduleCallback } from "./callbacks/OrderReschedule.ts";
 import { OrderReportPeroblemCallback } from "./callbacks/OrderReportProblem.ts";
 import { e } from "../../shared/locales/emojies.ts";
+import type { TFunction } from "../../shared/locales/index.ts";
 
-function getOrderStatusInfo(status: string) {
+function getOrderStatusInfo(status: string, t: TFunction) {
   const statusMap: Record<
     string,
     { emoji: string; text: string; color: string }
   > = {
     pending_payment: {
       emoji: e.time,
-      text: "در انتظار پرداخت",
+      text: t("orderStatus_pending_payment"),
       color: e.pending,
     },
-    paid: { emoji: e.confirm, text: "پرداخت شده", color: e.confirm },
+    paid: { emoji: e.confirm, text: t("orderStatus_paid"), color: e.confirm },
     pending_admin: {
       emoji: e.admin,
-      text: "در انتظار بررسی",
+      text: t("orderStatus_pending_admin"),
       color: e.pending,
     },
     waiting_schedule: {
       emoji: e.date,
-      text: "نیاز به انتخاب زمان",
+      text: t("orderStatus_waiting_schedule"),
       color: e.needData,
     },
-    scheduled: { emoji: e.date, text: "زمان‌بندی شده", color: e.active },
-    reminder_sent: { emoji: e.bell, text: "یادآوری ارسال شد", color: e.active },
+    scheduled: { emoji: e.date, text: t("orderStatus_scheduled"), color: e.active },
+    reminder_sent: {
+      emoji: e.bell,
+      text: t("orderStatus_reminder_sent"),
+      color: e.active,
+    },
     waiting_user_online: {
       emoji: e.user,
-      text: "در انتظار حضور شما",
+      text: t("orderStatus_waiting_user_online"),
       color: e.pending,
     },
     user_not_responding: {
       emoji: e.warning,
-      text: "پاسخ داده نشده",
+      text: t("orderStatus_user_not_responding"),
       color: e.needData,
     },
     waiting_invite: {
       emoji: e.incoming,
-      text: "در انتظار ارسال دعوتنامه",
+      text: t("orderStatus_waiting_invite"),
       color: e.active,
     },
-    invite_sent: { emoji: "📧", text: "دعوتنامه ارسال شد", color: e.complete },
+    invite_sent: {
+      emoji: "📧",
+      text: t("orderStatus_invite_sent"),
+      color: e.complete,
+    },
     waiting_user_action: {
       emoji: "🔄",
-      text: "نیاز به اقدام شما",
+      text: t("orderStatus_waiting_user_action"),
       color: e.pending,
     },
-    join_link_sent: { emoji: "🔗", text: "لینک Join ارسال شد", color: "🟢" },
-    in_queue: { emoji: "⏰", text: "در صف انتظار", color: "🟡" },
-    in_progress: { emoji: "🔄", text: "در حال انجام", color: e.active },
-    active: { emoji: e.sparkles, text: "فعال", color: e.active },
-    expiring_soon: { emoji: "⚡", text: "نزدیک به پایان", color: e.needData },
-    completed: { emoji: e.confirm, text: "تکمیل شده", color: e.complete },
-    cancelled: { emoji: e.reject, text: "لغو شده", color: "🔴" },
-    refunded: { emoji: e.wallet, text: "بازگشت وجه", color: "🟣" },
-    failed: { emoji: e.failed, text: "ناموفق", color: "🔴" },
-    rescheduled: { emoji: "🔄", text: "زمان تغییر کرد", color: "🔵" },
+    join_link_sent: {
+      emoji: "🔗",
+      text: t("orderStatus_join_link_sent"),
+      color: "🟢",
+    },
+    in_queue: { emoji: "⏰", text: t("orderStatus_in_queue"), color: "🟡" },
+    in_progress: {
+      emoji: "🔄",
+      text: t("orderStatus_in_progress"),
+      color: e.active,
+    },
+    active: { emoji: e.sparkles, text: t("orderStatus_active"), color: e.active },
+    expiring_soon: {
+      emoji: "⚡",
+      text: t("orderStatus_expiring_soon"),
+      color: e.needData,
+    },
+    completed: {
+      emoji: e.confirm,
+      text: t("orderStatus_completed"),
+      color: e.complete,
+    },
+    cancelled: { emoji: e.reject, text: t("orderStatus_cancelled"), color: "🔴" },
+    refunded: { emoji: e.wallet, text: t("orderStatus_refunded"), color: "🟣" },
+    failed: { emoji: e.failed, text: t("orderStatus_failed"), color: "🔴" },
+    rescheduled: { emoji: "🔄", text: t("orderStatus_rescheduled"), color: "🔵" },
   };
 
-  return statusMap[status] || { emoji: "❓", text: status, color: "⚪" };
+  return (
+    statusMap[status] || {
+      emoji: "❓",
+      text: t("orderStatus_unknown", { status }),
+      color: "⚪",
+    }
+  );
 }
 
 function formatDate(date: Date | string): string {

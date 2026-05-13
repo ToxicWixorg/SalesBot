@@ -33,13 +33,13 @@ export async function OrderFilterAllCallback(
 
     for (const order of orders.slice(0, 10)) {
       const product = await ProductRepository.findById(order.productId);
-      const statusInfo = getOrderStatusInfo(order.status);
+      const statusInfo = getOrderStatusInfo(order.status, t);
 
-      message += `${statusInfo.color} سفارش #${order.id}\n`;
-      message += `📦 ${product?.name || "محصول"}\n`;
+      message += `${statusInfo.color} ${t("ordersOrderLabel", { orderId: order.id })}\n`;
+      message += `📦 ${product?.name || t("ordersProductFallback")}\n`;
       message += `${statusInfo.emoji} ${statusInfo.text}\n`;
       message += `📅 ${formatDate(order.createdAt)}\n`;
-      message += `💰 ${formatPrice(order.finalPrice)} تومان\n`;
+      message += `💰 ${formatPrice(order.finalPrice)} ${t("currency")}\n`;
       message += `\n`;
     }
 
@@ -48,7 +48,9 @@ export async function OrderFilterAllCallback(
     // ایجاد دکمه‌های سفارشات
     const keyboard = ordersListKeyboard(t);
     for (const order of orders.slice(0, 10)) {
-      keyboard.row().text(`📦 سفارش #${order.id}`, `order_${order.id}`);
+      keyboard
+        .row()
+        .text(`📦 ${t("ordersOrderLabel", { orderId: order.id })}`, `order_${order.id}`);
     }
 
     await context.editText(message, {

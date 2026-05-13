@@ -48,24 +48,24 @@ export async function OrderCallback(
     }
 
     const product = await ProductRepository.findById(order.productId);
-    const statusInfo = getOrderStatusInfo(order.status);
+    const statusInfo = getOrderStatusInfo(order.status, t);
 
     let message = `${t("orderDetailsTitle")}\n\n`;
     message += `${t("orderNumber")}: #${order.id}\n`;
     message += `${t("orderProduct")}: ${product?.name || "-"}\n`;
     message += `${statusInfo.color} ${t("orderStatus")}: ${statusInfo.emoji} ${statusInfo.text}\n`;
     message += `\n`;
-    message += `${t("orderTotalPrice")}: ${formatPrice(order.totalPrice)} تومان\n`;
+    message += `${t("orderTotalPrice")}: ${formatPrice(order.totalPrice)} ${t("currency")}\n`;
 
     if (Number(order.discountAmount) > 0) {
-      message += `${t("orderDiscount")}: ${formatPrice(order.discountAmount)} تومان\n`;
+      message += `${t("orderDiscount")}: ${formatPrice(order.discountAmount)} ${t("currency")}\n`;
     }
 
     if (Number(order.walletUsed) > 0) {
-      message += `${t("orderWalletUsed")}: ${formatPrice(order.walletUsed)} تومان\n`;
+      message += `${t("orderWalletUsed")}: ${formatPrice(order.walletUsed)} ${t("currency")}\n`;
     }
 
-    message += `${t("orderFinalPrice")}: ${formatPrice(order.finalPrice)} تومان\n`;
+    message += `${t("orderFinalPrice")}: ${formatPrice(order.finalPrice)} ${t("currency")}\n`;
     message += `\n`;
     message += `${t("orderCreatedAt")}: ${formatDate(order.createdAt)}\n`;
 
@@ -101,7 +101,7 @@ export async function OrderCallback(
 
       if (items.length > 0) {
         hasDeliveryData = true;
-        message += `• آیتم‌ها:\n`;
+        message += `• ${t("items")}:\n`;
         for (const [idx, item] of items.entries()) {
           message += `${idx + 1}. <code>${escapeHtml(item)}</code>\n`;
         }
@@ -150,7 +150,7 @@ export async function OrderCallback(
       }
 
       if (!hasDeliveryData) {
-        message += `اطلاعات تحویل ثبت نشده است.\n`;
+        message += `${t("orderDeliveryInfoNotProvided")}\n`;
       }
     }
 
