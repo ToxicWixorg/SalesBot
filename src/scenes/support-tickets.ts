@@ -74,7 +74,7 @@ export function setupTicketScenes(bot: AnyBot) {
         return;
       }
 
-      if (ticket.status !== "open" || ticket.status !== "waiting_user") {
+      if (ticket.status !== "open") {
         await context.answerCallbackQuery({
           text: t("youCannotReplyToThisTicket"),
           parse_mode: "HTML",
@@ -82,6 +82,7 @@ export function setupTicketScenes(bot: AnyBot) {
         });
         return;
       }
+
 
       ticketReplyState.set(context.from.id, ticketId);
 
