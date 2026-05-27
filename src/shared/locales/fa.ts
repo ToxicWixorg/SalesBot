@@ -73,7 +73,7 @@ export const fa = {
   productDetails: `${e.bag} جزئیات محصول`,
   price: `${e.wallet} قیمت:`,
   stock: `${e.bag} موجودی:`,
-  available: `${e.checkBold} موجود`,
+  available: `${e.checkBold} موجود\nپلن مورد نظرت رو انتخاب کن: `,
   outOfStock: `❌ ناموجود`,
   productNotFound: `❌ محصول پیدا نشد`,
   planNotFound: `❌ پلن پیدا نشد`,

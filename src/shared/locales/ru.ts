@@ -74,7 +74,7 @@ export const ru = {
   productDetails: `${e.bag} Детали товара`,
   price: `${e.wallet} Цена:`,
   stock: `${e.bag} Наличие:`,
-  available: `${e.checkBold} В наличии`,
+  available: `${e.checkBold} В наличии\nВыберите тариф: `,
   outOfStock: `❌ Нет в наличии`,
   productNotFound: `❌ Товар не найден`,
   planNotFound: `❌ Тариф не найден`,

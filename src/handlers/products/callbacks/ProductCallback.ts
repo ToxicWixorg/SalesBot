@@ -1,7 +1,14 @@
 import { UserRepository } from "../../../repositories/UserRepository.ts";
 import { i18n } from "../../../shared/locales/index.ts";
-import { productDetailsKeyboard } from "../../../shared/keyboards/index.ts";
-import { ProductRepository } from "../../../repositories/ProductRepository.ts";
+import {
+  backKeyboard,
+  productDetailsKeyboard,
+  productPlansKeyboard,
+} from "../../../shared/keyboards/index.ts";
+import {
+  ProductPlanRepository,
+  ProductRepository,
+} from "../../../repositories/ProductRepository.ts";
 import { e } from "../../../shared/locales/emojies.ts";
 import { normalizeCustomEmojiId } from "../../../shared/utils/customEmoji.ts";
 import {
@@ -30,29 +37,50 @@ export async function ProductCallback(context: any, getEffectiveStock: any) {
   const stock = await getEffectiveStock(product);
   const hasStock = stock > 0;
 
-  const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
+  if (hasStock) {
+    const plans = await ProductPlanRepository.findByProductId(productId);
+    if (plans.length === 0) {
+      await context.answerCallbackQuery({
+        text: t("noPlansAvailable"),
+        show_alert: true,
+      });
+      return;
+    }
+    const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
+    let message = safeEmojiId
+      ? `<tg-emoji emoji-id="${safeEmojiId}">🛍️</tg-emoji> `
+      : e.bag;
 
-  let message = safeEmojiId
-    ? `<tg-emoji emoji-id="${safeEmojiId}">🛍️</tg-emoji> `
-    : e.bag;
+    const productName = getLocalizedName(product, user.languageCode);
+    const productDescription = getLocalizedDescription(
+      product,
+      user.languageCode,
+    );
 
-  const productName = getLocalizedName(product, user.languageCode);
-  const productDescription = getLocalizedDescription(
-    product,
-    user.languageCode,
-  );
+    message += `<b>${productName}</b>\n\n`;
+    if (productDescription) message += `${productDescription}\n\n`;
 
-  message += `<b>${productName}</b>\n\n`;
-  if (productDescription) message += `${productDescription}\n\n`;
+    message += `${t("stock")} ${hasStock ? t("available") : t("outOfStock")}\n`;
 
-  message += `${t("stock")} ${hasStock ? t("available") : t("outOfStock")}\n`;
-
-  if (product.warrantyDays && product.warrantyDays > 0) {
-    message += `\n${t("warrantyDays", { days: product.warrantyDays })}`;
+    if (product.warrantyDays && product.warrantyDays > 0) {
+      message += `\n${t("warrantyDays", { days: product.warrantyDays })}`;
+    }
+    await context.editText(message, {
+      parse_mode: "HTML",
+      reply_markup: productPlansKeyboard(
+        t,
+        plans,
+        productId,
+        user.languageCode,
+      ),
+    });
+    return;
   }
+
+  const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
 
   await context.editText(message, {
     parse_mode: "HTML",
-    reply_markup: productDetailsKeyboard(t, product, hasStock),
+    reply_markup: backKeyboard(t, "products"),
   });
 }

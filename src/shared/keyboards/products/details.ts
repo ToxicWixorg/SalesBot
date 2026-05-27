@@ -8,6 +8,9 @@ export function productDetailsKeyboard(
   product: Product,
   hasStock: boolean,
 ): InlineKeyboard {
+  if (hasStock) {
+    return 
+  }
   const keyboard = new InlineKeyboard();
 
   if (hasStock) {

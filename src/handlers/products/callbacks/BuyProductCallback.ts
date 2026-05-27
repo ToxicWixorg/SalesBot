@@ -11,7 +11,7 @@ import { normalizeCustomEmojiId } from "../../../shared/utils/customEmoji.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 
 export async function BuyProductCallback(
-  context: Context<any>,
+  context: Context,
   getEffectiveStock: any,
 ) {
   if (!context.from || !context.queryData) return;

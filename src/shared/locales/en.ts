@@ -71,7 +71,7 @@ export const en = {
   productDetails: `${e.bag} Product Details`,
   price: `${e.wallet} Price:`,
   stock: `${e.bag} Stock:`,
-  available: `${e.checkBold} Available`,
+  available: `${e.checkBold} Available\nSelect plan : `,
   outOfStock: `❌ Out of Stock`,
   productNotFound: `❌ Product not found`,
   planNotFound: `❌ Plan not found`,
