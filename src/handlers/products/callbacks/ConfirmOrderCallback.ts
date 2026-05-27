@@ -22,35 +22,35 @@ import {
 const LEGACY_STEPS: Record<string, RequiredInputField> = {
   email: {
     key: "email",
-    label: "ایمیل",
+    text: "لطفا ایمیل خود را وارد کنید.",
     inputType: "email",
     required: true,
     sensitive: false,
   },
   password: {
     key: "password",
-    label: "رمز",
+    text: "لطفا رمز عبور را وارد کنید.",
     inputType: "password",
     required: true,
     sensitive: true,
   },
   loginUsername: {
     key: "loginUsername",
-    label: "نام کاربری",
+    text: "لطفا نام کاربری را وارد کنید.",
     inputType: "text",
     required: true,
     sensitive: false,
   },
   loginPassword: {
     key: "loginPassword",
-    label: "رمز عبور",
+    text: "لطفا رمز عبور ورود را وارد کنید.",
     inputType: "password",
     required: true,
     sensitive: true,
   },
   region: {
     key: "region",
-    label: "منطقه",
+    text: "لطفا منطقه را وارد کنید.",
     inputType: "text",
     required: true,
     sensitive: false,
@@ -68,8 +68,8 @@ function normalizeRequiredInputs(value: unknown): RequiredInputField[] {
         .trim()
         .toLowerCase()
         .replace(/\s+/g, "_");
-      const label = String(row.label ?? "").trim();
-      if (!key || !label) return null;
+      const text = typeof row.text === "string" ? row.text : undefined;
+      if (!key || !text) return null;
 
       const inputTypeRaw = String(row.inputType ?? "text")
         .trim()
@@ -82,14 +82,10 @@ function normalizeRequiredInputs(value: unknown): RequiredInputField[] {
 
       return {
         key,
-        label,
+        text,
         inputType,
         required: row.required === undefined ? true : Boolean(row.required),
         sensitive: Boolean(row.sensitive),
-        placeholder:
-          row.placeholder === undefined
-            ? undefined
-            : String(row.placeholder ?? "").trim(),
       } satisfies RequiredInputField;
     })
     .filter((x) => Boolean(x)) as RequiredInputField[];
@@ -102,22 +98,9 @@ function normalizeRequiredInputs(value: unknown): RequiredInputField[] {
   });
 }
 
-function buildPromptText(t: any, step: RequiredInputField): string {
-  const legacyPromptKeyMap: Record<string, string> = {
-    email: "manualOrderEmailPrompt",
-    password: "manualOrderPasswordPrompt",
-    loginUsername: "manualOrderLoginUsernamePrompt",
-    loginPassword: "manualOrderLoginPasswordPrompt",
-    region: "manualOrderRegionPrompt",
-  };
-
-  const legacyPromptKey = legacyPromptKeyMap[step.key];
-  if (legacyPromptKey) return t(legacyPromptKey as any);
-
-  const placeholder = step.placeholder?.trim();
-  return placeholder
-    ? `📝 <b>${step.label}</b>\n<blockquote>${placeholder}</blockquote>`
-    : `📝 <b>${step.label}</b> را وارد کنید:`;
+// فقط متن مستقیم را نمایش بده
+function buildPromptText(step: RequiredInputField): string {
+  return step.text || "";
 }
 
 /**
@@ -274,7 +257,7 @@ export async function ConfirmOrderCallback(context: any): Promise<void> {
     current: 1,
     total: steps.length,
   });
-  const promptText = `${stepIndicator}\n\n${buildPromptText(t, firstStep)}`;
+  const promptText = `${stepIndicator}\n\n${buildPromptText(firstStep)}`;
 
   await context.editText(promptText, {
     parse_mode: "HTML",

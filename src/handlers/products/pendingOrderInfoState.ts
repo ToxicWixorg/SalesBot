@@ -8,11 +8,10 @@ export type InfoStep = string;
 
 export type RequiredInputField = {
   key: string;
-  label: string;
+  text: string; // متن مستقیم برای نمایش به کاربر
   inputType?: "text" | "email" | "password" | "number" | "url";
   required?: boolean;
   sensitive?: boolean;
-  placeholder?: string;
 };
 
 /**
