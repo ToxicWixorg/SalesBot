@@ -34,8 +34,7 @@ export async function ProductCallback(context: any, getEffectiveStock: any) {
     return;
   }
 
-  const stock = await getEffectiveStock(product);
-  const hasStock = stock > 0;
+  const hasStock = product.stock;
 
   const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
 
