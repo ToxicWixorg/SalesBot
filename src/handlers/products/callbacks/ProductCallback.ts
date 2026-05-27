@@ -60,13 +60,6 @@ export async function ProductCallback(context: any, getEffectiveStock: any) {
 
   if (hasStock) {
     const plans = await ProductPlanRepository.findByProductId(productId);
-    if (plans.length === 0) {
-      await context.answerCallbackQuery({
-        text: t("noPlansAvailable"),
-        show_alert: true,
-      });
-      return;
-    }
 
     await context.editText(message, {
       parse_mode: "HTML",
@@ -82,6 +75,6 @@ export async function ProductCallback(context: any, getEffectiveStock: any) {
 
   await context.editText(message, {
     parse_mode: "HTML",
-    reply_markup: backKeyboard(t, "products"),
+    reply_markup: backKeyboard(t, `product_${productId}`),
   });
 }
