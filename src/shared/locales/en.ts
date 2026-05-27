@@ -68,6 +68,7 @@ export const en = {
       : `${e.bag} <b>${category}</b> products:`;
   },
   noProducts: `${e.reject} No products available in this category.`,
+  selectProduct: `${e.bag} Select your preferred product:`,
   productDetails: `${e.bag} Product Details`,
   price: `${e.wallet} Price:`,
   stock: `${e.bag} Stock:`,

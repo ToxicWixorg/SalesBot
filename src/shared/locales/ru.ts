@@ -71,6 +71,7 @@ export const ru = {
       : `${e.bag} Товары <b>${category}</b>:`;
   },
   noProducts: `${e.reject} В этой категории нет товаров.`,
+  selectProduct: `${e.bag} Выберите предпочитаемый товар:`,
   productDetails: `${e.bag} Детали товара`,
   price: `${e.wallet} Цена:`,
   stock: `${e.bag} Наличие:`,

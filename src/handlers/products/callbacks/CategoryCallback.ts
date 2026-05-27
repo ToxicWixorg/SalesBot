@@ -7,9 +7,12 @@ import {
 } from "../../../repositories/ProductRepository.ts";
 import { productsListKeyboard } from "../../../shared/keyboards/index.ts";
 import { normalizeCustomEmojiId } from "../../../shared/utils/customEmoji.ts";
-import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
+import {
+  getLocalizedDescription,
+  getLocalizedName,
+} from "../../../shared/utils/localizedFields.ts";
 
-export async function CategoryCallback(context: Context<any>) {
+export async function CategoryCallback(context: Context) {
   if (!context.from || !context.queryData) return;
 
   const categoryId = Number.parseInt(context.queryData[1]!);
@@ -29,15 +32,15 @@ export async function CategoryCallback(context: Context<any>) {
 
   const products = await ProductRepository.findByCategory(categoryId);
   const categoryName = getLocalizedName(category, user.languageCode);
+  const categoryDescription = getLocalizedDescription(
+    category,
+    user.languageCode,
+  );
 
   const message =
-    products.length === 0
-      ? `${t("categoryProducts", categoryName, normalizeCustomEmojiId(category.customEmojiId) ?? null)}\n\n${t("noProducts")}`
-      : t(
-          "categoryProducts",
-          categoryName,
-          normalizeCustomEmojiId(category.customEmojiId) ?? null,
-        );
+    `${t("categoryProducts", categoryName, normalizeCustomEmojiId(category.customEmojiId) ?? null)}\n\n` +
+    `${categoryDescription}\n\n` +
+    (products.length === 0 ? t("noProducts") : t("selectProduct"));
 
   await context.editText(message, {
     parse_mode: "HTML",
