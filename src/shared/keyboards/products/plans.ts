@@ -40,7 +40,7 @@ export function productPlansKeyboard(
     keyboard.row();
   });
 
-  keyboard.text(t("btnBack"), `product_${productId}`, {
+  keyboard.text(t("btnBack"), `categories`, {
     icon_custom_emoji_id: emojiIds.back,
   });
 

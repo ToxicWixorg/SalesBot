@@ -75,6 +75,6 @@ export async function ProductCallback(context: any, getEffectiveStock: any) {
 
   await context.editText(message, {
     parse_mode: "HTML",
-    reply_markup: backKeyboard(t, `product_${productId}`),
+    reply_markup: backKeyboard(t, `categories`),
   });
 }
