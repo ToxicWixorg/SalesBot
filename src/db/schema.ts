@@ -115,7 +115,7 @@ export const productsTable = pgTable(
     // Status
     isActive: boolean("is_active").default(true),
     stock: integer("stock").default(0),
-    minStock: integer("min_stock").default(5),
+    minStock: integer("min_stock").default(0),
 
     // Inventory / Sale settings
     warrantyDays: integer("warranty_days").default(0),
