@@ -37,6 +37,27 @@ export async function ProductCallback(context: any, getEffectiveStock: any) {
   const stock = await getEffectiveStock(product);
   const hasStock = stock > 0;
 
+  const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
+
+  const productName = getLocalizedName(product, user.languageCode);
+  const productDescription = getLocalizedDescription(
+    product,
+    user.languageCode,
+  );
+
+  let message = safeEmojiId
+    ? `<tg-emoji emoji-id="${safeEmojiId}">🛍️</tg-emoji> `
+    : e.bag;
+
+  message += `<b>${productName}</b>\n\n`;
+  if (productDescription) message += `${productDescription}\n\n`;
+
+  message += `${t("stock")} ${hasStock ? t("available") : t("outOfStock")}\n`;
+
+  if (product.warrantyDays && product.warrantyDays > 0) {
+    message += `\n${t("warrantyDays", { days: product.warrantyDays })}`;
+  }
+
   if (hasStock) {
     const plans = await ProductPlanRepository.findByProductId(productId);
     if (plans.length === 0) {
@@ -46,25 +67,7 @@ export async function ProductCallback(context: any, getEffectiveStock: any) {
       });
       return;
     }
-    const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
-    let message = safeEmojiId
-      ? `<tg-emoji emoji-id="${safeEmojiId}">🛍️</tg-emoji> `
-      : e.bag;
 
-    const productName = getLocalizedName(product, user.languageCode);
-    const productDescription = getLocalizedDescription(
-      product,
-      user.languageCode,
-    );
-
-    message += `<b>${productName}</b>\n\n`;
-    if (productDescription) message += `${productDescription}\n\n`;
-
-    message += `${t("stock")} ${hasStock ? t("available") : t("outOfStock")}\n`;
-
-    if (product.warrantyDays && product.warrantyDays > 0) {
-      message += `\n${t("warrantyDays", { days: product.warrantyDays })}`;
-    }
     await context.editText(message, {
       parse_mode: "HTML",
       reply_markup: productPlansKeyboard(
@@ -76,8 +79,6 @@ export async function ProductCallback(context: any, getEffectiveStock: any) {
     });
     return;
   }
-
-  const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
 
   await context.editText(message, {
     parse_mode: "HTML",
