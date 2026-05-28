@@ -44,7 +44,9 @@ export async function notifyAdminNewOrder(
     const value = data.collected[step.key];
     if (!value) continue;
     const shownValue = step.sensitive ? "••••••" : value;
-    description += `${step.label}: ${shownValue}\n`;
+    // نمایش متن مناسب با زبان (اینجا fa پیش‌فرض است)
+    const label = step.textFA || step.textEN || step.textRU || step.key;
+    description += `${label}: ${shownValue}\n`;
   }
   if (data.scheduledSlot)
     description += `${t("adminOrderScheduled")}: ${data.scheduledSlot}\n`;

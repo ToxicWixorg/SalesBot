@@ -3,16 +3,12 @@ import { UserRepository } from "../../../../repositories";
 import { i18n } from "../../../../shared/locales";
 import { pendingOrderInfoState } from "../../../../handlers/products/pendingOrderInfoState";
 
-function resolvePromptText(t: any, key: string, label: string) {
-  const legacyPromptKeyMap: Record<string, string> = {
-    email: "manualOrderEmailPrompt",
-    password: "manualOrderPasswordPrompt",
-    loginUsername: "manualOrderLoginUsernamePrompt",
-    loginPassword: "manualOrderLoginPasswordPrompt",
-    region: "manualOrderRegionPrompt",
-  };
-  const legacy = legacyPromptKeyMap[key];
-  return legacy ? t(legacy as any) : `📝 <b>${label}</b> را وارد کنید:`;
+function resolvePromptText(step: any, lang: string) {
+  let text = step.textFA;
+  if (lang === "en") text = step.textEN || step.textFA;
+  else if (lang === "ru") text = step.textRU || step.textFA;
+  text = text || step.textFA || step.textEN || step.textRU || "";
+  return `📝 <b>${text}</b>`;
 }
 
 export async function EditInfoCallback(ctx: Context) {
@@ -33,7 +29,8 @@ export async function EditInfoCallback(ctx: Context) {
   const user = await UserRepository.findById(userId);
   const t = i18n.buildT(user?.languageCode ?? "en");
 
-  await ctx.editText(resolvePromptText(t, step.key, step.label), {
+  const lang = user?.languageCode || "fa";
+  await ctx.editText(resolvePromptText(step, lang), {
     parse_mode: "HTML",
     reply_markup: new InlineKeyboard().text(
       t("btnCancelManualOrder"),

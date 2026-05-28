@@ -22,35 +22,45 @@ import {
 const LEGACY_STEPS: Record<string, RequiredInputField> = {
   email: {
     key: "email",
-    text: "لطفا ایمیل خود را وارد کنید.",
+    textFA: "لطفا ایمیل خود را وارد کنید.",
+    textEN: "Please enter your email.",
+    textRU: "Пожалуйста, введите ваш email.",
     inputType: "email",
     required: true,
     sensitive: false,
   },
   password: {
     key: "password",
-    text: "لطفا رمز عبور را وارد کنید.",
+    textFA: "لطفا رمز عبور را وارد کنید.",
+    textEN: "Please enter your password.",
+    textRU: "Пожалуйста, введите пароль.",
     inputType: "password",
     required: true,
     sensitive: true,
   },
   loginUsername: {
     key: "loginUsername",
-    text: "لطفا نام کاربری را وارد کنید.",
+    textFA: "لطفا نام کاربری را وارد کنید.",
+    textEN: "Please enter your username.",
+    textRU: "Пожалуйста, введите имя пользователя.",
     inputType: "text",
     required: true,
     sensitive: false,
   },
   loginPassword: {
     key: "loginPassword",
-    text: "لطفا رمز عبور ورود را وارد کنید.",
+    textFA: "لطفا رمز عبور ورود را وارد کنید.",
+    textEN: "Please enter your login password.",
+    textRU: "Пожалуйста, введите пароль для входа.",
     inputType: "password",
     required: true,
     sensitive: true,
   },
   region: {
     key: "region",
-    text: "لطفا منطقه را وارد کنید.",
+    textFA: "لطفا منطقه را وارد کنید.",
+    textEN: "Please enter the region.",
+    textRU: "Пожалуйста, введите регион.",
     inputType: "text",
     required: true,
     sensitive: false,
@@ -68,8 +78,10 @@ function normalizeRequiredInputs(value: unknown): RequiredInputField[] {
         .trim()
         .toLowerCase()
         .replace(/\s+/g, "_");
-      const text = typeof row.text === "string" ? row.text : undefined;
-      if (!key || !text) return null;
+      const textFA = typeof row.textFA === "string" ? row.textFA.trim() : "";
+      const textEN = typeof row.textEN === "string" ? row.textEN.trim() : "";
+      const textRU = typeof row.textRU === "string" ? row.textRU.trim() : "";
+      if (!key || (!textFA && !textEN && !textRU)) return null;
 
       const inputTypeRaw = String(row.inputType ?? "text")
         .trim()
@@ -82,7 +94,9 @@ function normalizeRequiredInputs(value: unknown): RequiredInputField[] {
 
       return {
         key,
-        text,
+        textFA,
+        textEN,
+        textRU,
         inputType,
         required: row.required === undefined ? true : Boolean(row.required),
         sensitive: Boolean(row.sensitive),
@@ -98,9 +112,8 @@ function normalizeRequiredInputs(value: unknown): RequiredInputField[] {
   });
 }
 
-// فقط متن مستقیم را نمایش بده
 function buildPromptText(step: RequiredInputField): string {
-  return step.text || "";
+  return step.displayText || step.textFA || step.textEN || step.textRU || "";
 }
 
 /**
@@ -249,6 +262,17 @@ export async function ConfirmOrderCallback(context: any): Promise<void> {
     discount: hasDiscount ? discount : undefined,
     regionPrice,
   };
+
+  // کش کردن متن نمایش (براساس زبان کاربر) برای هر استپ تا جاهای دیگر از آن استفاده کنند
+  const lang = user.languageCode?.toLowerCase() || "fa";
+  for (const s of steps) {
+    s.displayText =
+      lang === "en"
+        ? s.textEN || s.textFA || s.textRU || s.key
+        : lang === "ru"
+          ? s.textRU || s.textFA || s.textEN || s.key
+          : s.textFA || s.textEN || s.textRU || s.key;
+  }
 
   pendingOrderInfoState.set(userId, state);
 

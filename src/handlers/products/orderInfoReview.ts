@@ -16,7 +16,13 @@ export function buildOrderInfoReviewText(
   for (const step of state.steps) {
     const rawValue = state.collected[step.key] ?? "—";
     const value = step.sensitive && rawValue !== "—" ? "••••••" : rawValue;
-    text += `${step.label}: <code>${value}</code>\n`;
+    const label =
+      (step as any).displayText ||
+      (step as any).textFA ||
+      (step as any).textEN ||
+      (step as any).textRU ||
+      step.key;
+    text += `${label}: <code>${value}</code>\n`;
   }
 
   return text;
@@ -39,7 +45,13 @@ export function orderInfoReviewKeyboard(
   }).row();
 
   for (const step of steps) {
-    kb.text(`✏️ ${step.label}`, `edit_info_${planId}_${step.key}`).row();
+    const label =
+      (step as any).displayText ||
+      (step as any).textFA ||
+      (step as any).textEN ||
+      (step as any).textRU ||
+      step.key;
+    kb.text(`✏️ ${label}`, `edit_info_${planId}_${step.key}`).row();
   }
 
   kb.text(t("btnCancelManualOrder"), "cancel_manual_order");

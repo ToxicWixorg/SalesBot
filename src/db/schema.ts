@@ -147,18 +147,35 @@ export const productPlansTable = pgTable(
     // Dynamic user-input fields required before completing order
     // Example:
     // [
-    //   { key: "account_email", label: "ایمیل", inputType: "email", required: true, sensitive: false },
-    //   { key: "account_password", label: "رمز", inputType: "password", required: true, sensitive: true }
+    //   {
+    //     key: "account_email",
+    //     textFA: "ایمیل اکانت",
+    //     textEN: "Account email",
+    //     textRU: "Email аккаунта",
+    //     inputType: "email",
+    //     required: true,
+    //     sensitive: false,
+    //   },
+    //   {
+    //     key: "account_password",
+    //     textFA: "رمز اکانت",
+    //     textEN: "Account password",
+    //     textRU: "Пароль аккаунта",
+    //     inputType: "password",
+    //     required: true,
+    //     sensitive: true,
+    //   }
     // ]
     requiredInputs: jsonb("required_inputs")
       .$type<
         {
           key: string;
-          label: string;
+          textFA: string;
+          textEN: string;
+          textRU: string;
           inputType?: "text" | "email" | "password" | "number" | "url";
           required?: boolean;
           sensitive?: boolean;
-          placeholder?: string;
         }[]
       >()
       .default([]),

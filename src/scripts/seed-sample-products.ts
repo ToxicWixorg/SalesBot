@@ -20,11 +20,16 @@ const l = (fa: string, en?: string, ru?: string): LocalizedText => ({
 
 type RequiredInput = {
   key: string;
-  label: string;
+  textFA?: string;
+  textEN?: string;
+  textRU?: string;
   inputType?: "text" | "email" | "password" | "number" | "url";
   required?: boolean;
   sensitive?: boolean;
-  placeholder?: string;
+  placeholder?: string; // legacy single placeholder (kept for convenience)
+  placeholderFA?: string;
+  placeholderEN?: string;
+  placeholderRU?: string;
 };
 
 type SeedPlan = {
@@ -107,19 +112,27 @@ const sampleCatalog: SeedCategory[] = [
             requiredInputs: [
               {
                 key: "account_email",
-                label: "ایمیل اکانت",
+                textFA: "ایمیل اکانت",
+                textEN: "Account email",
+                textRU: "Email аккаунта",
                 inputType: "email",
                 required: true,
                 sensitive: false,
                 placeholder: "example@gmail.com",
+                placeholderFA: "example@gmail.com",
+                placeholderEN: "example@gmail.com",
               },
               {
                 key: "account_password",
-                label: "رمز اکانت",
+                textFA: "رمز اکانت",
+                textEN: "Account password",
+                textRU: "Пароль аккаунта",
                 inputType: "password",
                 required: true,
                 sensitive: true,
                 placeholder: "رمز ورود اکانت",
+                placeholderFA: "رمز ورود اکانت",
+                placeholderEN: "Account password",
               },
             ],
           },
@@ -160,19 +173,27 @@ const sampleCatalog: SeedCategory[] = [
             requiredInputs: [
               {
                 key: "account_email",
-                label: "ایمیل اکانت",
+                textFA: "ایمیل اکانت",
+                textEN: "Account email",
+                textRU: "Email аккаунта",
                 inputType: "email",
                 required: true,
                 sensitive: false,
                 placeholder: "example@gmail.com",
+                placeholderFA: "example@gmail.com",
+                placeholderEN: "example@gmail.com",
               },
               {
                 key: "account_password",
-                label: "رمز اکانت",
+                textFA: "رمز اکانت",
+                textEN: "Account password",
+                textRU: "Пароль аккаунта",
                 inputType: "password",
                 required: true,
                 sensitive: false,
                 placeholder: "رمز ورود اکانت",
+                placeholderFA: "رمز ورود اکانت",
+                placeholderEN: "Account password",
               },
             ],
           },

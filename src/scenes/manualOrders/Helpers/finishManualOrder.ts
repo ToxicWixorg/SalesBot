@@ -21,8 +21,9 @@ export async function finishManualOrder(
 ) {
   const user = await UserRepository.findById(userId);
   if (!user) return;
+  const userLang = user.languageCode;
 
-  const t = i18n.buildT(user.languageCode || "en");
+  const t = i18n.buildT(userLang || "en");
 
   const plan = await ProductPlanRepository.findById(state.planId);
   if (!plan) {
@@ -56,7 +57,7 @@ export async function finishManualOrder(
       })
       .row()
       .text(t("btnCancel"), "cancel_order", {
-        icon_custom_emoji_id: emojiIds.cross,
+        icon_custom_emoji_id: emojiIds.failed,
       });
     await sendFn(
       t("insufficientBalance", {
@@ -91,6 +92,19 @@ export async function finishManualOrder(
     delivery,
   });
 
+  const productName =
+    userLang.toLowerCase() === "fa"
+      ? product.nameFA
+      : userLang.toLowerCase() === "en"
+        ? product.nameEN
+        : product.nameRU;
+  const planName =
+    userLang.toLowerCase() === "fa"
+      ? plan.nameFA
+      : userLang.toLowerCase() === "en"
+        ? plan.nameEN
+        : plan.nameRU;
+
   // Deduct wallet balance
   await UserRepository.updateWalletBalance(userId, finalPrice, "subtract");
 
@@ -100,7 +114,7 @@ export async function finishManualOrder(
     finalPrice.toFixed(2),
     "purchase",
     order.id,
-    `خرید ${product.name} - ${plan.name}`,
+    `خرید ${productName} - ${planName}`,
   );
 
   // Record discount usage
@@ -124,8 +138,8 @@ export async function finishManualOrder(
     userId,
     username: user.username ?? null,
     firstName: user.firstName ?? null,
-    productName: product.name,
-    planName: plan.name,
+    productName: productName,
+    planName: planName,
     finalPrice,
     collected: state.collected,
     steps: state.steps,
@@ -144,8 +158,8 @@ export async function finishManualOrder(
   await sendFn(
     t("manualOrderPending", {
       orderId: order.id,
-      productName: product.name,
-      planName: plan.name,
+      productName: productName,
+      planName: planName,
       amount: finalPrice.toFixed(0),
       remainingBalance: newBalance.toFixed(0),
     }),
