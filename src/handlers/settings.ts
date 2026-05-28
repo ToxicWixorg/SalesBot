@@ -219,6 +219,7 @@ settingsComposer.callbackQuery("settings:privacy:export", async (context) => {
     new File([fileBuffer], fileName, { type: "application/json" }),
     {
       caption: t("exportDataReady"),
+      parse_mode: "HTML",
     },
   );
 });
