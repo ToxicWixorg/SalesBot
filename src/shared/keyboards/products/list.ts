@@ -5,11 +5,14 @@ import { emojiIds } from "../../locales/emojies.ts";
 import { normalizeCustomEmojiId } from "../../utils/customEmoji.ts";
 import { getLocalizedName } from "../../utils/localizedFields.ts";
 
+const PRODUCTS_PER_PAGE = 10;
+
 export function productsListKeyboard(
   t: TFunction,
   products: Product[],
   categoryId: number,
   languageCode = "fa",
+  page: number = 1,
 ): InlineKeyboard {
   const keyboard = new InlineKeyboard();
 
@@ -20,7 +23,14 @@ export function productsListKeyboard(
     return keyboard;
   }
 
-  products.forEach((product) => {
+  // Calculate pagination
+  const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE);
+  const startIdx = (page - 1) * PRODUCTS_PER_PAGE;
+  const endIdx = startIdx + PRODUCTS_PER_PAGE;
+  const pageProducts = products.slice(startIdx, endIdx);
+
+  // Display products for current page
+  pageProducts.forEach((product) => {
     console.log("product : ", product);
     const inStock = (product.stock || 0) > 0;
     const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
@@ -36,6 +46,21 @@ export function productsListKeyboard(
     );
     keyboard.row();
   });
+
+  // Pagination controls
+  if (totalPages > 1) {
+    if (page > 1) {
+      keyboard.text(t("previous"), `category_page_${categoryId}_${page - 1}`);
+    }
+
+    keyboard.text(`${page}/${totalPages}`, `noop`);
+
+    if (page < totalPages) {
+      keyboard.text(t("next"), `category_page_${categoryId}_${page + 1}`);
+    }
+
+    keyboard.row();
+  }
 
   keyboard.text(t("btnBack"), `categories`, {
     icon_custom_emoji_id: emojiIds.back,

@@ -13,7 +13,7 @@ import {
   ProductConfig,
   InsertProductConfig,
 } from "../db/schema.ts";
-import { eq, desc, and, isNull } from "drizzle-orm";
+import { eq, desc, and, isNull, asc } from "drizzle-orm";
 
 export class ProductRepository {
   /**
@@ -50,7 +50,7 @@ export class ProductRepository {
       .select()
       .from(productsTable)
       .where(eq(productsTable.isActive, true))
-      .orderBy(productsTable.nameFA);
+      .orderBy(asc(productsTable.displayOrder), asc(productsTable.nameFA));
   }
 
   /**
@@ -66,7 +66,7 @@ export class ProductRepository {
           eq(productsTable.isActive, true),
         ),
       )
-      .orderBy(productsTable.nameFA);
+      .orderBy(asc(productsTable.displayOrder), asc(productsTable.nameFA));
   }
 
   /**

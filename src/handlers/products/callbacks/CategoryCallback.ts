@@ -16,6 +16,10 @@ export async function CategoryCallback(context: Context) {
   if (!context.from || !context.queryData) return;
 
   const categoryId = Number.parseInt(context.queryData[1]!);
+  const page = context.queryData[2]
+    ? Number.parseInt(context.queryData[2]!)
+    : 1;
+
   const user = await UserRepository.findById(context.from.id);
   if (!user) return;
 
@@ -49,6 +53,7 @@ export async function CategoryCallback(context: Context) {
       products,
       categoryId,
       user.languageCode,
+      page,
     ),
   });
 }

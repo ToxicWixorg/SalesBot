@@ -129,12 +129,16 @@ export const productsTable = pgTable(
       .$type<{ flag: string; name: string }[]>()
       .default([]),
 
+    // Display Order for manual sorting
+    displayOrder: integer("display_order").default(0),
+
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => ({
     categoryIdIdx: index("products_category_id_idx").on(table.categoryId),
     slugIdx: index("products_slug_idx").on(table.slug),
+    displayOrderIdx: index("products_display_order_idx").on(table.displayOrder),
   }),
 );
 

@@ -38,6 +38,9 @@ export const productsComposer = new Composer()
   .callbackQuery(/^category_(\d+)$/, async (context) => {
     return await CategoryCallback(context);
   })
+  .callbackQuery(/^category_page_(\d+)_(\d+)$/, async (context) => {
+    return await CategoryCallback(context);
+  })
   .callbackQuery(/^product_(\d+)$/, async (context) => {
     return await ProductCallback(context, getEffectiveStock);
   })
@@ -70,4 +73,8 @@ export const productsComposer = new Composer()
       parse_mode: "HTML",
       reply_markup: backToMainKeyboard(t),
     });
+  })
+  .callbackQuery("noop", async (context) => {
+    // No-op handler for non-interactive buttons (like page numbers)
+    await context.answerCallbackQuery();
   });

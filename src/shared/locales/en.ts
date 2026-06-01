@@ -53,6 +53,11 @@ export const en = {
   btnNo: ` No`,
   btnConfirm: ` Confirm`,
 
+  // Pagination
+  previous: `◀ Previous`,
+  next: `Next ▶`,
+  page: `Page`,
+
   // Products
   btnBuyProduct: ` Buy`,
   btnNotifyStock: ` Notify Me`,

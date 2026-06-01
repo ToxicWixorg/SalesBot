@@ -403,7 +403,7 @@ async function ensurePlan(productId: number, plan: SeedPlan) {
         deliveryType: plan.deliveryType,
         order: plan.order,
         isActive: true,
-        requiredInputs: plan.requiredInputs,
+        requiredInputs: plan.requiredInputs as any,
         customEmojiId: plan.customEmojiId ?? null,
       })
       .where(eq(productPlansTable.id, existing.id));
@@ -435,7 +435,7 @@ async function ensurePlan(productId: number, plan: SeedPlan) {
       deliveryType: plan.deliveryType,
       order: plan.order,
       isActive: true,
-      requiredInputs: plan.requiredInputs,
+      requiredInputs: plan.requiredInputs as any,
       customEmojiId: plan.customEmojiId ?? null,
     })
     .returning();

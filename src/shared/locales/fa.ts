@@ -55,6 +55,11 @@ export const fa = {
   btnNo: ` خیر`,
   btnConfirm: ` تایید`,
 
+  // Pagination
+  previous: `◀ قبلی`,
+  next: `بعدی ▶`,
+  page: `صفحه`,
+
   // Products
   btnBuyProduct: ` خرید`,
   btnNotifyStock: ` اطلاع موجودی`,
@@ -70,7 +75,7 @@ export const fa = {
       : `${e.bag} محصولات <b>${category}</b>:`;
   },
   noProducts: `${e.reject} محصولی در این دسته موجود نیست.`,
-  selectProduct : `${e.bag} محصول مورد نظرت رو انتخاب کن:`,
+  selectProduct: `${e.bag} محصول مورد نظرت رو انتخاب کن:`,
   productDetails: `${e.bag} جزئیات محصول`,
   price: `${e.wallet} قیمت:`,
   stock: `${e.bag} موجودی:`,

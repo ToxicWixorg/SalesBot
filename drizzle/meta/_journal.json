@@ -183,6 +183,13 @@
       "when": 1778699220595,
       "tag": "0025_add_multilang_support",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1778899220595,
+      "tag": "0026_add_product_order",
+      "breakpoints": true
     }
   ]
 }
