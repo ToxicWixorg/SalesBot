@@ -20,8 +20,14 @@ export const en = {
     `${e.user} Your Role : <b>${userRole === "super_admin" ? "Owner" : userRole === "admin" ? "Admin" : "Support"}</b>\n\n` +
     `${e.admin} Use bottons below:`,
   adminpanelBtnUrl: "Enter admin panel",
-  Toman: "Toman",
   adminpanelBtnEmojies: "Premium emoji id",
+  adminpanelEmojiParserIntro:
+    "Send a message containing premium custom emojis and I will extract their IDs in order.",
+  adminpanelEmojiParserResult: (payload: { ids: string }) =>
+    `Custom emoji IDs in order:\n${payload.ids}`,
+  adminpanelEmojiParserNoEmoji:
+    "No premium custom emoji IDs were found in your message.",
+  Toman: "Toman",
   // Greeting & Welcome
   greeting: (name: string) => `Hello <b>${name}</b>! ${e.sparkles}`,
   welcome: (name: string) =>

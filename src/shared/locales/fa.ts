@@ -24,6 +24,12 @@ export const fa = {
     `${e.admin} برای تعامل از دکمه های زیر استفاده کنید:`,
   adminpanelBtnUrl: "ورود به پنل ادمین",
   adminpanelBtnEmojies: "ایدی ایموجی پرمیوم",
+  adminpanelEmojiParserIntro:
+    "لطفا یک پیام شامل ایموجی‌های پرمیوم بفرست تا آیدی آنها را استخراج کنم.",
+  adminpanelEmojiParserResult: (payload: { ids: string }) =>
+    `آیدی‌های ایموجی به ترتیب:
+${payload.ids}`,
+  adminpanelEmojiParserNoEmoji: "هیچ ایموجی پرمیومی در پیام شما پیدا نکردم.",
 
   // Greeting & Welcome
   greeting: (name: string) => `سلام <b>${name}</b>! ${e.sparkles}`,

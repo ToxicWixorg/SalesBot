@@ -6,6 +6,7 @@ import { ForceJoinRepository } from "../repositories/ForceJoinRepository.ts";
 import type { ForceJoinChannel } from "../db/schema.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { languageSelectionScene } from "../scenes/language-selection.ts";
+import { enterCustomEmojiIdsScene } from "../scenes/enter-custom-emoji-ids.ts";
 import { mainMenuKeyboard } from "../shared/keyboards/index.ts";
 import { sendNewUserNotification } from "../services/bot/notifications/newUser.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
@@ -304,4 +305,26 @@ export const startComposer = new Composer()
       parse_mode: "HTML",
       reply_markup: keyboard,
     });
+  })
+  .callbackQuery("get_custom_emoji", async (context) => {
+    if (!context.from) {
+      return context.answerCallbackQuery("❌ Unable to identify user.");
+    }
+
+    const userId = context.from.id;
+    const user = await UserRepository.findById(userId);
+    if (!user) {
+      return context.answerCallbackQuery("❌ Unable to identify user.");
+    }
+
+    if (user.role === "customer") {
+      return context.answerCallbackQuery("⛔ Staff only");
+    }
+
+    const t = i18n.buildT(user.languageCode || "en");
+    await context.answerCallbackQuery();
+    await context.send(t("adminpanelEmojiParserIntro"), {
+      parse_mode: "HTML",
+    });
+    await context.scene.enter(enterCustomEmojiIdsScene);
   });
