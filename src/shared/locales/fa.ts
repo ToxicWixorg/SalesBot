@@ -10,7 +10,7 @@ export const fa = {
   languageSelected: (lang: string) =>
     `${e.checkBold} زبان به <b>${lang}</b> تغییر یافت`,
 
-  Toman : "Toman"
+  Toman: "Toman",
 
   btnAdminPanel: "پنل ادمین",
 
