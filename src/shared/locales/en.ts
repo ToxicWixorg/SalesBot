@@ -341,7 +341,7 @@ export const en = {
     `${e.robot} <b>Digital Services Sales Bot</b>\n\n` +
     `${e.diamond} Best services, best prices, and fastest delivery.\n\n` +
     `${e.mail} <b>Contact us:</b>\n` +
-    `• Support: @r4m_m\n` +
+    `• Support:\n` +
     `${e.tag} Version: 2.3.5`,
 
   ordersTitle: `${e.bag} My Orders`,
