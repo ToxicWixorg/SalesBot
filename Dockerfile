@@ -1,6 +1,6 @@
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1.2.5 AS base
+FROM oven/bun:1.1.38-alpine AS base
 WORKDIR /usr/src/app
 
 # install dependencies into temp directory
@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 FROM base AS install
 RUN mkdir -p /temp/dev
 COPY package.json bun.lock /temp/dev/
-RUN cd /temp/dev && bun install --frozen-lockfile
+RUN cd /temp/dev && bun install --frozen-lockfile 2>&1
 
 # install with --production (exclude devDependencies)
 RUN mkdir -p /temp/prod
