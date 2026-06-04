@@ -20,6 +20,7 @@ export const en = {
     `${e.user} Your Role : <b>${userRole === "super_admin" ? "Owner" : userRole === "admin" ? "Admin" : "Support"}</b>\n\n` +
     `${e.admin} Use bottons below:`,
   adminpanelBtnUrl: "Enter admin panel",
+  Toman: "Toman",
   adminpanelBtnEmojies: "Premium emoji id",
   // Greeting & Welcome
   greeting: (name: string) => `Hello <b>${name}</b>! ${e.sparkles}`,

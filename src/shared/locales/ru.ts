@@ -13,6 +13,7 @@ export const ru = {
     `${e.checkBold} Язык изменён на <b>${lang}</b>`,
 
   btnAdminPanel: "َAdmin panel",
+  Toman: "Toman",
 
   btnReportBug: "Report a bot issue",
 
