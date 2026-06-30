@@ -1344,16 +1344,17 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     }
   });
 
-  bot.on("message", async (ctx) => {
+  bot.on("message", async (ctx, next) => {
     const userId = ctx.from?.id;
-    if (!userId) return;
+    if (!userId) return next?.();
 
-    if (ticketState.has(userId) || ticketReplyState.has(userId)) return;
-    if ((ctx as any).scene?.current) return;
+    if (ticketState.has(userId) || ticketReplyState.has(userId))
+      return next?.();
+    if ((ctx as any).scene?.current) return next?.();
 
     const state = rechargeState.get(userId);
     if (!state) {
-      return;
+      return next?.();
     }
 
     const user = await UserRepository.findById(userId);

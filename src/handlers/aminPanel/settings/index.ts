@@ -530,16 +530,16 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 	});
 
 	// ───────────────────────── ورودی متنی ─────────────────────
-	bot.on("message", async (ctx) => {
+	bot.on("message", async (ctx, next) => {
 		const userId = ctx.from?.id;
-		if (!userId) return;
+		if (!userId) return next?.();
 
 		const state = settingsInput.get(userId);
-		if (!state) return;
-		if ((ctx as any).scene?.current) return;
+		if (!state) return next?.();
+		if ((ctx as any).scene?.current) return next?.();
 		if (!isOwner(userId)) {
 			settingsInput.delete(userId);
-			return;
+			return next?.();
 		}
 
 		const message = (ctx as any).update?.message ?? {};

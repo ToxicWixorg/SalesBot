@@ -224,16 +224,16 @@ export function setupAdminSchedulesHandlers(bot: AnyBot) {
 	});
 
 	// ── ورودی متنی ────────────────────────────────────────────
-	bot.on("message", async (ctx) => {
+	bot.on("message", async (ctx, next) => {
 		const userId = ctx.from?.id;
-		if (!userId) return;
+		if (!userId) return next?.();
 
 		const draft = schedInput.get(userId);
-		if (!draft) return;
-		if ((ctx as any).scene?.current) return;
+		if (!draft) return next?.();
+		if ((ctx as any).scene?.current) return next?.();
 		if (!(await AdminService.hasPermission(userId, "schedules"))) {
 			schedInput.delete(userId);
-			return;
+			return next?.();
 		}
 
 		const text = (ctx.text ?? "").trim();

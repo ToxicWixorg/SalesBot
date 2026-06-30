@@ -282,16 +282,16 @@ export function setupAdminBroadcastHandlers(bot: AnyBot) {
 	});
 
 	// ── دریافت پیام برودکست ───────────────────────────────────
-	bot.on("message", async (ctx) => {
+	bot.on("message", async (ctx, next) => {
 		const userId = ctx.from?.id;
-		if (!userId) return;
+		if (!userId) return next?.();
 
 		const draft = broadcastDraft.get(userId);
-		if (!draft || !draft.awaitingMessage) return;
-		if ((ctx as any).scene?.current) return;
+		if (!draft || !draft.awaitingMessage) return next?.();
+		if ((ctx as any).scene?.current) return next?.();
 		if (!(await AdminService.hasPermission(userId, "broadcast"))) {
 			draft.awaitingMessage = false;
-			return;
+			return next?.();
 		}
 
 		const message = (ctx as any).update?.message ?? {};

@@ -442,16 +442,16 @@ export function setupAdminUsersHandlers(bot: AnyBot) {
 	});
 
 	// ── ورودی متنی ────────────────────────────────────────────
-	bot.on("message", async (ctx) => {
+	bot.on("message", async (ctx, next) => {
 		const userId = ctx.from?.id;
-		if (!userId) return;
+		if (!userId) return next?.();
 
 		const state = usersInput.get(userId);
-		if (!state) return;
-		if ((ctx as any).scene?.current) return;
+		if (!state) return next?.();
+		if ((ctx as any).scene?.current) return next?.();
 		if (!(await AdminService.hasPermission(userId, "users"))) {
 			usersInput.delete(userId);
-			return;
+			return next?.();
 		}
 
 		const text = (ctx.text ?? "").trim();

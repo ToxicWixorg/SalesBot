@@ -195,16 +195,16 @@ export function setupAdminDiscountsHandlers(bot: AnyBot) {
 	});
 
 	// ── ورودی متنی ────────────────────────────────────────────
-	bot.on("message", async (ctx) => {
+	bot.on("message", async (ctx, next) => {
 		const userId = ctx.from?.id;
-		if (!userId) return;
+		if (!userId) return next?.();
 
 		const state = discInput.get(userId);
-		if (!state) return;
-		if ((ctx as any).scene?.current) return;
+		if (!state) return next?.();
+		if ((ctx as any).scene?.current) return next?.();
 		if (!(await AdminService.hasPermission(userId, "discounts"))) {
 			discInput.delete(userId);
-			return;
+			return next?.();
 		}
 
 		const text = (ctx.text ?? "").trim();
