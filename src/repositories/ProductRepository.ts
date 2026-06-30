@@ -6,7 +6,7 @@ import {
   productPlansTable,
   ProductPlan,
   InsertProductPlan,
-  premiumCategoriesTable as categoriesTable,ثس
+  premiumCategoriesTable as categoriesTable,
   Category,
   InsertCategory,
   productConfigsTable,
