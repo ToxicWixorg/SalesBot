@@ -13,7 +13,7 @@ import {
   ProductConfig,
   InsertProductConfig,
 } from "../db/schema.ts";
-import { eq, desc, and, isNull, asc } from "drizzle-orm";
+import { eq, desc, and, isNull, asc, inArray } from "drizzle-orm";
 
 export class ProductRepository {
   /**
@@ -173,6 +173,24 @@ export class ProductPlanRepository {
       .from(productPlansTable)
       .where(eq(productPlansTable.productId, productId))
       .orderBy(productPlansTable.order);
+  }
+
+  /**
+   * پلن‌های فعالِ چند محصول به‌صورت یکجا (برای محاسبه‌ی در دسترس بودن لیست).
+   */
+  static async findActiveByProductIds(
+    productIds: number[],
+  ): Promise<ProductPlan[]> {
+    if (productIds.length === 0) return [];
+    return db
+      .select()
+      .from(productPlansTable)
+      .where(
+        and(
+          inArray(productPlansTable.productId, productIds),
+          eq(productPlansTable.isActive, true),
+        ),
+      );
   }
 
   /**

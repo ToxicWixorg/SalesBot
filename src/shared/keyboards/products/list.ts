@@ -13,6 +13,7 @@ export function premiumProductsListKeyboard(
   categoryId: number,
   languageCode = "fa",
   page: number = 1,
+  availableIds?: Set<number>,
 ): InlineKeyboard {
   const keyboard = new InlineKeyboard();
 
@@ -31,8 +32,11 @@ export function premiumProductsListKeyboard(
 
   // Display products for current page
   pageProducts.forEach((product) => {
-    console.log("product : ", product);
-    const inStock = (product.stock || 0) > 0;
+    // Availability is computed by the caller (inventory + non-automatic plans).
+    // Fall back to the manual `stock` field only when no set was provided.
+    const inStock = availableIds
+      ? availableIds.has(product.id)
+      : (product.stock || 0) > 0;
     const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
     const opts: { style: "success" | "danger"; icon_custom_emoji_id?: string } =
       {

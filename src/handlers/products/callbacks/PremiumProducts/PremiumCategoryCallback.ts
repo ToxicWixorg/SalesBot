@@ -4,7 +4,9 @@ import { i18n } from "../../../../shared/locales/index.ts";
 import {
   PremiumCategoryRepository,
   ProductRepository,
+  ProductPlanRepository,
 } from "../../../../repositories/ProductRepository.ts";
+import { InventoryRepository } from "../../../../repositories/InventoryRepository.ts";
 import { normalizeCustomEmojiId } from "../../../../shared/utils/customEmoji.ts";
 import {
   getLocalizedDescription,
@@ -35,6 +37,24 @@ export async function PremiumCategoryCallback(context: Context) {
   }
 
   const products = await ProductRepository.findByCategory(categoryId);
+
+  // A product is "available" if it has at least one active plan that is either
+  // non-automatic (manual/scheduled — no inventory needed) or automatic with
+  // available inventory. Computed with two batched queries.
+  const productIds = products.map((p) => p.id);
+  const [plans, inventoryCounts] = await Promise.all([
+    ProductPlanRepository.findActiveByProductIds(productIds),
+    InventoryRepository.countAvailableByProductIds(productIds),
+  ]);
+  const availableIds = new Set<number>();
+  for (const plan of plans) {
+    if (availableIds.has(plan.productId)) continue;
+    const purchasable =
+      plan.deliveryType !== "automatic" ||
+      (inventoryCounts.get(plan.productId) ?? 0) > 0;
+    if (purchasable) availableIds.add(plan.productId);
+  }
+
   const categoryName = getLocalizedName(category, user.languageCode);
   const categoryDescription = getLocalizedDescription(
     category,
@@ -54,6 +74,7 @@ export async function PremiumCategoryCallback(context: Context) {
       categoryId,
       user.languageCode,
       page,
+      availableIds,
     ),
   });
 }

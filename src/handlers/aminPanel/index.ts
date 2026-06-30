@@ -26,6 +26,8 @@ import {
   adminPlanRequirementsCallback,
   adminPlanAddFieldCallback,
   adminPlanDeleteFieldCallback,
+  adminPlanInventoryCallback,
+  adminPlanAddItemsCallback,
   adminPlanToggleActiveCallback,
   adminEditPlanDescCallback,
   adminEditPlanDurationCallback,
@@ -106,6 +108,12 @@ export const adminPanelComposer = new Composer()
   })
   .callbackQuery(/^admin_plan_delfield_(\d+)_(\d+)$/, async (context) => {
     return await adminPlanDeleteFieldCallback(context);
+  })
+  .callbackQuery(/^admin_plan_inventory_(\d+)$/, async (context) => {
+    return await adminPlanInventoryCallback(context);
+  })
+  .callbackQuery(/^admin_plan_additems_(\d+)$/, async (context) => {
+    return await adminPlanAddItemsCallback(context);
   })
   .callbackQuery(/^admin_plan_reqs_(\d+)$/, async (context) => {
     return await adminPlanRequirementsCallback(context);

@@ -1,6 +1,6 @@
 import { db } from "../db/index.ts";
 import { inventoryTable, Inventory, InsertInventory } from "../db/schema.ts";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, inArray } from "drizzle-orm";
 import { verrou } from "../services/locks.ts";
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -45,6 +45,34 @@ export class InventoryRepository {
         ),
       );
     return row?.count ?? 0;
+  }
+
+  /**
+   * تعداد آیتم‌های available برای چند محصول به‌صورت یکجا.
+   * خروجی: Map از productId به تعداد موجودی در دسترس.
+   */
+  static async countAvailableByProductIds(
+    productIds: number[],
+  ): Promise<Map<number, number>> {
+    const result = new Map<number, number>();
+    if (productIds.length === 0) return result;
+
+    const rows = await db
+      .select({
+        productId: inventoryTable.productId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(inventoryTable)
+      .where(
+        and(
+          inArray(inventoryTable.productId, productIds),
+          eq(inventoryTable.status, "available"),
+        ),
+      )
+      .groupBy(inventoryTable.productId);
+
+    for (const row of rows) result.set(row.productId, row.count);
+    return result;
   }
 
   /**
