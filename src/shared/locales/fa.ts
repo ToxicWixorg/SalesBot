@@ -865,7 +865,7 @@ ${payload.ids}`,
   btnViewPlans: "پلن‌ها",
   btnDelete: "حذف",
   btnEdit : "ویرایش",
-  btnEditPrice: `${e.wallet} ویرایش قیمت (دلار)`,
+  btnEditPrice: "💰 ویرایش قیمت (دلار)",
   noPermission: "شما اجازه دسترسی به این بخش را ندارید.",
   priceRateUnavailable:
     "❌ نرخ لحظه‌ای ارز در دسترس نیست. لطفاً چند لحظه دیگر دوباره تلاش کنید.",
@@ -928,6 +928,17 @@ ${payload.ids}`,
   adminCreatePlanCancelled: "❌ ساخت پلن لغو شد.",
   adminPlanCreated: ({ name, usd }: { name: string; usd: string }) =>
     `✅ پلن «<b>${name}</b>» با قیمت <b>$${usd}</b> ساخته شد.`,
+  adminPlanDeactivatedHasOrders:
+    "این پلن سفارش ثبت‌شده دارد، پس به‌جای حذف کامل غیرفعال شد (تاریخچه سفارش‌ها حفظ می‌شود).",
+  adminEditPlanPromptFA: ({ current }: { current: string }) =>
+    `✏️ ویرایش پلن.\n\nنام جدید را به <b>فارسی</b> بفرستید.\nمقدار فعلی: <code>${current}</code>\n\n/skip برای نگه‌داشتن مقدار فعلی، /cancel برای لغو.`,
+  adminEditPlanPromptEN: ({ current }: { current: string }) =>
+    `نام جدید را به <b>انگلیسی</b> بفرستید.\nمقدار فعلی: <code>${current}</code>\n\n/skip برای نگه‌داشتن.`,
+  adminEditPlanPromptRU: ({ current }: { current: string }) =>
+    `نام جدید را به <b>روسی</b> بفرستید.\nمقدار فعلی: <code>${current}</code>\n\n/skip برای نگه‌داشتن.`,
+  adminEditPlanCancelled: "❌ ویرایش پلن لغو شد.",
+  adminPlanUpdated: ({ name }: { name: string }) =>
+    `✅ پلن «<b>${name}</b>» با موفقیت بروزرسانی شد.`,
   priceLabel: (price: string) => `قیمت: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `مدت زمان: <b>${duration}</b>\n`,
   notAvailable: "موجود نیست",

@@ -798,7 +798,7 @@ export const ru = {
   btnViewPlans: "Показать тарифы",
   btnDelete: "Удалить",
   btnEdit : "Редактировать",
-  btnEditPrice: `${e.wallet} Изменить цену (USD)`,
+  btnEditPrice: "💰 Изменить цену (USD)",
   noPermission: "У вас нет доступа к этому разделу.",
   priceRateUnavailable:
     "❌ Курс валюты сейчас недоступен. Пожалуйста, попробуйте через мгновение.",
@@ -863,6 +863,17 @@ export const ru = {
   adminCreatePlanCancelled: "❌ Создание тарифа отменено.",
   adminPlanCreated: ({ name, usd }: { name: string; usd: string }) =>
     `✅ Тариф «<b>${name}</b>» создан с ценой <b>$${usd}</b>.`,
+  adminPlanDeactivatedHasOrders:
+    "У этого тарифа есть заказы, поэтому он был деактивирован вместо полного удаления (история заказов сохранена).",
+  adminEditPlanPromptFA: ({ current }: { current: string }) =>
+    `✏️ Редактирование тарифа.\n\nОтправьте новое название на <b>персидском</b>.\nТекущее: <code>${current}</code>\n\n/skip — оставить текущее, /cancel — отмена.`,
+  adminEditPlanPromptEN: ({ current }: { current: string }) =>
+    `Отправьте новое название на <b>английском</b>.\nТекущее: <code>${current}</code>\n\n/skip — оставить.`,
+  adminEditPlanPromptRU: ({ current }: { current: string }) =>
+    `Отправьте новое название на <b>русском</b>.\nТекущее: <code>${current}</code>\n\n/skip — оставить.`,
+  adminEditPlanCancelled: "❌ Редактирование тарифа отменено.",
+  adminPlanUpdated: ({ name }: { name: string }) =>
+    `✅ Тариф «<b>${name}</b>» успешно обновлён.`,
   priceLabel: (price: string) => `Цена: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Длительность: <b>${duration}</b>\n`,
   notAvailable: "Недоступно",

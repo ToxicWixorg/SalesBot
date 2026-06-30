@@ -864,7 +864,7 @@ export const en = {
   btnViewPlans: "View plans",
   btnDelete: "Delete",
   btnEdit : "Edit",
-  btnEditPrice: `${e.wallet} Edit price (USD)`,
+  btnEditPrice: "💰 Edit price (USD)",
   noPermission: "You do not have permission to access this section.",
   priceRateUnavailable:
     "❌ The live exchange rate is unavailable. Please try again in a moment.",
@@ -927,6 +927,17 @@ export const en = {
   adminCreatePlanCancelled: "❌ Plan creation cancelled.",
   adminPlanCreated: ({ name, usd }: { name: string; usd: string }) =>
     `✅ Plan "<b>${name}</b>" created with price <b>$${usd}</b>.`,
+  adminPlanDeactivatedHasOrders:
+    "This plan has existing orders, so it was deactivated instead of fully deleted (order history is preserved).",
+  adminEditPlanPromptFA: ({ current }: { current: string }) =>
+    `✏️ Editing plan.\n\nSend the new name in <b>Persian</b>.\nCurrent: <code>${current}</code>\n\n/skip to keep current, /cancel to abort.`,
+  adminEditPlanPromptEN: ({ current }: { current: string }) =>
+    `Send the new name in <b>English</b>.\nCurrent: <code>${current}</code>\n\n/skip to keep.`,
+  adminEditPlanPromptRU: ({ current }: { current: string }) =>
+    `Send the new name in <b>Russian</b>.\nCurrent: <code>${current}</code>\n\n/skip to keep.`,
+  adminEditPlanCancelled: "❌ Plan editing cancelled.",
+  adminPlanUpdated: ({ name }: { name: string }) =>
+    `✅ Plan "<b>${name}</b>" updated successfully.`,
   priceLabel: (price: string) => `Price: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Duration: <b>${duration}</b>\n`,
   notAvailable: "Not available",
