@@ -3,7 +3,7 @@ import { i18n } from "../../../shared/locales/index.ts";
 import { mainKeyboard } from "../../../shared/keyboards/index.ts";
 
 export async function mainCallback(context: any) {
-  if (!context.from || !context.queryData) return;
+  if (!context.from) return;
 
   const user = await UserRepository.findById(context.from.id);
   if (!user) return;
