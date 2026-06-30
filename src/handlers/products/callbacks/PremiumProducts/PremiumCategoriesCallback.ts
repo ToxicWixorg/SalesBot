@@ -1,11 +1,11 @@
 import { Context } from "gramio";
-import { UserRepository } from "../../../repositories/UserRepository.ts";
-import { i18n } from "../../../shared/locales/index.ts";
-import { getBotSettings } from "../../../plugins/base.ts";
-import { CategoryRepository } from "../../../repositories/index.ts";
-import { categoriesKeyboard } from "../../../shared/keyboards/index.ts";
+import { UserRepository } from "../../../../repositories/UserRepository.ts";
+import { i18n } from "../../../../shared/locales/index.ts";
+import { getBotSettings } from "../../../../plugins/base.ts";
+import { CategoryRepository } from "../../../../repositories/index.ts";
+import { premiumCategoriesKeyboard } from "../../../../shared/keyboards/index.ts";
 
-export async function CategoriesCallback(context: Context) {
+export async function PremiumCategoriesCallback(context: Context) {
   if (!context.from) return;
 
   const user = await UserRepository.findById(context.from.id);
@@ -27,6 +27,6 @@ export async function CategoriesCallback(context: Context) {
 
   await context.editText(t("selectCategory"), {
     parse_mode: "HTML",
-    reply_markup: categoriesKeyboard(t, categories, user.languageCode),
+    reply_markup: premiumCategoriesKeyboard(t, categories, user.languageCode),
   });
 }

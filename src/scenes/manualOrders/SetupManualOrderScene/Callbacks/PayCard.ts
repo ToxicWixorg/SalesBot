@@ -44,7 +44,9 @@ export async function PayCardCallback(ctx: Context) {
     pendingDiscount && pendingDiscount.planId === state.planId;
   const finalPrice = hasDiscount
     ? pendingDiscount.finalPrice
-    : parseFloat((plan?.price as string) ?? "0");
+    : (state.basePriceToman ??
+      state.regionPrice ??
+      parseFloat((plan?.price as string) ?? "0"));
 
   // Build card instructions — show all active cards
   let msg = `💳 <b>${t("paymentSummaryTitle" as any)}</b>\n\n💰 ${finalPrice.toLocaleString()} ${t("currency")}\n\n`;

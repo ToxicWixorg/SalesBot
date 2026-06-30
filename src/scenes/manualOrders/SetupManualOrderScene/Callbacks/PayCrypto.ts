@@ -41,7 +41,9 @@ export async function PayCryptoCallback(ctx: any) {
     pendingDiscount && pendingDiscount.planId === state.planId;
   const finalPrice = hasDiscount
     ? pendingDiscount.finalPrice
-    : parseFloat((plan?.price as string) ?? "0");
+    : (state.basePriceToman ??
+      state.regionPrice ??
+      parseFloat((plan?.price as string) ?? "0"));
 
   const usdtAmount = finalPrice / settings.cryptoExchangeRate!;
 

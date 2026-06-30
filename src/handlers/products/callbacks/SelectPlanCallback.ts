@@ -14,6 +14,10 @@ import {
 } from "../../../shared/keyboards/index.ts";
 import { regionSelectionKeyboard } from "../../../shared/keyboards/products/regionSelect.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
+import {
+  getUsdtRate,
+  usdToTomanWithRate,
+} from "../../../services/tetherland/index.ts";
 
 export async function SelectPlanCallback(context: Context<any>) {
   if (!context.from || !context.queryData) return;
@@ -47,6 +51,16 @@ export async function SelectPlanCallback(context: Context<any>) {
   const productName = getLocalizedName(product, user.languageCode);
   const planName = getLocalizedName(plan, user.languageCode);
 
+  // Prices are stored in USD; we need the live USDT→Toman rate to show/charge.
+  const usdtRate = await getUsdtRate();
+  if (usdtRate === null) {
+    await context.answerCallbackQuery({
+      text: t("priceRateUnavailable"),
+      show_alert: true,
+    });
+    return;
+  }
+
   if (plan.deliveryType === "automatic") {
     const available = await InventoryRepository.countAvailable(product.id);
     if (available <= 0) {
@@ -74,12 +88,12 @@ export async function SelectPlanCallback(context: Context<any>) {
     if (regions.length > 0) {
       await context.editText(t("selectRegion"), {
         parse_mode: "HTML",
-        reply_markup: regionSelectionKeyboard(t, planId, regions),
+        reply_markup: regionSelectionKeyboard(t, planId, regions, usdtRate),
       });
       return;
     }
 
-    const price = parseFloat(plan.price as string);
+    const price = usdToTomanWithRate(parseFloat(plan.price as string), usdtRate);
     let duration = t("oneTime");
     if (plan.duration) {
       const unitKey = plan.durationUnit ?? "day";
@@ -109,12 +123,12 @@ export async function SelectPlanCallback(context: Context<any>) {
     if (regions.length > 0) {
       await context.editText(t("selectRegion"), {
         parse_mode: "HTML",
-        reply_markup: regionSelectionKeyboard(t, planId, regions),
+        reply_markup: regionSelectionKeyboard(t, planId, regions, usdtRate),
       });
       return;
     }
 
-    const price = parseFloat(plan.price as string);
+    const price = usdToTomanWithRate(parseFloat(plan.price as string), usdtRate);
     let duration = t("oneTime");
     if (plan.duration) {
       const unitKey = plan.durationUnit ?? "day";
@@ -144,12 +158,12 @@ export async function SelectPlanCallback(context: Context<any>) {
     if (regions.length > 0) {
       await context.editText(t("selectRegion"), {
         parse_mode: "HTML",
-        reply_markup: regionSelectionKeyboard(t, planId, regions),
+        reply_markup: regionSelectionKeyboard(t, planId, regions, usdtRate),
       });
       return;
     }
 
-    const price = parseFloat(plan.price as string);
+    const price = usdToTomanWithRate(parseFloat(plan.price as string), usdtRate);
     let duration = t("oneTime");
     if (plan.duration) {
       const unitKey = plan.durationUnit ?? "day";

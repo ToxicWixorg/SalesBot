@@ -37,8 +37,8 @@ export { paginationKeyboard } from "./pagination/pagination.ts";
 export { listItemKeyboard } from "./pagination/listItem.ts";
 
 // Products Keyboards
-export { categoriesKeyboard } from "./products/categories.ts";
-export { productsListKeyboard } from "./products/list.ts";
+export { premiumCategoriesKeyboard } from "./products/categories.ts";
+export { premiumProductsListKeyboard } from "./products/list.ts";
 export { productDetailsKeyboard } from "./products/details.ts";
 export { productPlansKeyboard } from "./products/plans.ts";
 export { orderConfirmationKeyboard } from "./products/confirmation.ts";
@@ -67,3 +67,13 @@ export { supportKeyboard } from "./support/support.ts";
 export { ticketKeyboard } from "./forumGroup/ticket.ts";
 
 export { newRefKeyboard } from "./notifications.ts/newRef.ts";
+
+export { mainKeyboard } from "./adminPanel/mainKeyboard.ts";
+export {
+  adminPanelCategoriesKeyboard,
+  adminPanelCategoryKeyboard,
+  adminPanelProductsListKeyboard,
+  adminPanelProductDetailsKeyboard,
+  adminPanelProductPlansKeyboard,
+  adminPanelPlanKeyboard,
+} from "./adminPanel/products.ts";

@@ -18,6 +18,10 @@ export const ru = {
   btnReportBug: "Report a bot issue",
 
   items: "Items",
+  SectionTelegramProducts: "محصولات تلگرامی",
+  SectionInstagramProducts: "محصولات اینستاگرامی ",
+  SectionPremiumProducts: "اکانت ها یرمیوم",
+  SectionMessage: `${e.crown} درود دوست عزیز\n\n${e.bag} یکی از بخش هارو انتخاب کنید: `,
 
   adminpanelText: (userid: number, userRole: string) =>
     `${e.id} Your userid : <code>${userid}</code>\n` +
@@ -229,6 +233,10 @@ export const ru = {
   rechargePendingApproval: `${e.checkBold} Ваш запрос принят!\n\n${e.time} Дождитесь подтверждения админа — обычно до 30 минут.`,
   rechargeApproved: (amount: string) =>
     `${e.party} <b>Пополнение подтверждено!</b>\n\n${e.diamond} <b>${amount}</b> томан добавлено в ваш кошелёк.`,
+  walletAdminCredited: (amount: string, balance: string) =>
+    `${e.diamond} <b>${amount}</b> томан добавлено в ваш кошелёк.\n${e.wallet} Текущий баланс: <b>${balance}</b> томан`,
+  walletAdminDebited: (amount: string, balance: string) =>
+    `${e.reject} <b>${amount}</b> томан списано с вашего кошелька.\n${e.wallet} Текущий баланс: <b>${balance}</b> томан`,
   rechargeRejected: `${e.reject} <b>Запрос на пополнение отклонён.</b>\n\nПри необходимости обратитесь в поддержку.`,
   rechargeSessionExpired: `⚠️Сессия истекла. Начните снова из раздела кошелька.`,
   rechargeMethodDisabled: `❌ Этот способ оплаты сейчас недоступен.`,
@@ -757,4 +765,57 @@ export const ru = {
   langRussian: `${e.flag_ru} Русский`,
   ticketWaitingAdmin: `❌ Ожидание ответа администратора на ваше последнее сообщение`,
   youCannotReplyToThisTicket: `❌ Вы не можете ответить на этот тикет прямо сейчас.`,
+  
+  // Admin Panel
+  adminPanelMainMessage: `${e.admin} <b>пнл управления</b>\n\nчто бы вы хотели сделать?`,
+  
+  panelProducts : "Products",
+  panelOrders : "Orders",
+  panelUsers : "Users",
+  panelWallet : "Wallet",
+  panelDiscounts : "Discounts",
+  panelSchedules : "Schedules",
+  panelBroadcast : "Broadcast",
+  panelSetting : "Settings",
+
+  adminProductsTitle: "Управление категориями товаров",
+  active: "Активен",
+  inactive: "Неактивен",
+  adminCategoryStatus: (status: string) => `Статус: <b>${status}</b>`,
+  adminCategoryProductsTitle: (category: string) => `Товары в категории «${category}»`,
+  adminProductPlansTitle: (product: string) => `Тарифы для «${product}»`,
+  adminProductStatus: (status: string) => `Статус товара: <b>${status}</b>\n`,
+  adminProductCategory: (category: string) => `Категория: <b>${category}</b>`,
+  adminPlanStatus: (status: string) => `Статус тарифа: <b>${status}</b>\n`,
+  adminFeatureNotImplemented: "Эта функция еще не реализована.",
+  adminCategoryDeleted: "Категория успешно деактивирована.",
+  adminProductDeleted: "Товар успешно деактивирован.",
+  adminPlanDeleted: "Тариф успешно деактивирован.",
+  btnCreateCategory: "Создать категорию",
+  btnCreateProduct: "Создать товар",
+  btnCreatePlan: "Создать тариф",
+  btnProductsInCategory: "Показать товары категории",
+  btnViewPlans: "Показать тарифы",
+  btnDelete: "Удалить",
+  btnEdit : "Редактировать",
+  btnEditPrice: `${e.wallet} Изменить цену (USD)`,
+  noPermission: "У вас нет доступа к этому разделу.",
+  priceRateUnavailable:
+    "❌ Курс валюты сейчас недоступен. Пожалуйста, попробуйте через мгновение.",
+  adminEditPlanPricePrompt: ({ planName }: { planName: string }) =>
+    `${e.wallet} Введите новую цену тарифа «<b>${planName}</b>» в <b>долларах</b>.\n\n` +
+    `Например <code>12.5</code> для $12.5.\nЦена автоматически конвертируется в томаны по текущему курсу при показе.`,
+  adminPlanPriceInvalid:
+    "❌ Неверная сумма. Введите корректное число в долларах больше нуля (например 12.5).",
+  adminPlanPriceUpdated: ({
+    planName,
+    usd,
+  }: {
+    planName: string;
+    usd: string;
+  }) => `✅ Цена тарифа «<b>${planName}</b>» установлена на <b>$${usd}</b>.`,
+  priceLabel: (price: string) => `Цена: <b>${price}</b>\n`,
+  durationLabel: (duration: string) => `Длительность: <b>${duration}</b>\n`,
+  notAvailable: "Недоступно",
+
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

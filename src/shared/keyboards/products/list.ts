@@ -7,7 +7,7 @@ import { getLocalizedName } from "../../utils/localizedFields.ts";
 
 const PRODUCTS_PER_PAGE = 10;
 
-export function productsListKeyboard(
+export function premiumProductsListKeyboard(
   t: TFunction,
   products: Product[],
   categoryId: number,
@@ -41,7 +41,7 @@ export function productsListKeyboard(
       };
     keyboard.text(
       getLocalizedName(product, languageCode),
-      `product_${product.id}`,
+      `premium_product_${product.id}`,
       opts,
     );
     keyboard.row();
@@ -50,19 +50,25 @@ export function productsListKeyboard(
   // Pagination controls
   if (totalPages > 1) {
     if (page > 1) {
-      keyboard.text(t("previous"), `category_page_${categoryId}_${page - 1}`);
+      keyboard.text(
+        t("previous"),
+        `premium_category_page_${categoryId}_${page - 1}`,
+      );
     }
 
     keyboard.text(`${page}/${totalPages}`, `noop`);
 
     if (page < totalPages) {
-      keyboard.text(t("next"), `category_page_${categoryId}_${page + 1}`);
+      keyboard.text(
+        t("next"),
+        `premium_category_page_${categoryId}_${page + 1}`,
+      );
     }
 
     keyboard.row();
   }
 
-  keyboard.text(t("btnBack"), `categories`, {
+  keyboard.text(t("btnBack"), `premiumProducts`, {
     icon_custom_emoji_id: emojiIds.back,
   });
 

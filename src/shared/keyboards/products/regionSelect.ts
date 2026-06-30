@@ -1,21 +1,27 @@
 import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../locales/index.ts";
+import { usdToTomanWithRate } from "../../../services/tetherland/index.ts";
 
 /**
  * Builds a region selection keyboard.
  * Each region button has callback: select_region_{planId}_{index}
  * Regions are accessed by index to avoid encoding issues in callback data.
+ *
+ * Region prices are stored in USD and converted to Toman with the live rate.
  */
 export function regionSelectionKeyboard(
   t: TFunction,
   planId: number,
   regions: Array<{ flag: string; name: string; price?: string }>,
+  usdtRate: number | null = null,
 ): InlineKeyboard {
   const kb = new InlineKeyboard();
   for (let i = 0; i < regions.length; i++) {
     const r = regions[i]!;
     const priceLabel = r.price
-      ? ` — ${Number(r.price).toLocaleString()} ${t("currency")}`
+      ? usdtRate !== null
+        ? ` — ${usdToTomanWithRate(Number(r.price), usdtRate).toLocaleString()} ${t("currency")}`
+        : ` — $${Number(r.price)}`
       : "";
     kb.text(`${r.flag} ${r.name}${priceLabel}`, `select_region_${planId}_${i}`);
     if (i % 2 === 1) kb.row();

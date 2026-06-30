@@ -38,7 +38,9 @@ async function createRenewalOrder(
     planId: info.planId,
     status,
     quantity: 1,
-    totalPrice: plan.price as any,
+    // info.finalPrice is the Toman price snapshotted when the renewal screen
+    // was shown (USD plan price → Toman); renewals have no discount.
+    totalPrice: info.finalPrice.toString() as any,
     discountAmount: "0" as any,
     walletUsed:
       paymentMethod === "wallet"

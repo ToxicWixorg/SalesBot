@@ -14,6 +14,11 @@ import { DiscountCodeRepository } from "../../../repositories/DiscountCodeReposi
 import { inventoryOrderSummaryKeyboard } from "../../../shared/keyboards/index.ts";
 import { appliedDiscountState } from "../discountOrderState.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
+import { sendNewOrderNotification } from "../../../services/bot/notifications/newOrder.ts";
+import {
+  getUsdtRate,
+  usdToTomanWithRate,
+} from "../../../services/tetherland/index.ts";
 
 /**
  * Per-user state tracking which product/plan the user is entering a quantity for.
@@ -78,7 +83,16 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
       return;
     }
 
-    const unitPrice = parseFloat(plan.price as string);
+    // Plan price is stored in USD → convert to Toman with the live rate.
+    const usdtRate = await getUsdtRate();
+    if (usdtRate === null) {
+      await ctx.send(t("priceRateUnavailable"), { parse_mode: "HTML" });
+      return;
+    }
+    const unitPrice = usdToTomanWithRate(
+      parseFloat(plan.price as string),
+      usdtRate,
+    );
     const discount = appliedDiscountState.get(userId);
     const hasDiscount = discount && discount.planId === state.planId;
     const finalTotal = hasDiscount
@@ -158,7 +172,16 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
 
     const discount = appliedDiscountState.get(userId);
     const hasDiscount = discount && discount.planId === planId;
-    const unitPrice = parseFloat(plan.price as string);
+    // Plan price is stored in USD → convert to Toman with the live rate.
+    const usdtRate = await getUsdtRate();
+    if (usdtRate === null) {
+      await ctx.editText(t("priceRateUnavailable"), { parse_mode: "HTML" });
+      return;
+    }
+    const unitPrice = usdToTomanWithRate(
+      parseFloat(plan.price as string),
+      usdtRate,
+    );
     const totalPrice = unitPrice * qty;
     const discountAmount = hasDiscount ? discount.discountAmount * qty : 0;
     const finalPrice = hasDiscount ? discount.finalPrice * qty : totalPrice;
@@ -231,7 +254,9 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
     }
 
     // Mark order delivered
-    await OrderRepository.markAsDelivered(order.id, { items: deliveryLines });
+    const deliveredOrder = await OrderRepository.markAsDelivered(order.id, {
+      items: deliveryLines,
+    });
 
     // Deduct wallet
     await UserRepository.updateWalletBalance(userId, finalPrice, "subtract");
@@ -258,6 +283,15 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
 
     const updatedUser = await UserRepository.findById(userId);
     const newBalance = parseFloat(updatedUser?.walletBalance ?? "0");
+
+    // Notify the Orders topic in the support forum group
+    sendNewOrderNotification(bot.api as any, {
+      order: deliveredOrder,
+      user,
+      productName,
+      planName: getLocalizedName(plan, user.languageCode),
+      deliveryLines,
+    }).catch(() => {});
 
     const deliveryItems = deliveryLines.map((content, idx) => ({
       index: idx + 1,

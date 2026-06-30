@@ -195,6 +195,25 @@ export class TicketRepository {
   }
 
   /**
+   * Update ticket priority
+   */
+  static async updateTicketPriority(
+    ticketId: number,
+    priority: string,
+  ): Promise<Ticket> {
+    const [ticket] = await db
+      .update(ticketsTable)
+      .set({
+        priority,
+        updatedAt: new Date(),
+      })
+      .where(eq(ticketsTable.id, ticketId))
+      .returning();
+
+    return ticket;
+  }
+
+  /**
    * Assign ticket to support agent
    */
   static async assignTicket(

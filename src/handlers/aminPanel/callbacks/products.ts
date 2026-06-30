@@ -1,0 +1,503 @@
+﻿import type { AnyBot } from "gramio";
+import { i18n } from "../../../shared/locales/index.ts";
+import { AdminService } from "../../../services/bot/admin/Service.ts";
+import { AdminSections } from "../../../services/bot/admin/Admin/Section.ts";
+import { UserRepository } from "../../../repositories/UserRepository.ts";
+import {
+  getUsdtRate,
+  usdToTomanWithRate,
+} from "../../../services/tetherland/index.ts";
+import {
+  ProductRepository,
+  ProductPlanRepository,
+  PremiumCategoryRepository,
+} from "../../../repositories/ProductRepository.ts";
+import {
+  adminPanelCategoriesKeyboard,
+  adminPanelCategoryKeyboard,
+  adminPanelProductsListKeyboard,
+  adminPanelProductDetailsKeyboard,
+  adminPanelProductPlansKeyboard,
+  adminPanelPlanKeyboard,
+} from "../../../shared/keyboards/adminPanel/products.ts";
+import {
+  getLocalizedName,
+  getLocalizedDescription,
+} from "../../../shared/utils/localizedFields.ts";
+import { normalizeCustomEmojiId } from "../../../shared/utils/customEmoji.ts";
+
+async function getT(context: any) {
+  if (!context.from) return;
+
+  const user = await UserRepository.findById(context.from.id);
+  if (!user) return;
+
+  return i18n.buildT(user.languageCode ?? "fa");
+}
+
+async function requireProductAccess(context: any) {
+  if (!context.from) return false;
+  const isAdmin = await AdminService.isAdmin(context.from.id);
+  if (!isAdmin) return false;
+  return await AdminService.hasPermission(
+    context.from.id,
+    AdminSections.PRODUCTS,
+  );
+}
+
+export async function adminPanelProductsCallback(context: any) {
+  const t = await getT(context);
+  if (!t || !context.from) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const categories = await PremiumCategoryRepository.findAll();
+  await context.editText(t("adminProductsTitle"), {
+    parse_mode: "HTML",
+    reply_markup: adminPanelCategoriesKeyboard(
+      t,
+      categories,
+      context.from.languageCode ?? "fa",
+    ),
+  });
+}
+
+export async function adminCategoryCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  const categoryId = Number.parseInt(context.queryData[1]!);
+  const category = await PremiumCategoryRepository.findById(categoryId);
+  if (!category) {
+    await context.answerCallbackQuery({
+      text: t("categoryNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const categoryName = getLocalizedName(category, context.from.languageCode);
+  const categoryDescription = getLocalizedDescription(
+    category,
+    context.from.languageCode,
+  );
+  const status = category.isActive ? t("active") : t("inactive");
+  const prefix = normalizeCustomEmojiId(category.customEmojiId)
+    ? `<tg-emoji emoji-id="${normalizeCustomEmojiId(category.customEmojiId)}">ðŸ“</tg-emoji> `
+    : "ðŸ“ ";
+
+  const message =
+    `${prefix}<b>${categoryName}</b>
+` +
+    `${categoryDescription ? `${categoryDescription}
+
+` : ""}` +
+    `${t("adminCategoryStatus", status)}`;
+
+  await context.editText(message, {
+    parse_mode: "HTML",
+    reply_markup: adminPanelCategoryKeyboard(t, categoryId),
+  });
+}
+
+export async function adminCategoryProductsCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  const categoryId = Number.parseInt(context.queryData[1]!);
+  const category = await PremiumCategoryRepository.findById(categoryId);
+  if (!category) {
+    await context.answerCallbackQuery({
+      text: t("categoryNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const products = await ProductRepository.findAllByCategory(categoryId);
+  const categoryName = getLocalizedName(category, context.from.languageCode);
+
+  await context.editText(t("adminCategoryProductsTitle", categoryName), {
+    parse_mode: "HTML",
+    reply_markup: adminPanelProductsListKeyboard(
+      t,
+      products,
+      categoryId,
+      context.from.languageCode ?? "fa",
+    ),
+  });
+}
+
+export async function adminProductCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  const productId = Number.parseInt(context.queryData[1]!);
+  const product = await ProductRepository.findById(productId);
+  if (!product) {
+    await context.answerCallbackQuery({
+      text: t("productNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const productName = getLocalizedName(product, context.from.languageCode);
+  const productDescription = getLocalizedDescription(
+    product,
+    context.from.languageCode,
+  );
+  const status = product.isActive ? t("active") : t("inactive");
+
+  const category =
+    product.categoryId &&
+      (await PremiumCategoryRepository.findById(product.categoryId));
+  const categoryName = category
+    ? getLocalizedName(category, context.from.languageCode)
+    : "-";
+
+  const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
+  const icon = safeEmojiId
+    ? `<tg-emoji emoji-id="${safeEmojiId}">ðŸ›ï¸</tg-emoji> `
+    : "ðŸ›ï¸ ";
+
+  const message =
+    `${icon}<b>${productName}</b>
+` +
+    `${productDescription ? `${productDescription}
+
+` : ""}` +
+    `${t("adminProductStatus", status)}
+` +
+    `${t("adminProductCategory", categoryName)}`;
+
+  await context.editText(message, {
+    parse_mode: "HTML",
+    reply_markup: adminPanelProductDetailsKeyboard(
+      t,
+      productId,
+      product.categoryId ?? 0,
+    ),
+  });
+}
+
+export async function adminProductPlansCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  const productId = Number.parseInt(context.queryData[1]!);
+  const product = await ProductRepository.findById(productId);
+  if (!product) {
+    await context.answerCallbackQuery({
+      text: t("productNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const plans = await ProductPlanRepository.findAllByProductId(productId);
+  const productName = getLocalizedName(product, context.from.languageCode);
+
+  await context.editText(t("adminProductPlansTitle", productName), {
+    parse_mode: "HTML",
+    reply_markup: adminPanelProductPlansKeyboard(
+      t,
+      plans,
+      productId,
+      context.from.languageCode ?? "fa",
+    ),
+  });
+}
+
+export async function adminPlanCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planName = getLocalizedName(plan, context.from.languageCode);
+  const planDescription = getLocalizedDescription(
+    plan,
+    context.from.languageCode,
+  );
+  const status = plan.isActive ? t("active") : t("inactive");
+
+  // Prices are stored in USD; show the dollar value plus the live Toman value.
+  let price = t("notAvailable");
+  if (plan.price) {
+    const usd = Number.parseFloat(plan.price as string);
+    const rate = await getUsdtRate();
+    price =
+      rate !== null
+        ? `$${usd} (≈ ${usdToTomanWithRate(usd, rate).toLocaleString()} ${t("currency")})`
+        : `$${usd}`;
+  }
+  const duration = plan.duration ? `${plan.duration} ${plan.durationUnit ?? "days"}` : t("oneTime");
+
+  const message =
+    `<b>${planName}</b>
+` +
+    `${planDescription ? `${planDescription}
+
+` : ""}` +
+    `${t("adminPlanStatus", status)}
+` +
+    `${t("priceLabel", price)}
+` +
+    `${t("durationLabel", duration)}`;
+
+  await context.editText(message, {
+    parse_mode: "HTML",
+    reply_markup: adminPanelPlanKeyboard(t, planId, plan.productId),
+  });
+}
+
+async function replyNotImplemented(context: any, t: any) {
+  await context.answerCallbackQuery({
+    text: t("adminFeatureNotImplemented"),
+    show_alert: true,
+  });
+}
+
+export async function adminCreateCategoryCallback(context: any) {
+  const t = await getT(context);
+  if (!t) return;
+  await replyNotImplemented(context, t);
+}
+
+export async function adminCreateProductCallback(context: any) {
+  const t = await getT(context);
+  if (!t) return;
+  await replyNotImplemented(context, t);
+}
+
+export async function adminCreatePlanCallback(context: any) {
+  const t = await getT(context);
+  if (!t) return;
+  await replyNotImplemented(context, t);
+}
+
+export async function adminEditCategoryCallback(context: any) {
+  const t = await getT(context);
+  if (!t) return;
+  await replyNotImplemented(context, t);
+}
+
+export async function adminEditProductCallback(context: any) {
+  const t = await getT(context);
+  if (!t) return;
+  await replyNotImplemented(context, t);
+}
+
+export async function adminEditPlanCallback(context: any) {
+  const t = await getT(context);
+  if (!t) return;
+  await replyNotImplemented(context, t);
+}
+
+export async function adminDeleteCategoryCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  const categoryId = Number.parseInt(context.queryData[1]!);
+  const category = await PremiumCategoryRepository.findById(categoryId);
+  if (!category) {
+    await context.answerCallbackQuery({
+      text: t("categoryNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  await PremiumCategoryRepository.update(categoryId, { isActive: false });
+
+  await context.editText(
+    `${t("adminCategoryDeleted")}\n\n` +
+      `<b>${getLocalizedName(category, context.from.languageCode)}</b>`,
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPanelCategoryKeyboard(t, categoryId),
+    },
+  );
+}
+
+export async function adminDeleteProductCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  const productId = Number.parseInt(context.queryData[1]!);
+  const product = await ProductRepository.findById(productId);
+  if (!product) {
+    await context.answerCallbackQuery({
+      text: t("productNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  await ProductRepository.update(productId, { isActive: false });
+
+  await context.editText(
+    `${t("adminProductDeleted")}\n\n` +
+      `<b>${getLocalizedName(product, context.from.languageCode)}</b>`,
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPanelProductDetailsKeyboard(
+        t,
+        productId,
+        product.categoryId ?? 0,
+      ),
+    },
+  );
+}
+
+export async function adminDeletePlanCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  await ProductPlanRepository.update(planId, { isActive: false });
+
+  await context.editText(
+    `${t("adminPlanDeleted")}\n\n` +
+      `<b>${getLocalizedName(plan, context.from.languageCode)}</b>`,
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPanelPlanKeyboard(t, planId, plan.productId),
+    },
+  );
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 💵 EDIT PLAN PRICE (admin enters USD) ━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/** adminUserId → planId being edited */
+const editPlanPriceState = new Map<number, number>();
+
+/** Convert Persian/Arabic-Indic digits to ASCII so `parseFloat` works. */
+function normalizeDigits(input: string): string {
+  return input
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776))
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632));
+}
+
+/**
+ * `admin_edit_plan_price_{planId}` — prompt the admin to type the new USD price.
+ */
+export async function adminEditPlanPriceCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  editPlanPriceState.set(context.from.id, planId);
+
+  const planName = getLocalizedName(plan, context.from.languageCode);
+  await context.editText(t("adminEditPlanPricePrompt", { planName }), {
+    parse_mode: "HTML",
+    reply_markup: adminPanelPlanKeyboard(t, planId, plan.productId),
+  });
+}
+
+/**
+ * Registers the text-message interceptor that captures the new USD price typed
+ * by an admin after pressing "Edit price". Wire via setupAdminPlanPriceHandler(bot).
+ */
+export function setupAdminPlanPriceHandler(bot: AnyBot): void {
+  bot.on("message", async (ctx, next) => {
+    const userId = ctx.from?.id;
+    if (!userId || !ctx.text) return next?.();
+
+    const planId = editPlanPriceState.get(userId);
+    if (planId === undefined) return next?.();
+
+    // Don't swallow input meant for an active scene.
+    if ((ctx as any).scene?.current) return next?.();
+
+    const t = i18n.buildT(ctx.from?.languageCode ?? "fa");
+
+    const usd = Number.parseFloat(normalizeDigits(ctx.text.trim()));
+    if (!Number.isFinite(usd) || usd <= 0) {
+      await ctx.send(t("adminPlanPriceInvalid"), { parse_mode: "HTML" });
+      return;
+    }
+
+    editPlanPriceState.delete(userId);
+
+    const plan = await ProductPlanRepository.findById(planId);
+    if (!plan) {
+      await ctx.send(t("planNotFound"), { parse_mode: "HTML" });
+      return;
+    }
+
+    // Store as USD with 2 decimals (matches the decimal(15,2) column).
+    const usdValue = usd.toFixed(2);
+    await ProductPlanRepository.update(planId, { price: usdValue });
+
+    const rate = await getUsdtRate();
+    const tomanLine =
+      rate !== null
+        ? `\n≈ ${usdToTomanWithRate(usd, rate).toLocaleString()} ${t("currency")}`
+        : "";
+
+    await ctx.send(
+      t("adminPlanPriceUpdated", {
+        planName: getLocalizedName(plan, ctx.from?.languageCode),
+        usd: usdValue,
+      }) + tomanLine,
+      {
+        parse_mode: "HTML",
+        reply_markup: adminPanelPlanKeyboard(t, planId, plan.productId),
+      },
+    );
+  });
+}

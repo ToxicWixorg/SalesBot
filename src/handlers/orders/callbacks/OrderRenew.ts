@@ -10,6 +10,10 @@ import { i18n } from "../../../shared/locales/index.ts";
 import { renewalPendingState } from "../renewState.ts";
 import { emojiIds } from "../../../shared/locales/emojies.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
+import {
+  getUsdtRate,
+  usdToTomanWithRate,
+} from "../../../services/tetherland/index.ts";
 
 export async function OrderRenewCallback(context: any) {
   await context.answerCallbackQuery();
@@ -50,7 +54,19 @@ export async function OrderRenewCallback(context: any) {
       return;
     }
 
-    const finalPrice = parseFloat(plan.price as string);
+    // Plan price is stored in USD → convert to Toman with the live rate.
+    const usdtRate = await getUsdtRate();
+    if (usdtRate === null) {
+      await context.answerCallbackQuery({
+        text: t("priceRateUnavailable"),
+        show_alert: true,
+      });
+      return;
+    }
+    const finalPrice = usdToTomanWithRate(
+      parseFloat(plan.price as string),
+      usdtRate,
+    );
     const walletBalance = parseFloat(user.walletBalance ?? "0");
     const productName = getLocalizedName(product, user.languageCode);
     const planName = getLocalizedName(plan, user.languageCode);

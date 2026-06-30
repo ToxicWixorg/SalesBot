@@ -1,18 +1,18 @@
 import { Context } from "gramio";
-import { UserRepository } from "../../../repositories/UserRepository.ts";
-import { i18n } from "../../../shared/locales/index.ts";
+import { UserRepository } from "../../../../repositories/UserRepository.ts";
+import { i18n } from "../../../../shared/locales/index.ts";
 import {
-  CategoryRepository,
+  PremiumCategoryRepository,
   ProductRepository,
-} from "../../../repositories/ProductRepository.ts";
-import { productsListKeyboard } from "../../../shared/keyboards/index.ts";
-import { normalizeCustomEmojiId } from "../../../shared/utils/customEmoji.ts";
+} from "../../../../repositories/ProductRepository.ts";
+import { normalizeCustomEmojiId } from "../../../../shared/utils/customEmoji.ts";
 import {
   getLocalizedDescription,
   getLocalizedName,
-} from "../../../shared/utils/localizedFields.ts";
+} from "../../../../shared/utils/localizedFields.ts";
+import { premiumProductsListKeyboard } from "../../../../shared/keyboards/products/list.ts";
 
-export async function CategoryCallback(context: Context) {
+export async function PremiumCategoryCallback(context: Context) {
   if (!context.from || !context.queryData) return;
 
   const categoryId = Number.parseInt(context.queryData[1]!);
@@ -25,7 +25,7 @@ export async function CategoryCallback(context: Context) {
 
   const t = i18n.buildT(user.languageCode ?? "fa");
 
-  const category = await CategoryRepository.findById(categoryId);
+  const category = await PremiumCategoryRepository.findById(categoryId);
   if (!category) {
     await context.answerCallbackQuery({
       text: t("categoryNotFound"),
@@ -48,7 +48,7 @@ export async function CategoryCallback(context: Context) {
 
   await context.editText(message, {
     parse_mode: "HTML",
-    reply_markup: productsListKeyboard(
+    reply_markup: premiumProductsListKeyboard(
       t,
       products,
       categoryId,

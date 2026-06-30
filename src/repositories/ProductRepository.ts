@@ -69,6 +69,14 @@ export class ProductRepository {
       .orderBy(asc(productsTable.displayOrder), asc(productsTable.nameFA));
   }
 
+  static async findAllByCategory(categoryId: number): Promise<Product[]> {
+    return db
+      .select()
+      .from(productsTable)
+      .where(eq(productsTable.categoryId, categoryId))
+      .orderBy(asc(productsTable.displayOrder), asc(productsTable.nameFA));
+  }
+
   /**
    * محصول جدید ایجاد کن
    */
@@ -140,6 +148,14 @@ export class ProductPlanRepository {
       .orderBy(productPlansTable.order);
   }
 
+  static async findAllByProductId(productId: number): Promise<ProductPlan[]> {
+    return db
+      .select()
+      .from(productPlansTable)
+      .where(eq(productPlansTable.productId, productId))
+      .orderBy(productPlansTable.order);
+  }
+
   /**
    * پلن جدید ایجاد کن
    */
@@ -169,7 +185,7 @@ export class ProductPlanRepository {
   }
 }
 
-export class CategoryRepository {
+export class PremiumCategoryRepository {
   /**
    * دسته را با ID پیدا کن
    */
@@ -210,6 +226,19 @@ export class CategoryRepository {
     const [result] = await db
       .insert(categoriesTable)
       .values(category)
+      .returning();
+
+    return result;
+  }
+
+  static async update(
+    id: number,
+    data: Partial<Category>,
+  ): Promise<Category> {
+    const [result] = await db
+      .update(categoriesTable)
+      .set(data)
+      .where(eq(categoriesTable.id, id))
       .returning();
 
     return result;
@@ -313,3 +342,5 @@ export class ProductConfigRepository {
       .where(eq(productConfigsTable.orderId, orderId));
   }
 }
+
+export const CategoryRepository = PremiumCategoryRepository;

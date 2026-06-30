@@ -36,7 +36,9 @@ export async function PayZarinpalCallback(ctx: Context, bot: AnyBot) {
     pendingDiscount && pendingDiscount.planId === state.planId;
   const finalPrice = hasDiscount
     ? pendingDiscount.finalPrice
-    : parseFloat((plan?.price as string) ?? "0");
+    : (state.basePriceToman ??
+      state.regionPrice ??
+      parseFloat((plan?.price as string) ?? "0"));
 
   const apiUrl = settings.zarinpalSandbox
     ? "https://sandbox.zarinpal.com/pg/v4/payment/request.json"

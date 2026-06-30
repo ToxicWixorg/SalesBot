@@ -5,7 +5,7 @@ import { emojiIds } from "../../locales/emojies.ts";
 import { normalizeCustomEmojiId } from "../../utils/customEmoji.ts";
 import { getLocalizedName } from "../../utils/localizedFields.ts";
 
-export function categoriesKeyboard(
+export function premiumCategoriesKeyboard(
   t: TFunction,
   categories: Category[],
   languageCode = "fa",
@@ -21,7 +21,7 @@ export function categoriesKeyboard(
       : undefined;
     keyboard.text(
       `${icon} ${getLocalizedName(category, languageCode)}`,
-      `category_${category.id}`,
+      `premium_category_${category.id}`,
       opts,
     );
 

@@ -1,6 +1,10 @@
 export { sendNewUserNotification } from "./notifications/newUser.ts";
 export { sendNewRefNotification } from "./notifications/newRef.ts";
 export { sendNewsMessage } from "./notifications/news.ts";
+export {
+  sendNewOrderNotification,
+  orderForumKeyboard,
+} from "./notifications/newOrder.ts";
 
 export { TicketService } from "./ticket.ts";
 

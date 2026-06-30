@@ -41,8 +41,14 @@ export type PendingOrderInfo = {
   collected: Record<InfoStep, string>;
   /** Discount already validated and waiting to be applied */
   discount?: AppliedDiscount;
-  /** Price override when the user selected a region with its own price */
+  /** Price override (Toman) when the user selected a region with its own price */
   regionPrice?: number;
+  /**
+   * Base plan price already converted to Toman, resolved once on the payment
+   * screen. Downstream payment handlers read this instead of re-converting the
+   * USD plan price.
+   */
+  basePriceToman?: number;
   /** Which step is being re-edited from the review screen */
   editingStep?: InfoStep;
   /** The order ID created after payment (used to link the slot booking) */

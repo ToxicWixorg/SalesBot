@@ -70,8 +70,11 @@ export async function linkSlotToOrder(
     userId,
   );
 
-  // Notify admin
-  const finalPrice = state.regionPrice ?? parseFloat(plan.price as string);
+  // Notify admin — Toman base price resolved on the payment screen (USD → Toman).
+  const finalPrice =
+    state.basePriceToman ??
+    state.regionPrice ??
+    parseFloat(plan.price as string);
   await notifyAdminNewOrder(bot, {
     orderId,
     userId,

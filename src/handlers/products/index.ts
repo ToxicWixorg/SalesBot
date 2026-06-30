@@ -5,15 +5,16 @@ import { UserRepository } from "../../repositories/UserRepository.ts";
 import { InventoryRepository } from "../../repositories/InventoryRepository.ts";
 import { backToMainKeyboard } from "../../shared/keyboards/index.ts";
 import { ConfirmOrderCallback } from "./callbacks/ConfirmOrderCallback.ts";
-import { ProductsCallback } from "./callbacks/ProductsCallback.ts";
-import { CategoriesCallback } from "./callbacks/CategoriesCallback.ts";
-import { CategoryCallback } from "./callbacks/CategoryCallback.ts";
-import { ProductCallback } from "./callbacks/ProductCallback.ts";
+import { PremiumCategoriesCallback } from "./callbacks/PremiumProducts/PremiumCategoriesCallback.ts";
+import { PremiumCategoryCallback } from "./callbacks/PremiumProducts/PremiumCategoryCallback.ts";
+import { SectionsCallback } from "./callbacks/SectionsCallback.ts";
 import { BuyProductCallback } from "./callbacks/BuyProductCallback.ts";
 import { SelectPlanCallback } from "./callbacks/SelectPlanCallback.ts";
 import { SelectRegionCallback } from "./callbacks/SelectRegionCallback.ts";
 import { AddDiscountCallback } from "./callbacks/AddDiscountCallback.ts";
 import { NotifyStockCallback } from "./callbacks/NotifyStockCallback.ts";
+import { PremiumProductsCallback } from "./callbacks/PremiumProducts/PremiumProductsCallback.ts";
+import { PremiumProductCallback } from "./callbacks/PremiumProducts/PremiumProductCallback.ts";
 
 async function getEffectiveStock(product: {
   id: number;
@@ -27,22 +28,25 @@ async function getEffectiveStock(product: {
 export const productsComposer = new Composer()
   .extend(composer)
   .command("products", async (context) => {
-    return await ProductsCallback(context);
+    return await SectionsCallback(context);
   })
   .callbackQuery("products", async (context) => {
-    return await ProductsCallback(context);
+    return await SectionsCallback(context);
   })
-  .callbackQuery("categories", async (context) => {
-    return await CategoriesCallback(context);
+  .callbackQuery("premiumProducts", async (context) => {
+    return await PremiumProductsCallback(context);
   })
-  .callbackQuery(/^category_(\d+)$/, async (context) => {
-    return await CategoryCallback(context);
+  .callbackQuery("premiumCategories", async (context) => {
+    return await PremiumCategoriesCallback(context);
   })
-  .callbackQuery(/^category_page_(\d+)_(\d+)$/, async (context) => {
-    return await CategoryCallback(context);
+  .callbackQuery(/^premium_category_(\d+)$/, async (context) => {
+    return await PremiumCategoryCallback(context);
+  })
+  .callbackQuery(/^premium_category_page_(\d+)_(\d+)$/, async (context) => {
+    return await PremiumCategoryCallback(context);
   })
   .callbackQuery(/^product_(\d+)$/, async (context) => {
-    return await ProductCallback(context, getEffectiveStock);
+    return await PremiumProductCallback(context, getEffectiveStock);
   })
   .callbackQuery(/^buy_product_(\d+)$/, async (context) => {
     return await BuyProductCallback(context, getEffectiveStock);

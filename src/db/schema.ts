@@ -69,7 +69,7 @@ export type InsertUser = typeof usersTable.$inferInsert;
 // 🛍️ PRODUCTS ━━━━━━━━━━━━━━━━━━━━━━━━━
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-export const categoriesTable = pgTable("categories", {
+export const premiumCategoriesTable = pgTable("categories", {
   id: serial("id").primaryKey(),
   nameFA: text("name_fa").notNull(),
   nameEN: text("name_en").notNull(),
@@ -84,8 +84,8 @@ export const categoriesTable = pgTable("categories", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export type Category = typeof categoriesTable.$inferSelect;
-export type InsertCategory = typeof categoriesTable.$inferInsert;
+export type Category = typeof premiumCategoriesTable.$inferSelect;
+export type InsertCategory = typeof premiumCategoriesTable.$inferInsert;
 
 export const productsTable = pgTable(
   "products",
@@ -99,7 +99,7 @@ export const productsTable = pgTable(
     descriptionEN: text("description_en"),
     descriptionRU: text("description_ru"),
     image: text("image"),
-    categoryId: integer("category_id").references(() => categoriesTable.id),
+    categoryId: integer("category_id").references(() => premiumCategoriesTable.id),
 
     // Product Requirements
     requiresEmail: boolean("requires_email").default(false),

@@ -8,6 +8,10 @@ import {
 import { preSelectedRegionState } from "../preSelectedRegionState.ts";
 import { orderConfirmationKeyboard } from "../../../shared/keyboards/index.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
+import {
+  getUsdtRate,
+  usdToTomanWithRate,
+} from "../../../services/tetherland/index.ts";
 
 export async function SelectRegionCallback(context: Context) {
   if (!context.from || !context.queryData) return;
@@ -44,7 +48,19 @@ export async function SelectRegionCallback(context: Context) {
     return;
   }
 
-  const regionPrice = region.price ? parseFloat(region.price) : undefined;
+  // Prices (region + plan) are stored in USD → convert to Toman with live rate.
+  const usdtRate = await getUsdtRate();
+  if (usdtRate === null) {
+    await context.answerCallbackQuery({
+      text: t("priceRateUnavailable"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const regionPrice = region.price
+    ? usdToTomanWithRate(parseFloat(region.price), usdtRate)
+    : undefined;
   preSelectedRegionState.set(userId, {
     planId,
     flag: region.flag,
@@ -52,7 +68,9 @@ export async function SelectRegionCallback(context: Context) {
     price: regionPrice,
   });
 
-  const effectivePrice = regionPrice ?? parseFloat(plan.price as string);
+  const effectivePrice =
+    regionPrice ??
+    usdToTomanWithRate(parseFloat(plan.price as string), usdtRate);
   const productName = getLocalizedName(product, user.languageCode);
   const planName = getLocalizedName(plan, user.languageCode);
 

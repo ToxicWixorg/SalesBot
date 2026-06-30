@@ -9,6 +9,7 @@ import { languageSelectionScene } from "../scenes/language-selection.ts";
 import { enterCustomEmojiIdsScene } from "../scenes/enter-custom-emoji-ids.ts";
 import { mainMenuKeyboard } from "../shared/keyboards/index.ts";
 import { sendNewUserNotification } from "../services/bot/notifications/newUser.ts";
+import { sendNewRefNotification } from "../services/bot/notifications/newRef.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
 import { config } from "../config.ts";
 
@@ -124,6 +125,16 @@ export const startComposer = new Composer()
                 text: message,
                 parse_mode: "HTML",
               });
+
+              // Post referral notification to the forum group's referral topic
+              const { totalReferrals } =
+                await ReferralRepository.getReferralStats(referrerId);
+              sendNewRefNotification(
+                context.bot.api as any,
+                user,
+                referrer,
+                totalReferrals,
+              ).catch(() => {});
             }
           } catch (msgError) {
             console.error(
@@ -272,39 +283,6 @@ export const startComposer = new Composer()
     }
 
     await context.answerCallbackQuery();
-  })
-  .callbackQuery("admin_panel", async (context) => {
-    if (!context.from) {
-      return context.answerCallbackQuery("❌ Unable to identify user.");
-    }
-
-    const userId = context.from.id;
-
-    let user = await UserRepository.findById(userId);
-    const t = i18n.buildT(user.languageCode || "en");
-    if (!user) {
-      return context.answerCallbackQuery("❌ Unable to identify user.");
-    }
-
-    if (user.role === "customer") {
-      await context.editReplyMarkup(mainMenuKeyboard(t, user.role));
-      return context.answerCallbackQuery("⛔ Staff only");
-    }
-
-    const keyboard = new InlineKeyboard()
-      .url(t("adminpanelBtnUrl"), config.ADMIN_PANEL_URL, {
-        style: "success",
-        icon_custom_emoji_id: "5258096772776991776",
-      })
-      .row()
-      .text(t("adminpanelBtnEmojies"), "get_custom_emoji", {
-        icon_custom_emoji_id: "6136464120779638846",
-      });
-
-    await context.send(t("adminpanelText", userId, user.role), {
-      parse_mode: "HTML",
-      reply_markup: keyboard,
-    });
   })
   .callbackQuery("get_custom_emoji", async (context) => {
     if (!context.from) {

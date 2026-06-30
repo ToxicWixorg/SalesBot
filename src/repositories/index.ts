@@ -27,3 +27,15 @@ export {
 } from "./AdminRepository.ts";
 export { InventoryRepository } from "./InventoryRepository.ts";
 export { ForceJoinRepository } from "./ForceJoinRepository.ts";
+export { PaymentRepository } from "./PaymentRepository.ts";
+export {
+  BotSettingsRepository,
+  BackupSettingsRepository,
+} from "./SettingsRepository.ts";
+export {
+  UserAdminRepository,
+  type UserListFilter,
+  type BroadcastLang,
+  type BroadcastAudience,
+} from "./UserAdminRepository.ts";
+export { WalletTopupRepository } from "./WalletTopupRepository.ts";

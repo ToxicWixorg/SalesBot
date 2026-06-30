@@ -1,163 +1,210 @@
+import { and, count, desc, eq, sql } from "drizzle-orm";
 import { db } from "../db/index.ts";
 import {
-  discountCodesTable,
-  discountUsageTable,
-  DiscountCode,
-  InsertDiscountCode,
-  DiscountUsage,
-  InsertDiscountUsage,
+	type DiscountCode,
+	type DiscountUsage,
+	discountCodesTable,
+	discountUsageTable,
+	type InsertDiscountCode,
+	InsertDiscountUsage,
 } from "../db/schema.ts";
-import { eq, and, sql } from "drizzle-orm";
 
 export class DiscountCodeRepository {
-  /**
-   * پیدا کردن کد تخفیف بر اساس کد
-   */
-  static async findByCode(code: string): Promise<DiscountCode | undefined> {
-    const [result] = await db
-      .select()
-      .from(discountCodesTable)
-      .where(eq(discountCodesTable.code, code))
-      .limit(1);
+	// ─── مدیریت ادمین ─────────────────────────────────────────
+	/** دریافت همه کدهای تخفیف (صفحه‌بندی، جدیدترین اول). */
+	static async getAll(limit: number, offset: number): Promise<DiscountCode[]> {
+		return db
+			.select()
+			.from(discountCodesTable)
+			.orderBy(desc(discountCodesTable.createdAt))
+			.limit(limit)
+			.offset(offset);
+	}
 
-    return result;
-  }
+	/** تعداد کل کدهای تخفیف. */
+	static async countAll(): Promise<number> {
+		const [r] = await db.select({ c: count() }).from(discountCodesTable);
+		return r?.c ?? 0;
+	}
 
+	/** پیدا کردن کد تخفیف با ID. */
+	static async findById(id: number): Promise<DiscountCode | undefined> {
+		const [row] = await db
+			.select()
+			.from(discountCodesTable)
+			.where(eq(discountCodesTable.id, id))
+			.limit(1);
+		return row;
+	}
 
-  static async validateCode(
-    code: string,
-    userId: number,
-    orderAmount: number,
-  ): Promise<{
-    valid: boolean;
-    message: string;
-    discountCode?: DiscountCode;
-  }> {
-    const discountCode = await this.findByCode(code);
+	/** ساخت کد تخفیف جدید. */
+	static async create(data: InsertDiscountCode): Promise<DiscountCode> {
+		const [row] = await db.insert(discountCodesTable).values(data).returning();
+		return row;
+	}
 
-    if (!discountCode) {
-      return { valid: false, message: "کد تخفیف وجود ندارد" };
-    }
+	/** فعال/غیرفعال کردن کد تخفیف. */
+	static async setActive(id: number, isActive: boolean): Promise<DiscountCode> {
+		const [row] = await db
+			.update(discountCodesTable)
+			.set({ isActive })
+			.where(eq(discountCodesTable.id, id))
+			.returning();
+		return row;
+	}
 
-    if (!discountCode.isActive) {
-      return { valid: false, message: "کد تخفیف غیرفعال است" };
-    }
+	/** حذف کامل کد تخفیف. */
+	static async delete(id: number): Promise<void> {
+		await db.delete(discountCodesTable).where(eq(discountCodesTable.id, id));
+	}
 
-    if (discountCode.expiresAt && discountCode.expiresAt < new Date()) {
-      return { valid: false, message: "کد تخفیف منقضی شده است" };
-    }
+	/**
+	 * پیدا کردن کد تخفیف بر اساس کد
+	 */
+	static async findByCode(code: string): Promise<DiscountCode | undefined> {
+		const [result] = await db
+			.select()
+			.from(discountCodesTable)
+			.where(eq(discountCodesTable.code, code))
+			.limit(1);
 
-    if (
-      discountCode.minOrderAmount &&
-      Number(orderAmount) < Number(discountCode.minOrderAmount)
-    ) {
-      return {
-        valid: false,
-        message: `حداقل مبلغ سفارش برای این کد: ${discountCode.minOrderAmount} تومان`,
-      };
-    }
+		return result;
+	}
 
-    if (
-      discountCode.maxUses &&
-      discountCode.currentUses &&
-      discountCode.currentUses >= discountCode.maxUses
-    ) {
-      return { valid: false, message: "ظرفیت کد تخفیف تمام شده است" };
-    }
+	static async validateCode(
+		code: string,
+		userId: number,
+		orderAmount: number,
+	): Promise<{
+		valid: boolean;
+		message: string;
+		discountCode?: DiscountCode;
+	}> {
+		const discountCode = await DiscountCodeRepository.findByCode(code);
 
-    const userUsageCount = await this.getUserUsageCount(
-      discountCode.id,
-      userId,
-    );
-    if (
-      discountCode.maxUsesPerUser &&
-      userUsageCount >= discountCode.maxUsesPerUser
-    ) {
-      return {
-        valid: false,
-        message: "شما قبلاً از این کد تخفیف استفاده کرده‌اید",
-      };
-    }
+		if (!discountCode) {
+			return { valid: false, message: "کد تخفیف وجود ندارد" };
+		}
 
-    if (discountCode.userIds) {
-      const userIds = discountCode.userIds as number[];
-      if (!userIds.includes(userId)) {
-        return { valid: false, message: "این کد تخفیف برای شما معتبر نیست" };
-      }
-    }
+		if (!discountCode.isActive) {
+			return { valid: false, message: "کد تخفیف غیرفعال است" };
+		}
 
-    return { valid: true, message: "کد تخفیف معتبر است", discountCode };
-  }
+		if (discountCode.expiresAt && discountCode.expiresAt < new Date()) {
+			return { valid: false, message: "کد تخفیف منقضی شده است" };
+		}
 
-  static calculateDiscount(
-    discountCode: DiscountCode,
-    orderAmount: number,
-  ): number {
-    if (discountCode.type === "percentage") {
-      let discount = (orderAmount * Number(discountCode.value)) / 100;
+		if (
+			discountCode.minOrderAmount &&
+			Number(orderAmount) < Number(discountCode.minOrderAmount)
+		) {
+			return {
+				valid: false,
+				message: `حداقل مبلغ سفارش برای این کد: ${discountCode.minOrderAmount} تومان`,
+			};
+		}
 
-      if (
-        discountCode.maxDiscount &&
-        discount > Number(discountCode.maxDiscount)
-      ) {
-        discount = Number(discountCode.maxDiscount);
-      }
+		if (
+			discountCode.maxUses &&
+			discountCode.currentUses &&
+			discountCode.currentUses >= discountCode.maxUses
+		) {
+			return { valid: false, message: "ظرفیت کد تخفیف تمام شده است" };
+		}
 
-      return discount;
-    } else {
-      return Math.min(Number(discountCode.value), orderAmount);
-    }
-  }
+		const userUsageCount = await DiscountCodeRepository.getUserUsageCount(
+			discountCode.id,
+			userId,
+		);
+		if (
+			discountCode.maxUsesPerUser &&
+			userUsageCount >= discountCode.maxUsesPerUser
+		) {
+			return {
+				valid: false,
+				message: "شما قبلاً از این کد تخفیف استفاده کرده‌اید",
+			};
+		}
 
-  static async recordUsage(
-    codeId: number,
-    userId: number,
-    orderId: number,
-    discountAmount: number,
-  ): Promise<void> {
-    await db.insert(discountUsageTable).values({
-      codeId,
-      userId,
-      orderId,
-      discountAmount: discountAmount.toString(),
-    });
+		if (discountCode.userIds) {
+			const userIds = discountCode.userIds as number[];
+			if (!userIds.includes(userId)) {
+				return { valid: false, message: "این کد تخفیف برای شما معتبر نیست" };
+			}
+		}
 
-    await db
-      .update(discountCodesTable)
-      .set({
-        currentUses: sql`${discountCodesTable.currentUses} + 1`,
-      })
-      .where(eq(discountCodesTable.id, codeId));
-  }
+		return { valid: true, message: "کد تخفیف معتبر است", discountCode };
+	}
 
-  /**
-   * دریافت تعداد استفاده کاربر از کد
-   */
-  static async getUserUsageCount(
-    codeId: number,
-    userId: number,
-  ): Promise<number> {
-    const result = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(discountUsageTable)
-      .where(
-        and(
-          eq(discountUsageTable.codeId, codeId),
-          eq(discountUsageTable.userId, userId),
-        ),
-      );
+	static calculateDiscount(
+		discountCode: DiscountCode,
+		orderAmount: number,
+	): number {
+		if (discountCode.type === "percentage") {
+			let discount = (orderAmount * Number(discountCode.value)) / 100;
 
-    return Number(result[0]?.count || 0);
-  }
+			if (
+				discountCode.maxDiscount &&
+				discount > Number(discountCode.maxDiscount)
+			) {
+				discount = Number(discountCode.maxDiscount);
+			}
 
-  /**
-   * دریافت تاریخچه استفاده کاربر
-   */
-  static async getUserUsageHistory(userId: number): Promise<DiscountUsage[]> {
-    return await db
-      .select()
-      .from(discountUsageTable)
-      .where(eq(discountUsageTable.userId, userId))
-      .orderBy(sql`${discountUsageTable.usedAt} DESC`);
-  }
+			return discount;
+		} else {
+			return Math.min(Number(discountCode.value), orderAmount);
+		}
+	}
+
+	static async recordUsage(
+		codeId: number,
+		userId: number,
+		orderId: number,
+		discountAmount: number,
+	): Promise<void> {
+		await db.insert(discountUsageTable).values({
+			codeId,
+			userId,
+			orderId,
+			discountAmount: discountAmount.toString(),
+		});
+
+		await db
+			.update(discountCodesTable)
+			.set({
+				currentUses: sql`${discountCodesTable.currentUses} + 1`,
+			})
+			.where(eq(discountCodesTable.id, codeId));
+	}
+
+	/**
+	 * دریافت تعداد استفاده کاربر از کد
+	 */
+	static async getUserUsageCount(
+		codeId: number,
+		userId: number,
+	): Promise<number> {
+		const result = await db
+			.select({ count: sql<number>`count(*)` })
+			.from(discountUsageTable)
+			.where(
+				and(
+					eq(discountUsageTable.codeId, codeId),
+					eq(discountUsageTable.userId, userId),
+				),
+			);
+
+		return Number(result[0]?.count || 0);
+	}
+
+	/**
+	 * دریافت تاریخچه استفاده کاربر
+	 */
+	static async getUserUsageHistory(userId: number): Promise<DiscountUsage[]> {
+		return await db
+			.select()
+			.from(discountUsageTable)
+			.where(eq(discountUsageTable.userId, userId))
+			.orderBy(sql`${discountUsageTable.usedAt} DESC`);
+	}
 }

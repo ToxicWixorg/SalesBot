@@ -107,6 +107,52 @@ export function setupTicketScenes(bot: AnyBot) {
 
       await context.answerCallbackQuery();
     })
+    .callbackQuery("new_support_ticket", async (context) => {
+      const user = await UserRepository.findById(context.from.id);
+      if (!user) return;
+      const t = i18n.buildT(user.languageCode || "en");
+
+      ticketState.set(context.from.id, {
+        type: "support",
+        step: "message",
+      });
+
+      const keyboard = new InlineKeyboard().text(
+        t("btnCancel"),
+        "cancel_ticket",
+        { icon_custom_emoji_id: emojiIds.reject },
+      );
+
+      await context.editText(t("ticketSupportPrompt"), {
+        reply_markup: keyboard,
+        parse_mode: "HTML",
+      });
+
+      await context.answerCallbackQuery();
+    })
+    .callbackQuery("new_report_ticket", async (context) => {
+      const user = await UserRepository.findById(context.from.id);
+      if (!user) return;
+      const t = i18n.buildT(user.languageCode || "en");
+
+      ticketState.set(context.from.id, {
+        type: "report",
+        step: "message",
+      });
+
+      const keyboard = new InlineKeyboard().text(
+        t("btnCancel"),
+        "cancel_ticket",
+        { icon_custom_emoji_id: emojiIds.reject },
+      );
+
+      await context.editText(t("ticketReportPrompt"), {
+        reply_markup: keyboard,
+        parse_mode: "HTML",
+      });
+
+      await context.answerCallbackQuery();
+    })
     .callbackQuery(/^cancel_ticket/, async (context) => {
       const user = await UserRepository.findById(context.from.id);
       if (!user) return;
@@ -320,50 +366,3 @@ export function setupTicketScenes(bot: AnyBot) {
     }
   }
 }
-
-// .callbackQuery("new_support_ticket", async (context) => {
-//   const user = await UserRepository.findById(context.from.id);
-//   if (!user) {
-//     return;
-//   }
-//   const t = i18n.buildT(user.languageCode || "en");
-
-//   ticketState.set(context.from.id, {
-//     type: "support",
-//     step: "message",
-//   });
-
-//   const keyboard = new InlineKeyboard().text(
-//     t("btnCancel"),
-//     "cancel_ticket",
-//   );
-
-//   await context.editText(t("ticketSupportPrompt"), {
-//     reply_markup: keyboard,
-//     parse_mode: "HTML",
-//   });
-
-//   await context.answerCallbackQuery();
-// })
-// .callbackQuery("new_report_ticket", async (context) => {
-//   const user = await UserRepository.findById(context.from.id);
-//   if (!user) return;
-//   const t = i18n.buildT(user.languageCode || "en");
-
-//   ticketState.set(context.from.id, {
-//     type: "report",
-//     step: "message",
-//   });
-
-//   const keyboard = new InlineKeyboard().text(
-//     t("btnCancel"),
-//     "cancel_ticket",
-//   );
-
-//   await context.editText(t("ticketReportPrompt"), {
-//     reply_markup: keyboard,
-//     parse_mode: "HTML",
-//   });
-
-//   await context.answerCallbackQuery();
-// })

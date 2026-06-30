@@ -13,6 +13,10 @@ import {
   appliedDiscountState,
 } from "../handlers/products/discountOrderState.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
+import {
+  getUsdtRate,
+  usdToTomanWithRate,
+} from "../services/tetherland/index.ts";
 
 export const enterDiscountCodeOrderScene = new Scene(
   "enter-discount-code-order",
@@ -42,7 +46,19 @@ export const enterDiscountCodeOrderScene = new Scene(
     return;
   }
 
-  const originalPrice = parseFloat(plan.price as string);
+  // Plan price is stored in USD. Convert to Toman first so the discount
+  // (and its min-order / fixed-amount checks, all denominated in Toman) and
+  // every downstream amount stay consistent in Toman.
+  const usdtRate = await getUsdtRate();
+  if (usdtRate === null) {
+    await context.scene.exit();
+    discountEntryState.delete(userId);
+    return context.send(t("priceRateUnavailable"), { parse_mode: "HTML" });
+  }
+  const originalPrice = usdToTomanWithRate(
+    parseFloat(plan.price as string),
+    usdtRate,
+  );
 
   // Validate the discount code against the real order amount
   const validation = await DiscountCodeRepository.validateCode(

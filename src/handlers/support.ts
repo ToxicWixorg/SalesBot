@@ -333,6 +333,39 @@ export const supportHandler = (bot: AnyBot) => {
     }
   });
 
+  // Cycle ticket priority (low → normal → high → urgent → low)
+  bot.callbackQuery(/^ticket_priority_(\d+)$/, async (ctx) => {
+    const ticketId = parseInt(ctx.queryData[1]);
+
+    try {
+      const ticket = await TicketRepository.getTicketById(ticketId);
+      if (!ticket) {
+        await ctx.answerCallbackQuery({
+          text: "❌ Ticket not found",
+          show_alert: true,
+        });
+        return;
+      }
+
+      const order = ["low", "normal", "high", "urgent"];
+      const current = ticket.priority || "normal";
+      const next = order[(order.indexOf(current) + 1) % order.length];
+
+      await TicketRepository.updateTicketPriority(ticketId, next);
+
+      await ctx.answerCallbackQuery({
+        text: `⚠️ Priority: ${next}`,
+        show_alert: true,
+      });
+    } catch (error) {
+      console.error("[SUPPORT] Error updating priority:", error);
+      await ctx.answerCallbackQuery({
+        text: "❌ Failed to update priority",
+        show_alert: true,
+      });
+    }
+  });
+
   // View user profile (for admins)
   bot.callbackQuery(/^ticket_profile_(\d+)$/, async (ctx) => {
     const userId = parseInt(ctx.queryData[1]);
@@ -391,33 +424,9 @@ export const supportHandler = (bot: AnyBot) => {
     return; // do NOT call next() so other handlers don't also process this message
   });
 
-  /**
-   * Handle replies from support group (forum messages)
-   * This listens to messages in the support group and forwards them to users
-   */
-  if (config.SUPPORT_GROUP_ID) {
-    bot.on("message", async (ctx, next) => {
-      // Only process text messages from support group
-      if (!ctx.text) return next();
-      if (ctx.chat?.id.toString() !== config.SUPPORT_GROUP_ID) return next();
-
-      // Check if message is a reply in a thread
-      if (ctx.update?.message?.reply_to_message) {
-        const threadMessageId = ctx.update.message.reply_to_message.message_id;
-
-        try {
-          const ticketService = new TicketService(bot.api);
-          await ticketService.handleForumMessage(
-            threadMessageId,
-            ctx.from.id,
-            ctx.text,
-          );
-        } catch (error) {
-          console.error("[SUPPORT] Error handling forum message:", error);
-        }
-      }
-    });
-  }
+  // NOTE: Support-group thread replies → user are handled in
+  // scenes/support-tickets.ts (the canonical relay). A second handler here
+  // would double-deliver every reply, so it was removed.
 };
 
 // Helper functions

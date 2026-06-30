@@ -14,6 +14,10 @@ export const en = {
   btnReportBug: "Report a bot issue",
 
   items: "Items",
+  SectionTelegramProducts: "محصولات تلگرامی",
+  SectionInstagramProducts: "محصولات اینستاگرامی ",
+  SectionPremiumProducts: "اکانت ها یرمیوم",
+  SectionMessage: `${e.crown} درود دوست عزیز\n\n${e.bag} یکی از بخش هارو انتخاب کنید: `,
 
   adminpanelText: (userid: number, userRole: string) =>
     `${e.id} Your userid : <code>${userid}</code>\n` +
@@ -192,6 +196,10 @@ export const en = {
   rechargePendingApproval: `${e.checkBold} Your request has been registered!\n\n${e.time} Please wait for admin approval — usually under 30 minutes.`,
   rechargeApproved: (amount: string) =>
     `${e.party} <b>Top-up approved!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
+  walletAdminCredited: (amount: string, balance: string) =>
+    `${e.diamond} <b>${amount}</b> Toman has been added to your wallet.\n${e.wallet} Current balance: <b>${balance}</b> Toman`,
+  walletAdminDebited: (amount: string, balance: string) =>
+    `${e.reject} <b>${amount}</b> Toman has been deducted from your wallet.\n${e.wallet} Current balance: <b>${balance}</b> Toman`,
   rechargeRejected: `${e.reject} <b>Top-up request rejected.</b>\n\nContact support if needed.`,
   rechargeSessionExpired: `⚠️ Session expired. Please start again from wallet section.`,
   rechargeMethodDisabled: `❌ This payment method is currently disabled.`,
@@ -822,4 +830,58 @@ export const en = {
   rechargeCardSaveFailed: e.warning + "Failed to save file",
   ticketWaitingAdmin: `❌ wait for admin reply to your last message`,
   youCannotReplyToThisTicket: `❌ You cannot reply to this ticket right now.`,
+
+  // Admin Panel
+
+  adminPanelMainMessage: `${e.admin} <b>Admin Panel</b>\n\nWhat would you like to do?`,
+  
+  panelProducts : "Products",
+  panelOrders : "Orders",
+  panelUsers : "Users",
+  panelWallet : "Wallet",
+  panelDiscounts : "Discounts",
+  panelSchedules : "Schedules",
+  panelBroadcast : "Broadcast",
+  panelSetting : "Settings",
+
+  adminProductsTitle: "Manage product categories",
+  active: "Active",
+  inactive: "Inactive",
+  adminCategoryStatus: (status: string) => `Status: <b>${status}</b>`,
+  adminCategoryProductsTitle: (category: string) => `Products in category “${category}”`,
+  adminProductPlansTitle: (product: string) => `Plans for “${product}”`,
+  adminProductStatus: (status: string) => `Product status: <b>${status}</b>\n`,
+  adminProductCategory: (category: string) => `Category: <b>${category}</b>`,
+  adminPlanStatus: (status: string) => `Plan status: <b>${status}</b>\n`,
+  adminFeatureNotImplemented: "This functionality is not implemented yet.",
+  adminCategoryDeleted: "Category has been deactivated successfully.",
+  adminProductDeleted: "Product has been deactivated successfully.",
+  adminPlanDeleted: "Plan has been deactivated successfully.",
+  btnCreateCategory: "Create new category",
+  btnCreateProduct: "Create new product",
+  btnCreatePlan: "Create new plan",
+  btnProductsInCategory: "View category products",
+  btnViewPlans: "View plans",
+  btnDelete: "Delete",
+  btnEdit : "Edit",
+  btnEditPrice: `${e.wallet} Edit price (USD)`,
+  noPermission: "You do not have permission to access this section.",
+  priceRateUnavailable:
+    "❌ The live exchange rate is unavailable. Please try again in a moment.",
+  adminEditPlanPricePrompt: ({ planName }: { planName: string }) =>
+    `${e.wallet} Enter the new price for plan "<b>${planName}</b>" in <b>USD</b>.\n\n` +
+    `For example <code>12.5</code> for $12.5.\nThe price is automatically converted to Toman at the live rate when shown.`,
+  adminPlanPriceInvalid:
+    "❌ Invalid amount. Enter a valid USD number greater than zero (e.g. 12.5).",
+  adminPlanPriceUpdated: ({
+    planName,
+    usd,
+  }: {
+    planName: string;
+    usd: string;
+  }) => `✅ Price for plan "<b>${planName}</b>" set to <b>$${usd}</b>.`,
+  priceLabel: (price: string) => `Price: <b>${price}</b>\n`,
+  durationLabel: (duration: string) => `Duration: <b>${duration}</b>\n`,
+  notAvailable: "Not available",
+
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

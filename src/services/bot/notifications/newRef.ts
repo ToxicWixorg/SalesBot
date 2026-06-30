@@ -9,9 +9,9 @@ export async function sendNewRefNotification(
   inviter: User,
   totalReferrals: number,
 ) {
-  if (!config.SUPPORT_GROUP_ID || !config.NEWUSERS_TOPIC_ID) {
+  if (!config.SUPPORT_GROUP_ID || !config.NEWREFERRAL_TOPIC_ID) {
     console.warn(
-      "[FORUM] SUPPORT_GROUP_ID or NEWUSERS_TOPIC_ID not configured",
+      "[FORUM] SUPPORT_GROUP_ID or NEWREFERRAL_TOPIC_ID not configured",
     );
     return;
   }
@@ -40,10 +40,10 @@ export async function sendNewRefNotification(
     await botApi.sendMessage({
       chat_id: config.SUPPORT_GROUP_ID,
       text: message,
-      message_thread_id: config.NEWUSERS_TOPIC_ID,
+      message_thread_id: config.NEWREFERRAL_TOPIC_ID,
       parse_mode: "HTML",
     });
   } catch (error) {
-    console.error("[FORUM] Failed to send new user notification:", error);
+    console.error("[FORUM] Failed to send new referral notification:", error);
   }
 }

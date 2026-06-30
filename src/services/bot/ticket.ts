@@ -136,14 +136,16 @@ export class TicketService {
       : user.firstName || "User";
 
     try {
-      // Send to forum thread (reply to thread message)
-      // await this.botApi.sendMessage({
-      //   chat_id: Number(config.SUPPORT_GROUP_ID!),
-      //   text: `👤 <b>${username}:</b>\n${message}`,
-      //   message_thread_id: ticket.topicId!,
-      //   reply_to_message_id: ticket.threadMessageId,
-      //   parse_mode: "HTML",
-      // });
+      // Send to forum thread (reply to thread message) so support sees it
+      if (config.SUPPORT_GROUP_ID && ticket.topicId) {
+        await this.botApi.sendMessage({
+          chat_id: Number(config.SUPPORT_GROUP_ID),
+          text: `👤 <b>${username}:</b>\n${message}`,
+          message_thread_id: ticket.topicId,
+          reply_to_message_id: ticket.threadMessageId,
+          parse_mode: "HTML",
+        });
+      }
 
       // Save message to database
       await TicketRepository.addMessage({

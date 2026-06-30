@@ -3,6 +3,7 @@ import { config } from "./config.ts";
 import { seedOwnerOnStartup } from "./scripts/seed-owner.ts";
 import { seedCategoriesOnStartup } from "./scripts/seed-categories.ts";
 import { startReminderService } from "./services/ReminderService.ts";
+import { startBackupScheduler } from "./services/BackupService.ts";
 
 async function setBotCommandsOnStartup() {
   try {
@@ -41,3 +42,4 @@ await seedOwnerOnStartup();
 await bot.start();
 await setBotCommandsOnStartup();
 startReminderService(bot);
+startBackupScheduler(bot);

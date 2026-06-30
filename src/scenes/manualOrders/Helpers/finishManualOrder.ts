@@ -37,7 +37,11 @@ export async function finishManualOrder(
     return;
   }
 
-  const originalPrice = state.regionPrice ?? parseFloat(plan.price as string);
+  // Toman base price resolved on the payment screen (USD → Toman).
+  const originalPrice =
+    state.basePriceToman ??
+    state.regionPrice ??
+    parseFloat(plan.price as string);
 
   // Re-check discount state (or use forwarded discount)
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
@@ -83,7 +87,7 @@ export async function finishManualOrder(
     planId: plan.id,
     status: "pending_admin",
     quantity: 1,
-    totalPrice: plan.price as any,
+    totalPrice: originalPrice.toString() as any,
     discountAmount: discountAmount.toString() as any,
     walletUsed: finalPrice.toString() as any,
     finalPrice: finalPrice.toString() as any,

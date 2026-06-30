@@ -9,6 +9,7 @@ import { productPlansKeyboard } from "../../../shared/keyboards/index.ts";
 import { e } from "../../../shared/locales/emojies.ts";
 import { normalizeCustomEmojiId } from "../../../shared/utils/customEmoji.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
+import { getUsdtRate } from "../../../services/tetherland/index.ts";
 
 export async function BuyProductCallback(
   context: Context,
@@ -54,6 +55,7 @@ export async function BuyProductCallback(
     ? `<tg-emoji emoji-id="${safeEmojiId}">🛍️</tg-emoji> `
     : e.bag;
   const productName = getLocalizedName(product, user.languageCode);
+  const usdtRate = await getUsdtRate();
 
   await context.editText(
     `${title}<b>${productName}</b>\n\n${t("selectPlan")}`,
@@ -64,6 +66,7 @@ export async function BuyProductCallback(
         plans,
         productId,
         user.languageCode,
+        usdtRate,
       ),
     },
   );

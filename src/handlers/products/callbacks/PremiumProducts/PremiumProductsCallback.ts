@@ -1,14 +1,14 @@
 import { Context } from "gramio";
-import { UserRepository } from "../../../repositories/UserRepository.ts";
-import { i18n } from "../../../shared/locales/index.ts";
-import { getBotSettings } from "../../../plugins/base.ts";
-import { CategoryRepository } from "../../../repositories/ProductRepository.ts";
+import { UserRepository } from "../../../../repositories/UserRepository.ts";
+import { i18n } from "../../../../shared/locales/index.ts";
+import { getBotSettings } from "../../../../plugins/base.ts";
+import { PremiumCategoryRepository } from "../../../../repositories/ProductRepository.ts";
 import {
   backToMainKeyboard,
-  categoriesKeyboard,
-} from "../../../shared/keyboards/index.ts";
+  premiumCategoriesKeyboard,
+} from "../../../../shared/keyboards/index.ts";
 
-export async function ProductsCallback(context: Context) {
+export async function PremiumProductsCallback(context: Context) {
   if (!context.from) return;
 
   const user = await UserRepository.findById(context.from.id);
@@ -23,7 +23,7 @@ export async function ProductsCallback(context: Context) {
     return;
   }
 
-  const categories = await CategoryRepository.findAll();
+  const categories = await PremiumCategoryRepository.findAll();
   if (categories.length === 0) {
     await context.send(t("noProducts"), {
       reply_markup: backToMainKeyboard(t),
@@ -35,7 +35,7 @@ export async function ProductsCallback(context: Context) {
 
   await context.send(t("selectCategory"), {
     parse_mode: "HTML",
-    reply_markup: categoriesKeyboard(t, categories, user.languageCode),
+    reply_markup: premiumCategoriesKeyboard(t, categories, user.languageCode),
   });
   await context.message?.delete();
 }

@@ -36,7 +36,11 @@ export async function finishManualOrderWithSlot(
     return;
   }
 
-  const originalPrice = state.regionPrice ?? parseFloat(plan.price as string);
+  // Toman base price resolved on the payment screen (USD → Toman).
+  const originalPrice =
+    state.basePriceToman ??
+    state.regionPrice ??
+    parseFloat(plan.price as string);
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
   const hasDiscount =
     pendingDiscount !== undefined && pendingDiscount.planId === state.planId;
@@ -78,7 +82,7 @@ export async function finishManualOrderWithSlot(
     planId: plan.id,
     status: "scheduled",
     quantity: 1,
-    totalPrice: plan.price as any,
+    totalPrice: originalPrice.toString() as any,
     discountAmount: discountAmount.toString() as any,
     walletUsed: finalPrice.toString() as any,
     finalPrice: finalPrice.toString() as any,

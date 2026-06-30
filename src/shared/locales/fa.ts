@@ -18,6 +18,11 @@ export const fa = {
 
   items: "ایتم ها",
 
+  SectionTelegramProducts: "محصولات تلگرامی",
+  SectionInstagramProducts: "محصولات اینستاگرامی ",
+  SectionPremiumProducts: "اکانت ها یرمیوم",
+  SectionMessage: `${e.crown} درود دوست عزیز\n\n${e.bag} یکی از بخش هارو انتخاب کنید: `,
+
   adminpanelText: (userid: number, userRole: string) =>
     `${e.id} ایدی عددی شما : <code>${userid}</code>\n` +
     `${e.user} نقش شما : <b>${userRole === "super_admin" ? "مالک" : userRole === "admin" ? "ادمین" : "پشتیبان"}</b>\n\n` +
@@ -194,6 +199,10 @@ ${payload.ids}`,
   rechargePendingApproval: `${e.checkBold} درخواستت ثبت شد!\n\n${e.time} منتظر تأیید ادمین باش — معمولاً زیر ۳۰ دقیقه.`,
   rechargeApproved: (amount: string) =>
     `${e.party} <b>شارژ تأیید شد!</b>\n\n${e.diamond} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
+  walletAdminCredited: (amount: string, balance: string) =>
+    `${e.diamond} <b>${amount}</b> تومان به کیف پولت اضافه شد.\n${e.wallet} موجودی فعلی: <b>${balance}</b> تومان`,
+  walletAdminDebited: (amount: string, balance: string) =>
+    `${e.reject} <b>${amount}</b> تومان از کیف پولت کسر شد.\n${e.wallet} موجودی فعلی: <b>${balance}</b> تومان`,
   rechargeRejected: `${e.reject} <b>درخواست شارژ رد شد.</b>\n\nدر صورت نیاز با پشتیبانی تماس بگیر.`,
   rechargeSessionExpired: `⚠️ جلسه منقضی شده. دوباره از کیف پول شروع کن.`,
   rechargeMethodDisabled: `❌ این روش پرداخت فعلاً غیرفعاله.`,
@@ -822,4 +831,58 @@ ${payload.ids}`,
   rechargeCardSaveFailed: e.warning + "خطا در ذخیره فایل",
   ticketWaitingAdmin: `❌ در انتظار پاسخ مدیر به آخرین پیام شما`,
   youCannotReplyToThisTicket: `❌ نمی‌تونی به این تیکت پاسخ بدی`,
+
+  // Admin Panel
+
+  adminPanelMainMessage: `${e.admin} <b>پنل مدیریت</b>\n\nچه کاری می‌خوای انجام بدی؟`,
+
+  panelProducts : "محصولات",
+  panelOrders : "سفارشات",
+  panelUsers : "کاربران",
+  panelWallet : "کیف پول",
+  panelDiscounts : "تخفیف‌ها",
+  panelSchedules : "زمان‌بندی‌ها",
+  panelBroadcast : "ارسال پیام جمعی",
+  panelSetting : "تنظیمات",
+
+  adminProductsTitle: "مدیریت دسته‌بندی‌های محصولات",
+  active: "فعال",
+  inactive: "غیرفعال",
+  adminCategoryStatus: (status: string) => `وضعیت: <b>${status}</b>`,
+  adminCategoryProductsTitle: (category: string) => `محصولات دسته «${category}»`,
+  adminProductPlansTitle: (product: string) => `پلن‌های محصول «${product}»`,
+  adminProductStatus: (status: string) => `وضعیت محصول: <b>${status}</b>\n`,
+  adminProductCategory: (category: string) => `دسته‌بندی: <b>${category}</b>`,
+  adminPlanStatus: (status: string) => `وضعیت پلن: <b>${status}</b>\n`,
+  adminFeatureNotImplemented: "این قابلیت هنوز در دست توسعه است.",
+  adminCategoryDeleted: "دسته‌بندی با موفقیت غیرفعال شد.",
+  adminProductDeleted: "محصول با موفقیت غیرفعال شد.",
+  adminPlanDeleted: "پلن با موفقیت غیرفعال شد.",
+  btnCreateCategory: "ساخت دسته جدید",
+  btnCreateProduct: "ساخت محصول جدید",
+  btnCreatePlan: "ساخت پلن جدید",
+  btnProductsInCategory: "نمایش محصولات دسته",
+  btnViewPlans: "پلن‌ها",
+  btnDelete: "حذف",
+  btnEdit : "ویرایش",
+  btnEditPrice: `${e.wallet} ویرایش قیمت (دلار)`,
+  noPermission: "شما اجازه دسترسی به این بخش را ندارید.",
+  priceRateUnavailable:
+    "❌ نرخ لحظه‌ای ارز در دسترس نیست. لطفاً چند لحظه دیگر دوباره تلاش کنید.",
+  adminEditPlanPricePrompt: ({ planName }: { planName: string }) =>
+    `${e.wallet} قیمت جدید پلن «<b>${planName}</b>» را به <b>دلار</b> وارد کنید.\n\n` +
+    `مثلاً <code>12.5</code> برای ۱۲٫۵ دلار.\nقیمت موقع نمایش به‌صورت خودکار با نرخ لحظه‌ای به تومان تبدیل می‌شود.`,
+  adminPlanPriceInvalid:
+    "❌ مبلغ نامعتبر است. یک عدد دلاری معتبر بزرگ‌تر از صفر وارد کنید (مثلاً 12.5).",
+  adminPlanPriceUpdated: ({
+    planName,
+    usd,
+  }: {
+    planName: string;
+    usd: string;
+  }) => `✅ قیمت پلن «<b>${planName}</b>» روی <b>$${usd}</b> تنظیم شد.`,
+  priceLabel: (price: string) => `قیمت: <b>${price}</b>\n`,
+  durationLabel: (duration: string) => `مدت زمان: <b>${duration}</b>\n`,
+  notAvailable: "موجود نیست",
+
 } satisfies LanguageMap;
