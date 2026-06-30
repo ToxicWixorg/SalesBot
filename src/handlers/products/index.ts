@@ -7,7 +7,6 @@ import { backToMainKeyboard } from "../../shared/keyboards/index.ts";
 import { ConfirmOrderCallback } from "./callbacks/ConfirmOrderCallback.ts";
 import { PremiumCategoriesCallback } from "./callbacks/PremiumProducts/PremiumCategoriesCallback.ts";
 import { PremiumCategoryCallback } from "./callbacks/PremiumProducts/PremiumCategoryCallback.ts";
-import { SectionsCallback } from "./callbacks/SectionsCallback.ts";
 import { BuyProductCallback } from "./callbacks/BuyProductCallback.ts";
 import { SelectPlanCallback } from "./callbacks/SelectPlanCallback.ts";
 import { SelectRegionCallback } from "./callbacks/SelectRegionCallback.ts";
@@ -28,10 +27,10 @@ async function getEffectiveStock(product: {
 export const productsComposer = new Composer()
   .extend(composer)
   .command("products", async (context) => {
-    return await SectionsCallback(context);
+    return await PremiumProductsCallback(context);
   })
   .callbackQuery("products", async (context) => {
-    return await SectionsCallback(context);
+    return await PremiumProductsCallback(context);
   })
   .callbackQuery("premiumProducts", async (context) => {
     return await PremiumProductsCallback(context);
