@@ -209,7 +209,7 @@ export function adminPanelPlanKeyboard(
   const activeLabel =
     plan.isActive === false ? t("btnPlanActivate") : t("btnPlanDeactivate");
 
-  return new InlineKeyboard()
+  const keyboard = new InlineKeyboard()
     .text(t("btnPlanEditName"), `admin_edit_plan_${planId}`, { style: "primary" })
     .text(t("btnEditPrice"), `admin_edit_plan_price_${planId}`, {
       style: "primary",
@@ -230,13 +230,40 @@ export function adminPanelPlanKeyboard(
       style: "primary",
     })
     .text(t("btnPlanOrder"), `admin_plan_order_${planId}`, { style: "primary" })
-    .row()
+    .row();
+
+  // Automatic plans deliver from the product's inventory pool, so admins need a
+  // way to load items into it.
+  if (plan.deliveryType === "automatic") {
+    keyboard
+      .text(t("btnPlanInventory"), `admin_plan_inventory_${planId}`, {
+        style: "primary",
+      })
+      .row();
+  }
+
+  return keyboard
     .text(activeLabel, `admin_plan_toggleactive_${planId}`, {
       style: plan.isActive === false ? "success" : "danger",
     })
     .text(t("btnDelete"), `admin_delete_plan_${planId}`, { style: "danger" })
     .row()
     .text(t("btnBack"), `admin_product_plans_${plan.productId}`, {
+      icon_custom_emoji_id: emojiIds.back,
+    });
+}
+
+/** Inventory management screen for an automatic plan's product. */
+export function adminPlanInventoryKeyboard(
+  t: TFunction,
+  planId: number,
+): InlineKeyboard {
+  return new InlineKeyboard()
+    .text(t("btnPlanAddItems"), `admin_plan_additems_${planId}`, {
+      style: "success",
+    })
+    .row()
+    .text(t("btnBack"), `admin_plan_${planId}`, {
       icon_custom_emoji_id: emojiIds.back,
     });
 }

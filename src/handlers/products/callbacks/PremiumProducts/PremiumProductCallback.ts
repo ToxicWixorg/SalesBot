@@ -35,7 +35,12 @@ export async function PremiumProductCallback(context: any, getEffectiveStock: an
     return;
   }
 
-  const hasStock = product.stock;
+  // Effective stock = available inventory items, falling back to the manual
+  // `stock` field. This is informational only — it must NOT hide the plans,
+  // since manual/scheduled plans don't depend on inventory and automatic plans
+  // enforce their own stock check at selection time (SelectPlanCallback).
+  const effectiveStock = await getEffectiveStock(product);
+  const hasStock = effectiveStock > 0;
 
   const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
 
@@ -58,8 +63,9 @@ export async function PremiumProductCallback(context: any, getEffectiveStock: an
     message += `\n${t("warrantyDays", { days: product.warrantyDays })}`;
   }
 
-  if (hasStock) {
-    const plans = await ProductPlanRepository.findByProductId(productId);
+  const plans = await ProductPlanRepository.findByProductId(productId);
+
+  if (plans.length > 0) {
     const usdtRate = await getUsdtRate();
 
     await context.editText(message, {

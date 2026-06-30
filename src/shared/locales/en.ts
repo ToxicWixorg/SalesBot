@@ -958,6 +958,16 @@ export const en = {
   adminPlanFieldAdded: "✅ New input field added.",
   adminPlanFieldDeleted: "✅ Input field removed.",
   adminPlanNoFields: "No input fields defined yet.",
+  btnPlanInventory: "📦 Manage inventory",
+  btnPlanAddItems: "➕ Add items",
+  adminPlanInventoryTitle: ({ count }: { count: number }) =>
+    `📦 This product's inventory: <b>${count}</b> items available.\nTap the button below to add new items.`,
+  adminPlanAddItemsPrompt:
+    "Send the items, one per line (e.g. a config link, an activation key, or \"email:password\").\n/cancel to abort.",
+  adminPlanItemsAdded: ({ count }: { count: number }) =>
+    `✅ ${count} item(s) added to inventory.`,
+  adminPlanAddItemsEmpty: "❌ No items received. Send one item per line.",
+  adminPlanAddItemsCancelled: "❌ Adding items cancelled.",
   adminPlanDeliveryPrompt: "Choose this plan's delivery type:",
   adminPlanDeliveryUpdated: ({ type }: { type: string }) =>
     `✅ Delivery type set to "<b>${type}</b>".`,
