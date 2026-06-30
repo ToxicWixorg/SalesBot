@@ -299,9 +299,33 @@ export async function adminCreateCategoryCallback(context: any) {
 }
 
 export async function adminCreateProductCallback(context: any) {
+  if (!context.from || !context.queryData) return;
   const t = await getT(context);
   if (!t) return;
-  await replyNotImplemented(context, t);
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const categoryId = Number.parseInt(context.queryData[1]!);
+  const category = await PremiumCategoryRepository.findById(categoryId);
+  if (!category) {
+    await context.answerCallbackQuery({
+      text: t("categoryNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  createProductState.set(context.from.id, { categoryId, step: "nameFA" });
+
+  await context.editText(t("adminCreateProductPromptFA"), {
+    parse_mode: "HTML",
+  });
 }
 
 export async function adminCreatePlanCallback(context: any) {
@@ -586,6 +610,27 @@ interface EditCategoryState {
 /** adminUserId → in-progress category being edited */
 const editCategoryState = new Map<number, EditCategoryState>();
 
+interface CreateProductState {
+  categoryId: number;
+  step: CreateCategoryStep;
+  nameFA?: string;
+  nameEN?: string;
+  nameRU?: string;
+}
+
+/** adminUserId → in-progress product being created (under a category) */
+const createProductState = new Map<number, CreateProductState>();
+
+/** Ensure a product slug is unique by appending an incrementing suffix. */
+async function uniqueProductSlug(base: string): Promise<string> {
+  let slug = base;
+  let n = 2;
+  while (await ProductRepository.findBySlug(slug)) {
+    slug = `${base}-${n++}`;
+  }
+  return slug;
+}
+
 /** Build a URL-safe slug from a name; empty result falls back to a timestamp. */
 function slugify(input: string): string {
   const slug = input
@@ -618,7 +663,8 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
 
     const state = createCategoryState.get(userId);
     const editState = editCategoryState.get(userId);
-    if (!state && !editState) return next?.();
+    const productState = createProductState.get(userId);
+    if (!state && !editState && !productState) return next?.();
 
     // Don't swallow input meant for an active scene.
     if ((ctx as any).scene?.current) return next?.();
@@ -697,7 +743,63 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
       return;
     }
 
-    // ── CREATE FLOW ───────────────────────────────────────────────────────
+    // ── CREATE PRODUCT FLOW (Persian → English → Russian name) ────────────
+    if (productState) {
+      if (text === "/cancel") {
+        createProductState.delete(userId);
+        await ctx.send(t("adminCreateProductCancelled"), {
+          parse_mode: "HTML",
+        });
+        return;
+      }
+
+      if (productState.step === "nameFA") {
+        productState.nameFA = text;
+        productState.step = "nameEN";
+        await ctx.send(t("adminCreateProductPromptEN"), { parse_mode: "HTML" });
+        return;
+      }
+
+      if (productState.step === "nameEN") {
+        productState.nameEN = text;
+        productState.step = "nameRU";
+        await ctx.send(t("adminCreateProductPromptRU"), { parse_mode: "HTML" });
+        return;
+      }
+
+      // step === "nameRU" — final step: persist and confirm.
+      productState.nameRU = text;
+      createProductState.delete(userId);
+
+      const slug = await uniqueProductSlug(
+        slugify(productState.nameEN ?? productState.nameFA ?? "product"),
+      );
+
+      const product = await ProductRepository.create({
+        nameFA: productState.nameFA!,
+        nameEN: productState.nameEN!,
+        nameRU: productState.nameRU!,
+        slug,
+        categoryId: productState.categoryId,
+      });
+
+      await ctx.send(
+        t("adminProductCreated", {
+          name: getLocalizedName(product, ctx.from?.languageCode),
+        }),
+        {
+          parse_mode: "HTML",
+          reply_markup: adminPanelProductDetailsKeyboard(
+            t,
+            product.id,
+            productState.categoryId,
+          ),
+        },
+      );
+      return;
+    }
+
+    // ── CREATE CATEGORY FLOW ──────────────────────────────────────────────
     if (!state) return next?.();
 
     if (text === "/cancel") {

@@ -898,6 +898,13 @@ export const en = {
     `✅ Category "<b>${name}</b>" updated successfully.`,
   adminCategoryProductsOrphaned: ({ count }: { count: number }) =>
     `\n\n⚠️ ${count} product(s) in this category are now uncategorized.`,
+  adminCreateProductPromptFA:
+    "🆕 Creating a new product.\n\nSend the product name in <b>Persian</b>.\n\nSend /cancel to abort.",
+  adminCreateProductPromptEN: "Now send the product name in <b>English</b>.",
+  adminCreateProductPromptRU: "Now send the product name in <b>Russian</b>.",
+  adminCreateProductCancelled: "❌ Product creation cancelled.",
+  adminProductCreated: ({ name }: { name: string }) =>
+    `✅ Product "<b>${name}</b>" created successfully.\nYou can now add plans to it.`,
   priceLabel: (price: string) => `Price: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Duration: <b>${duration}</b>\n`,
   notAvailable: "Not available",

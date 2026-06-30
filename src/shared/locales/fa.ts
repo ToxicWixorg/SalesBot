@@ -899,6 +899,13 @@ ${payload.ids}`,
     `✅ دسته‌بندی «<b>${name}</b>» با موفقیت ویرایش شد.`,
   adminCategoryProductsOrphaned: ({ count }: { count: number }) =>
     `\n\n⚠️ ${count} محصول این دسته اکنون بدون دسته‌بندی شدند.`,
+  adminCreateProductPromptFA:
+    "🆕 ساخت محصول جدید.\n\nنام محصول را به <b>فارسی</b> ارسال کنید.\n\nبرای لغو /cancel را بفرستید.",
+  adminCreateProductPromptEN: "حالا نام محصول را به <b>انگلیسی</b> ارسال کنید.",
+  adminCreateProductPromptRU: "حالا نام محصول را به <b>روسی</b> ارسال کنید.",
+  adminCreateProductCancelled: "❌ ساخت محصول لغو شد.",
+  adminProductCreated: ({ name }: { name: string }) =>
+    `✅ محصول «<b>${name}</b>» با موفقیت ساخته شد.\nاکنون می‌توانید برایش پلن اضافه کنید.`,
   priceLabel: (price: string) => `قیمت: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `مدت زمان: <b>${duration}</b>\n`,
   notAvailable: "موجود نیست",

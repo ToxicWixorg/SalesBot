@@ -834,6 +834,13 @@ export const ru = {
     `✅ Категория «<b>${name}</b>» успешно обновлена.`,
   adminCategoryProductsOrphaned: ({ count }: { count: number }) =>
     `\n\n⚠️ ${count} товар(ов) этой категории теперь без категории.`,
+  adminCreateProductPromptFA:
+    "🆕 Создание нового товара.\n\nОтправьте название товара на <b>персидском</b>.\n\nОтправьте /cancel для отмены.",
+  adminCreateProductPromptEN: "Теперь отправьте название товара на <b>английском</b>.",
+  adminCreateProductPromptRU: "Теперь отправьте название товара на <b>русском</b>.",
+  adminCreateProductCancelled: "❌ Создание товара отменено.",
+  adminProductCreated: ({ name }: { name: string }) =>
+    `✅ Товар «<b>${name}</b>» успешно создан.\nТеперь вы можете добавить к нему тарифы.`,
   priceLabel: (price: string) => `Цена: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Длительность: <b>${duration}</b>\n`,
   notAvailable: "Недоступно",

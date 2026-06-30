@@ -103,16 +103,6 @@ export class ProductRepository {
   }
 
   /**
-   * دسته‌بندی همه محصولات یک دسته را خالی کن (هنگام حذف دسته)
-   */
-  static async clearCategory(categoryId: number): Promise<void> {
-    await db
-      .update(productsTable)
-      .set({ categoryId: null, updatedAt: new Date() })
-      .where(eq(productsTable.categoryId, categoryId));
-  }
-
-  /**
    * موجودی محصول را کم کن
    */
   static async decreaseStock(
@@ -241,10 +231,7 @@ export class PremiumCategoryRepository {
     return result;
   }
 
-  static async update(
-    id: number,
-    data: Partial<Category>,
-  ): Promise<Category> {
+  static async update(id: number, data: Partial<Category>): Promise<Category> {
     const [result] = await db
       .update(categoriesTable)
       .set(data)
@@ -252,13 +239,6 @@ export class PremiumCategoryRepository {
       .returning();
 
     return result;
-  }
-
-  /**
-   * دسته را برای همیشه حذف کن
-   */
-  static async delete(id: number): Promise<void> {
-    await db.delete(categoriesTable).where(eq(categoriesTable.id, id));
   }
 }
 
