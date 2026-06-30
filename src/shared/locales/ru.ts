@@ -788,7 +788,7 @@ export const ru = {
   adminProductCategory: (category: string) => `Категория: <b>${category}</b>`,
   adminPlanStatus: (status: string) => `Статус тарифа: <b>${status}</b>\n`,
   adminFeatureNotImplemented: "Эта функция еще не реализована.",
-  adminCategoryDeleted: "Категория успешно деактивирована.",
+  adminCategoryDeleted: "✅ Категория удалена навсегда.",
   adminProductDeleted: "Товар успешно деактивирован.",
   adminPlanDeleted: "Тариф успешно деактивирован.",
   btnCreateCategory: "Создать категорию",
@@ -823,6 +823,17 @@ export const ru = {
   adminCreateCategoryCancelled: "❌ Создание категории отменено.",
   adminCategoryCreated: ({ name }: { name: string }) =>
     `✅ Категория «<b>${name}</b>» успешно создана.`,
+  adminEditCategoryPromptFA: ({ current }: { current: string }) =>
+    `✏️ Редактирование категории.\n\nТекущее название на <b>персидском</b>: <b>${current}</b>\n\nОтправьте новое персидское название или /skip, чтобы оставить как есть.\n\nОтправьте /cancel для отмены.`,
+  adminEditCategoryPromptEN: ({ current }: { current: string }) =>
+    `Текущее название на <b>английском</b>: <b>${current}</b>\n\nОтправьте новое английское название или /skip, чтобы оставить как есть.`,
+  adminEditCategoryPromptRU: ({ current }: { current: string }) =>
+    `Текущее название на <b>русском</b>: <b>${current}</b>\n\nОтправьте новое русское название или /skip, чтобы оставить как есть.`,
+  adminEditCategoryCancelled: "❌ Редактирование категории отменено.",
+  adminCategoryUpdated: ({ name }: { name: string }) =>
+    `✅ Категория «<b>${name}</b>» успешно обновлена.`,
+  adminCategoryProductsOrphaned: ({ count }: { count: number }) =>
+    `\n\n⚠️ ${count} товар(ов) этой категории теперь без категории.`,
   priceLabel: (price: string) => `Цена: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Длительность: <b>${duration}</b>\n`,
   notAvailable: "Недоступно",

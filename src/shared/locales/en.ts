@@ -854,7 +854,7 @@ export const en = {
   adminProductCategory: (category: string) => `Category: <b>${category}</b>`,
   adminPlanStatus: (status: string) => `Plan status: <b>${status}</b>\n`,
   adminFeatureNotImplemented: "This functionality is not implemented yet.",
-  adminCategoryDeleted: "Category has been deactivated successfully.",
+  adminCategoryDeleted: "✅ Category permanently deleted.",
   adminProductDeleted: "Product has been deactivated successfully.",
   adminPlanDeleted: "Plan has been deactivated successfully.",
   btnCreateCategory: "Create new category",
@@ -887,6 +887,17 @@ export const en = {
   adminCreateCategoryCancelled: "❌ Category creation cancelled.",
   adminCategoryCreated: ({ name }: { name: string }) =>
     `✅ Category "<b>${name}</b>" created successfully.`,
+  adminEditCategoryPromptFA: ({ current }: { current: string }) =>
+    `✏️ Editing category.\n\nCurrent <b>Persian</b> name: <b>${current}</b>\n\nSend a new Persian name, or /skip to keep it.\n\nSend /cancel to abort.`,
+  adminEditCategoryPromptEN: ({ current }: { current: string }) =>
+    `Current <b>English</b> name: <b>${current}</b>\n\nSend a new English name, or /skip to keep it.`,
+  adminEditCategoryPromptRU: ({ current }: { current: string }) =>
+    `Current <b>Russian</b> name: <b>${current}</b>\n\nSend a new Russian name, or /skip to keep it.`,
+  adminEditCategoryCancelled: "❌ Category editing cancelled.",
+  adminCategoryUpdated: ({ name }: { name: string }) =>
+    `✅ Category "<b>${name}</b>" updated successfully.`,
+  adminCategoryProductsOrphaned: ({ count }: { count: number }) =>
+    `\n\n⚠️ ${count} product(s) in this category are now uncategorized.`,
   priceLabel: (price: string) => `Price: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Duration: <b>${duration}</b>\n`,
   notAvailable: "Not available",

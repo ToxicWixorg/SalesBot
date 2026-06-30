@@ -855,7 +855,7 @@ ${payload.ids}`,
   adminProductCategory: (category: string) => `دسته‌بندی: <b>${category}</b>`,
   adminPlanStatus: (status: string) => `وضعیت پلن: <b>${status}</b>\n`,
   adminFeatureNotImplemented: "این قابلیت هنوز در دست توسعه است.",
-  adminCategoryDeleted: "دسته‌بندی با موفقیت غیرفعال شد.",
+  adminCategoryDeleted: "✅ دسته‌بندی برای همیشه حذف شد.",
   adminProductDeleted: "محصول با موفقیت غیرفعال شد.",
   adminPlanDeleted: "پلن با موفقیت غیرفعال شد.",
   btnCreateCategory: "ساخت دسته جدید",
@@ -888,6 +888,17 @@ ${payload.ids}`,
   adminCreateCategoryCancelled: "❌ ساخت دسته‌بندی لغو شد.",
   adminCategoryCreated: ({ name }: { name: string }) =>
     `✅ دسته‌بندی «<b>${name}</b>» با موفقیت ساخته شد.`,
+  adminEditCategoryPromptFA: ({ current }: { current: string }) =>
+    `✏️ ویرایش دسته‌بندی.\n\nنام <b>فارسی</b> فعلی: <b>${current}</b>\n\nنام فارسی جدید را بفرستید، یا برای حفظ آن /skip را بزنید.\n\nبرای لغو /cancel را بفرستید.`,
+  adminEditCategoryPromptEN: ({ current }: { current: string }) =>
+    `نام <b>انگلیسی</b> فعلی: <b>${current}</b>\n\nنام انگلیسی جدید را بفرستید، یا برای حفظ آن /skip را بزنید.`,
+  adminEditCategoryPromptRU: ({ current }: { current: string }) =>
+    `نام <b>روسی</b> فعلی: <b>${current}</b>\n\nنام روسی جدید را بفرستید، یا برای حفظ آن /skip را بزنید.`,
+  adminEditCategoryCancelled: "❌ ویرایش دسته‌بندی لغو شد.",
+  adminCategoryUpdated: ({ name }: { name: string }) =>
+    `✅ دسته‌بندی «<b>${name}</b>» با موفقیت ویرایش شد.`,
+  adminCategoryProductsOrphaned: ({ count }: { count: number }) =>
+    `\n\n⚠️ ${count} محصول این دسته اکنون بدون دسته‌بندی شدند.`,
   priceLabel: (price: string) => `قیمت: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `مدت زمان: <b>${duration}</b>\n`,
   notAvailable: "موجود نیست",

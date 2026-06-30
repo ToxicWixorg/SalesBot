@@ -311,9 +311,37 @@ export async function adminCreatePlanCallback(context: any) {
 }
 
 export async function adminEditCategoryCallback(context: any) {
+  if (!context.from || !context.queryData) return;
   const t = await getT(context);
   if (!t) return;
-  await replyNotImplemented(context, t);
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const categoryId = Number.parseInt(context.queryData[1]!);
+  const category = await PremiumCategoryRepository.findById(categoryId);
+  if (!category) {
+    await context.answerCallbackQuery({
+      text: t("categoryNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  editCategoryState.set(context.from.id, { categoryId, step: "nameFA" });
+
+  await context.editText(
+    t("adminEditCategoryPromptFA", { current: category.nameFA }),
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPanelCategoryKeyboard(t, categoryId),
+    },
+  );
 }
 
 export async function adminEditProductCallback(context: any) {
@@ -343,14 +371,29 @@ export async function adminDeleteCategoryCallback(context: any) {
     return;
   }
 
-  await PremiumCategoryRepository.update(categoryId, { isActive: false });
+  // FK on products is ON DELETE no action, so orphan the products (set their
+  // category to null) before removing the category row for good.
+  const products = await ProductRepository.findAllByCategory(categoryId);
+  await ProductRepository.clearCategory(categoryId);
+  await PremiumCategoryRepository.delete(categoryId);
 
+  const orphanNote =
+    products.length > 0
+      ? t("adminCategoryProductsOrphaned", { count: products.length })
+      : "";
+
+  const categories = await PremiumCategoryRepository.findAll();
   await context.editText(
     `${t("adminCategoryDeleted")}\n\n` +
-      `<b>${getLocalizedName(category, context.from.languageCode)}</b>`,
+      `<b>${getLocalizedName(category, context.from.languageCode)}</b>` +
+      orphanNote,
     {
       parse_mode: "HTML",
-      reply_markup: adminPanelCategoryKeyboard(t, categoryId),
+      reply_markup: adminPanelCategoriesKeyboard(
+        t,
+        categories,
+        context.from.languageCode ?? "fa",
+      ),
     },
   );
 }
@@ -532,6 +575,17 @@ interface CreateCategoryState {
 /** adminUserId → in-progress category being created */
 const createCategoryState = new Map<number, CreateCategoryState>();
 
+interface EditCategoryState {
+  categoryId: number;
+  step: CreateCategoryStep;
+  nameFA?: string;
+  nameEN?: string;
+  nameRU?: string;
+}
+
+/** adminUserId → in-progress category being edited */
+const editCategoryState = new Map<number, EditCategoryState>();
+
 /** Build a URL-safe slug from a name; empty result falls back to a timestamp. */
 function slugify(input: string): string {
   const slug = input
@@ -563,13 +617,88 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
     if (!userId || !ctx.text) return next?.();
 
     const state = createCategoryState.get(userId);
-    if (!state) return next?.();
+    const editState = editCategoryState.get(userId);
+    if (!state && !editState) return next?.();
 
     // Don't swallow input meant for an active scene.
     if ((ctx as any).scene?.current) return next?.();
 
     const t = i18n.buildT(ctx.from?.languageCode ?? "fa");
     const text = ctx.text.trim();
+
+    // ── EDIT FLOW (send a new name per step, or /skip to keep it) ──────────
+    if (editState) {
+      if (text === "/cancel") {
+        editCategoryState.delete(userId);
+        await ctx.send(t("adminEditCategoryCancelled"), { parse_mode: "HTML" });
+        return;
+      }
+
+      const keep = text === "/skip";
+
+      if (editState.step === "nameFA") {
+        if (!keep) editState.nameFA = text;
+        editState.step = "nameEN";
+        const category = await PremiumCategoryRepository.findById(
+          editState.categoryId,
+        );
+        await ctx.send(
+          t("adminEditCategoryPromptEN", { current: category?.nameEN ?? "" }),
+          { parse_mode: "HTML" },
+        );
+        return;
+      }
+
+      if (editState.step === "nameEN") {
+        if (!keep) editState.nameEN = text;
+        editState.step = "nameRU";
+        const category = await PremiumCategoryRepository.findById(
+          editState.categoryId,
+        );
+        await ctx.send(
+          t("adminEditCategoryPromptRU", { current: category?.nameRU ?? "" }),
+          { parse_mode: "HTML" },
+        );
+        return;
+      }
+
+      // step === "nameRU" — final step: persist changed fields and confirm.
+      if (!keep) editState.nameRU = text;
+      editCategoryState.delete(userId);
+
+      const update: { nameFA?: string; nameEN?: string; nameRU?: string } = {};
+      if (editState.nameFA !== undefined) update.nameFA = editState.nameFA;
+      if (editState.nameEN !== undefined) update.nameEN = editState.nameEN;
+      if (editState.nameRU !== undefined) update.nameRU = editState.nameRU;
+
+      let category = await PremiumCategoryRepository.findById(
+        editState.categoryId,
+      );
+      if (!category) {
+        await ctx.send(t("categoryNotFound"), { parse_mode: "HTML" });
+        return;
+      }
+      if (Object.keys(update).length > 0) {
+        category = await PremiumCategoryRepository.update(
+          editState.categoryId,
+          update,
+        );
+      }
+
+      await ctx.send(
+        t("adminCategoryUpdated", {
+          name: getLocalizedName(category, ctx.from?.languageCode),
+        }),
+        {
+          parse_mode: "HTML",
+          reply_markup: adminPanelCategoryKeyboard(t, editState.categoryId),
+        },
+      );
+      return;
+    }
+
+    // ── CREATE FLOW ───────────────────────────────────────────────────────
+    if (!state) return next?.();
 
     if (text === "/cancel") {
       createCategoryState.delete(userId);
