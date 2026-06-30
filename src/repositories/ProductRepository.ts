@@ -116,6 +116,25 @@ export class ProductRepository {
       stock: (product.stock || 0) - quantity,
     });
   }
+
+  /**
+   * تمام محصولات یک دسته را بدون دسته کن (categoryId = null).
+   * قبل از حذف یک دسته استفاده می‌شود تا FK محصولات نقض نشود.
+   */
+  static async clearCategory(categoryId: number): Promise<void> {
+    await db
+      .update(productsTable)
+      .set({ categoryId: null, updatedAt: new Date() })
+      .where(eq(productsTable.categoryId, categoryId));
+  }
+
+  /**
+   * محصول را برای همیشه حذف کن (پلن‌هایش به‌صورت cascade حذف می‌شوند).
+   * اگر سفارشی به آن ارجاع دهد، خطای FK پرتاب می‌شود.
+   */
+  static async delete(id: number): Promise<void> {
+    await db.delete(productsTable).where(eq(productsTable.id, id));
+  }
 }
 
 export class ProductPlanRepository {
@@ -183,6 +202,14 @@ export class ProductPlanRepository {
 
     return result;
   }
+
+  /**
+   * پلن را برای همیشه حذف کن.
+   * اگر سفارشی به آن ارجاع دهد، خطای FK پرتاب می‌شود.
+   */
+  static async delete(id: number): Promise<void> {
+    await db.delete(productPlansTable).where(eq(productPlansTable.id, id));
+  }
 }
 
 export class PremiumCategoryRepository {
@@ -239,6 +266,14 @@ export class PremiumCategoryRepository {
       .returning();
 
     return result;
+  }
+
+  /**
+   * دسته را برای همیشه حذف کن.
+   * محصولات این دسته باید قبلاً با clearCategory بدون‌دسته شده باشند.
+   */
+  static async delete(id: number): Promise<void> {
+    await db.delete(categoriesTable).where(eq(categoriesTable.id, id));
   }
 }
 

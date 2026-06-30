@@ -329,9 +329,33 @@ export async function adminCreateProductCallback(context: any) {
 }
 
 export async function adminCreatePlanCallback(context: any) {
+  if (!context.from || !context.queryData) return;
   const t = await getT(context);
   if (!t) return;
-  await replyNotImplemented(context, t);
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const productId = Number.parseInt(context.queryData[1]!);
+  const product = await ProductRepository.findById(productId);
+  if (!product) {
+    await context.answerCallbackQuery({
+      text: t("productNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  createPlanState.set(context.from.id, { productId, step: "nameFA" });
+
+  await context.editText(t("adminCreatePlanPromptFA"), {
+    parse_mode: "HTML",
+  });
 }
 
 export async function adminEditCategoryCallback(context: any) {
@@ -369,9 +393,41 @@ export async function adminEditCategoryCallback(context: any) {
 }
 
 export async function adminEditProductCallback(context: any) {
+  if (!context.from || !context.queryData) return;
   const t = await getT(context);
   if (!t) return;
-  await replyNotImplemented(context, t);
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const productId = Number.parseInt(context.queryData[1]!);
+  const product = await ProductRepository.findById(productId);
+  if (!product) {
+    await context.answerCallbackQuery({
+      text: t("productNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  editProductState.set(context.from.id, { productId, step: "nameFA" });
+
+  await context.editText(
+    t("adminEditProductPromptFA", { current: product.nameFA }),
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPanelProductDetailsKeyboard(
+        t,
+        productId,
+        product.categoryId ?? 0,
+      ),
+    },
+  );
 }
 
 export async function adminEditPlanCallback(context: any) {
@@ -437,20 +493,28 @@ export async function adminDeleteProductCallback(context: any) {
     return;
   }
 
-  await ProductRepository.update(productId, { isActive: false });
+  const categoryId = product.categoryId ?? 0;
+  const name = getLocalizedName(product, context.from.languageCode);
 
-  await context.editText(
-    `${t("adminProductDeleted")}\n\n` +
-      `<b>${getLocalizedName(product, context.from.languageCode)}</b>`,
-    {
-      parse_mode: "HTML",
-      reply_markup: adminPanelProductDetailsKeyboard(
-        t,
-        productId,
-        product.categoryId ?? 0,
-      ),
-    },
-  );
+  let note = "";
+  try {
+    // Plans cascade-delete; this fails only if orders still reference it.
+    await ProductRepository.delete(productId);
+  } catch {
+    await ProductRepository.update(productId, { isActive: false });
+    note = `\n\n${t("adminProductDeactivatedHasOrders")}`;
+  }
+
+  const products = await ProductRepository.findAllByCategory(categoryId);
+  await context.editText(`${t("adminProductDeleted")}\n\n<b>${name}</b>${note}`, {
+    parse_mode: "HTML",
+    reply_markup: adminPanelProductsListKeyboard(
+      t,
+      products,
+      categoryId,
+      context.from.languageCode ?? "fa",
+    ),
+  });
 }
 
 export async function adminDeletePlanCallback(context: any) {
@@ -621,6 +685,30 @@ interface CreateProductState {
 /** adminUserId → in-progress product being created (under a category) */
 const createProductState = new Map<number, CreateProductState>();
 
+interface EditProductState {
+  productId: number;
+  step: CreateCategoryStep;
+  nameFA?: string;
+  nameEN?: string;
+  nameRU?: string;
+}
+
+/** adminUserId → in-progress product being edited */
+const editProductState = new Map<number, EditProductState>();
+
+type CreatePlanStep = "nameFA" | "nameEN" | "nameRU" | "price";
+
+interface CreatePlanState {
+  productId: number;
+  step: CreatePlanStep;
+  nameFA?: string;
+  nameEN?: string;
+  nameRU?: string;
+}
+
+/** adminUserId → in-progress plan being created (under a product) */
+const createPlanState = new Map<number, CreatePlanState>();
+
 /** Ensure a product slug is unique by appending an incrementing suffix. */
 async function uniqueProductSlug(base: string): Promise<string> {
   let slug = base;
@@ -664,7 +752,16 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
     const state = createCategoryState.get(userId);
     const editState = editCategoryState.get(userId);
     const productState = createProductState.get(userId);
-    if (!state && !editState && !productState) return next?.();
+    const editProdState = editProductState.get(userId);
+    const planState = createPlanState.get(userId);
+    if (
+      !state &&
+      !editState &&
+      !productState &&
+      !editProdState &&
+      !planState
+    )
+      return next?.();
 
     // Don't swallow input meant for an active scene.
     if ((ctx as any).scene?.current) return next?.();
@@ -794,6 +891,135 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
             product.id,
             productState.categoryId,
           ),
+        },
+      );
+      return;
+    }
+
+    // ── EDIT PRODUCT FLOW (new name per step, /skip to keep) ──────────────
+    if (editProdState) {
+      if (text === "/cancel") {
+        editProductState.delete(userId);
+        await ctx.send(t("adminEditProductCancelled"), { parse_mode: "HTML" });
+        return;
+      }
+
+      const keep = text === "/skip";
+
+      if (editProdState.step === "nameFA") {
+        if (!keep) editProdState.nameFA = text;
+        editProdState.step = "nameEN";
+        const product = await ProductRepository.findById(
+          editProdState.productId,
+        );
+        await ctx.send(
+          t("adminEditProductPromptEN", { current: product?.nameEN ?? "" }),
+          { parse_mode: "HTML" },
+        );
+        return;
+      }
+
+      if (editProdState.step === "nameEN") {
+        if (!keep) editProdState.nameEN = text;
+        editProdState.step = "nameRU";
+        const product = await ProductRepository.findById(
+          editProdState.productId,
+        );
+        await ctx.send(
+          t("adminEditProductPromptRU", { current: product?.nameRU ?? "" }),
+          { parse_mode: "HTML" },
+        );
+        return;
+      }
+
+      // step === "nameRU" — final step: persist changed fields and confirm.
+      if (!keep) editProdState.nameRU = text;
+      editProductState.delete(userId);
+
+      const update: { nameFA?: string; nameEN?: string; nameRU?: string } = {};
+      if (editProdState.nameFA !== undefined) update.nameFA = editProdState.nameFA;
+      if (editProdState.nameEN !== undefined) update.nameEN = editProdState.nameEN;
+      if (editProdState.nameRU !== undefined) update.nameRU = editProdState.nameRU;
+
+      let product = await ProductRepository.findById(editProdState.productId);
+      if (!product) {
+        await ctx.send(t("productNotFound"), { parse_mode: "HTML" });
+        return;
+      }
+      if (Object.keys(update).length > 0) {
+        product = await ProductRepository.update(editProdState.productId, update);
+      }
+
+      await ctx.send(
+        t("adminProductUpdated", {
+          name: getLocalizedName(product, ctx.from?.languageCode),
+        }),
+        {
+          parse_mode: "HTML",
+          reply_markup: adminPanelProductDetailsKeyboard(
+            t,
+            product.id,
+            product.categoryId ?? 0,
+          ),
+        },
+      );
+      return;
+    }
+
+    // ── CREATE PLAN FLOW (Persian → English → Russian name → USD price) ────
+    if (planState) {
+      if (text === "/cancel") {
+        createPlanState.delete(userId);
+        await ctx.send(t("adminCreatePlanCancelled"), { parse_mode: "HTML" });
+        return;
+      }
+
+      if (planState.step === "nameFA") {
+        planState.nameFA = text;
+        planState.step = "nameEN";
+        await ctx.send(t("adminCreatePlanPromptEN"), { parse_mode: "HTML" });
+        return;
+      }
+
+      if (planState.step === "nameEN") {
+        planState.nameEN = text;
+        planState.step = "nameRU";
+        await ctx.send(t("adminCreatePlanPromptRU"), { parse_mode: "HTML" });
+        return;
+      }
+
+      if (planState.step === "nameRU") {
+        planState.nameRU = text;
+        planState.step = "price";
+        await ctx.send(t("adminCreatePlanPromptPrice"), { parse_mode: "HTML" });
+        return;
+      }
+
+      // step === "price" — final step: validate price and create the plan.
+      const usd = Number.parseFloat(normalizeDigits(text));
+      if (!Number.isFinite(usd) || usd <= 0) {
+        await ctx.send(t("adminCreatePlanPriceInvalid"), { parse_mode: "HTML" });
+        return;
+      }
+      createPlanState.delete(userId);
+
+      const usdValue = usd.toFixed(2);
+      const plan = await ProductPlanRepository.create({
+        productId: planState.productId,
+        nameFA: planState.nameFA!,
+        nameEN: planState.nameEN!,
+        nameRU: planState.nameRU!,
+        price: usdValue,
+      });
+
+      await ctx.send(
+        t("adminPlanCreated", {
+          name: getLocalizedName(plan, ctx.from?.languageCode),
+          usd: usdValue,
+        }),
+        {
+          parse_mode: "HTML",
+          reply_markup: adminPanelPlanKeyboard(t, plan.id, plan.productId),
         },
       );
       return;

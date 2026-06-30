@@ -905,6 +905,28 @@ export const en = {
   adminCreateProductCancelled: "❌ Product creation cancelled.",
   adminProductCreated: ({ name }: { name: string }) =>
     `✅ Product "<b>${name}</b>" created successfully.\nYou can now add plans to it.`,
+  adminProductDeactivatedHasOrders:
+    "This product has existing orders, so it was deactivated instead of fully deleted (order history is preserved).",
+  adminEditProductPromptFA: ({ current }: { current: string }) =>
+    `✏️ Editing product.\n\nSend the new name in <b>Persian</b>.\nCurrent: <code>${current}</code>\n\n/skip to keep current, /cancel to abort.`,
+  adminEditProductPromptEN: ({ current }: { current: string }) =>
+    `Send the new name in <b>English</b>.\nCurrent: <code>${current}</code>\n\n/skip to keep.`,
+  adminEditProductPromptRU: ({ current }: { current: string }) =>
+    `Send the new name in <b>Russian</b>.\nCurrent: <code>${current}</code>\n\n/skip to keep.`,
+  adminEditProductCancelled: "❌ Product editing cancelled.",
+  adminProductUpdated: ({ name }: { name: string }) =>
+    `✅ Product "<b>${name}</b>" updated successfully.`,
+  adminCreatePlanPromptFA:
+    "🆕 Creating a new plan.\n\nSend the plan name in <b>Persian</b>.\n\nSend /cancel to abort.",
+  adminCreatePlanPromptEN: "Now send the plan name in <b>English</b>.",
+  adminCreatePlanPromptRU: "Now send the plan name in <b>Russian</b>.",
+  adminCreatePlanPromptPrice:
+    "Now enter the plan price in <b>USD</b>.\nFor example <code>12.5</code> for $12.5.",
+  adminCreatePlanPriceInvalid:
+    "❌ Invalid amount. Enter a valid USD number greater than zero (e.g. 12.5).",
+  adminCreatePlanCancelled: "❌ Plan creation cancelled.",
+  adminPlanCreated: ({ name, usd }: { name: string; usd: string }) =>
+    `✅ Plan "<b>${name}</b>" created with price <b>$${usd}</b>.`,
   priceLabel: (price: string) => `Price: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Duration: <b>${duration}</b>\n`,
   notAvailable: "Not available",

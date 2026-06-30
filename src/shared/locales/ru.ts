@@ -841,6 +841,28 @@ export const ru = {
   adminCreateProductCancelled: "❌ Создание товара отменено.",
   adminProductCreated: ({ name }: { name: string }) =>
     `✅ Товар «<b>${name}</b>» успешно создан.\nТеперь вы можете добавить к нему тарифы.`,
+  adminProductDeactivatedHasOrders:
+    "У этого товара есть заказы, поэтому он был деактивирован вместо полного удаления (история заказов сохранена).",
+  adminEditProductPromptFA: ({ current }: { current: string }) =>
+    `✏️ Редактирование товара.\n\nОтправьте новое название на <b>персидском</b>.\nТекущее: <code>${current}</code>\n\n/skip — оставить текущее, /cancel — отмена.`,
+  adminEditProductPromptEN: ({ current }: { current: string }) =>
+    `Отправьте новое название на <b>английском</b>.\nТекущее: <code>${current}</code>\n\n/skip — оставить.`,
+  adminEditProductPromptRU: ({ current }: { current: string }) =>
+    `Отправьте новое название на <b>русском</b>.\nТекущее: <code>${current}</code>\n\n/skip — оставить.`,
+  adminEditProductCancelled: "❌ Редактирование товара отменено.",
+  adminProductUpdated: ({ name }: { name: string }) =>
+    `✅ Товар «<b>${name}</b>» успешно обновлён.`,
+  adminCreatePlanPromptFA:
+    "🆕 Создание нового тарифа.\n\nОтправьте название тарифа на <b>персидском</b>.\n\nОтправьте /cancel для отмены.",
+  adminCreatePlanPromptEN: "Теперь отправьте название тарифа на <b>английском</b>.",
+  adminCreatePlanPromptRU: "Теперь отправьте название тарифа на <b>русском</b>.",
+  adminCreatePlanPromptPrice:
+    "Теперь введите цену тарифа в <b>долларах</b>.\nНапример <code>12.5</code> для $12.5.",
+  adminCreatePlanPriceInvalid:
+    "❌ Неверная сумма. Введите корректное число в долларах больше нуля (например 12.5).",
+  adminCreatePlanCancelled: "❌ Создание тарифа отменено.",
+  adminPlanCreated: ({ name, usd }: { name: string; usd: string }) =>
+    `✅ Тариф «<b>${name}</b>» создан с ценой <b>$${usd}</b>.`,
   priceLabel: (price: string) => `Цена: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Длительность: <b>${duration}</b>\n`,
   notAvailable: "Недоступно",

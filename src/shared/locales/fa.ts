@@ -906,6 +906,28 @@ ${payload.ids}`,
   adminCreateProductCancelled: "❌ ساخت محصول لغو شد.",
   adminProductCreated: ({ name }: { name: string }) =>
     `✅ محصول «<b>${name}</b>» با موفقیت ساخته شد.\nاکنون می‌توانید برایش پلن اضافه کنید.`,
+  adminProductDeactivatedHasOrders:
+    "این محصول سفارش ثبت‌شده دارد، پس به‌جای حذف کامل غیرفعال شد (تاریخچه سفارش‌ها حفظ می‌شود).",
+  adminEditProductPromptFA: ({ current }: { current: string }) =>
+    `✏️ ویرایش محصول.\n\nنام جدید را به <b>فارسی</b> بفرستید.\nمقدار فعلی: <code>${current}</code>\n\n/skip برای نگه‌داشتن مقدار فعلی، /cancel برای لغو.`,
+  adminEditProductPromptEN: ({ current }: { current: string }) =>
+    `نام جدید را به <b>انگلیسی</b> بفرستید.\nمقدار فعلی: <code>${current}</code>\n\n/skip برای نگه‌داشتن.`,
+  adminEditProductPromptRU: ({ current }: { current: string }) =>
+    `نام جدید را به <b>روسی</b> بفرستید.\nمقدار فعلی: <code>${current}</code>\n\n/skip برای نگه‌داشتن.`,
+  adminEditProductCancelled: "❌ ویرایش محصول لغو شد.",
+  adminProductUpdated: ({ name }: { name: string }) =>
+    `✅ محصول «<b>${name}</b>» با موفقیت بروزرسانی شد.`,
+  adminCreatePlanPromptFA:
+    "🆕 ساخت پلن جدید.\n\nنام پلن را به <b>فارسی</b> ارسال کنید.\n\nبرای لغو /cancel را بفرستید.",
+  adminCreatePlanPromptEN: "حالا نام پلن را به <b>انگلیسی</b> ارسال کنید.",
+  adminCreatePlanPromptRU: "حالا نام پلن را به <b>روسی</b> ارسال کنید.",
+  adminCreatePlanPromptPrice:
+    "حالا قیمت پلن را به <b>دلار</b> وارد کنید.\nمثلاً <code>12.5</code> برای ۱۲٫۵ دلار.",
+  adminCreatePlanPriceInvalid:
+    "❌ مبلغ نامعتبر است. یک عدد دلاری معتبر بزرگ‌تر از صفر وارد کنید (مثلاً 12.5).",
+  adminCreatePlanCancelled: "❌ ساخت پلن لغو شد.",
+  adminPlanCreated: ({ name, usd }: { name: string; usd: string }) =>
+    `✅ پلن «<b>${name}</b>» با قیمت <b>$${usd}</b> ساخته شد.`,
   priceLabel: (price: string) => `قیمت: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `مدت زمان: <b>${duration}</b>\n`,
   notAvailable: "موجود نیست",
