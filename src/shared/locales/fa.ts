@@ -939,6 +939,47 @@ ${payload.ids}`,
   adminEditPlanCancelled: "❌ ویرایش پلن لغو شد.",
   adminPlanUpdated: ({ name }: { name: string }) =>
     `✅ پلن «<b>${name}</b>» با موفقیت بروزرسانی شد.`,
+  deliveryType_automatic: "خودکار",
+  deliveryType_manual: "دستی",
+  deliveryType_custom_schedule: "زمان‌بندی‌شده",
+  btnPlanEditName: "✏️ نام",
+  btnPlanEditDesc: "📝 توضیحات",
+  btnPlanEditDuration: "⏳ مدت زمان",
+  btnPlanDelivery: "🚚 نوع تحویل",
+  btnPlanRequirements: "📋 نیازمندی‌ها",
+  btnPlanOrder: "🔢 ترتیب",
+  btnPlanActivate: "✅ فعال‌سازی",
+  btnPlanDeactivate: "🚫 غیرفعال‌سازی",
+  reqEmail: "ایمیل",
+  reqOtp: "کد یکبارمصرف (OTP)",
+  reqLogin: "ورود",
+  reqRegion: "منطقه",
+  adminPlanDeliveryPrompt: "نوع تحویل این پلن را انتخاب کنید:",
+  adminPlanDeliveryUpdated: ({ type }: { type: string }) =>
+    `✅ نوع تحویل روی «<b>${type}</b>» تنظیم شد.`,
+  adminPlanRequirementsTitle:
+    "نیازمندی‌های این پلن را با کلیک تغییر دهید (✅ فعال / ❌ غیرفعال):",
+  adminPlanActiveToggled: ({ status }: { status: string }) =>
+    `✅ وضعیت پلن به «<b>${status}</b>» تغییر کرد.`,
+  adminEditPlanDescPromptFA: ({ current }: { current: string }) =>
+    `✏️ ویرایش توضیحات پلن.\n\nتوضیحات جدید را به <b>فارسی</b> بفرستید.\nمقدار فعلی: <code>${current}</code>\n\n/skip برای نگه‌داشتن، /clear برای خالی‌کردن، /cancel برای لغو.`,
+  adminEditPlanDescPromptEN: ({ current }: { current: string }) =>
+    `توضیحات جدید را به <b>انگلیسی</b> بفرستید.\nمقدار فعلی: <code>${current}</code>\n\n/skip یا /clear.`,
+  adminEditPlanDescPromptRU: ({ current }: { current: string }) =>
+    `توضیحات جدید را به <b>روسی</b> بفرستید.\nمقدار فعلی: <code>${current}</code>\n\n/skip یا /clear.`,
+  adminEditPlanDescCancelled: "❌ ویرایش توضیحات لغو شد.",
+  adminPlanDescUpdated: "✅ توضیحات پلن بروزرسانی شد.",
+  adminEditPlanDurationPrompt:
+    "⏳ مدت زمان را وارد کنید: عدد و واحد، مثل <code>30 day</code> یا <code>6 month</code> یا <code>1 year</code>.\nبرای «یک‌بار مصرف» عدد <code>0</code> را بفرستید.\n/cancel برای لغو.",
+  adminPlanDurationInvalid:
+    "❌ قالب نامعتبر. مثلاً <code>30 day</code> یا <code>6 month</code> یا <code>0</code> برای یک‌بار مصرف.",
+  adminPlanDurationUpdated: ({ duration }: { duration: string }) =>
+    `✅ مدت زمان روی «<b>${duration}</b>» تنظیم شد.`,
+  adminEditPlanOrderPrompt: ({ current }: { current: number }) =>
+    `🔢 ترتیب نمایش جدید را به‌صورت یک عدد وارد کنید (عدد کوچکتر = بالاتر).\nمقدار فعلی: <code>${current}</code>\n/cancel برای لغو.`,
+  adminPlanOrderInvalid: "❌ یک عدد صحیح معتبر وارد کنید (مثلاً 0، 1، 2).",
+  adminPlanOrderUpdated: ({ order }: { order: number }) =>
+    `✅ ترتیب نمایش روی <b>${order}</b> تنظیم شد.`,
   priceLabel: (price: string) => `قیمت: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `مدت زمان: <b>${duration}</b>\n`,
   notAvailable: "موجود نیست",

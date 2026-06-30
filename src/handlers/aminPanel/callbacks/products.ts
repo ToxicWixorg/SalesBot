@@ -19,6 +19,10 @@ import {
   adminPanelProductDetailsKeyboard,
   adminPanelProductPlansKeyboard,
   adminPanelPlanKeyboard,
+  adminPlanDeliveryKeyboard,
+  adminPlanRequirementsKeyboard,
+  deliveryTypeLabel,
+  DELIVERY_TYPES,
 } from "../../../shared/keyboards/adminPanel/products.ts";
 import {
   getLocalizedName,
@@ -267,7 +271,7 @@ export async function adminPlanCallback(context: any) {
 
   await context.editText(message, {
     parse_mode: "HTML",
-    reply_markup: adminPanelPlanKeyboard(t, planId, plan.productId),
+    reply_markup: adminPanelPlanKeyboard(t, plan),
   });
 }
 
@@ -457,7 +461,7 @@ export async function adminEditPlanCallback(context: any) {
 
   await context.editText(t("adminEditPlanPromptFA", { current: plan.nameFA }), {
     parse_mode: "HTML",
-    reply_markup: adminPanelPlanKeyboard(t, planId, plan.productId),
+    reply_markup: adminPanelPlanKeyboard(t, plan),
   });
 }
 
@@ -582,6 +586,286 @@ export async function adminDeletePlanCallback(context: any) {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🚚 PLAN FIELD MANAGEMENT (delivery / requirements / active) ━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/** `admin_plan_delivery_{planId}` — show the delivery-type submenu. */
+export async function adminPlanDeliveryCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  await context.editText(t("adminPlanDeliveryPrompt"), {
+    parse_mode: "HTML",
+    reply_markup: adminPlanDeliveryKeyboard(t, plan),
+  });
+}
+
+/** `admin_plan_setdelivery_{planId}_{type}` — set the plan's delivery type. */
+export async function adminPlanSetDeliveryCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const type = context.queryData[2]!;
+  if (!(DELIVERY_TYPES as readonly string[]).includes(type)) {
+    await context.answerCallbackQuery();
+    return;
+  }
+
+  let plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  plan = await ProductPlanRepository.update(planId, { deliveryType: type });
+
+  await context.editText(
+    t("adminPlanDeliveryUpdated", { type: deliveryTypeLabel(t, type) }),
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPanelPlanKeyboard(t, plan),
+    },
+  );
+}
+
+/** `admin_plan_reqs_{planId}` — show the requirement-toggles submenu. */
+export async function adminPlanRequirementsCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  await context.editText(t("adminPlanRequirementsTitle"), {
+    parse_mode: "HTML",
+    reply_markup: adminPlanRequirementsKeyboard(t, plan),
+  });
+}
+
+const REQ_FIELD: Record<
+  string,
+  "requiresEmail" | "requiresOtp" | "requiresLogin" | "requiresRegion"
+> = {
+  email: "requiresEmail",
+  otp: "requiresOtp",
+  login: "requiresLogin",
+  region: "requiresRegion",
+};
+
+/** `admin_plan_togglereq_{planId}_{field}` — flip one boolean requirement. */
+export async function adminPlanToggleReqCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const column = REQ_FIELD[context.queryData[2]!];
+  if (!column) {
+    await context.answerCallbackQuery();
+    return;
+  }
+
+  let plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  plan = await ProductPlanRepository.update(planId, {
+    [column]: !plan[column],
+  });
+
+  await context.editText(t("adminPlanRequirementsTitle"), {
+    parse_mode: "HTML",
+    reply_markup: adminPlanRequirementsKeyboard(t, plan),
+  });
+}
+
+/** `admin_plan_toggleactive_{planId}` — activate/deactivate the plan. */
+export async function adminPlanToggleActiveCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  let plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  plan = await ProductPlanRepository.update(planId, {
+    isActive: plan.isActive === false,
+  });
+
+  await context.editText(
+    t("adminPlanActiveToggled", {
+      status: plan.isActive ? t("active") : t("inactive"),
+    }),
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPanelPlanKeyboard(t, plan),
+    },
+  );
+}
+
+/** `admin_plan_desc_{planId}` — start the description edit flow. */
+export async function adminEditPlanDescCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  editPlanDescState.set(context.from.id, { planId, step: "nameFA" });
+
+  await context.editText(
+    t("adminEditPlanDescPromptFA", { current: plan.descriptionFA ?? "-" }),
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPanelPlanKeyboard(t, plan),
+    },
+  );
+}
+
+/** `admin_plan_duration_{planId}` — prompt for the new duration. */
+export async function adminEditPlanDurationCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  editPlanDurationState.set(context.from.id, planId);
+
+  await context.editText(t("adminEditPlanDurationPrompt"), {
+    parse_mode: "HTML",
+    reply_markup: adminPanelPlanKeyboard(t, plan),
+  });
+}
+
+/** `admin_plan_order_{planId}` — prompt for the new display order. */
+export async function adminEditPlanOrderCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  editPlanOrderState.set(context.from.id, planId);
+
+  await context.editText(
+    t("adminEditPlanOrderPrompt", { current: plan.order ?? 0 }),
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPanelPlanKeyboard(t, plan),
+    },
+  );
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 💵 EDIT PLAN PRICE (admin enters USD) ━━━━━━━━━━━━━━━━━━━━━━━━━━
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -626,7 +910,7 @@ export async function adminEditPlanPriceCallback(context: any) {
   const planName = getLocalizedName(plan, context.from.languageCode);
   await context.editText(t("adminEditPlanPricePrompt", { planName }), {
     parse_mode: "HTML",
-    reply_markup: adminPanelPlanKeyboard(t, planId, plan.productId),
+    reply_markup: adminPanelPlanKeyboard(t, plan),
   });
 }
 
@@ -678,7 +962,7 @@ export function setupAdminPlanPriceHandler(bot: AnyBot): void {
       }) + tomanLine,
       {
         parse_mode: "HTML",
-        reply_markup: adminPanelPlanKeyboard(t, planId, plan.productId),
+        reply_markup: adminPanelPlanKeyboard(t, plan),
       },
     );
   });
@@ -757,6 +1041,23 @@ interface EditPlanState {
 /** adminUserId → in-progress plan being edited */
 const editPlanState = new Map<number, EditPlanState>();
 
+interface EditPlanDescState {
+  planId: number;
+  step: CreateCategoryStep;
+  descFA?: string | null;
+  descEN?: string | null;
+  descRU?: string | null;
+}
+
+/** adminUserId → in-progress plan description being edited */
+const editPlanDescState = new Map<number, EditPlanDescState>();
+
+/** adminUserId → planId whose duration is being entered */
+const editPlanDurationState = new Map<number, number>();
+
+/** adminUserId → planId whose display order is being entered */
+const editPlanOrderState = new Map<number, number>();
+
 /** Ensure a product slug is unique by appending an incrementing suffix. */
 async function uniqueProductSlug(base: string): Promise<string> {
   let slug = base;
@@ -803,13 +1104,19 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
     const editProdState = editProductState.get(userId);
     const planState = createPlanState.get(userId);
     const editPlState = editPlanState.get(userId);
+    const planDescState = editPlanDescState.get(userId);
+    const planDurationId = editPlanDurationState.get(userId);
+    const planOrderId = editPlanOrderState.get(userId);
     if (
       !state &&
       !editState &&
       !productState &&
       !editProdState &&
       !planState &&
-      !editPlState
+      !editPlState &&
+      !planDescState &&
+      planDurationId === undefined &&
+      planOrderId === undefined
     )
       return next?.();
 
@@ -1069,7 +1376,7 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
         }),
         {
           parse_mode: "HTML",
-          reply_markup: adminPanelPlanKeyboard(t, plan.id, plan.productId),
+          reply_markup: adminPanelPlanKeyboard(t, plan),
         },
       );
       return;
@@ -1131,9 +1438,152 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
         }),
         {
           parse_mode: "HTML",
-          reply_markup: adminPanelPlanKeyboard(t, plan.id, plan.productId),
+          reply_markup: adminPanelPlanKeyboard(t, plan),
         },
       );
+      return;
+    }
+
+    // ── EDIT PLAN DESCRIPTION FLOW (per language; /skip keep, /clear empty) ─
+    if (planDescState) {
+      if (text === "/cancel") {
+        editPlanDescState.delete(userId);
+        await ctx.send(t("adminEditPlanDescCancelled"), { parse_mode: "HTML" });
+        return;
+      }
+
+      const apply = (): string | null | undefined =>
+        text === "/skip" ? undefined : text === "/clear" ? null : text;
+
+      if (planDescState.step === "nameFA") {
+        planDescState.descFA = apply();
+        planDescState.step = "nameEN";
+        const plan = await ProductPlanRepository.findById(planDescState.planId);
+        await ctx.send(
+          t("adminEditPlanDescPromptEN", { current: plan?.descriptionEN ?? "-" }),
+          { parse_mode: "HTML" },
+        );
+        return;
+      }
+
+      if (planDescState.step === "nameEN") {
+        planDescState.descEN = apply();
+        planDescState.step = "nameRU";
+        const plan = await ProductPlanRepository.findById(planDescState.planId);
+        await ctx.send(
+          t("adminEditPlanDescPromptRU", { current: plan?.descriptionRU ?? "-" }),
+          { parse_mode: "HTML" },
+        );
+        return;
+      }
+
+      // step === "nameRU" — final step: persist changed fields and confirm.
+      planDescState.descRU = apply();
+      editPlanDescState.delete(userId);
+
+      const update: {
+        descriptionFA?: string | null;
+        descriptionEN?: string | null;
+        descriptionRU?: string | null;
+      } = {};
+      if (planDescState.descFA !== undefined)
+        update.descriptionFA = planDescState.descFA;
+      if (planDescState.descEN !== undefined)
+        update.descriptionEN = planDescState.descEN;
+      if (planDescState.descRU !== undefined)
+        update.descriptionRU = planDescState.descRU;
+
+      let plan = await ProductPlanRepository.findById(planDescState.planId);
+      if (!plan) {
+        await ctx.send(t("planNotFound"), { parse_mode: "HTML" });
+        return;
+      }
+      if (Object.keys(update).length > 0) {
+        plan = await ProductPlanRepository.update(planDescState.planId, update);
+      }
+
+      await ctx.send(t("adminPlanDescUpdated"), {
+        parse_mode: "HTML",
+        reply_markup: adminPanelPlanKeyboard(t, plan),
+      });
+      return;
+    }
+
+    // ── EDIT PLAN DURATION FLOW (e.g. "30 day", "6 month", "0" = one-time) ─
+    if (planDurationId !== undefined) {
+      if (text === "/cancel") {
+        editPlanDurationState.delete(userId);
+        await ctx.send(t("adminEditPlanCancelled"), { parse_mode: "HTML" });
+        return;
+      }
+
+      const norm = normalizeDigits(text).trim().toLowerCase();
+
+      if (norm === "0") {
+        editPlanDurationState.delete(userId);
+        const plan = await ProductPlanRepository.update(planDurationId, {
+          duration: null,
+          durationUnit: null,
+        });
+        await ctx.send(t("adminPlanDurationUpdated", { duration: t("oneTime") }), {
+          parse_mode: "HTML",
+          reply_markup: adminPanelPlanKeyboard(t, plan),
+        });
+        return;
+      }
+
+      const m = norm.match(/^(\d+)\s*(day|month|year|روز|ماه|سال)?$/);
+      const num = m ? Number.parseInt(m[1]!, 10) : NaN;
+      if (!m || !Number.isFinite(num) || num <= 0) {
+        await ctx.send(t("adminPlanDurationInvalid"), { parse_mode: "HTML" });
+        return;
+      }
+      let unit = m[2] ?? "day";
+      if (unit === "روز") unit = "day";
+      else if (unit === "ماه") unit = "month";
+      else if (unit === "سال") unit = "year";
+
+      editPlanDurationState.delete(userId);
+      const plan = await ProductPlanRepository.update(planDurationId, {
+        duration: num,
+        durationUnit: unit,
+      });
+      const unitLabel =
+        unit === "month"
+          ? t("duration_month")
+          : unit === "year"
+            ? t("duration_year")
+            : t("duration_day");
+      await ctx.send(
+        t("adminPlanDurationUpdated", { duration: `${num} ${unitLabel}` }),
+        {
+          parse_mode: "HTML",
+          reply_markup: adminPanelPlanKeyboard(t, plan),
+        },
+      );
+      return;
+    }
+
+    // ── EDIT PLAN DISPLAY ORDER FLOW ──────────────────────────────────────
+    if (planOrderId !== undefined) {
+      if (text === "/cancel") {
+        editPlanOrderState.delete(userId);
+        await ctx.send(t("adminEditPlanCancelled"), { parse_mode: "HTML" });
+        return;
+      }
+
+      const order = Number.parseInt(normalizeDigits(text).trim(), 10);
+      if (!Number.isInteger(order) || order < 0) {
+        await ctx.send(t("adminPlanOrderInvalid"), { parse_mode: "HTML" });
+        return;
+      }
+
+      editPlanOrderState.delete(userId);
+      const plan = await ProductPlanRepository.update(planOrderId, { order });
+      await ctx.send(t("adminPlanOrderUpdated", { order }), {
+        parse_mode: "HTML",
+        reply_markup: adminPanelPlanKeyboard(t, plan),
+      });
       return;
     }
 

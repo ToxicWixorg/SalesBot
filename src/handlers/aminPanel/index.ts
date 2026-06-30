@@ -21,6 +21,14 @@ import {
   adminDeleteCategoryCallback,
   adminDeleteProductCallback,
   adminDeletePlanCallback,
+  adminPlanDeliveryCallback,
+  adminPlanSetDeliveryCallback,
+  adminPlanRequirementsCallback,
+  adminPlanToggleReqCallback,
+  adminPlanToggleActiveCallback,
+  adminEditPlanDescCallback,
+  adminEditPlanDurationCallback,
+  adminEditPlanOrderCallback,
 } from "./callbacks/products.ts";
 
 export const adminPanelComposer = new Composer()
@@ -85,6 +93,30 @@ export const adminPanelComposer = new Composer()
   })
   .callbackQuery(/^admin_delete_plan_(\d+)$/, async (context) => {
     return await adminDeletePlanCallback(context);
+  })
+  .callbackQuery(/^admin_plan_setdelivery_(\d+)_([a-z_]+)$/, async (context) => {
+    return await adminPlanSetDeliveryCallback(context);
+  })
+  .callbackQuery(/^admin_plan_delivery_(\d+)$/, async (context) => {
+    return await adminPlanDeliveryCallback(context);
+  })
+  .callbackQuery(/^admin_plan_togglereq_(\d+)_([a-z]+)$/, async (context) => {
+    return await adminPlanToggleReqCallback(context);
+  })
+  .callbackQuery(/^admin_plan_reqs_(\d+)$/, async (context) => {
+    return await adminPlanRequirementsCallback(context);
+  })
+  .callbackQuery(/^admin_plan_toggleactive_(\d+)$/, async (context) => {
+    return await adminPlanToggleActiveCallback(context);
+  })
+  .callbackQuery(/^admin_plan_desc_(\d+)$/, async (context) => {
+    return await adminEditPlanDescCallback(context);
+  })
+  .callbackQuery(/^admin_plan_duration_(\d+)$/, async (context) => {
+    return await adminEditPlanDurationCallback(context);
+  })
+  .callbackQuery(/^admin_plan_order_(\d+)$/, async (context) => {
+    return await adminEditPlanOrderCallback(context);
   });
   
 

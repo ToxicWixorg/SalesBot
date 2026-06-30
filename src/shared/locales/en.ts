@@ -938,6 +938,47 @@ export const en = {
   adminEditPlanCancelled: "❌ Plan editing cancelled.",
   adminPlanUpdated: ({ name }: { name: string }) =>
     `✅ Plan "<b>${name}</b>" updated successfully.`,
+  deliveryType_automatic: "Automatic",
+  deliveryType_manual: "Manual",
+  deliveryType_custom_schedule: "Scheduled",
+  btnPlanEditName: "✏️ Name",
+  btnPlanEditDesc: "📝 Description",
+  btnPlanEditDuration: "⏳ Duration",
+  btnPlanDelivery: "🚚 Delivery",
+  btnPlanRequirements: "📋 Requirements",
+  btnPlanOrder: "🔢 Order",
+  btnPlanActivate: "✅ Activate",
+  btnPlanDeactivate: "🚫 Deactivate",
+  reqEmail: "Email",
+  reqOtp: "OTP",
+  reqLogin: "Login",
+  reqRegion: "Region",
+  adminPlanDeliveryPrompt: "Choose this plan's delivery type:",
+  adminPlanDeliveryUpdated: ({ type }: { type: string }) =>
+    `✅ Delivery type set to "<b>${type}</b>".`,
+  adminPlanRequirementsTitle:
+    "Toggle this plan's requirements (✅ on / ❌ off):",
+  adminPlanActiveToggled: ({ status }: { status: string }) =>
+    `✅ Plan status changed to "<b>${status}</b>".`,
+  adminEditPlanDescPromptFA: ({ current }: { current: string }) =>
+    `✏️ Editing plan description.\n\nSend the new description in <b>Persian</b>.\nCurrent: <code>${current}</code>\n\n/skip to keep, /clear to empty, /cancel to abort.`,
+  adminEditPlanDescPromptEN: ({ current }: { current: string }) =>
+    `Send the new description in <b>English</b>.\nCurrent: <code>${current}</code>\n\n/skip or /clear.`,
+  adminEditPlanDescPromptRU: ({ current }: { current: string }) =>
+    `Send the new description in <b>Russian</b>.\nCurrent: <code>${current}</code>\n\n/skip or /clear.`,
+  adminEditPlanDescCancelled: "❌ Description editing cancelled.",
+  adminPlanDescUpdated: "✅ Plan description updated.",
+  adminEditPlanDurationPrompt:
+    "⏳ Enter the duration: a number and unit, e.g. <code>30 day</code>, <code>6 month</code>, <code>1 year</code>.\nSend <code>0</code> for one-time.\n/cancel to abort.",
+  adminPlanDurationInvalid:
+    "❌ Invalid format. E.g. <code>30 day</code>, <code>6 month</code>, or <code>0</code> for one-time.",
+  adminPlanDurationUpdated: ({ duration }: { duration: string }) =>
+    `✅ Duration set to "<b>${duration}</b>".`,
+  adminEditPlanOrderPrompt: ({ current }: { current: number }) =>
+    `🔢 Enter the new display order as a number (smaller = higher).\nCurrent: <code>${current}</code>\n/cancel to abort.`,
+  adminPlanOrderInvalid: "❌ Enter a valid integer (e.g. 0, 1, 2).",
+  adminPlanOrderUpdated: ({ order }: { order: number }) =>
+    `✅ Display order set to <b>${order}</b>.`,
   priceLabel: (price: string) => `Price: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Duration: <b>${duration}</b>\n`,
   notAvailable: "Not available",

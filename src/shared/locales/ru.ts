@@ -874,6 +874,47 @@ export const ru = {
   adminEditPlanCancelled: "❌ Редактирование тарифа отменено.",
   adminPlanUpdated: ({ name }: { name: string }) =>
     `✅ Тариф «<b>${name}</b>» успешно обновлён.`,
+  deliveryType_automatic: "Автоматически",
+  deliveryType_manual: "Вручную",
+  deliveryType_custom_schedule: "По расписанию",
+  btnPlanEditName: "✏️ Название",
+  btnPlanEditDesc: "📝 Описание",
+  btnPlanEditDuration: "⏳ Срок",
+  btnPlanDelivery: "🚚 Доставка",
+  btnPlanRequirements: "📋 Требования",
+  btnPlanOrder: "🔢 Порядок",
+  btnPlanActivate: "✅ Активировать",
+  btnPlanDeactivate: "🚫 Деактивировать",
+  reqEmail: "Email",
+  reqOtp: "OTP",
+  reqLogin: "Вход",
+  reqRegion: "Регион",
+  adminPlanDeliveryPrompt: "Выберите тип доставки этого тарифа:",
+  adminPlanDeliveryUpdated: ({ type }: { type: string }) =>
+    `✅ Тип доставки установлен на «<b>${type}</b>».`,
+  adminPlanRequirementsTitle:
+    "Переключите требования этого тарифа (✅ вкл / ❌ выкл):",
+  adminPlanActiveToggled: ({ status }: { status: string }) =>
+    `✅ Статус тарифа изменён на «<b>${status}</b>».`,
+  adminEditPlanDescPromptFA: ({ current }: { current: string }) =>
+    `✏️ Редактирование описания тарифа.\n\nОтправьте новое описание на <b>персидском</b>.\nТекущее: <code>${current}</code>\n\n/skip — оставить, /clear — очистить, /cancel — отмена.`,
+  adminEditPlanDescPromptEN: ({ current }: { current: string }) =>
+    `Отправьте новое описание на <b>английском</b>.\nТекущее: <code>${current}</code>\n\n/skip или /clear.`,
+  adminEditPlanDescPromptRU: ({ current }: { current: string }) =>
+    `Отправьте новое описание на <b>русском</b>.\nТекущее: <code>${current}</code>\n\n/skip или /clear.`,
+  adminEditPlanDescCancelled: "❌ Редактирование описания отменено.",
+  adminPlanDescUpdated: "✅ Описание тарифа обновлено.",
+  adminEditPlanDurationPrompt:
+    "⏳ Введите срок: число и единицу, напр. <code>30 day</code>, <code>6 month</code>, <code>1 year</code>.\nОтправьте <code>0</code> для разового.\n/cancel — отмена.",
+  adminPlanDurationInvalid:
+    "❌ Неверный формат. Напр. <code>30 day</code>, <code>6 month</code> или <code>0</code> для разового.",
+  adminPlanDurationUpdated: ({ duration }: { duration: string }) =>
+    `✅ Срок установлен на «<b>${duration}</b>».`,
+  adminEditPlanOrderPrompt: ({ current }: { current: number }) =>
+    `🔢 Введите новый порядок отображения числом (меньше = выше).\nТекущее: <code>${current}</code>\n/cancel — отмена.`,
+  adminPlanOrderInvalid: "❌ Введите корректное целое число (напр. 0, 1, 2).",
+  adminPlanOrderUpdated: ({ order }: { order: number }) =>
+    `✅ Порядок отображения установлен на <b>${order}</b>.`,
   priceLabel: (price: string) => `Цена: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Длительность: <b>${duration}</b>\n`,
   notAvailable: "Недоступно",
