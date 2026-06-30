@@ -5,7 +5,7 @@
 
 import { db } from "../db/index.ts";
 import {
-  categoriesTable,
+  premiumCategoriesTable as categoriesTable,
   productsTable,
   productPlansTable,
 } from "../db/schema.ts";

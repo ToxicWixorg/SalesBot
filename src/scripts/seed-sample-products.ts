@@ -1,7 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "../db/index.ts";
 import {
-  categoriesTable,
+  premiumCategoriesTable as categoriesTable,
   productPlansTable,
   productsTable,
 } from "../db/schema.ts";

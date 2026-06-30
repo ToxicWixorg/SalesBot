@@ -1,5 +1,5 @@
 import { db } from "../db/index.ts";
-import { categoriesTable } from "../db/schema.ts";
+import { premiumCategoriesTable as categoriesTable } from "../db/schema.ts";
 import { eq } from "drizzle-orm";
 
 const defaultCategories = [
