@@ -881,6 +881,13 @@ ${payload.ids}`,
     planName: string;
     usd: string;
   }) => `✅ قیمت پلن «<b>${planName}</b>» روی <b>$${usd}</b> تنظیم شد.`,
+  adminCreateCategoryPromptFA:
+    "🆕 ساخت دسته‌بندی جدید.\n\nنام دسته را به <b>فارسی</b> ارسال کنید.\n\nبرای لغو /cancel را بفرستید.",
+  adminCreateCategoryPromptEN: "حالا نام دسته را به <b>انگلیسی</b> ارسال کنید.",
+  adminCreateCategoryPromptRU: "حالا نام دسته را به <b>روسی</b> ارسال کنید.",
+  adminCreateCategoryCancelled: "❌ ساخت دسته‌بندی لغو شد.",
+  adminCategoryCreated: ({ name }: { name: string }) =>
+    `✅ دسته‌بندی «<b>${name}</b>» با موفقیت ساخته شد.`,
   priceLabel: (price: string) => `قیمت: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `مدت زمان: <b>${duration}</b>\n`,
   notAvailable: "موجود نیست",

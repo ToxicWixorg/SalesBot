@@ -279,9 +279,23 @@ async function replyNotImplemented(context: any, t: any) {
 }
 
 export async function adminCreateCategoryCallback(context: any) {
+  if (!context.from) return;
   const t = await getT(context);
   if (!t) return;
-  await replyNotImplemented(context, t);
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  createCategoryState.set(context.from.id, { step: "nameFA" });
+
+  await context.editText(t("adminCreateCategoryPromptFA"), {
+    parse_mode: "HTML",
+  });
 }
 
 export async function adminCreateProductCallback(context: any) {
@@ -499,5 +513,105 @@ export function setupAdminPlanPriceHandler(bot: AnyBot): void {
         reply_markup: adminPanelPlanKeyboard(t, planId, plan.productId),
       },
     );
+  });
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🆕 CREATE CATEGORY (admin enters names) ━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+type CreateCategoryStep = "nameFA" | "nameEN" | "nameRU";
+
+interface CreateCategoryState {
+  step: CreateCategoryStep;
+  nameFA?: string;
+  nameEN?: string;
+  nameRU?: string;
+}
+
+/** adminUserId → in-progress category being created */
+const createCategoryState = new Map<number, CreateCategoryState>();
+
+/** Build a URL-safe slug from a name; empty result falls back to a timestamp. */
+function slugify(input: string): string {
+  const slug = input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return slug || `category-${Date.now()}`;
+}
+
+/** Ensure the slug is unique by appending an incrementing suffix when needed. */
+async function uniqueCategorySlug(base: string): Promise<string> {
+  let slug = base;
+  let n = 2;
+  while (await PremiumCategoryRepository.findBySlug(slug)) {
+    slug = `${base}-${n++}`;
+  }
+  return slug;
+}
+
+/**
+ * Registers the text-message interceptor that walks an admin through creating a
+ * category (Persian → English → Russian name). Wire via
+ * setupAdminCreateCategoryHandler(bot).
+ */
+export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
+  bot.on("message", async (ctx, next) => {
+    const userId = ctx.from?.id;
+    if (!userId || !ctx.text) return next?.();
+
+    const state = createCategoryState.get(userId);
+    if (!state) return next?.();
+
+    // Don't swallow input meant for an active scene.
+    if ((ctx as any).scene?.current) return next?.();
+
+    const t = i18n.buildT(ctx.from?.languageCode ?? "fa");
+    const text = ctx.text.trim();
+
+    if (text === "/cancel") {
+      createCategoryState.delete(userId);
+      await ctx.send(t("adminCreateCategoryCancelled"), { parse_mode: "HTML" });
+      return;
+    }
+
+    if (state.step === "nameFA") {
+      state.nameFA = text;
+      state.step = "nameEN";
+      await ctx.send(t("adminCreateCategoryPromptEN"), { parse_mode: "HTML" });
+      return;
+    }
+
+    if (state.step === "nameEN") {
+      state.nameEN = text;
+      state.step = "nameRU";
+      await ctx.send(t("adminCreateCategoryPromptRU"), { parse_mode: "HTML" });
+      return;
+    }
+
+    // state.step === "nameRU" — final step: persist and confirm.
+    state.nameRU = text;
+    createCategoryState.delete(userId);
+
+    const slug = await uniqueCategorySlug(slugify(state.nameEN ?? state.nameFA ?? "category"));
+
+    await PremiumCategoryRepository.create({
+      nameFA: state.nameFA!,
+      nameEN: state.nameEN!,
+      nameRU: state.nameRU!,
+      slug,
+    });
+
+    const categories = await PremiumCategoryRepository.findAll();
+    await ctx.send(t("adminCategoryCreated", { name: state.nameFA! }), {
+      parse_mode: "HTML",
+      reply_markup: adminPanelCategoriesKeyboard(
+        t,
+        categories,
+        ctx.from?.languageCode ?? "fa",
+      ),
+    });
   });
 }

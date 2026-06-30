@@ -814,6 +814,15 @@ export const ru = {
     planName: string;
     usd: string;
   }) => `✅ Цена тарифа «<b>${planName}</b>» установлена на <b>$${usd}</b>.`,
+  adminCreateCategoryPromptFA:
+    "🆕 Создание новой категории.\n\nОтправьте название категории на <b>персидском</b>.\n\nОтправьте /cancel для отмены.",
+  adminCreateCategoryPromptEN:
+    "Теперь отправьте название категории на <b>английском</b>.",
+  adminCreateCategoryPromptRU:
+    "Теперь отправьте название категории на <b>русском</b>.",
+  adminCreateCategoryCancelled: "❌ Создание категории отменено.",
+  adminCategoryCreated: ({ name }: { name: string }) =>
+    `✅ Категория «<b>${name}</b>» успешно создана.`,
   priceLabel: (price: string) => `Цена: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Длительность: <b>${duration}</b>\n`,
   notAvailable: "Недоступно",

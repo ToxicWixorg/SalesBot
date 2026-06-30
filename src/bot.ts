@@ -24,7 +24,10 @@ import { setupAdminWalletHandlers } from "./handlers/aminPanel/wallet/index.ts";
 import { setupAdminDiscountsHandlers } from "./handlers/aminPanel/discounts/index.ts";
 import { setupAdminSchedulesHandlers } from "./handlers/aminPanel/schedules/index.ts";
 import { setupAdminBroadcastHandlers } from "./handlers/aminPanel/broadcast/index.ts";
-import { setupAdminPlanPriceHandler } from "./handlers/aminPanel/callbacks/products.ts";
+import {
+  setupAdminPlanPriceHandler,
+  setupAdminCreateCategoryHandler,
+} from "./handlers/aminPanel/callbacks/products.ts";
 
 // Validate BOT_TOKEN
 if (!config.BOT_TOKEN) {
@@ -82,6 +85,9 @@ setupAdminBroadcastHandlers(bot);
 
 // Setup admin plan price editing (admin enters price in USD)
 setupAdminPlanPriceHandler(bot);
+
+// Setup admin category creation (admin enters FA/EN/RU names)
+setupAdminCreateCategoryHandler(bot);
 
 // Setup manual order scene (must run before ticket scenes)
 setupManualOrderScene(bot);

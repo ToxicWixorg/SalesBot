@@ -880,6 +880,13 @@ export const en = {
     planName: string;
     usd: string;
   }) => `✅ Price for plan "<b>${planName}</b>" set to <b>$${usd}</b>.`,
+  adminCreateCategoryPromptFA:
+    "🆕 Creating a new category.\n\nSend the category name in <b>Persian</b>.\n\nSend /cancel to abort.",
+  adminCreateCategoryPromptEN: "Now send the category name in <b>English</b>.",
+  adminCreateCategoryPromptRU: "Now send the category name in <b>Russian</b>.",
+  adminCreateCategoryCancelled: "❌ Category creation cancelled.",
+  adminCategoryCreated: ({ name }: { name: string }) =>
+    `✅ Category "<b>${name}</b>" created successfully.`,
   priceLabel: (price: string) => `Price: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Duration: <b>${duration}</b>\n`,
   notAvailable: "Not available",
