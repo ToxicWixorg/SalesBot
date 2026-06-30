@@ -265,27 +265,26 @@ export function adminPlanRequirementsKeyboard(
   t: TFunction,
   plan: ProductPlan,
 ): InlineKeyboard {
-  const mark = (v: boolean | null) => (v ? "✅" : "❌");
-  return new InlineKeyboard()
-    .text(
-      `${mark(plan.requiresEmail)} ${t("reqEmail")}`,
-      `admin_plan_togglereq_${plan.id}_email`,
-    )
-    .text(
-      `${mark(plan.requiresOtp)} ${t("reqOtp")}`,
-      `admin_plan_togglereq_${plan.id}_otp`,
-    )
-    .row()
-    .text(
-      `${mark(plan.requiresLogin)} ${t("reqLogin")}`,
-      `admin_plan_togglereq_${plan.id}_login`,
-    )
-    .text(
-      `${mark(plan.requiresRegion)} ${t("reqRegion")}`,
-      `admin_plan_togglereq_${plan.id}_region`,
-    )
+  const keyboard = new InlineKeyboard();
+  const fields = plan.requiredInputs ?? [];
+
+  fields.forEach((field, index) => {
+    const label = `🗑 ${field.textFA || field.textEN || field.textRU || field.key}`;
+    keyboard
+      .text(label, `admin_plan_delfield_${plan.id}_${index}`, {
+        style: "danger",
+      })
+      .row();
+  });
+
+  keyboard
+    .text(t("btnPlanAddField"), `admin_plan_addfield_${plan.id}`, {
+      style: "success",
+    })
     .row()
     .text(t("btnBack"), `admin_plan_${plan.id}`, {
       icon_custom_emoji_id: emojiIds.back,
     });
+
+  return keyboard;
 }

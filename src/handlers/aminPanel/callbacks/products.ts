@@ -674,18 +674,22 @@ export async function adminPlanRequirementsCallback(context: any) {
   });
 }
 
-const REQ_FIELD: Record<
-  string,
-  "requiresEmail" | "requiresOtp" | "requiresLogin" | "requiresRegion"
-> = {
-  email: "requiresEmail",
-  otp: "requiresOtp",
-  login: "requiresLogin",
-  region: "requiresRegion",
-};
+/** Build a unique, slug-safe field key from a name. */
+function uniqueFieldKey(base: string, existing: Set<string>): string {
+  const slug =
+    base
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "") || "field";
+  let key = slug;
+  let n = 2;
+  while (existing.has(key)) key = `${slug}_${n++}`;
+  return key;
+}
 
-/** `admin_plan_togglereq_{planId}_{field}` — flip one boolean requirement. */
-export async function adminPlanToggleReqCallback(context: any) {
+/** `admin_plan_addfield_{planId}` — start the add-input-field flow. */
+export async function adminPlanAddFieldCallback(context: any) {
   if (!context.from || !context.queryData) return;
   const t = await getT(context);
   if (!t) return;
@@ -699,12 +703,38 @@ export async function adminPlanToggleReqCallback(context: any) {
   }
 
   const planId = Number.parseInt(context.queryData[1]!);
-  const column = REQ_FIELD[context.queryData[2]!];
-  if (!column) {
-    await context.answerCallbackQuery();
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
     return;
   }
 
+  addPlanFieldState.set(context.from.id, { planId, step: "nameFA" });
+
+  await context.editText(t("adminPlanAddFieldPromptFA"), {
+    parse_mode: "HTML",
+  });
+}
+
+/** `admin_plan_delfield_{planId}_{index}` — remove one input field by index. */
+export async function adminPlanDeleteFieldCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const index = Number.parseInt(context.queryData[2]!);
   let plan = await ProductPlanRepository.findById(planId);
   if (!plan) {
     await context.answerCallbackQuery({
@@ -714,14 +744,22 @@ export async function adminPlanToggleReqCallback(context: any) {
     return;
   }
 
-  plan = await ProductPlanRepository.update(planId, {
-    [column]: !plan[column],
-  });
+  const fields = [...(plan.requiredInputs ?? [])];
+  if (index < 0 || index >= fields.length) {
+    await context.answerCallbackQuery();
+    return;
+  }
+  fields.splice(index, 1);
 
-  await context.editText(t("adminPlanRequirementsTitle"), {
-    parse_mode: "HTML",
-    reply_markup: adminPlanRequirementsKeyboard(t, plan),
-  });
+  plan = await ProductPlanRepository.update(planId, { requiredInputs: fields });
+
+  await context.editText(
+    `${t("adminPlanFieldDeleted")}\n\n${t("adminPlanRequirementsTitle")}`,
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPlanRequirementsKeyboard(t, plan),
+    },
+  );
 }
 
 /** `admin_plan_toggleactive_{planId}` — activate/deactivate the plan. */
@@ -1058,6 +1096,17 @@ const editPlanDurationState = new Map<number, number>();
 /** adminUserId → planId whose display order is being entered */
 const editPlanOrderState = new Map<number, number>();
 
+interface AddPlanFieldState {
+  planId: number;
+  step: CreateCategoryStep;
+  textFA?: string;
+  textEN?: string;
+  textRU?: string;
+}
+
+/** adminUserId → in-progress dynamic input field being added to a plan */
+const addPlanFieldState = new Map<number, AddPlanFieldState>();
+
 /** Ensure a product slug is unique by appending an incrementing suffix. */
 async function uniqueProductSlug(base: string): Promise<string> {
   let slug = base;
@@ -1107,6 +1156,7 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
     const planDescState = editPlanDescState.get(userId);
     const planDurationId = editPlanDurationState.get(userId);
     const planOrderId = editPlanOrderState.get(userId);
+    const addFieldState = addPlanFieldState.get(userId);
     if (
       !state &&
       !editState &&
@@ -1116,7 +1166,8 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
       !editPlState &&
       !planDescState &&
       planDurationId === undefined &&
-      planOrderId === undefined
+      planOrderId === undefined &&
+      !addFieldState
     )
       return next?.();
 
@@ -1559,6 +1610,68 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
         {
           parse_mode: "HTML",
           reply_markup: adminPanelPlanKeyboard(t, plan),
+        },
+      );
+      return;
+    }
+
+    // ── ADD PLAN INPUT FIELD FLOW (text in 3 languages) ───────────────────
+    if (addFieldState) {
+      if (text === "/cancel") {
+        addPlanFieldState.delete(userId);
+        await ctx.send(t("adminPlanAddFieldCancelled"), { parse_mode: "HTML" });
+        return;
+      }
+
+      if (addFieldState.step === "nameFA") {
+        addFieldState.textFA = text;
+        addFieldState.step = "nameEN";
+        await ctx.send(t("adminPlanAddFieldPromptEN"), { parse_mode: "HTML" });
+        return;
+      }
+
+      if (addFieldState.step === "nameEN") {
+        addFieldState.textEN = text;
+        addFieldState.step = "nameRU";
+        await ctx.send(t("adminPlanAddFieldPromptRU"), { parse_mode: "HTML" });
+        return;
+      }
+
+      // step === "nameRU" — final step: append the field and confirm.
+      addFieldState.textRU = text;
+      addPlanFieldState.delete(userId);
+
+      let plan = await ProductPlanRepository.findById(addFieldState.planId);
+      if (!plan) {
+        await ctx.send(t("planNotFound"), { parse_mode: "HTML" });
+        return;
+      }
+
+      const fields = [...(plan.requiredInputs ?? [])];
+      const existingKeys = new Set(fields.map((f) => f.key));
+      const textFA = addFieldState.textFA ?? "";
+      const textEN = addFieldState.textEN ?? "";
+      const textRU = addFieldState.textRU ?? "";
+
+      fields.push({
+        key: uniqueFieldKey(textEN || textFA || "field", existingKeys),
+        textFA,
+        textEN,
+        textRU,
+        inputType: "text",
+        required: true,
+        sensitive: false,
+      });
+
+      plan = await ProductPlanRepository.update(addFieldState.planId, {
+        requiredInputs: fields,
+      });
+
+      await ctx.send(
+        `${t("adminPlanFieldAdded")}\n\n${t("adminPlanRequirementsTitle")}`,
+        {
+          parse_mode: "HTML",
+          reply_markup: adminPlanRequirementsKeyboard(t, plan),
         },
       );
       return;

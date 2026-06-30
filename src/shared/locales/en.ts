@@ -945,19 +945,24 @@ export const en = {
   btnPlanEditDesc: "📝 Description",
   btnPlanEditDuration: "⏳ Duration",
   btnPlanDelivery: "🚚 Delivery",
-  btnPlanRequirements: "📋 Requirements",
+  btnPlanRequirements: "📋 Input fields",
   btnPlanOrder: "🔢 Order",
   btnPlanActivate: "✅ Activate",
   btnPlanDeactivate: "🚫 Deactivate",
-  reqEmail: "Email",
-  reqOtp: "OTP",
-  reqLogin: "Login",
-  reqRegion: "Region",
+  btnPlanAddField: "➕ Add field",
+  adminPlanAddFieldPromptFA:
+    "➕ Adding a new input field.\n\nSend the field text in <b>Persian</b> (the question asked to the buyer).\n/cancel to abort.",
+  adminPlanAddFieldPromptEN: "Now send the same field text in <b>English</b>.",
+  adminPlanAddFieldPromptRU: "Now send the same field text in <b>Russian</b>.",
+  adminPlanAddFieldCancelled: "❌ Adding field cancelled.",
+  adminPlanFieldAdded: "✅ New input field added.",
+  adminPlanFieldDeleted: "✅ Input field removed.",
+  adminPlanNoFields: "No input fields defined yet.",
   adminPlanDeliveryPrompt: "Choose this plan's delivery type:",
   adminPlanDeliveryUpdated: ({ type }: { type: string }) =>
     `✅ Delivery type set to "<b>${type}</b>".`,
   adminPlanRequirementsTitle:
-    "Toggle this plan's requirements (✅ on / ❌ off):",
+    "📋 This plan's input fields (asked from the buyer at checkout).\nTap a field to remove it, or add a new one:",
   adminPlanActiveToggled: ({ status }: { status: string }) =>
     `✅ Plan status changed to "<b>${status}</b>".`,
   adminEditPlanDescPromptFA: ({ current }: { current: string }) =>

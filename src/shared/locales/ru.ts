@@ -881,19 +881,24 @@ export const ru = {
   btnPlanEditDesc: "📝 Описание",
   btnPlanEditDuration: "⏳ Срок",
   btnPlanDelivery: "🚚 Доставка",
-  btnPlanRequirements: "📋 Требования",
+  btnPlanRequirements: "📋 Поля ввода",
   btnPlanOrder: "🔢 Порядок",
   btnPlanActivate: "✅ Активировать",
   btnPlanDeactivate: "🚫 Деактивировать",
-  reqEmail: "Email",
-  reqOtp: "OTP",
-  reqLogin: "Вход",
-  reqRegion: "Регион",
+  btnPlanAddField: "➕ Добавить поле",
+  adminPlanAddFieldPromptFA:
+    "➕ Добавление нового поля ввода.\n\nОтправьте текст поля на <b>персидском</b> (вопрос, задаваемый покупателю).\n/cancel — отмена.",
+  adminPlanAddFieldPromptEN: "Теперь отправьте тот же текст поля на <b>английском</b>.",
+  adminPlanAddFieldPromptRU: "Теперь отправьте тот же текст поля на <b>русском</b>.",
+  adminPlanAddFieldCancelled: "❌ Добавление поля отменено.",
+  adminPlanFieldAdded: "✅ Новое поле ввода добавлено.",
+  adminPlanFieldDeleted: "✅ Поле ввода удалено.",
+  adminPlanNoFields: "Поля ввода ещё не заданы.",
   adminPlanDeliveryPrompt: "Выберите тип доставки этого тарифа:",
   adminPlanDeliveryUpdated: ({ type }: { type: string }) =>
     `✅ Тип доставки установлен на «<b>${type}</b>».`,
   adminPlanRequirementsTitle:
-    "Переключите требования этого тарифа (✅ вкл / ❌ выкл):",
+    "📋 Поля ввода этого тарифа (запрашиваются у покупателя при оформлении).\nНажмите на поле, чтобы удалить, или добавьте новое:",
   adminPlanActiveToggled: ({ status }: { status: string }) =>
     `✅ Статус тарифа изменён на «<b>${status}</b>».`,
   adminEditPlanDescPromptFA: ({ current }: { current: string }) =>
