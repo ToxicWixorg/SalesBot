@@ -894,16 +894,6 @@ export const ru = {
   adminPlanFieldAdded: "✅ Новое поле ввода добавлено.",
   adminPlanFieldDeleted: "✅ Поле ввода удалено.",
   adminPlanNoFields: "Поля ввода ещё не заданы.",
-  btnPlanInventory: "📦 Управление запасом",
-  btnPlanAddItems: "➕ Добавить позиции",
-  adminPlanInventoryTitle: ({ count }: { count: number }) =>
-    `📦 Запас этого товара: <b>${count}</b> позиций доступно.\nНажмите кнопку ниже, чтобы добавить новые позиции.`,
-  adminPlanAddItemsPrompt:
-    "Отправьте позиции, по одной в строке (например ссылку на конфиг, ключ активации или «email:password»).\n/cancel — отмена.",
-  adminPlanItemsAdded: ({ count }: { count: number }) =>
-    `✅ Добавлено позиций: ${count}.`,
-  adminPlanAddItemsEmpty: "❌ Позиции не получены. Отправляйте по одной в строке.",
-  adminPlanAddItemsCancelled: "❌ Добавление позиций отменено.",
   adminPlanDeliveryPrompt: "Выберите тип доставки этого тарифа:",
   adminPlanDeliveryUpdated: ({ type }: { type: string }) =>
     `✅ Тип доставки установлен на «<b>${type}</b>».`,

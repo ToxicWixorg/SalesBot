@@ -176,7 +176,7 @@ export class ProductPlanRepository {
   }
 
   /**
-   * پلن‌های فعالِ چند محصول به‌صورت یکجا (برای محاسبه‌ی در دسترس بودن لیست).
+   * تمام پلن‌های فعالِ چند محصول (batched) — برای محاسبه‌ی «موجود بودن» محصول.
    */
   static async findActiveByProductIds(
     productIds: number[],

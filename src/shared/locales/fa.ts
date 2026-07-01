@@ -959,16 +959,6 @@ ${payload.ids}`,
   adminPlanFieldAdded: "✅ فیلد ورودی جدید اضافه شد.",
   adminPlanFieldDeleted: "✅ فیلد ورودی حذف شد.",
   adminPlanNoFields: "هنوز فیلد ورودی‌ای تعریف نشده است.",
-  btnPlanInventory: "📦 مدیریت موجودی",
-  btnPlanAddItems: "➕ افزودن آیتم",
-  adminPlanInventoryTitle: ({ count }: { count: number }) =>
-    `📦 موجودی این محصول: <b>${count}</b> آیتم در دسترس.\nبرای افزودن آیتم جدید دکمه‌ی زیر را بزنید.`,
-  adminPlanAddItemsPrompt:
-    "آیتم‌ها را بفرستید؛ هر آیتم در یک خط جداگانه (مثلاً لینک کانفیگ، کلید فعال‌سازی یا «email:password»).\n/cancel برای لغو.",
-  adminPlanItemsAdded: ({ count }: { count: number }) =>
-    `✅ ${count} آیتم به موجودی اضافه شد.`,
-  adminPlanAddItemsEmpty: "❌ هیچ آیتمی دریافت نشد. هر آیتم را در یک خط بفرستید.",
-  adminPlanAddItemsCancelled: "❌ افزودن آیتم لغو شد.",
   adminPlanDeliveryPrompt: "نوع تحویل این پلن را انتخاب کنید:",
   adminPlanDeliveryUpdated: ({ type }: { type: string }) =>
     `✅ نوع تحویل روی «<b>${type}</b>» تنظیم شد.`,
