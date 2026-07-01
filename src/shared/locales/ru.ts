@@ -920,6 +920,36 @@ export const ru = {
   adminPlanOrderInvalid: "❌ Введите корректное целое число (напр. 0, 1, 2).",
   adminPlanOrderUpdated: ({ order }: { order: number }) =>
     `✅ Порядок отображения установлен на <b>${order}</b>.`,
+  btnPlanInventory: "📦 Управление складом",
+  btnPlanAddStock: "➕ Добавить товары",
+  btnPlanClearStock: "🗑 Удалить доступные товары",
+  adminPlanInventoryTitle: ({
+    available,
+    reserved,
+    used,
+    dead,
+  }: {
+    available: number;
+    reserved: number;
+    used: number;
+    dead: number;
+  }) =>
+    `📦 <b>Управление складом</b>\n\n` +
+    `🟢 Доступно: <b>${available}</b>\n` +
+    `🟡 Зарезервировано: <b>${reserved}</b>\n` +
+    `🔵 Использовано: <b>${used}</b>\n` +
+    `⚫️ Испорчено: <b>${dead}</b>`,
+  adminPlanAddStockPrompt:
+    "📥 Отправьте товары — <b>по одному в строке</b>.\n\n" +
+    "Текст каждой строки выдаётся покупателю при автоматической покупке " +
+    "(например <code>email:password</code> или любой контент).\n\n" +
+    "Отправьте /cancel для отмены.",
+  adminPlanAddStockEmpty: "❌ Товары не найдены. Отправьте хотя бы одну строку.",
+  adminPlanAddStockCancelled: "❌ Добавление товаров отменено.",
+  adminPlanStockAdded: ({ count }: { count: number }) =>
+    `✅ Добавлено товаров: ${count}.`,
+  adminPlanStockCleared: ({ count }: { count: number }) =>
+    `🗑 Удалено доступных товаров: ${count}.`,
   priceLabel: (price: string) => `Цена: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Длительность: <b>${duration}</b>\n`,
   notAvailable: "Недоступно",

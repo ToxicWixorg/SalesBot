@@ -87,6 +87,46 @@ export class InventoryRepository {
   }
 
   /**
+   * تعداد آیتم‌ها به تفکیک وضعیت (برای پنل مدیریت موجودی ادمین)
+   */
+  static async statusCounts(
+    productId: number,
+  ): Promise<{ available: number; reserved: number; used: number; dead: number }> {
+    const rows = await db
+      .select({
+        status: inventoryTable.status,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(inventoryTable)
+      .where(eq(inventoryTable.productId, productId))
+      .groupBy(inventoryTable.status);
+
+    const counts = { available: 0, reserved: 0, used: 0, dead: 0 };
+    for (const row of rows) {
+      if (row.status in counts) {
+        counts[row.status as keyof typeof counts] = row.count;
+      }
+    }
+    return counts;
+  }
+
+  /**
+   * حذف همه‌ی آیتم‌های available یک محصول — خروجی: تعداد حذف‌شده
+   */
+  static async deleteAvailableByProductId(productId: number): Promise<number> {
+    const deleted = await db
+      .delete(inventoryTable)
+      .where(
+        and(
+          eq(inventoryTable.productId, productId),
+          eq(inventoryTable.status, "available"),
+        ),
+      )
+      .returning();
+    return deleted.length;
+  }
+
+  /**
    * یک آیتم با ID
    */
   static async findById(id: number): Promise<Inventory | undefined> {

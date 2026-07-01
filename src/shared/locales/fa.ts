@@ -985,6 +985,36 @@ ${payload.ids}`,
   adminPlanOrderInvalid: "❌ یک عدد صحیح معتبر وارد کنید (مثلاً 0، 1، 2).",
   adminPlanOrderUpdated: ({ order }: { order: number }) =>
     `✅ ترتیب نمایش روی <b>${order}</b> تنظیم شد.`,
+  btnPlanInventory: "📦 مدیریت موجودی",
+  btnPlanAddStock: "➕ افزودن موجودی",
+  btnPlanClearStock: "🗑 حذف موجودی‌های آماده",
+  adminPlanInventoryTitle: ({
+    available,
+    reserved,
+    used,
+    dead,
+  }: {
+    available: number;
+    reserved: number;
+    used: number;
+    dead: number;
+  }) =>
+    `📦 <b>مدیریت موجودی</b>\n\n` +
+    `🟢 آماده: <b>${available}</b>\n` +
+    `🟡 رزرو‌شده: <b>${reserved}</b>\n` +
+    `🔵 استفاده‌شده: <b>${used}</b>\n` +
+    `⚫️ خراب: <b>${dead}</b>`,
+  adminPlanAddStockPrompt:
+    "📥 آیتم‌های موجودی را ارسال کنید — <b>هر خط یک آیتم</b>.\n\n" +
+    "همان متن هر خط هنگام خرید خودکار به خریدار تحویل داده می‌شود " +
+    "(مثلاً <code>email:password</code> یا هر محتوای دلخواه).\n\n" +
+    "برای لغو /cancel را بفرستید.",
+  adminPlanAddStockEmpty: "❌ هیچ آیتمی پیدا نشد. حداقل یک خط بفرستید.",
+  adminPlanAddStockCancelled: "❌ افزودن موجودی لغو شد.",
+  adminPlanStockAdded: ({ count }: { count: number }) =>
+    `✅ ${count} آیتم به موجودی اضافه شد.`,
+  adminPlanStockCleared: ({ count }: { count: number }) =>
+    `🗑 ${count} آیتم آماده حذف شد.`,
   priceLabel: (price: string) => `قیمت: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `مدت زمان: <b>${duration}</b>\n`,
   notAvailable: "موجود نیست",

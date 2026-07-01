@@ -984,6 +984,36 @@ export const en = {
   adminPlanOrderInvalid: "❌ Enter a valid integer (e.g. 0, 1, 2).",
   adminPlanOrderUpdated: ({ order }: { order: number }) =>
     `✅ Display order set to <b>${order}</b>.`,
+  btnPlanInventory: "📦 Manage inventory",
+  btnPlanAddStock: "➕ Add stock",
+  btnPlanClearStock: "🗑 Delete available stock",
+  adminPlanInventoryTitle: ({
+    available,
+    reserved,
+    used,
+    dead,
+  }: {
+    available: number;
+    reserved: number;
+    used: number;
+    dead: number;
+  }) =>
+    `📦 <b>Inventory management</b>\n\n` +
+    `🟢 Available: <b>${available}</b>\n` +
+    `🟡 Reserved: <b>${reserved}</b>\n` +
+    `🔵 Used: <b>${used}</b>\n` +
+    `⚫️ Dead: <b>${dead}</b>`,
+  adminPlanAddStockPrompt:
+    "📥 Send the inventory items — <b>one item per line</b>.\n\n" +
+    "Each line's text is delivered to the buyer on an automatic purchase " +
+    "(e.g. <code>email:password</code> or any content you want).\n\n" +
+    "Send /cancel to abort.",
+  adminPlanAddStockEmpty: "❌ No items found. Send at least one line.",
+  adminPlanAddStockCancelled: "❌ Adding stock cancelled.",
+  adminPlanStockAdded: ({ count }: { count: number }) =>
+    `✅ ${count} item(s) added to inventory.`,
+  adminPlanStockCleared: ({ count }: { count: number }) =>
+    `🗑 ${count} available item(s) deleted.`,
   priceLabel: (price: string) => `Price: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Duration: <b>${duration}</b>\n`,
   notAvailable: "Not available",

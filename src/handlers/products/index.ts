@@ -44,7 +44,7 @@ export const productsComposer = new Composer()
   .callbackQuery(/^premium_category_page_(\d+)_(\d+)$/, async (context) => {
     return await PremiumCategoryCallback(context);
   })
-  .callbackQuery(/^product_(\d+)$/, async (context) => {
+  .callbackQuery(/^(?:premium_)?product_(\d+)$/, async (context) => {
     return await PremiumProductCallback(context, getEffectiveStock);
   })
   .callbackQuery(/^buy_product_(\d+)$/, async (context) => {

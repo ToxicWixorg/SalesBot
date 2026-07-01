@@ -209,7 +209,7 @@ export function adminPanelPlanKeyboard(
   const activeLabel =
     plan.isActive === false ? t("btnPlanActivate") : t("btnPlanDeactivate");
 
-  return new InlineKeyboard()
+  const keyboard = new InlineKeyboard()
     .text(t("btnPlanEditName"), `admin_edit_plan_${planId}`, { style: "primary" })
     .text(t("btnEditPrice"), `admin_edit_plan_price_${planId}`, {
       style: "primary",
@@ -230,7 +230,18 @@ export function adminPanelPlanKeyboard(
       style: "primary",
     })
     .text(t("btnPlanOrder"), `admin_plan_order_${planId}`, { style: "primary" })
-    .row()
+    .row();
+
+  // Inventory management only applies to automatic delivery (draws from stock).
+  if (plan.deliveryType === "automatic") {
+    keyboard
+      .text(t("btnPlanInventory"), `admin_plan_inventory_${planId}`, {
+        style: "primary",
+      })
+      .row();
+  }
+
+  keyboard
     .text(activeLabel, `admin_plan_toggleactive_${planId}`, {
       style: plan.isActive === false ? "success" : "danger",
     })
@@ -239,6 +250,34 @@ export function adminPanelPlanKeyboard(
     .text(t("btnBack"), `admin_product_plans_${plan.productId}`, {
       icon_custom_emoji_id: emojiIds.back,
     });
+
+  return keyboard;
+}
+
+export function adminPlanInventoryKeyboard(
+  t: TFunction,
+  plan: ProductPlan,
+  counts: { available: number; reserved: number; used: number; dead: number },
+): InlineKeyboard {
+  const keyboard = new InlineKeyboard()
+    .text(t("btnPlanAddStock"), `admin_plan_addstock_${plan.id}`, {
+      style: "success",
+    })
+    .row();
+
+  if (counts.available > 0) {
+    keyboard
+      .text(t("btnPlanClearStock"), `admin_plan_clearstock_${plan.id}`, {
+        style: "danger",
+      })
+      .row();
+  }
+
+  keyboard.text(t("btnBack"), `admin_plan_${plan.id}`, {
+    icon_custom_emoji_id: emojiIds.back,
+  });
+
+  return keyboard;
 }
 
 export function adminPlanDeliveryKeyboard(

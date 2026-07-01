@@ -12,6 +12,7 @@ import {
   ProductPlanRepository,
   PremiumCategoryRepository,
 } from "../../../repositories/ProductRepository.ts";
+import { InventoryRepository } from "../../../repositories/InventoryRepository.ts";
 import {
   adminPanelCategoriesKeyboard,
   adminPanelCategoryKeyboard,
@@ -21,6 +22,7 @@ import {
   adminPanelPlanKeyboard,
   adminPlanDeliveryKeyboard,
   adminPlanRequirementsKeyboard,
+  adminPlanInventoryKeyboard,
   deliveryTypeLabel,
   DELIVERY_TYPES,
 } from "../../../shared/keyboards/adminPanel/products.ts";
@@ -652,6 +654,121 @@ export async function adminPlanSetDeliveryCallback(context: any) {
   );
 }
 
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 📦 PLAN INVENTORY (automatic delivery) ━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+interface AddStockState {
+  planId: number;
+  productId: number;
+}
+
+/** adminUserId → plan/product awaiting pasted inventory items */
+const addPlanStockState = new Map<number, AddStockState>();
+
+/** `admin_plan_inventory_{planId}` — show the product's inventory summary. */
+export async function adminPlanInventoryCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const counts = await InventoryRepository.statusCounts(plan.productId);
+  await context.editText(t("adminPlanInventoryTitle", counts), {
+    parse_mode: "HTML",
+    reply_markup: adminPlanInventoryKeyboard(t, plan, counts),
+  });
+}
+
+/** `admin_plan_addstock_{planId}` — prompt the admin to paste inventory items. */
+export async function adminPlanAddStockCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  addPlanStockState.set(context.from.id, {
+    planId,
+    productId: plan.productId,
+  });
+
+  await context.editText(t("adminPlanAddStockPrompt"), {
+    parse_mode: "HTML",
+  });
+}
+
+/** `admin_plan_clearstock_{planId}` — delete all available inventory items. */
+export async function adminPlanClearStockCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const removed = await InventoryRepository.deleteAvailableByProductId(
+    plan.productId,
+  );
+  const counts = await InventoryRepository.statusCounts(plan.productId);
+
+  await context.answerCallbackQuery({
+    text: t("adminPlanStockCleared", { count: removed }),
+  });
+  await context.editText(t("adminPlanInventoryTitle", counts), {
+    parse_mode: "HTML",
+    reply_markup: adminPlanInventoryKeyboard(t, plan, counts),
+  });
+}
+
 /** `admin_plan_reqs_{planId}` — show the requirement-toggles submenu. */
 export async function adminPlanRequirementsCallback(context: any) {
   if (!context.from || !context.queryData) return;
@@ -1157,6 +1274,7 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
     const planDurationId = editPlanDurationState.get(userId);
     const planOrderId = editPlanOrderState.get(userId);
     const addFieldState = addPlanFieldState.get(userId);
+    const addStockState = addPlanStockState.get(userId);
     if (
       !state &&
       !editState &&
@@ -1167,7 +1285,8 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
       !planDescState &&
       planDurationId === undefined &&
       planOrderId === undefined &&
-      !addFieldState
+      !addFieldState &&
+      !addStockState
     )
       return next?.();
 
@@ -1696,6 +1815,45 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
       await ctx.send(t("adminPlanOrderUpdated", { order }), {
         parse_mode: "HTML",
         reply_markup: adminPanelPlanKeyboard(t, plan),
+      });
+      return;
+    }
+
+    // ── ADD PLAN INVENTORY FLOW (one item per line → available stock) ─────
+    if (addStockState) {
+      if (text === "/cancel") {
+        addPlanStockState.delete(userId);
+        await ctx.send(t("adminPlanAddStockCancelled"), { parse_mode: "HTML" });
+        return;
+      }
+
+      const lines = text
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0);
+
+      if (lines.length === 0) {
+        await ctx.send(t("adminPlanAddStockEmpty"), { parse_mode: "HTML" });
+        return;
+      }
+
+      const { planId, productId } = addStockState;
+      addPlanStockState.delete(userId);
+
+      const added = await InventoryRepository.bulkCreate(
+        lines.map((content) => ({ productId, content })),
+      );
+
+      const plan = await ProductPlanRepository.findById(planId);
+      if (!plan) {
+        await ctx.send(t("planNotFound"), { parse_mode: "HTML" });
+        return;
+      }
+
+      const counts = await InventoryRepository.statusCounts(productId);
+      await ctx.send(t("adminPlanStockAdded", { count: added }), {
+        parse_mode: "HTML",
+        reply_markup: adminPlanInventoryKeyboard(t, plan, counts),
       });
       return;
     }
