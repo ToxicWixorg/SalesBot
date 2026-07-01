@@ -950,6 +950,24 @@ export const ru = {
     `✅ Добавлено товаров: ${count}.`,
   adminPlanStockCleared: ({ count }: { count: number }) =>
     `🗑 Удалено доступных товаров: ${count}.`,
+  btnPlanManageItems: "🔧 Управлять товарами по одному",
+  adminPlanItemsTitle: ({ count, page, pages }: { count: number; page: number; pages: number }) =>
+    `🔧 <b>Управление доступными товарами</b>\n\n` +
+    `Доступно: <b>${count}</b>\n` +
+    `Страница ${page} из ${pages}\n\n` +
+    `Нажмите на товар, чтобы посмотреть содержимое или удалить его.`,
+  adminPlanItemsEmpty: "📭 Нет доступных товаров для управления.",
+  adminInventoryItemTitle: ({ id, status, content }: { id: number; status: string; content: string }) =>
+    `🔖 <b>Товар #${id}</b>\n` +
+    `Статус: <b>${status}</b>\n\n` +
+    `Содержимое:\n<code>${content}</code>`,
+  btnDeleteItem: "🗑 Удалить этот товар",
+  adminInventoryItemDeleted: "✅ Товар удалён.",
+  adminInventoryItemNotFound: "❌ Товар не найден или уже удалён.",
+  invStatusAvailable: "🟢 Доступен",
+  invStatusReserved: "🟡 Зарезервирован",
+  invStatusUsed: "🔵 Использован",
+  invStatusDead: "⚫️ Недействителен",
   priceLabel: (price: string) => `Цена: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Длительность: <b>${duration}</b>\n`,
   notAvailable: "Недоступно",

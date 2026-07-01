@@ -33,6 +33,9 @@ import {
   adminPlanInventoryCallback,
   adminPlanAddStockCallback,
   adminPlanClearStockCallback,
+  adminPlanItemsCallback,
+  adminInventoryItemCallback,
+  adminInventoryDeleteItemCallback,
 } from "./callbacks/products.ts";
 
 export const adminPanelComposer = new Composer()
@@ -133,6 +136,15 @@ export const adminPanelComposer = new Composer()
   })
   .callbackQuery(/^admin_plan_clearstock_(\d+)$/, async (context) => {
     return await adminPlanClearStockCallback(context);
+  })
+  .callbackQuery(/^admin_plan_items_(\d+)(?:_(\d+))?$/, async (context) => {
+    return await adminPlanItemsCallback(context);
+  })
+  .callbackQuery(/^admin_inv_item_(\d+)_(\d+)$/, async (context) => {
+    return await adminInventoryItemCallback(context);
+  })
+  .callbackQuery(/^admin_inv_del_(\d+)_(\d+)$/, async (context) => {
+    return await adminInventoryDeleteItemCallback(context);
   });
   
 

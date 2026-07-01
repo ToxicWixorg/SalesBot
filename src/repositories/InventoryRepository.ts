@@ -87,6 +87,24 @@ export class InventoryRepository {
   }
 
   /**
+   * فقط آیتم‌های available یک محصول (برای مدیریت تک‌تک آیتم‌ها در ادمین)
+   */
+  static async findAvailableByProductId(
+    productId: number,
+  ): Promise<Inventory[]> {
+    return db
+      .select()
+      .from(inventoryTable)
+      .where(
+        and(
+          eq(inventoryTable.productId, productId),
+          eq(inventoryTable.status, "available"),
+        ),
+      )
+      .orderBy(inventoryTable.createdAt);
+  }
+
+  /**
    * تعداد آیتم‌ها به تفکیک وضعیت (برای پنل مدیریت موجودی ادمین)
    */
   static async statusCounts(

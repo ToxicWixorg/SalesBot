@@ -23,6 +23,8 @@ import {
   adminPlanDeliveryKeyboard,
   adminPlanRequirementsKeyboard,
   adminPlanInventoryKeyboard,
+  adminPlanItemsListKeyboard,
+  adminInventoryItemKeyboard,
   deliveryTypeLabel,
   DELIVERY_TYPES,
 } from "../../../shared/keyboards/adminPanel/products.ts";
@@ -767,6 +769,181 @@ export async function adminPlanClearStockCallback(context: any) {
     parse_mode: "HTML",
     reply_markup: adminPlanInventoryKeyboard(t, plan, counts),
   });
+}
+
+/** Human-readable, localized label for an inventory item status. */
+function inventoryStatusLabel(t: any, status: string): string {
+  switch (status) {
+    case "available":
+      return t("invStatusAvailable");
+    case "reserved":
+      return t("invStatusReserved");
+    case "used":
+      return t("invStatusUsed");
+    case "dead":
+      return t("invStatusDead");
+    default:
+      return status;
+  }
+}
+
+/** Full delivery content of an inventory item (content or email:password). */
+function inventoryItemContent(item: {
+  content: string | null;
+  email: string | null;
+  password: string | null;
+  extraData: string | null;
+}): string {
+  const credentials = [item.email, item.password].filter(Boolean).join(":");
+  return item.content || credentials || item.extraData || "—";
+}
+
+/**
+ * `admin_plan_items_{planId}` (optional `_{page}`) — list available inventory
+ * items one-by-one so the admin can inspect or delete each individually.
+ */
+export async function adminPlanItemsCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const page = context.queryData[2] ? Number.parseInt(context.queryData[2]!) : 1;
+
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const items = await InventoryRepository.findAvailableByProductId(
+    plan.productId,
+  );
+
+  if (items.length === 0) {
+    const counts = await InventoryRepository.statusCounts(plan.productId);
+    await context.editText(t("adminPlanInventoryTitle", counts), {
+      parse_mode: "HTML",
+      reply_markup: adminPlanInventoryKeyboard(t, plan, counts),
+    });
+    return;
+  }
+
+  const pages = Math.max(1, Math.ceil(items.length / 8));
+  const current = Math.min(Math.max(page, 1), pages);
+
+  await context.editText(
+    t("adminPlanItemsTitle", { count: items.length, page: current, pages }),
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPlanItemsListKeyboard(t, plan, items, current),
+    },
+  );
+}
+
+/** `admin_inv_item_{planId}_{itemId}` — show a single item's full content. */
+export async function adminInventoryItemCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const itemId = Number.parseInt(context.queryData[2]!);
+
+  const item = await InventoryRepository.findById(itemId);
+  if (!item) {
+    await context.answerCallbackQuery({
+      text: t("adminInventoryItemNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  await context.editText(
+    t("adminInventoryItemTitle", {
+      id: item.id,
+      status: inventoryStatusLabel(t, item.status),
+      content: inventoryItemContent(item),
+    }),
+    {
+      parse_mode: "HTML",
+      reply_markup: adminInventoryItemKeyboard(t, planId, itemId),
+    },
+  );
+}
+
+/** `admin_inv_del_{planId}_{itemId}` — delete one inventory item, back to list. */
+export async function adminInventoryDeleteItemCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const itemId = Number.parseInt(context.queryData[2]!);
+
+  const plan = await ProductPlanRepository.findById(planId);
+  const item = await InventoryRepository.findById(itemId);
+
+  if (!plan || !item) {
+    await context.answerCallbackQuery({
+      text: t("adminInventoryItemNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  await InventoryRepository.delete(itemId);
+  await context.answerCallbackQuery({ text: t("adminInventoryItemDeleted") });
+
+  const items = await InventoryRepository.findAvailableByProductId(
+    plan.productId,
+  );
+
+  // No items left → fall back to the inventory summary.
+  if (items.length === 0) {
+    const counts = await InventoryRepository.statusCounts(plan.productId);
+    await context.editText(t("adminPlanInventoryTitle", counts), {
+      parse_mode: "HTML",
+      reply_markup: adminPlanInventoryKeyboard(t, plan, counts),
+    });
+    return;
+  }
+
+  const pages = Math.max(1, Math.ceil(items.length / 8));
+  await context.editText(
+    t("adminPlanItemsTitle", { count: items.length, page: 1, pages }),
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPlanItemsListKeyboard(t, plan, items, 1),
+    },
+  );
 }
 
 /** `admin_plan_reqs_{planId}` — show the requirement-toggles submenu. */

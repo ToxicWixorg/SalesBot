@@ -1015,6 +1015,24 @@ ${payload.ids}`,
     `✅ ${count} آیتم به موجودی اضافه شد.`,
   adminPlanStockCleared: ({ count }: { count: number }) =>
     `🗑 ${count} آیتم آماده حذف شد.`,
+  btnPlanManageItems: "🔧 مدیریت تک‌تک آیتم‌ها",
+  adminPlanItemsTitle: ({ count, page, pages }: { count: number; page: number; pages: number }) =>
+    `🔧 <b>مدیریت آیتم‌های آماده</b>\n\n` +
+    `تعداد آماده: <b>${count}</b>\n` +
+    `صفحه ${page} از ${pages}\n\n` +
+    `روی هر آیتم بزنید تا محتوایش را ببینید یا آن را حذف کنید.`,
+  adminPlanItemsEmpty: "📭 هیچ آیتم آماده‌ای برای مدیریت نیست.",
+  adminInventoryItemTitle: ({ id, status, content }: { id: number; status: string; content: string }) =>
+    `🔖 <b>آیتم #${id}</b>\n` +
+    `وضعیت: <b>${status}</b>\n\n` +
+    `محتوا:\n<code>${content}</code>`,
+  btnDeleteItem: "🗑 حذف این آیتم",
+  adminInventoryItemDeleted: "✅ آیتم حذف شد.",
+  adminInventoryItemNotFound: "❌ آیتم پیدا نشد یا قبلاً حذف شده.",
+  invStatusAvailable: "🟢 آماده",
+  invStatusReserved: "🟡 رزرو‌شده",
+  invStatusUsed: "🔵 استفاده‌شده",
+  invStatusDead: "⚫️ خراب",
   priceLabel: (price: string) => `قیمت: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `مدت زمان: <b>${duration}</b>\n`,
   notAvailable: "موجود نیست",

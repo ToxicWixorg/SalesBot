@@ -1014,6 +1014,24 @@ export const en = {
     `✅ ${count} item(s) added to inventory.`,
   adminPlanStockCleared: ({ count }: { count: number }) =>
     `🗑 ${count} available item(s) deleted.`,
+  btnPlanManageItems: "🔧 Manage items individually",
+  adminPlanItemsTitle: ({ count, page, pages }: { count: number; page: number; pages: number }) =>
+    `🔧 <b>Manage available items</b>\n\n` +
+    `Available: <b>${count}</b>\n` +
+    `Page ${page} of ${pages}\n\n` +
+    `Tap an item to view its content or delete it.`,
+  adminPlanItemsEmpty: "📭 No available items to manage.",
+  adminInventoryItemTitle: ({ id, status, content }: { id: number; status: string; content: string }) =>
+    `🔖 <b>Item #${id}</b>\n` +
+    `Status: <b>${status}</b>\n\n` +
+    `Content:\n<code>${content}</code>`,
+  btnDeleteItem: "🗑 Delete this item",
+  adminInventoryItemDeleted: "✅ Item deleted.",
+  adminInventoryItemNotFound: "❌ Item not found or already deleted.",
+  invStatusAvailable: "🟢 Available",
+  invStatusReserved: "🟡 Reserved",
+  invStatusUsed: "🔵 Used",
+  invStatusDead: "⚫️ Dead",
   priceLabel: (price: string) => `Price: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Duration: <b>${duration}</b>\n`,
   notAvailable: "Not available",
