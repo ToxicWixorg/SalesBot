@@ -1,5 +1,5 @@
 import type { AnyBot } from "gramio";
-import { config } from "../../config.ts";
+import { getForumConfig } from "../../services/forumConfig.ts";
 import {
   OrderRepository,
   UserRepository,
@@ -13,11 +13,11 @@ import {
  */
 const orderReplyState = new Map<number, { orderId: number; buyerId: number }>();
 
-function isSupportGroup(chatId: number | string | undefined): boolean {
-  return (
-    !!config.SUPPORT_GROUP_ID &&
-    String(chatId) === String(config.SUPPORT_GROUP_ID)
-  );
+async function isSupportGroup(
+  chatId: number | string | undefined,
+): Promise<boolean> {
+  const { groupId } = await getForumConfig();
+  return !!groupId && String(chatId) === String(groupId);
 }
 
 /**
@@ -45,12 +45,13 @@ export function setupOrderForumHandlers(bot: AnyBot): void {
       buyerId: Number(order.userId),
     });
 
+    const forum = await getForumConfig();
     await ctx.answerCallbackQuery();
     await ctx.send(
       `✍️ پیام خود را برای خریدار سفارش #${orderId} بنویسید.\n` +
         `پیام بعدی شما به کاربر ارسال می‌شود. (برای لغو /cancel)`,
       {
-        message_thread_id: config.ORDERS_TOPIC_ID,
+        message_thread_id: forum.topics.order,
         parse_mode: "HTML",
       } as any,
     );
@@ -177,7 +178,7 @@ export function setupOrderForumHandlers(bot: AnyBot): void {
   // ── Relay a staff reply (typed in the group) to the buyer ───────────────────
   bot.on("message", async (ctx, next) => {
     if (!ctx.text) return next?.();
-    if (!isSupportGroup(ctx.chat?.id)) return next?.();
+    if (!(await isSupportGroup(ctx.chat?.id))) return next?.();
 
     const adminId = ctx.from?.id;
     if (!adminId) return next?.();
@@ -185,11 +186,13 @@ export function setupOrderForumHandlers(bot: AnyBot): void {
     const state = orderReplyState.get(adminId);
     if (!state) return next?.();
 
+    const forum = await getForumConfig();
+
     // Allow cancelling the pending reply
     if (ctx.text.trim() === "/cancel") {
       orderReplyState.delete(adminId);
       await ctx.send("✅ ارسال پیام لغو شد.", {
-        message_thread_id: config.ORDERS_TOPIC_ID,
+        message_thread_id: forum.topics.order,
       } as any);
       return;
     }
@@ -203,12 +206,12 @@ export function setupOrderForumHandlers(bot: AnyBot): void {
         parse_mode: "HTML",
       });
       await ctx.send(`✅ پیام برای خریدار سفارش #${state.orderId} ارسال شد.`, {
-        message_thread_id: config.ORDERS_TOPIC_ID,
+        message_thread_id: forum.topics.order,
       } as any);
     } catch (error) {
       console.error("[ORDER-FORUM] Failed to relay message to buyer:", error);
       await ctx.send("❌ ارسال پیام به خریدار ناموفق بود.", {
-        message_thread_id: config.ORDERS_TOPIC_ID,
+        message_thread_id: forum.topics.order,
       } as any);
     }
   });

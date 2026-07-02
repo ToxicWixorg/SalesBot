@@ -5,7 +5,7 @@ import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
 import { PaymentRepository } from "../repositories/PaymentRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
-import { config } from "../config.ts";
+import { getForumConfig } from "../services/forumConfig.ts";
 import { ticketState, ticketReplyState } from "./support-tickets.ts";
 
 import {
@@ -576,8 +576,9 @@ async function notifyAdmin(
     usdtAmount?: number;
   },
 ) {
-  if (!config.SUPPORT_GROUP_ID) return;
-  const topicId = config.PAYMENTS_TOPIC_ID ?? config.ORDERS_TOPIC_ID;
+  const forum = await getForumConfig();
+  if (!forum.groupId) return;
+  const topicId = forum.topics.payments ?? forum.topics.order;
 
   const userLabel = opts.username
     ? `@${opts.username}`
@@ -616,7 +617,7 @@ async function notifyAdmin(
   try {
     if (opts.evidenceType === "photo") {
       await (bot.api as any).sendPhoto({
-        chat_id: Number(config.SUPPORT_GROUP_ID),
+        chat_id: Number(forum.groupId),
         message_thread_id: topicId,
         photo: opts.evidence,
         caption: msg,
@@ -625,7 +626,7 @@ async function notifyAdmin(
       });
     } else {
       await (bot.api as any).sendMessage({
-        chat_id: Number(config.SUPPORT_GROUP_ID),
+        chat_id: Number(forum.groupId),
         message_thread_id: topicId,
         text: msg + `\n\n🔗 <b>TxID:</b>\n<code>${opts.evidence}</code>`,
         parse_mode: "HTML",

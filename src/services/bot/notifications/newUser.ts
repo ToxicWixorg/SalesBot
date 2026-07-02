@@ -1,10 +1,11 @@
-import { config } from "../../../config.ts";
+import { getForumConfig } from "../../forumConfig.ts";
 import type { User } from "../../../db/schema.ts";
 
 type BotApi = any;
 
 export async function sendNewUserNotification(botApi: BotApi, user: User) {
-  if (!config.SUPPORT_GROUP_ID || !config.NEWUSERS_TOPIC_ID) {
+  const forum = await getForumConfig();
+  if (!forum.groupId || !forum.topics.new_users) {
     console.warn(
       "[FORUM] SUPPORT_GROUP_ID or NEWUSERS_TOPIC_ID not configured",
     );
@@ -30,9 +31,9 @@ export async function sendNewUserNotification(botApi: BotApi, user: User) {
 
   try {
     await botApi.sendMessage({
-      chat_id: config.SUPPORT_GROUP_ID,
+      chat_id: forum.groupId,
       text: message,
-      message_thread_id: config.NEWUSERS_TOPIC_ID,
+      message_thread_id: forum.topics.new_users,
       parse_mode: "HTML",
     });
   } catch (error) {

@@ -5,7 +5,7 @@ import {
 } from "../../../handlers/products/pendingOrderInfoState";
 import { AnyBot } from "gramio";
 import { i18n } from "../../../shared/locales";
-import { config, TICKET_TOPICS } from "../../../config";
+import { getForumConfig } from "../../../services/forumConfig";
 
 export async function notifyAdminNewOrder(
   bot: AnyBot,
@@ -64,10 +64,11 @@ export async function notifyAdminNewOrder(
       priority: "high",
     });
 
+    const forum = await getForumConfig();
     if (
       data.paymentMethod === "card" &&
       data.paymentReceiptFileId &&
-      config.SUPPORT_GROUP_ID
+      forum.groupId
     ) {
       const receiptCaption =
         `🧾 <b>Order Card Receipt</b>\n` +
@@ -77,8 +78,8 @@ export async function notifyAdminNewOrder(
         `💰 <b>Amount:</b> ${data.finalPrice.toLocaleString()} Toman`;
 
       await (bot.api as any).sendPhoto({
-        chat_id: Number(config.SUPPORT_GROUP_ID),
-        message_thread_id: TICKET_TOPICS.order,
+        chat_id: Number(forum.groupId),
+        message_thread_id: forum.topics.order,
         photo: data.paymentReceiptFileId,
         caption: receiptCaption,
         parse_mode: "HTML",

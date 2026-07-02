@@ -1,4 +1,4 @@
-import { config } from "../../../config.ts";
+import { getForumConfig } from "../../forumConfig.ts";
 import type { User } from "../../../db/schema.ts";
 
 type BotApi = any;
@@ -9,7 +9,8 @@ export async function sendNewRefNotification(
   inviter: User,
   totalReferrals: number,
 ) {
-  if (!config.SUPPORT_GROUP_ID || !config.NEWREFERRAL_TOPIC_ID) {
+  const forum = await getForumConfig();
+  if (!forum.groupId || !forum.topics.new_referral) {
     console.warn(
       "[FORUM] SUPPORT_GROUP_ID or NEWREFERRAL_TOPIC_ID not configured",
     );
@@ -38,9 +39,9 @@ export async function sendNewRefNotification(
 
   try {
     await botApi.sendMessage({
-      chat_id: config.SUPPORT_GROUP_ID,
+      chat_id: forum.groupId,
       text: message,
-      message_thread_id: config.NEWREFERRAL_TOPIC_ID,
+      message_thread_id: forum.topics.new_referral,
       parse_mode: "HTML",
     });
   } catch (error) {

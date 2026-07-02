@@ -3,7 +3,7 @@ import { TicketService } from "../services/bot/ticket.ts";
 import { TicketRepository } from "../repositories/TicketRepository.ts";
 import { i18n } from "../shared/locales/index";
 import { UserRepository } from "../repositories/UserRepository.ts";
-import { config } from "../config.ts";
+import { getForumConfig } from "../services/forumConfig.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
 import { mainMenuKeyboard } from "../shared/keyboards/main-menu.ts";
 
@@ -188,12 +188,10 @@ export function setupTicketScenes(bot: AnyBot) {
 
       if (context.chat?.type === "supergroup") {
         const chatId = context.chat.id.toString();
-        const supportGroupId = config.SUPPORT_GROUP_ID?.replace("-100", "");
+        const forum = await getForumConfig();
+        const supportGroupId = forum.groupId?.replace("-100", "");
 
-        if (
-          !config.SUPPORT_GROUP_ID ||
-          !chatId.includes(supportGroupId || "")
-        ) {
+        if (!forum.groupId || !chatId.includes(supportGroupId || "")) {
           return;
         }
 

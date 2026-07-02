@@ -1170,6 +1170,28 @@ export type BotSettings = typeof botSettingsTable.$inferSelect;
 export type InsertBotSettings = typeof botSettingsTable.$inferInsert;
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 💬 FORUM (SUPPORT GROUP) SETTINGS ━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Single-row table (id=1) — Telegram forum group + topic IDs.
+// Any null field falls back to the corresponding env value
+// (SUPPORT_GROUP_ID / *_TOPIC_ID). See src/services/forumConfig.ts
+export const forumSettingsTable = pgTable("forum_settings", {
+  id: serial("id").primaryKey(),
+  supportGroupId: text("support_group_id"),
+  supportTopicId: integer("support_topic_id"),
+  ordersTopicId: integer("orders_topic_id"),
+  reportsTopicId: integer("reports_topic_id"),
+  newUsersTopicId: integer("new_users_topic_id"),
+  newsTopicId: integer("news_topic_id"),
+  newReferralTopicId: integer("new_referral_topic_id"),
+  paymentsTopicId: integer("payments_topic_id"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type ForumSettings = typeof forumSettingsTable.$inferSelect;
+export type InsertForumSettings = typeof forumSettingsTable.$inferInsert;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 💬 SESSION CHATS ━━━━━━━━━━━━━━━━━━━━━
 // Live delivery sessions for custom_schedule products.
 // Created automatically at T=0 by ReminderService instead of tickets.

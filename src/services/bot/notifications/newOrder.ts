@@ -1,5 +1,5 @@
 import { InlineKeyboard } from "gramio";
-import { config } from "../../../config.ts";
+import { getForumConfig } from "../../forumConfig.ts";
 import type { Order, User } from "../../../db/schema.ts";
 
 type BotApi = any;
@@ -35,7 +35,8 @@ export async function sendNewOrderNotification(
   botApi: BotApi,
   data: NewOrderNotificationData,
 ) {
-  if (!config.SUPPORT_GROUP_ID || !config.ORDERS_TOPIC_ID) {
+  const forum = await getForumConfig();
+  if (!forum.groupId || !forum.topics.order) {
     console.warn("[FORUM] SUPPORT_GROUP_ID or ORDERS_TOPIC_ID not configured");
     return;
   }
@@ -82,9 +83,9 @@ export async function sendNewOrderNotification(
 
   try {
     await botApi.sendMessage({
-      chat_id: Number(config.SUPPORT_GROUP_ID),
+      chat_id: Number(forum.groupId),
       text: message,
-      message_thread_id: config.ORDERS_TOPIC_ID,
+      message_thread_id: forum.topics.order,
       parse_mode: "HTML",
       reply_markup: orderForumKeyboard(order, Number(user.id)),
     });

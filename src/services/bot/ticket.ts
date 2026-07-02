@@ -1,6 +1,7 @@
 import { TicketRepository } from "../../repositories/TicketRepository";
 import { UserRepository } from "../../repositories/UserRepository";
-import { config, TICKET_TOPICS, type TicketType } from "../../config";
+import { type TicketType } from "../../config";
+import { getForumConfig } from "../forumConfig.ts";
 import type { Ticket } from "../../db/schema";
 import { ticketKeyboard } from "../../shared/keyboards";
 
@@ -50,7 +51,8 @@ export class TicketService {
       });
     }
 
-    if (config.SUPPORT_GROUP_ID) {
+    const forum = await getForumConfig();
+    if (forum.groupId) {
       await this.sendTicketToForum(ticket, user);
     }
 
@@ -61,12 +63,13 @@ export class TicketService {
     ticket: Ticket,
     user: { id: number; username?: string | null; firstName?: string | null },
   ) {
-    if (!config.SUPPORT_GROUP_ID) {
+    const forum = await getForumConfig();
+    if (!forum.groupId) {
       console.warn("[TICKET] Support group not configured");
       return;
     }
 
-    const topicId = TICKET_TOPICS[ticket.type as TicketType];
+    const topicId = forum.topics[ticket.type as TicketType];
     const username = user.username
       ? `@${user.username}`
       : user.firstName || "User";
@@ -95,7 +98,7 @@ export class TicketService {
 
     try {
       const sentMessage = await this.botApi.sendMessage({
-        chat_id: Number(config.SUPPORT_GROUP_ID),
+        chat_id: Number(forum.groupId),
         text: message,
         message_thread_id: topicId,
         parse_mode: "HTML",
@@ -104,7 +107,7 @@ export class TicketService {
 
       // Update ticket with forum info
       await TicketRepository.updateTicketForumInfo(ticket.id, {
-        forumGroupId: Number(config.SUPPORT_GROUP_ID),
+        forumGroupId: Number(forum.groupId),
         topicId: topicId,
         threadMessageId: sentMessage.message_id,
       });
@@ -137,9 +140,10 @@ export class TicketService {
 
     try {
       // Send to forum thread (reply to thread message) so support sees it
-      if (config.SUPPORT_GROUP_ID && ticket.topicId) {
+      const forum = await getForumConfig();
+      if (forum.groupId && ticket.topicId) {
         await this.botApi.sendMessage({
-          chat_id: Number(config.SUPPORT_GROUP_ID),
+          chat_id: Number(forum.groupId),
           text: `👤 <b>${username}:</b>\n${message}`,
           message_thread_id: ticket.topicId,
           reply_to_message_id: ticket.threadMessageId,
@@ -239,10 +243,11 @@ export class TicketService {
     }
 
     // Update forum thread
-    if (ticket.threadMessageId && config.SUPPORT_GROUP_ID) {
+    const resolveForum = await getForumConfig();
+    if (ticket.threadMessageId && resolveForum.groupId) {
       try {
         await this.botApi.sendMessage({
-          chat_id: Number(config.SUPPORT_GROUP_ID),
+          chat_id: Number(resolveForum.groupId),
           text: `✅ <b>Ticket Resolved</b>\n\nThis ticket has been marked as resolved.`,
           message_thread_id: ticket.topicId!,
           reply_to_message_id: ticket.threadMessageId,
@@ -287,14 +292,15 @@ export class TicketService {
     const agent = await UserRepository.findById(agentId);
 
     // Update forum thread
-    if (ticket.threadMessageId && config.SUPPORT_GROUP_ID) {
+    const assignForum = await getForumConfig();
+    if (ticket.threadMessageId && assignForum.groupId) {
       try {
         const agentName = agent?.username
           ? `@${agent.username}`
           : agent?.firstName || "Agent";
 
         await this.botApi.sendMessage({
-          chat_id: Number(config.SUPPORT_GROUP_ID),
+          chat_id: Number(assignForum.groupId),
           text: `👨‍💼 <b>Ticket Assigned</b>\n\nAssigned to: ${agentName}`,
           message_thread_id: ticket.topicId!,
           reply_to_message_id: ticket.threadMessageId,

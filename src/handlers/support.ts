@@ -1,7 +1,7 @@
 import { Bot, AnyBot, InlineKeyboard } from "gramio";
 import { TicketRepository } from "../repositories/TicketRepository";
 import { TicketService } from "../services/bot/ticket";
-import { config } from "../config";
+import { getForumConfig } from "../services/forumConfig.ts";
 import { i18n } from "../shared/locales/index";
 import { UserRepository } from "../repositories/UserRepository";
 import { backToMainKeyboard, supportKeyboard } from "../shared/keyboards";
@@ -402,15 +402,16 @@ export const supportHandler = (bot: AnyBot) => {
     });
 
     // Forward to admin group
-    if (config.SUPPORT_GROUP_ID && config.ORDERS_TOPIC_ID) {
+    const forum = await getForumConfig();
+    if (forum.groupId && forum.topics.order) {
       const user = await UserRepository.findById(userId);
       const displayName = user?.username
         ? `@${user.username}`
         : (user?.firstName ?? String(userId));
 
       await bot.api.sendMessage({
-        chat_id: Number(config.SUPPORT_GROUP_ID),
-        message_thread_id: config.ORDERS_TOPIC_ID,
+        chat_id: Number(forum.groupId),
+        message_thread_id: forum.topics.order,
         text:
           `💬 <b>Session Chat #${sessionChat.id}</b>\n` +
           `👤 ${displayName} (<code>${userId}</code>)\n` +

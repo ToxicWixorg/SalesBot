@@ -15,7 +15,7 @@ import {
   productsTable,
 } from "../db/schema.ts";
 import { i18n } from "../shared/locales/index.ts";
-import { config } from "../config.ts";
+import { getForumConfig } from "./forumConfig.ts";
 import { ScheduleRepository } from "../repositories/ScheduleRepository.ts";
 import { OrderRepository } from "../repositories/OrderRepository.ts";
 import { SessionChatRepository } from "../repositories/SessionChatRepository.ts";
@@ -112,7 +112,8 @@ async function checkAndSendReminders(bot: AnyBot) {
       });
 
       // ── Notify admin forum (ORDERS topic) ────────────────────────────────
-      if (config.SUPPORT_GROUP_ID && config.ORDERS_TOPIC_ID) {
+      const reminderForum = await getForumConfig();
+      if (reminderForum.groupId && reminderForum.topics.order) {
         const displayName = user?.username
           ? `@${user.username}`
           : (user?.firstName ?? String(userId));
@@ -125,8 +126,8 @@ async function checkAndSendReminders(bot: AnyBot) {
           `Please be ready to deliver login credentials.`;
 
         await bot.api.sendMessage({
-          chat_id: Number(config.SUPPORT_GROUP_ID),
-          message_thread_id: config.ORDERS_TOPIC_ID,
+          chat_id: Number(reminderForum.groupId),
+          message_thread_id: reminderForum.topics.order,
           text: adminMsg,
           parse_mode: "HTML",
         });
@@ -206,7 +207,8 @@ async function checkAndStartSessions(bot: AnyBot) {
       });
 
       // 5. Notify admin forum
-      if (config.SUPPORT_GROUP_ID && config.ORDERS_TOPIC_ID) {
+      const sessionForum = await getForumConfig();
+      if (sessionForum.groupId && sessionForum.topics.order) {
         const displayName = user?.username
           ? `@${user.username}`
           : (user?.firstName ?? String(userId));
@@ -220,8 +222,8 @@ async function checkAndStartSessions(bot: AnyBot) {
           `Send login credentials to the user now.`;
 
         await bot.api.sendMessage({
-          chat_id: Number(config.SUPPORT_GROUP_ID),
-          message_thread_id: config.ORDERS_TOPIC_ID,
+          chat_id: Number(sessionForum.groupId),
+          message_thread_id: sessionForum.topics.order,
           text: forumMsg,
           parse_mode: "HTML",
         });
