@@ -213,14 +213,16 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 			});
 			return;
 		}
+		const ownerAdmin = isOwner(Number(admin.userId));
 		const text =
 			`👤 <b>${admin.displayName ?? admin.userId}</b>\n\n` +
 			`آیدی: <code>${admin.userId}</code>\n` +
 			`نقش: <b>${getRoleName(admin.role as AdminRole)}</b>\n` +
-			`وضعیت: <b>${admin.isActive ? "فعال 🟢" : "غیرفعال 🔴"}</b>`;
+			`وضعیت: <b>${admin.isActive ? "فعال 🟢" : "غیرفعال 🔴"}</b>` +
+			(ownerAdmin ? `\n\n👑 <b>مالک ربات</b> — قابل تغییر نیست.` : "");
 		await ctx.editText(text, {
 			parse_mode: "HTML",
-			reply_markup: adminManageKeyboard(admin),
+			reply_markup: adminManageKeyboard(admin, ownerAdmin),
 		});
 	});
 
@@ -231,6 +233,13 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 		if (!admin) {
 			await ctx.answerCallbackQuery({
 				text: "ادمین یافت نشد",
+				show_alert: true,
+			});
+			return;
+		}
+		if (isOwner(Number(admin.userId))) {
+			await ctx.answerCallbackQuery({
+				text: "⛔ مالک ربات قابل تغییر نیست.",
 				show_alert: true,
 			});
 			return;
@@ -255,6 +264,13 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 			});
 			return;
 		}
+		if (isOwner(Number(admin.userId))) {
+			await ctx.answerCallbackQuery({
+				text: "⛔ مالک ربات قابل تغییر نیست.",
+				show_alert: true,
+			});
+			return;
+		}
 		// چرخش بین «ادمین» و «پشتیبان»
 		const nextRole: AdminRole = admin.role === "admin" ? "support" : "admin";
 		await AdminService.changeRole(id, nextRole, ctx.from.id);
@@ -269,6 +285,14 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 	bot.callbackQuery(/^set_admin_del_(\d+)$/, async (ctx) => {
 		if (!(await ownerGate(ctx))) return;
 		const id = Number(ctx.queryData[1]);
+		const target = await AdminRepository.findById(id);
+		if (target && isOwner(Number(target.userId))) {
+			await ctx.answerCallbackQuery({
+				text: "⛔ مالک ربات قابل حذف نیست.",
+				show_alert: true,
+			});
+			return;
+		}
 		try {
 			await AdminService.removeAdmin(id, ctx.from.id);
 		} catch (err) {

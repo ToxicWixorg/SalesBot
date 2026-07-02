@@ -86,7 +86,17 @@ export function adminsListKeyboard(admins: Admin[]): InlineKeyboard {
 	return keyboard;
 }
 
-export function adminManageKeyboard(admin: Admin): InlineKeyboard {
+export function adminManageKeyboard(
+	admin: Admin,
+	isOwnerAdmin = false,
+): InlineKeyboard {
+	// The bot owner cannot be modified — show only the back button.
+	if (isOwnerAdmin) {
+		return new InlineKeyboard().text("بازگشت", "set_admins", {
+			icon_custom_emoji_id: emojiIds.back,
+		});
+	}
+
 	return new InlineKeyboard()
 		.text(
 			admin.isActive ? "🔴 غیرفعال کردن" : "🟢 فعال کردن",
