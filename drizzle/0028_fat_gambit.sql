@@ -1,4 +1,4 @@
-CREATE TABLE "forum_settings" (
+CREATE TABLE IF NOT EXISTS "forum_settings" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"support_group_id" text,
 	"support_topic_id" integer,
@@ -12,5 +12,5 @@ CREATE TABLE "forum_settings" (
 );
 --> statement-breakpoint
 ALTER TABLE "products" ALTER COLUMN "min_stock" SET DEFAULT 0;--> statement-breakpoint
-ALTER TABLE "products" ADD COLUMN "display_order" integer DEFAULT 0;--> statement-breakpoint
-CREATE INDEX "products_display_order_idx" ON "products" USING btree ("display_order");
+ALTER TABLE "products" ADD COLUMN IF NOT EXISTS "display_order" integer DEFAULT 0;--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "products_display_order_idx" ON "products" USING btree ("display_order");
