@@ -8,8 +8,9 @@ import {
 import { preSelectedRegionState } from "../preSelectedRegionState.ts";
 import { InventoryRepository } from "../../../repositories/InventoryRepository.ts";
 import { enterQuantityState } from "./EnterQuantity.ts";
+import { appliedDiscountState } from "../discountOrderState.ts";
 import {
-  enterQuantityKeyboard,
+  inventoryOrderSummaryKeyboard,
   orderConfirmationKeyboard,
 } from "../../../shared/keyboards/index.ts";
 import { regionSelectionKeyboard } from "../../../shared/keyboards/products/regionSelect.ts";
@@ -71,12 +72,32 @@ export async function SelectPlanCallback(context: Context<any>) {
       return;
     }
 
-    enterQuantityState.set(userId, { planId, productId: product.id });
+    // Ready/automatic products are sold one unit at a time — skip the quantity
+    // prompt and go straight to the single-item order summary.
+    enterQuantityState.delete(userId);
+    const qty = 1;
 
-    await context.editText(t("enterQuantityPrompt", available), {
-      parse_mode: "HTML",
-      reply_markup: enterQuantityKeyboard(t, product.id),
-    });
+    const unitPrice = usdToTomanWithRate(
+      parseFloat(plan.price as string),
+      usdtRate,
+    );
+    const discount = appliedDiscountState.get(userId);
+    const hasDiscount = discount && discount.planId === planId;
+    const finalTotal = hasDiscount ? discount.finalPrice * qty : unitPrice * qty;
+
+    await context.editText(
+      t("inventoryOrderSummary", {
+        productName,
+        qty,
+        unitPrice: unitPrice.toLocaleString(),
+        total: finalTotal.toLocaleString(),
+        currency: t("currency"),
+      }),
+      {
+        parse_mode: "HTML",
+        reply_markup: inventoryOrderSummaryKeyboard(t, planId, qty, false),
+      },
+    );
     return;
   }
 
