@@ -20,6 +20,7 @@ import { setBotInstance } from "./botInstance.ts";
 import { setupAdminSetupHandler } from "./handlers/adminSetup.ts";
 import { setupAdminSettingsHandlers } from "./handlers/aminPanel/settings/index.ts";
 import { setupAdminUsersHandlers } from "./handlers/aminPanel/users/index.ts";
+import { setupAdminOrdersHandlers } from "./handlers/aminPanel/orders/index.ts";
 import { setupAdminWalletHandlers } from "./handlers/aminPanel/wallet/index.ts";
 import { setupAdminDiscountsHandlers } from "./handlers/aminPanel/discounts/index.ts";
 import { setupAdminSchedulesHandlers } from "./handlers/aminPanel/schedules/index.ts";
@@ -70,6 +71,9 @@ setupAdminSettingsHandlers(bot);
 
 // Setup admin panel users section (search / profile / new / stats / bulk)
 setupAdminUsersHandlers(bot);
+
+// Setup admin panel orders section (list / filter / view / status change)
+setupAdminOrdersHandlers(bot);
 
 // Setup admin panel wallet section (pending top-ups / stats / transactions)
 setupAdminWalletHandlers(bot);

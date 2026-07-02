@@ -7,7 +7,7 @@ import {
   Subscription,
   InsertSubscription,
 } from "../db/schema.ts";
-import { eq, desc, and, or } from "drizzle-orm";
+import { eq, desc, and, or, count } from "drizzle-orm";
 
 export class OrderRepository {
   /**
@@ -21,6 +21,47 @@ export class OrderRepository {
       .limit(1);
 
     return result;
+  }
+
+  // ── Admin: listing & counts ────────────────────────────────
+  /** تعداد کل سفارش‌ها */
+  static async countAll(): Promise<number> {
+    const [row] = await db.select({ c: count() }).from(ordersTable);
+    return Number(row?.c ?? 0);
+  }
+
+  /** تعداد سفارش‌ها حسب وضعیت */
+  static async countByStatus(status: string): Promise<number> {
+    const [row] = await db
+      .select({ c: count() })
+      .from(ordersTable)
+      .where(eq(ordersTable.status, status));
+    return Number(row?.c ?? 0);
+  }
+
+  /** جدیدترین سفارش‌ها (صفحه‌بندی‌شده) */
+  static async getRecent(limit: number, offset: number): Promise<Order[]> {
+    return db
+      .select()
+      .from(ordersTable)
+      .orderBy(desc(ordersTable.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  /** سفارش‌ها حسب وضعیت (صفحه‌بندی‌شده) */
+  static async getByStatus(
+    status: string,
+    limit: number,
+    offset: number,
+  ): Promise<Order[]> {
+    return db
+      .select()
+      .from(ordersTable)
+      .where(eq(ordersTable.status, status))
+      .orderBy(desc(ordersTable.createdAt))
+      .limit(limit)
+      .offset(offset);
   }
 
   /**
