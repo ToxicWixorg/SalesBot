@@ -3,6 +3,7 @@ import type {
 	Admin,
 	BackupSettings,
 	BotSettings,
+	ForumSettings,
 	PaymentCardNumber,
 	PaymentSettings,
 } from "../../../db/schema.ts";
@@ -23,7 +24,46 @@ export function settingsMainKeyboard(): InlineKeyboard {
 		.row()
 		.text("💾 مدیریت بکاپ", "set_backup", { style: "success" })
 		.row()
+		.text("🗂 مدیریت گروه فروم", "set_forum", { style: "primary" })
+		.row()
 		.text("بازگشت", "admin_panel", { icon_custom_emoji_id: emojiIds.back });
+}
+
+// ─── گروه فروم (گروه پشتیبانی و تاپیک‌ها) ─────────────────────
+export function forumSettingsKeyboard(
+	settings: ForumSettings,
+): InlineKeyboard {
+	const topic = (v: number | null | undefined) =>
+		v == null ? "پیش‌فرض" : String(v);
+
+	return new InlineKeyboard()
+		.text(
+			`🆔 آیدی گروه: ${settings.supportGroupId ?? "پیش‌فرض"}`,
+			"set_forum_group",
+			{ style: "primary" },
+		)
+		.row()
+		.text(`💬 پشتیبانی: ${topic(settings.supportTopicId)}`, "set_forum_support")
+		.text(`📦 سفارش‌ها: ${topic(settings.ordersTopicId)}`, "set_forum_orders")
+		.row()
+		.text(`⚠️ گزارش‌ها: ${topic(settings.reportsTopicId)}`, "set_forum_reports")
+		.text(
+			`👤 کاربران جدید: ${topic(settings.newUsersTopicId)}`,
+			"set_forum_newusers",
+		)
+		.row()
+		.text(`📣 اخبار: ${topic(settings.newsTopicId)}`, "set_forum_news")
+		.text(
+			`🎁 ریفرال: ${topic(settings.newReferralTopicId)}`,
+			"set_forum_referral",
+		)
+		.row()
+		.text(
+			`💳 پرداخت‌ها: ${topic(settings.paymentsTopicId)}`,
+			"set_forum_payments",
+		)
+		.row()
+		.text("بازگشت", "panel_setting", { icon_custom_emoji_id: emojiIds.back });
 }
 
 // ─── ادمین‌ها ────────────────────────────────────────────────

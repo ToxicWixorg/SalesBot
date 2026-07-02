@@ -5,9 +5,14 @@ import {
 	AdminRepository,
 	BackupSettingsRepository,
 	BotSettingsRepository,
+	ForumSettingsRepository,
 	PaymentRepository,
 	UserRepository,
 } from "../../../repositories/index.ts";
+import {
+	getForumConfig,
+	invalidateForumConfigCache,
+} from "../../../services/forumConfig.ts";
 import {
 	buildDailyCron,
 	parseBackupHour,
@@ -24,6 +29,7 @@ import {
 	cardManageKeyboard,
 	cardsListKeyboard,
 	cryptoSettingsKeyboard,
+	forumSettingsKeyboard,
 	settingsMainKeyboard,
 	walletSettingsKeyboard,
 	zarinpalSettingsKeyboard,
@@ -46,7 +52,15 @@ type SettingsInput =
 	| { type: "cr_address" }
 	| { type: "cr_apikey" }
 	| { type: "bk_channel" }
-	| { type: "bk_hour" };
+	| { type: "bk_hour" }
+	| { type: "forum_group" }
+	| { type: "forum_support" }
+	| { type: "forum_orders" }
+	| { type: "forum_reports" }
+	| { type: "forum_newusers" }
+	| { type: "forum_news" }
+	| { type: "forum_referral" }
+	| { type: "forum_payments" };
 
 const settingsInput = new Map<number, SettingsInput>();
 
@@ -136,6 +150,26 @@ async function backupMenu() {
 		`ساعت بکاپ خودکار: <b>${String(hour).padStart(2, "0")}:00</b>\n` +
 		`آخرین بکاپ: ${last}`;
 	return { text, keyboard: backupSettingsKeyboard(s) };
+}
+
+async function forumMenu() {
+	const s = await ForumSettingsRepository.getOrCreate();
+	const eff = await getForumConfig();
+	const text =
+		`🗂 <b>مدیریت گروه فروم</b>\n\n` +
+		`آیدی گروه پشتیبانی و آیدی تاپیک‌ها را اینجا تغییر دهید.\n` +
+		`هر مقداری که خالی («پیش‌فرض») باشد، از فایل تنظیمات (.env) خوانده می‌شود.\n` +
+		`برای بازگرداندن یک مقدار به پیش‌فرض، عبارت <code>-</code> را بفرستید.\n\n` +
+		`<b>مقادیر مؤثر فعلی:</b>\n` +
+		`🆔 گروه: <code>${eff.groupId ?? "—"}</code>\n` +
+		`💬 پشتیبانی: <code>${eff.topics.support}</code>\n` +
+		`📦 سفارش‌ها: <code>${eff.topics.order}</code>\n` +
+		`⚠️ گزارش‌ها: <code>${eff.topics.report}</code>\n` +
+		`👤 کاربران جدید: <code>${eff.topics.new_users}</code>\n` +
+		`📣 اخبار: <code>${eff.topics.news}</code>\n` +
+		`🎁 ریفرال: <code>${eff.topics.new_referral}</code>\n` +
+		`💳 پرداخت‌ها: <code>${eff.topics.payments ?? eff.topics.order}</code>`;
+	return { text, keyboard: forumSettingsKeyboard(s) };
 }
 
 async function adminsMenu() {
@@ -529,6 +563,57 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 		await ctx.editText(text, { parse_mode: "HTML", reply_markup: keyboard });
 	});
 
+	// ───────────────────────── گروه فروم ──────────────────────
+	bot.callbackQuery("set_forum", async (ctx) => {
+		if (!(await ownerGate(ctx))) return;
+		const { text, keyboard } = await forumMenu();
+		await ctx.editText(text, { parse_mode: "HTML", reply_markup: keyboard });
+	});
+
+	// Prompt helper for a forum field edit (group id or a topic id).
+	const forumPrompt = async (
+		ctx: any,
+		type: SettingsInput["type"],
+		label: string,
+		isGroup = false,
+	) => {
+		if (!(await ownerGate(ctx))) return;
+		settingsInput.set(ctx.from.id, { type } as SettingsInput);
+		const hint = isGroup
+			? `مثال: <code>-1001234567890</code>`
+			: `یک عدد صحیح (آیدی تاپیک) بفرستید. مثال: <code>5</code>`;
+		await ctx.editText(
+			`✏️ <b>${label}</b> را بفرستید:\n${hint}\n\n` +
+				`برای بازگرداندن به پیش‌فرض (.env)، عبارت <code>-</code> را بفرستید.`,
+			{ parse_mode: "HTML", reply_markup: cancelTo("set_forum") },
+		);
+	};
+
+	bot.callbackQuery("set_forum_group", (ctx) =>
+		forumPrompt(ctx, "forum_group", "آیدی گروه پشتیبانی", true),
+	);
+	bot.callbackQuery("set_forum_support", (ctx) =>
+		forumPrompt(ctx, "forum_support", "آیدی تاپیک پشتیبانی"),
+	);
+	bot.callbackQuery("set_forum_orders", (ctx) =>
+		forumPrompt(ctx, "forum_orders", "آیدی تاپیک سفارش‌ها"),
+	);
+	bot.callbackQuery("set_forum_reports", (ctx) =>
+		forumPrompt(ctx, "forum_reports", "آیدی تاپیک گزارش‌ها"),
+	);
+	bot.callbackQuery("set_forum_newusers", (ctx) =>
+		forumPrompt(ctx, "forum_newusers", "آیدی تاپیک کاربران جدید"),
+	);
+	bot.callbackQuery("set_forum_news", (ctx) =>
+		forumPrompt(ctx, "forum_news", "آیدی تاپیک اخبار"),
+	);
+	bot.callbackQuery("set_forum_referral", (ctx) =>
+		forumPrompt(ctx, "forum_referral", "آیدی تاپیک ریفرال"),
+	);
+	bot.callbackQuery("set_forum_payments", (ctx) =>
+		forumPrompt(ctx, "forum_payments", "آیدی تاپیک پرداخت‌ها"),
+	);
+
 	// ───────────────────────── ورودی متنی ─────────────────────
 	bot.on("message", async (ctx, next) => {
 		const userId = ctx.from?.id;
@@ -719,6 +804,78 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 					reply_markup: keyboard,
 				},
 			);
+			return;
+		}
+
+		// ── گروه فروم: آیدی گروه (متن) ─────────────────────────
+		if (state.type === "forum_group") {
+			const reset = text === "-" || text === "پیش‌فرض";
+			await ForumSettingsRepository.update({
+				supportGroupId: reset ? null : text,
+			});
+			await invalidateForumConfigCache();
+			const { text: m, keyboard } = await forumMenu();
+			await ctx.send(`✅ آیدی گروه ذخیره شد.\n\n${m}`, {
+				parse_mode: "HTML",
+				reply_markup: keyboard,
+			});
+			return;
+		}
+
+		// ── گروه فروم: آیدی تاپیک‌ها (عدد صحیح، - برای پیش‌فرض) ──
+		if (
+			state.type === "forum_support" ||
+			state.type === "forum_orders" ||
+			state.type === "forum_reports" ||
+			state.type === "forum_newusers" ||
+			state.type === "forum_news" ||
+			state.type === "forum_referral" ||
+			state.type === "forum_payments"
+		) {
+			const reset = text === "-" || text === "پیش‌فرض";
+			let value: number | null = null;
+			if (!reset) {
+				const n = Number.parseInt(digits(text), 10);
+				if (Number.isNaN(n) || n < 1) {
+					settingsInput.set(userId, state);
+					await ctx.send(
+						"❌ آیدی تاپیک نامعتبر است. یک عدد صحیح مثبت بفرستید، یا - برای بازگشت به پیش‌فرض.",
+					);
+					return;
+				}
+				value = n;
+			}
+
+			switch (state.type) {
+				case "forum_support":
+					await ForumSettingsRepository.update({ supportTopicId: value });
+					break;
+				case "forum_orders":
+					await ForumSettingsRepository.update({ ordersTopicId: value });
+					break;
+				case "forum_reports":
+					await ForumSettingsRepository.update({ reportsTopicId: value });
+					break;
+				case "forum_newusers":
+					await ForumSettingsRepository.update({ newUsersTopicId: value });
+					break;
+				case "forum_news":
+					await ForumSettingsRepository.update({ newsTopicId: value });
+					break;
+				case "forum_referral":
+					await ForumSettingsRepository.update({ newReferralTopicId: value });
+					break;
+				case "forum_payments":
+					await ForumSettingsRepository.update({ paymentsTopicId: value });
+					break;
+			}
+
+			await invalidateForumConfigCache();
+			const { text: m, keyboard } = await forumMenu();
+			await ctx.send(`✅ ذخیره شد.\n\n${m}`, {
+				parse_mode: "HTML",
+				reply_markup: keyboard,
+			});
 			return;
 		}
 	});

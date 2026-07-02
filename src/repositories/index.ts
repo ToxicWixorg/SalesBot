@@ -31,6 +31,7 @@ export { PaymentRepository } from "./PaymentRepository.ts";
 export {
   BotSettingsRepository,
   BackupSettingsRepository,
+  ForumSettingsRepository,
 } from "./SettingsRepository.ts";
 export {
   UserAdminRepository,

@@ -5,8 +5,11 @@ import {
 	type BotSettings,
 	backupSettingsTable,
 	botSettingsTable,
+	type ForumSettings,
+	forumSettingsTable,
 	type InsertBackupSettings,
 	type InsertBotSettings,
+	type InsertForumSettings,
 } from "../db/schema.ts";
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -90,6 +93,48 @@ export class BackupSettingsRepository {
 			.update(backupSettingsTable)
 			.set({ ...patch, updatedAt: new Date() })
 			.where(eq(backupSettingsTable.id, 1))
+			.returning();
+		return row;
+	}
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🗂 Forum Settings (single-row id=1)
+// Overrides the Telegram forum group id and topic ids from env config.
+// Any null field falls back to the env value via services/forumConfig.ts.
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+export class ForumSettingsRepository {
+	static async get(): Promise<ForumSettings | undefined> {
+		const [row] = await db
+			.select()
+			.from(forumSettingsTable)
+			.where(eq(forumSettingsTable.id, 1))
+			.limit(1);
+		return row;
+	}
+
+	static async getOrCreate(): Promise<ForumSettings> {
+		const existing = await ForumSettingsRepository.get();
+		if (existing) return existing;
+
+		const [created] = await db
+			.insert(forumSettingsTable)
+			.values({ id: 1 })
+			.onConflictDoNothing()
+			.returning();
+
+		return created ?? (await ForumSettingsRepository.get())!;
+	}
+
+	static async update(
+		patch: Partial<InsertForumSettings>,
+	): Promise<ForumSettings> {
+		await ForumSettingsRepository.getOrCreate();
+		const [row] = await db
+			.update(forumSettingsTable)
+			.set({ ...patch, updatedAt: new Date() })
+			.where(eq(forumSettingsTable.id, 1))
 			.returning();
 		return row;
 	}
