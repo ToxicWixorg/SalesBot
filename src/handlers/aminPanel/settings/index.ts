@@ -570,19 +570,17 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 
 	bot.callbackQuery("set_bk_now", async (ctx) => {
 		if (!(await ownerGate(ctx))) return;
+		// A callback query can only be answered once, and the backup can take a few
+		// seconds, so give immediate feedback here and report the outcome via a
+		// follow-up message (not a second answerCallbackQuery, which is a no-op).
 		await ctx.answerCallbackQuery({ text: "⏳ در حال تهیه بکاپ..." });
 		const result = await runBackup(bot);
-		if (result.ok) {
-			await ctx.answerCallbackQuery({
-				text: "✅ بکاپ با موفقیت به کانال ارسال شد.",
-				show_alert: true,
-			});
-		} else {
-			await ctx.answerCallbackQuery({
-				text: `❌ خطا: ${result.error ?? "نامشخص"}`,
-				show_alert: true,
-			});
-		}
+		await ctx.send(
+			result.ok
+				? "✅ بکاپ با موفقیت به کانال ارسال شد."
+				: `❌ تهیه بکاپ ناموفق بود.\nخطا: ${result.error ?? "نامشخص"}`,
+			{ parse_mode: "HTML" },
+		);
 		const { text, keyboard } = await backupMenu();
 		await ctx.editText(text, { parse_mode: "HTML", reply_markup: keyboard });
 	});

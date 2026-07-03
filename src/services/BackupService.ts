@@ -46,8 +46,17 @@ function normalizeChannelId(channelId: string): string | number {
 		: trimmed;
 }
 
+/** حداکثر حجم فایلی که یک بات می‌تواند به تلگرام آپلود کند (۵۰ مگابایت). */
+const TELEGRAM_MAX_UPLOAD_BYTES = 50 * 1024 * 1024;
+
 /** خروجی pg_dump را به‌صورت Buffer برمی‌گرداند. */
 async function dumpDatabase(): Promise<Buffer> {
+	if (!Bun.which("pg_dump")) {
+		throw new Error(
+			"دستور pg_dump یافت نشد. بسته‌ی postgresql-client را روی سرور نصب کنید.",
+		);
+	}
+
 	const proc = Bun.spawn(
 		["pg_dump", config.DATABASE_URL, "--no-owner", "--no-privileges"],
 		{ stdout: "pipe", stderr: "pipe" },
@@ -82,6 +91,16 @@ export async function runBackup(bot: AnyBot): Promise<BackupResult> {
 
 	try {
 		const dump = await dumpDatabase();
+
+		if (dump.byteLength === 0) {
+			throw new Error("خروجی pg_dump خالی بود (بکاپ نامعتبر).");
+		}
+		if (dump.byteLength > TELEGRAM_MAX_UPLOAD_BYTES) {
+			throw new Error(
+				`حجم بکاپ ${(dump.byteLength / 1048576).toFixed(1)} مگابایت است و از حد ۵۰ مگابایتی تلگرام بیشتر است.`,
+			);
+		}
+
 		const chatId = normalizeChannelId(settings.telegramChannelId);
 
 		await (bot.api as any).sendDocument({
@@ -125,7 +144,9 @@ export function startBackupScheduler(bot: AnyBot) {
 
 			const now = new Date();
 			const targetHour = parseBackupHour(settings.cronSchedule);
-			if (now.getHours() !== targetHour) return;
+			// «در ساعت هدف یا بعد از آن» — تا اگر ربات دقیقاً سرِ ساعت خاموش بود،
+			// همان روز پس از بالا آمدن، بکاپ عقب‌افتاده گرفته شود (یک‌بار در روز).
+			if (now.getHours() < targetHour) return;
 
 			// اگر امروز قبلاً بکاپ گرفته شده، دوباره نگیر
 			if (
