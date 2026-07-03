@@ -12,10 +12,10 @@ async function seedOwner() {
     .insert(usersTable)
     .values({
       id: ownerId,
-      username: "r4m_m",
-      firstName: "Ramin",
-      lastName: "Salehi",
-      languageCode: "en",
+      username: "",
+      firstName: "Owner",
+      lastName: "",
+      languageCode: "fa",
       role: "super_admin",
       referralCode: `OWNER${ownerId}`,
       referredBy: null,
