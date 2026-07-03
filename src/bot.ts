@@ -17,7 +17,6 @@ import { setupManualOrderScene } from "./scenes/manualOrders/index.ts";
 import { setupEnterQuantityHandler } from "./handlers/products/callbacks/EnterQuantity.ts";
 import { setupOrderForumHandlers } from "./handlers/orders/orderForum.ts";
 import { setBotInstance } from "./botInstance.ts";
-import { setupAdminSetupHandler } from "./handlers/adminSetup.ts";
 import { setupAdminSettingsHandlers } from "./handlers/aminPanel/settings/index.ts";
 import { setupAdminUsersHandlers } from "./handlers/aminPanel/users/index.ts";
 import { setupAdminOrdersHandlers } from "./handlers/aminPanel/orders/index.ts";
@@ -63,8 +62,10 @@ export const bot = new Bot(config.BOT_TOKEN)
 // Set bot singleton (must be before scenes that need getBotInstance)
 setBotInstance(bot);
 
-// Setup admin password setup handler (highest priority — before other message handlers)
-setupAdminSetupHandler(bot);
+// NOTE: The in-bot admin panel is role-based (isAdmin / hasPermission), so newly
+// added admins do NOT need to set a password. The old bot-side password-setup
+// prompt (setupAdminSetupHandler) is intentionally disabled. Owner web-panel
+// credentials are seeded separately via scripts/seed-owner.ts.
 
 // Setup owner-only admin panel settings (admins / bot / wallet / backup)
 setupAdminSettingsHandlers(bot);

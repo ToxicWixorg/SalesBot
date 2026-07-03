@@ -697,6 +697,18 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 				return;
 			}
 
+			// Notify the new admin. The in-bot panel is role-based, so no password
+			// setup is required — they can open it straight from the main menu.
+			try {
+				await (bot.api as any).sendMessage({
+					chat_id: forwardedId,
+					text:
+						"🎉 شما به‌عنوان <b>ادمین</b> اضافه شدید!\n\n" +
+						"برای ورود به پنل مدیریت، /start را بزنید و دکمه «پنل مدیریت» را انتخاب کنید.",
+					parse_mode: "HTML",
+				});
+			} catch {}
+
 			const { text: menuText, keyboard } = await adminsMenu();
 			await ctx.send(`✅ ادمین جدید اضافه شد.\n\n${menuText}`, {
 				parse_mode: "HTML",

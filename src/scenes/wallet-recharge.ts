@@ -17,8 +17,10 @@ import {
   usersTable,
   type PaymentSettings,
   type ZarinpalWalletPayment,
+  type WalletTopup,
 } from "../db/schema.ts";
 import { cancelKeyboard } from "../shared/keyboards/back.ts";
+import { topupManageKeyboard } from "../shared/keyboards/adminPanel/wallet.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
 
 // ─────────────────────────────────────────────────────────
@@ -655,6 +657,53 @@ async function createPendingCardTopup(opts: {
     .returning();
 
   return topup;
+}
+
+/**
+ * ارسال رسید کارت‌به‌کارت به تاپیک پرداخت‌های گروه فروم برای تأیید ادمین.
+ * دکمه‌های تأیید/رد به همان هندلرهای بخش کیف‌پول ادمین (`wtopup_*`) وصل‌اند.
+ */
+async function notifyCardTopupToForum(
+  bot: AnyBot,
+  opts: {
+    topup: WalletTopup;
+    username: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  },
+) {
+  const forum = await getForumConfig();
+  if (!forum.groupId) return;
+  const topicId = forum.topics.payments ?? forum.topics.order;
+
+  const name =
+    [opts.firstName, opts.lastName].filter(Boolean).join(" ") || "کاربر";
+  const userLabel = opts.username ? `${name} (@${opts.username})` : name;
+  const amount = Number.parseFloat(
+    String(opts.topup.amount ?? "0"),
+  ).toLocaleString("en-US");
+  const fileId = opts.topup.receiptPath.replace(/^telegram-file-id:/, "");
+
+  const caption =
+    `🧾 <b>درخواست شارژ کیف پول #${opts.topup.id}</b>\n\n` +
+    `👤 ${userLabel}\n` +
+    `🆔 <code>${opts.topup.userId}</code>\n` +
+    `💵 مبلغ: <b>${amount}</b> تومان\n` +
+    `💳 روش: کارت‌به‌کارت\n` +
+    `⏰ ${new Date().toLocaleString("en-GB")}`;
+
+  try {
+    await (bot.api as any).sendPhoto({
+      chat_id: Number(forum.groupId),
+      message_thread_id: topicId,
+      photo: fileId,
+      caption,
+      parse_mode: "HTML",
+      reply_markup: topupManageKeyboard(opts.topup),
+    });
+  } catch (err) {
+    console.error("[wallet-recharge] notifyCardTopupToForum error:", err);
+  }
 }
 
 /** اعمال شارژ و اطلاع به کاربر */
@@ -1459,8 +1508,9 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       const fileId = photo[photo.length - 1].file_id;
       rechargeState.delete(userId);
 
+      let topup: WalletTopup | undefined;
       try {
-        await createPendingCardTopup({
+        topup = await createPendingCardTopup({
           userId,
           amount: state.amount,
           receiptFileId: fileId,
@@ -1472,6 +1522,16 @@ export function setupWalletRechargeScene(bot: AnyBot) {
         );
         await ctx.reply(t("rechargeCardSaveFailed"), { parse_mode: "HTML" });
         return;
+      }
+
+      // Notify the forum group's payments topic so admins can approve/reject.
+      if (topup) {
+        await notifyCardTopupToForum(bot, {
+          topup,
+          username: ctx.from?.username ?? null,
+          firstName: ctx.from?.firstName ?? null,
+          lastName: ctx.from?.lastName ?? null,
+        });
       }
 
       await ctx.reply(t("rechargePendingApproval"), {
