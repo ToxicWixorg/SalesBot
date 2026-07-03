@@ -38,6 +38,12 @@ export function forumSettingsKeyboard(
 
 	return new InlineKeyboard()
 		.text(
+			`${settings.notificationsEnabled ? "🔔 ارسال پیام به گروه: روشن" : "🔕 ارسال پیام به گروه: خاموش"}`,
+			"set_forum_notify_toggle",
+			{ style: settings.notificationsEnabled ? "success" : "danger" },
+		)
+		.row()
+		.text(
 			`🆔 آیدی گروه: ${settings.supportGroupId ?? "پیش‌فرض"}`,
 			"set_forum_group",
 			{ style: "primary" },

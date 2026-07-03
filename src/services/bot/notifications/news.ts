@@ -19,6 +19,7 @@ export async function sendNewsMessage(
   },
 ) {
   const forum = await getForumConfig();
+  if (!forum.notificationsEnabled) return; // group notifications turned off
   if (!forum.groupId || !forum.topics.news) {
     console.warn("[FORUM] SUPPORT_GROUP_ID or NEWS_TOPIC_ID not configured");
     return;

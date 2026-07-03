@@ -1185,6 +1185,10 @@ export const forumSettingsTable = pgTable("forum_settings", {
   newsTopicId: integer("news_topic_id"),
   newReferralTopicId: integer("new_referral_topic_id"),
   paymentsTopicId: integer("payments_topic_id"),
+  // Master switch for sending notifications to the forum group. Default OFF.
+  notificationsEnabled: boolean("notifications_enabled")
+    .notNull()
+    .default(false),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

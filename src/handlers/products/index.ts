@@ -38,6 +38,17 @@ export const productsComposer = new Composer()
   .callbackQuery("premiumCategories", async (context) => {
     return await PremiumCategoriesCallback(context);
   })
+  // "categories" is the back-target used by several buy-flow keyboards
+  // (plans list, empty product list, quantity/renew screens). Show the
+  // category list in-place.
+  .callbackQuery("categories", async (context) => {
+    return await PremiumCategoriesCallback(context);
+  })
+  // "category_{id}" is the back-target from a product detail — show that
+  // category's product list.
+  .callbackQuery(/^category_(\d+)$/, async (context) => {
+    return await PremiumCategoryCallback(context);
+  })
   .callbackQuery(/^premium_category_(\d+)$/, async (context) => {
     return await PremiumCategoryCallback(context);
   })

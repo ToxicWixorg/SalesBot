@@ -204,6 +204,13 @@
       "when": 1783000455326,
       "tag": "0028_fat_gambit",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1783100455326,
+      "tag": "0029_add_forum_notifications_enabled",
+      "breakpoints": true
     }
   ]
 }

@@ -16,6 +16,7 @@ import { setupTicketScenes } from "./scenes/support-tickets.ts";
 import { setupManualOrderScene } from "./scenes/manualOrders/index.ts";
 import { setupEnterQuantityHandler } from "./handlers/products/callbacks/EnterQuantity.ts";
 import { setupOrderForumHandlers } from "./handlers/orders/orderForum.ts";
+import { setupOrderReportHandler } from "./handlers/orders/orderReport.ts";
 import { setBotInstance } from "./botInstance.ts";
 import { setupAdminSettingsHandlers } from "./handlers/aminPanel/settings/index.ts";
 import { setupAdminUsersHandlers } from "./handlers/aminPanel/users/index.ts";
@@ -102,6 +103,9 @@ setupEnterQuantityHandler(bot);
 
 // Setup Orders-topic forum management (buttons + message-buyer relay)
 setupOrderForumHandlers(bot);
+
+// Setup order problem-report flow (buyer describes issue → Reports topic)
+setupOrderReportHandler(bot);
 
 // Setup support/ticket handlers FIRST (higher priority)
 setupTicketScenes(bot);

@@ -76,6 +76,7 @@ export async function PremiumProductCallback(context: any, getEffectiveStock: an
         productId,
         user.languageCode,
         usdtRate,
+        product.categoryId ?? null,
       ),
     });
     return;
@@ -83,6 +84,9 @@ export async function PremiumProductCallback(context: any, getEffectiveStock: an
 
   await context.editText(message, {
     parse_mode: "HTML",
-    reply_markup: backKeyboard(t, `categories`),
+    reply_markup: backKeyboard(
+      t,
+      product.categoryId != null ? `category_${product.categoryId}` : `categories`,
+    ),
   });
 }

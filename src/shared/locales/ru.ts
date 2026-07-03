@@ -476,6 +476,11 @@ export const ru = {
   orderCannotReschedule: "Этот заказ нельзя перенести",
   orderRescheduleComingSoon: "Перенос времени скоро будет доступен",
   orderReportComingSoon: "Система отчётов о проблемах скоро будет доступна",
+  orderReportPrompt:
+    "📝 Пожалуйста, опишите проблему с этим заказом, чтобы мы передали её в поддержку.\n\n(Отправьте /cancel для отмены)",
+  orderReportCancelled: "❌ Отправка отчёта отменена.",
+  orderReportSent:
+    "✅ Ваш отчёт отправлен в поддержку. Мы скоро его рассмотрим.",
   errorFetchingOrders: `❌ Ошибка загрузки заказов`,
   errorFetchingOrderDetails: `❌ Ошибка загрузки деталей заказа`,
   errorReschedulingOrder: `❌ Ошибка переноса заказа`,

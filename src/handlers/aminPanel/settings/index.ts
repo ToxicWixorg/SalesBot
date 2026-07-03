@@ -594,6 +594,23 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 		await ctx.editText(text, { parse_mode: "HTML", reply_markup: keyboard });
 	});
 
+	// روشن/خاموش کردن ارسال پیام به گروه فروم (پیش‌فرض: خاموش)
+	bot.callbackQuery("set_forum_notify_toggle", async (ctx) => {
+		if (!(await ownerGate(ctx))) return;
+		const current = await ForumSettingsRepository.getOrCreate();
+		await ForumSettingsRepository.update({
+			notificationsEnabled: !current.notificationsEnabled,
+		});
+		await invalidateForumConfigCache();
+		await ctx.answerCallbackQuery({
+			text: !current.notificationsEnabled
+				? "🔔 ارسال پیام به گروه روشن شد."
+				: "🔕 ارسال پیام به گروه خاموش شد.",
+		});
+		const { text, keyboard } = await forumMenu();
+		await ctx.editText(text, { parse_mode: "HTML", reply_markup: keyboard });
+	});
+
 	// Prompt helper for a forum field edit (group id or a topic id).
 	const forumPrompt = async (
 		ctx: any,

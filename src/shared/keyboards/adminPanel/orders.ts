@@ -113,26 +113,39 @@ export function orderManageKeyboard(
 	filterCode: string,
 ): InlineKeyboard {
 	const keyboard = new InlineKeyboard();
+	const done = order.status === "completed";
+	const closed = order.status === "cancelled" || order.status === "refunded";
 
-	// Manual status transitions (updates the status field only — no side effects
-	// like wallet refunds or re-delivery).
+	// ── Primary actions (with side effects + buyer notification) ──────────────
+	if (!done && !closed) {
+		keyboard
+			.text("✅ تحویل شد", `oadm_deliver_${filterCode}_${order.id}`, {
+				style: "success",
+			})
+			.text("❌ لغو و بازگشت وجه", `oadm_cancel_${filterCode}_${order.id}`, {
+				style: "danger",
+			})
+			.row();
+	}
+
+	keyboard
+		.text("✉️ پیام به خریدار", `oadm_msg_${filterCode}_${order.id}`)
+		.text("👤 پروفایل کاربر", `ord_user_${order.userId}`)
+		.row();
+
+	// ── Manual status transitions (status field only, no side effects) ────────
 	const transitions: { code: string; label: string }[] = [
 		{ code: "pa", label: "👤 در انتظار ادمین" },
 		{ code: "ip", label: "🔄 در حال انجام" },
-		{ code: "cp", label: "✅ تکمیل" },
-		{ code: "cn", label: "❌ لغو" },
-		{ code: "rf", label: "↩️ بازپرداخت" },
 	];
-
 	const currentCode = ORDER_STATUS_TO_CODE[order.status ?? ""] ?? "";
 	transitions
 		.filter((tr) => tr.code !== currentCode)
-		.forEach((tr, i) => {
+		.forEach((tr) => {
 			keyboard.text(tr.label, `oadm_setst_${filterCode}_${order.id}_${tr.code}`);
-			if (i % 2 === 1) keyboard.row();
 		});
-
 	keyboard.row();
+
 	keyboard.text("بازگشت", `oadm_list_${filterCode}_0`, {
 		icon_custom_emoji_id: emojiIds.back,
 	});

@@ -1,10 +1,11 @@
 import type { AnyBot } from "gramio";
 import { getForumConfig } from "../../services/forumConfig.ts";
+import { OrderRepository, UserRepository } from "../../repositories/index.ts";
 import {
-  OrderRepository,
-  UserRepository,
-  WalletRepository,
-} from "../../repositories/index.ts";
+  cancelRefundOrderAction,
+  deliverOrderAction,
+  messageBuyerAction,
+} from "../../services/bot/orderActions.ts";
 
 /**
  * Pending "message buyer" state, keyed by the staff member's Telegram id.
@@ -60,92 +61,15 @@ export function setupOrderForumHandlers(bot: AnyBot): void {
   // ── ✅ Mark as delivered ────────────────────────────────────────────────────
   bot.callbackQuery(/^ord_deliver_(\d+)$/, async (ctx) => {
     const orderId = parseInt(ctx.queryData[1], 10);
-    const order = await OrderRepository.findById(orderId);
-    if (!order) {
-      await ctx.answerCallbackQuery({
-        text: "❌ سفارش پیدا نشد",
-        show_alert: true,
-      });
-      return;
-    }
-
-    await OrderRepository.updateStatus(orderId, "completed");
-
-    try {
-      await bot.api.sendMessage({
-        chat_id: Number(order.userId),
-        text: `✅ سفارش شما (#${orderId}) تحویل داده شد. از خرید شما متشکریم!`,
-        parse_mode: "HTML",
-      });
-    } catch {}
-
-    await ctx.answerCallbackQuery({
-      text: "✅ سفارش تحویل‌شده علامت‌گذاری شد",
-      show_alert: true,
-    });
+    const result = await deliverOrderAction(bot.api as any, orderId);
+    await ctx.answerCallbackQuery({ text: result.message, show_alert: true });
   });
 
   // ── ❌ Cancel & refund ──────────────────────────────────────────────────────
   bot.callbackQuery(/^ord_cancel_(\d+)$/, async (ctx) => {
     const orderId = parseInt(ctx.queryData[1], 10);
-    const order = await OrderRepository.findById(orderId);
-    if (!order) {
-      await ctx.answerCallbackQuery({
-        text: "❌ سفارش پیدا نشد",
-        show_alert: true,
-      });
-      return;
-    }
-
-    if (order.status === "cancelled" || order.status === "refunded") {
-      await ctx.answerCallbackQuery({
-        text: "ℹ️ این سفارش قبلاً لغو شده است",
-        show_alert: true,
-      });
-      return;
-    }
-
-    const refund = Number(order.walletUsed ?? 0);
-    let refunded = false;
-    if (refund > 0) {
-      try {
-        await UserRepository.updateWalletBalance(
-          Number(order.userId),
-          refund,
-          "add",
-        );
-        await WalletRepository.addCredit(
-          Number(order.userId),
-          refund.toFixed(2),
-          "refund",
-          `بازگشت وجه سفارش #${orderId}`,
-        );
-        refunded = true;
-      } catch (error) {
-        console.error("[ORDER-FORUM] Refund failed:", error);
-      }
-    }
-
-    await OrderRepository.updateStatus(orderId, refunded ? "refunded" : "cancelled");
-
-    try {
-      await bot.api.sendMessage({
-        chat_id: Number(order.userId),
-        text:
-          `❌ سفارش شما (#${orderId}) لغو شد.` +
-          (refunded
-            ? `\n💰 مبلغ ${refund.toLocaleString()} تومان به کیف پول شما بازگردانده شد.`
-            : ""),
-        parse_mode: "HTML",
-      });
-    } catch {}
-
-    await ctx.answerCallbackQuery({
-      text: refunded
-        ? "✅ سفارش لغو و وجه بازگردانده شد"
-        : "✅ سفارش لغو شد",
-      show_alert: true,
-    });
+    const result = await cancelRefundOrderAction(bot.api as any, orderId);
+    await ctx.answerCallbackQuery({ text: result.message, show_alert: true });
   });
 
   // ── 👤 Buyer profile ────────────────────────────────────────────────────────
@@ -199,20 +123,17 @@ export function setupOrderForumHandlers(bot: AnyBot): void {
 
     orderReplyState.delete(adminId);
 
-    try {
-      await bot.api.sendMessage({
-        chat_id: state.buyerId,
-        text: `📩 <b>پیام پشتیبانی درباره سفارش #${state.orderId}:</b>\n\n${ctx.text}`,
-        parse_mode: "HTML",
-      });
-      await ctx.send(`✅ پیام برای خریدار سفارش #${state.orderId} ارسال شد.`, {
-        message_thread_id: forum.topics.order,
-      } as any);
-    } catch (error) {
-      console.error("[ORDER-FORUM] Failed to relay message to buyer:", error);
-      await ctx.send("❌ ارسال پیام به خریدار ناموفق بود.", {
-        message_thread_id: forum.topics.order,
-      } as any);
-    }
+    const sent = await messageBuyerAction(
+      bot.api as any,
+      state.orderId,
+      state.buyerId,
+      ctx.text,
+    );
+    await ctx.send(
+      sent
+        ? `✅ پیام برای خریدار سفارش #${state.orderId} ارسال شد.`
+        : "❌ ارسال پیام به خریدار ناموفق بود.",
+      { message_thread_id: forum.topics.order } as any,
+    );
   });
 }

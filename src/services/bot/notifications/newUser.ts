@@ -5,6 +5,7 @@ type BotApi = any;
 
 export async function sendNewUserNotification(botApi: BotApi, user: User) {
   const forum = await getForumConfig();
+  if (!forum.notificationsEnabled) return; // group notifications turned off
   if (!forum.groupId || !forum.topics.new_users) {
     console.warn(
       "[FORUM] SUPPORT_GROUP_ID or NEWUSERS_TOPIC_ID not configured",

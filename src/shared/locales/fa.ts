@@ -445,6 +445,11 @@ ${payload.ids}`,
   orderCannotReschedule: "این سفارش قابل تغییر زمان نیست",
   orderRescheduleComingSoon: "امکان تغییر زمان به‌زودی فعال می‌شه",
   orderReportComingSoon: "سیستم گزارش مشکل به‌زودی فعال می‌شه",
+  orderReportPrompt:
+    "📝 لطفاً مشکل خود درباره این سفارش را بنویسید تا برای پشتیبانی ارسال شود.\n\n(برای لغو /cancel را بفرستید)",
+  orderReportCancelled: "❌ ارسال گزارش لغو شد.",
+  orderReportSent:
+    "✅ گزارش شما برای پشتیبانی ارسال شد. به‌زودی بررسی می‌شود.",
   errorFetchingOrders: `❌ خطا در دریافت سفارشات`,
   errorFetchingOrderDetails: `❌ خطا در دریافت جزئیات سفارش`,
   errorReschedulingOrder: `❌ خطا در تغییر زمان`,

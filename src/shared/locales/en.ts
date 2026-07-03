@@ -443,6 +443,11 @@ export const en = {
   orderCannotReschedule: "This order cannot be rescheduled",
   orderRescheduleComingSoon: "Rescheduling will be available soon",
   orderReportComingSoon: "Problem reporting will be available soon",
+  orderReportPrompt:
+    "📝 Please describe the problem with this order so we can forward it to support.\n\n(Send /cancel to abort)",
+  orderReportCancelled: "❌ Report cancelled.",
+  orderReportSent:
+    "✅ Your report has been sent to support. We'll review it soon.",
   errorFetchingOrders: `❌ Error fetching orders`,
   errorFetchingOrderDetails: `❌ Error fetching order details`,
   errorReschedulingOrder: `❌ Error rescheduling order`,

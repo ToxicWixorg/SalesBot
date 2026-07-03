@@ -7,6 +7,11 @@ import {
 	UserRepository,
 } from "../../../repositories/index.ts";
 import { AdminService } from "../../../services/bot/admin/Service.ts";
+import {
+	cancelRefundOrderAction,
+	deliverOrderAction,
+	messageBuyerAction,
+} from "../../../services/bot/orderActions.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 import {
 	ORDER_CODE_TO_STATUS,
@@ -17,6 +22,12 @@ import {
 } from "../../../shared/keyboards/adminPanel/orders.ts";
 
 const PAGE = 8;
+
+/** adminUserId → pending "message buyer" flow started from the admin panel. */
+const msgBuyerState = new Map<
+	number,
+	{ orderId: number; buyerId: number; filterCode: string }
+>();
 
 // ─────────────────────────────────────────────────────────────
 // Helpers
@@ -196,5 +207,79 @@ export function setupAdminOrdersHandlers(bot: AnyBot) {
 			text: `✅ وضعیت به «${statusLabel(status)}» تغییر کرد.`,
 		});
 		await renderOrder(ctx, filterCode, order.id);
+	});
+
+	// ── ✅ تحویل شد (وضعیت + اعلان به کاربر) ───────────────────
+	bot.callbackQuery(/^oadm_deliver_([a-z]+)_(\d+)$/, async (ctx) => {
+		if (!(await gate(ctx))) return;
+		const [, filterCode, orderIdStr] = ctx.queryData as [string, string, string];
+		const result = await deliverOrderAction(bot.api as any, Number(orderIdStr));
+		await ctx.answerCallbackQuery({ text: result.message, show_alert: true });
+		await renderOrder(ctx, filterCode, Number(orderIdStr));
+	});
+
+	// ── ❌ لغو و بازگشت وجه (بازپرداخت + اعلان به کاربر) ────────
+	bot.callbackQuery(/^oadm_cancel_([a-z]+)_(\d+)$/, async (ctx) => {
+		if (!(await gate(ctx))) return;
+		const [, filterCode, orderIdStr] = ctx.queryData as [string, string, string];
+		const result = await cancelRefundOrderAction(
+			bot.api as any,
+			Number(orderIdStr),
+		);
+		await ctx.answerCallbackQuery({ text: result.message, show_alert: true });
+		await renderOrder(ctx, filterCode, Number(orderIdStr));
+	});
+
+	// ── ✉️ پیام به خریدار (شروع جریان) ─────────────────────────
+	bot.callbackQuery(/^oadm_msg_([a-z]+)_(\d+)$/, async (ctx) => {
+		if (!(await gate(ctx))) return;
+		const [, filterCode, orderIdStr] = ctx.queryData as [string, string, string];
+		const order = await OrderRepository.findById(Number(orderIdStr));
+		if (!order) {
+			await ctx.answerCallbackQuery({ text: "سفارش یافت نشد", show_alert: true });
+			return;
+		}
+		msgBuyerState.set(ctx.from.id, {
+			orderId: order.id,
+			buyerId: Number(order.userId),
+			filterCode,
+		});
+		await ctx.answerCallbackQuery();
+		await ctx.editText(
+			`✍️ پیام خود را برای خریدار سفارش #${order.id} بنویسید.\n` +
+				`پیام بعدی شما به کاربر ارسال می‌شود. (برای لغو /cancel)`,
+			{ parse_mode: "HTML" },
+		);
+	});
+
+	// ── دریافت متن پیام به خریدار (چت خصوصی ادمین) ─────────────
+	bot.on("message", async (ctx, next) => {
+		const userId = ctx.from?.id;
+		if (!userId || !ctx.text) return next?.();
+
+		const state = msgBuyerState.get(userId);
+		if (!state) return next?.();
+		if ((ctx as any).scene?.current) return next?.();
+
+		const text = ctx.text.trim();
+		if (text === "/cancel") {
+			msgBuyerState.delete(userId);
+			await ctx.send("✅ ارسال پیام لغو شد.", { parse_mode: "HTML" });
+			return;
+		}
+
+		msgBuyerState.delete(userId);
+		const sent = await messageBuyerAction(
+			bot.api as any,
+			state.orderId,
+			state.buyerId,
+			text,
+		);
+		await ctx.send(
+			sent
+				? `✅ پیام برای خریدار سفارش #${state.orderId} ارسال شد.`
+				: "❌ ارسال پیام به خریدار ناموفق بود.",
+			{ parse_mode: "HTML" },
+		);
 	});
 }

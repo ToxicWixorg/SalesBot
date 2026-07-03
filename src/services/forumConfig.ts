@@ -21,6 +21,8 @@ const CACHE_TTL_SECONDS = 30;
 export interface EffectiveForumConfig {
   /** Telegram forum group id (e.g. "-1001234567890"), or null if unset */
   groupId: string | null;
+  /** Master switch for sending notifications to the group. Default OFF. */
+  notificationsEnabled: boolean;
   topics: {
     support: number;
     order: number;
@@ -36,6 +38,8 @@ export interface EffectiveForumConfig {
 function buildFromEnv(): EffectiveForumConfig {
   return {
     groupId: config.SUPPORT_GROUP_ID ?? null,
+    // Notifications default to OFF; only the DB row can turn them on.
+    notificationsEnabled: false,
     topics: {
       support: config.SUPPORT_TOPIC_ID,
       order: config.ORDERS_TOPIC_ID,
@@ -61,6 +65,7 @@ async function loadFromDb(): Promise<EffectiveForumConfig> {
   // DB value wins when set (non-null); otherwise fall back to env.
   return {
     groupId: row.supportGroupId ?? env.groupId,
+    notificationsEnabled: row.notificationsEnabled ?? false,
     topics: {
       support: row.supportTopicId ?? env.topics.support,
       order: row.ordersTopicId ?? env.topics.order,
@@ -100,6 +105,15 @@ export async function getForumConfig(): Promise<EffectiveForumConfig> {
   }
 
   return cfg;
+}
+
+/**
+ * Whether the bot is allowed to send notifications to the forum group.
+ * Defaults to false (off) until an admin enables it in the panel.
+ */
+export async function areGroupNotificationsEnabled(): Promise<boolean> {
+  const cfg = await getForumConfig();
+  return cfg.notificationsEnabled;
 }
 
 /** Resolve the topic id for a given ticket type (support/order/report). */

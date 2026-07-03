@@ -12,6 +12,7 @@ export function productPlansKeyboard(
   productId: number,
   languageCode = "fa",
   usdtRate: number | null = null,
+  categoryId: number | null = null,
 ): InlineKeyboard {
   const keyboard = new InlineKeyboard();
 
@@ -50,9 +51,13 @@ export function productPlansKeyboard(
     keyboard.row();
   });
 
-  keyboard.text(t("btnBack"), `categories`, {
-    icon_custom_emoji_id: emojiIds.back,
-  });
+  keyboard.text(
+    t("btnBack"),
+    categoryId != null ? `category_${categoryId}` : `categories`,
+    {
+      icon_custom_emoji_id: emojiIds.back,
+    },
+  );
 
   return keyboard;
 }

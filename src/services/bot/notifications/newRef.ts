@@ -10,6 +10,7 @@ export async function sendNewRefNotification(
   totalReferrals: number,
 ) {
   const forum = await getForumConfig();
+  if (!forum.notificationsEnabled) return; // group notifications turned off
   if (!forum.groupId || !forum.topics.new_referral) {
     console.warn(
       "[FORUM] SUPPORT_GROUP_ID or NEWREFERRAL_TOPIC_ID not configured",
