@@ -100,9 +100,10 @@ export async function adminCategoryCallback(context: any) {
     context.from.languageCode,
   );
   const status = category.isActive ? t("active") : t("inactive");
-  const prefix = normalizeCustomEmojiId(category.customEmojiId)
-    ? `<tg-emoji emoji-id="${normalizeCustomEmojiId(category.customEmojiId)}">ðŸ“</tg-emoji> `
-    : "ðŸ“ ";
+  const safeCategoryEmojiId = normalizeCustomEmojiId(category.customEmojiId);
+  const prefix = safeCategoryEmojiId
+    ? `<tg-emoji emoji-id="${safeCategoryEmojiId}">🛍️</tg-emoji> `
+    : "🛍️ ";
 
   const message =
     `${prefix}<b>${categoryName}</b>
@@ -182,8 +183,8 @@ export async function adminProductCallback(context: any) {
 
   const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
   const icon = safeEmojiId
-    ? `<tg-emoji emoji-id="${safeEmojiId}">ðŸ›ï¸</tg-emoji> `
-    : "ðŸ›ï¸ ";
+    ? `<tg-emoji emoji-id="${safeEmojiId}">🛍️</tg-emoji> `
+    : "🛍️ ";
 
   const message =
     `${icon}<b>${productName}</b>
