@@ -1632,9 +1632,6 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
     // Don't swallow input meant for an active scene.
     if ((ctx as any).scene?.current) return next?.();
 
-    const t = i18n.buildT(ctx.from?.languageCode ?? "fa");
-    const text = ctx.text.trim();
-
     // ── EDIT FLOW (send a new name per step, or /skip to keep it) ──────────
     if (editState) {
       if (text === "/cancel") {
