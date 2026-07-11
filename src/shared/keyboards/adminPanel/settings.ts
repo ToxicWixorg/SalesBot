@@ -3,6 +3,7 @@ import type {
 	Admin,
 	BackupSettings,
 	BotSettings,
+	ForceJoinChannel,
 	ForumSettings,
 	PaymentCardNumber,
 	PaymentSettings,
@@ -26,7 +27,45 @@ export function settingsMainKeyboard(): InlineKeyboard {
 		.row()
 		.text("🗂 مدیریت گروه فروم", "set_forum", { style: "primary" })
 		.row()
+		.text("📢 جوین اجباری", "set_forcejoin", { style: "primary" })
+		.row()
 		.text("بازگشت", "admin_panel", { icon_custom_emoji_id: emojiIds.back });
+}
+
+// ─── جوین اجباری (کانال‌های عضویت اجباری) ─────────────────────
+export function forceJoinListKeyboard(
+	channels: ForceJoinChannel[],
+): InlineKeyboard {
+	const keyboard = new InlineKeyboard();
+
+	for (const channel of channels) {
+		const status = channel.isActive ? "🟢" : "🔴";
+		keyboard
+			.text(`${status} ${channel.channelName}`, `set_fj_view_${channel.id}`)
+			.row();
+	}
+
+	keyboard
+		.text("➕ افزودن کانال", "set_fj_add", { style: "success" })
+		.row()
+		.text("بازگشت", "panel_setting", { icon_custom_emoji_id: emojiIds.back });
+
+	return keyboard;
+}
+
+export function forceJoinManageKeyboard(
+	channel: ForceJoinChannel,
+): InlineKeyboard {
+	return new InlineKeyboard()
+		.text(
+			channel.isActive ? "🔴 غیرفعال کردن" : "🟢 فعال کردن",
+			`set_fj_toggle_${channel.id}`,
+			{ style: channel.isActive ? "danger" : "success" },
+		)
+		.row()
+		.text("🗑 حذف کانال", `set_fj_del_${channel.id}`, { style: "danger" })
+		.row()
+		.text("بازگشت", "set_forcejoin", { icon_custom_emoji_id: emojiIds.back });
 }
 
 // ─── گروه فروم (گروه پشتیبانی و تاپیک‌ها) ─────────────────────

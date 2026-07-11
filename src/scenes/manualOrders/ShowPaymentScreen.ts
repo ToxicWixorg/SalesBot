@@ -12,6 +12,7 @@ import {
 import { PaymentRepository } from "../../repositories/PaymentRepository";
 import { i18n } from "../../shared/locales";
 import { getLocalizedName } from "../../shared/utils/localizedFields";
+import { formatPriceForUser } from "../../shared/utils/currency";
 import { getUsdtRate, usdToTomanWithRate } from "../../services/tetherland";
 
 export async function showPaymentScreen(
@@ -37,9 +38,17 @@ export async function showPaymentScreen(
       await sendFn(t("priceRateUnavailable"), { parse_mode: "HTML" });
       return;
     }
-    originalPrice = usdToTomanWithRate(parseFloat(plan.price as string), usdtRate);
+    originalPrice = usdToTomanWithRate(
+      parseFloat(plan.price as string),
+      usdtRate,
+    );
   }
   state.basePriceToman = originalPrice;
+  const priceInfo = await formatPriceForUser(
+    user.languageCode || "en",
+    parseFloat(plan.price as string),
+    t,
+  );
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
   const hasDiscount =
     pendingDiscount !== undefined && pendingDiscount.planId === state.planId;
@@ -65,6 +74,7 @@ export async function showPaymentScreen(
       durationUnit: plan.durationUnit,
       collected: state.collected,
       originalPrice,
+      originalPriceLabel: priceInfo.label,
       discountCode: hasDiscount ? pendingDiscount.code : undefined,
       discountAmount: hasDiscount ? pendingDiscount.discountAmount : undefined,
       finalPrice,

@@ -839,21 +839,22 @@ export const en = {
   // Admin Panel
 
   adminPanelMainMessage: `${e.admin} <b>Admin Panel</b>\n\nWhat would you like to do?`,
-  
-  panelProducts : "Products",
-  panelOrders : "Orders",
-  panelUsers : "Users",
-  panelWallet : "Wallet",
-  panelDiscounts : "Discounts",
-  panelSchedules : "Schedules",
-  panelBroadcast : "Broadcast",
-  panelSetting : "Settings",
+
+  panelProducts: "Products",
+  panelOrders: "Orders",
+  panelUsers: "Users",
+  panelWallet: "Wallet",
+  panelDiscounts: "Discounts",
+  panelSchedules: "Schedules",
+  panelBroadcast: "Broadcast",
+  panelSetting: "Settings",
 
   adminProductsTitle: "Manage product categories",
   active: "Active",
   inactive: "Inactive",
   adminCategoryStatus: (status: string) => `Status: <b>${status}</b>`,
-  adminCategoryProductsTitle: (category: string) => `Products in category “${category}”`,
+  adminCategoryProductsTitle: (category: string) =>
+    `Products in category “${category}”`,
   adminProductPlansTitle: (product: string) => `Plans for “${product}”`,
   adminProductStatus: (status: string) => `Product status: <b>${status}</b>\n`,
   adminProductCategory: (category: string) => `Category: <b>${category}</b>`,
@@ -868,8 +869,13 @@ export const en = {
   btnProductsInCategory: "View category products",
   btnViewPlans: "View plans",
   btnDelete: "Delete",
-  btnEdit : "Edit",
+  btnEdit: "Edit",
   btnEditPrice: "💰 Edit price (USD)",
+  btnEditEmoji: "🪪 Emoji",
+  adminEmojiEditPrompt:
+    "Please send a message containing a premium custom emoji so its ID can be stored for this item.",
+  adminEmojiUpdated: "✅ Premium emoji saved.",
+  adminEmojiCancelled: "❌ Emoji editing cancelled.",
   noPermission: "You do not have permission to access this section.",
   priceRateUnavailable:
     "❌ The live exchange rate is unavailable. Please try again in a moment.",
@@ -1020,13 +1026,29 @@ export const en = {
   adminPlanStockCleared: ({ count }: { count: number }) =>
     `🗑 ${count} available item(s) deleted.`,
   btnPlanManageItems: "🔧 Manage items individually",
-  adminPlanItemsTitle: ({ count, page, pages }: { count: number; page: number; pages: number }) =>
+  adminPlanItemsTitle: ({
+    count,
+    page,
+    pages,
+  }: {
+    count: number;
+    page: number;
+    pages: number;
+  }) =>
     `🔧 <b>Manage available items</b>\n\n` +
     `Available: <b>${count}</b>\n` +
     `Page ${page} of ${pages}\n\n` +
     `Tap an item to view its content or delete it.`,
   adminPlanItemsEmpty: "📭 No available items to manage.",
-  adminInventoryItemTitle: ({ id, status, content }: { id: number; status: string; content: string }) =>
+  adminInventoryItemTitle: ({
+    id,
+    status,
+    content,
+  }: {
+    id: number;
+    status: string;
+    content: string;
+  }) =>
     `🔖 <b>Item #${id}</b>\n` +
     `Status: <b>${status}</b>\n\n` +
     `Content:\n<code>${content}</code>`,
@@ -1040,5 +1062,4 @@ export const en = {
   priceLabel: (price: string) => `Price: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Duration: <b>${duration}</b>\n`,
   notAvailable: "Not available",
-
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

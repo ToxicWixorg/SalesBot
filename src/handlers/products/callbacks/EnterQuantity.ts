@@ -19,6 +19,7 @@ import {
   getUsdtRate,
   usdToTomanWithRate,
 } from "../../../services/tetherland/index.ts";
+import { formatPriceLabel } from "../../../shared/utils/currency.ts";
 
 /**
  * Per-user state tracking which product/plan the user is entering a quantity for.
@@ -83,16 +84,22 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
       return;
     }
 
-    // Plan price is stored in USD → convert to Toman with the live rate.
+    // Plan price is stored in USD → compute Toman using the live rate and format for display.
     const usdtRate = await getUsdtRate();
-    if (usdtRate === null) {
+    const priceInfo = formatPriceLabel(
+      user?.languageCode,
+      parseFloat(plan.price as string),
+      t,
+      usdtRate,
+    );
+    if (
+      !priceInfo ||
+      (priceInfo.toman === undefined && user?.languageCode === "fa")
+    ) {
       await ctx.send(t("priceRateUnavailable"), { parse_mode: "HTML" });
       return;
     }
-    const unitPrice = usdToTomanWithRate(
-      parseFloat(plan.price as string),
-      usdtRate,
-    );
+    const unitPrice = priceInfo.toman ?? parseFloat(plan.price as string);
     const discount = appliedDiscountState.get(userId);
     const hasDiscount = discount && discount.planId === state.planId;
     const finalTotal = hasDiscount
@@ -106,7 +113,7 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
       t("inventoryOrderSummary", {
         productName,
         qty,
-        unitPrice: unitPrice.toLocaleString(),
+        unitPrice: priceInfo.label,
         total: finalTotal.toLocaleString(),
         currency: t("currency"),
       }),

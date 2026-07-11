@@ -5,6 +5,7 @@ import {
 	AdminRepository,
 	BackupSettingsRepository,
 	BotSettingsRepository,
+	ForceJoinRepository,
 	ForumSettingsRepository,
 	PaymentRepository,
 	UserRepository,
@@ -29,6 +30,8 @@ import {
 	cardManageKeyboard,
 	cardsListKeyboard,
 	cryptoSettingsKeyboard,
+	forceJoinListKeyboard,
+	forceJoinManageKeyboard,
 	forumSettingsKeyboard,
 	settingsMainKeyboard,
 	walletSettingsKeyboard,
@@ -53,6 +56,12 @@ type SettingsInput =
 	| { type: "cr_apikey" }
 	| { type: "bk_channel" }
 	| { type: "bk_hour" }
+	| {
+			type: "add_forcejoin";
+			step: "id" | "url" | "name";
+			channelId?: string;
+			channelUrl?: string;
+	  }
 	| { type: "forum_group" }
 	| { type: "forum_support" }
 	| { type: "forum_orders" }
@@ -170,6 +179,18 @@ async function forumMenu() {
 		`🎁 ریفرال: <code>${eff.topics.new_referral}</code>\n` +
 		`💳 پرداخت‌ها: <code>${eff.topics.payments ?? eff.topics.order}</code>`;
 	return { text, keyboard: forumSettingsKeyboard(s) };
+}
+
+async function forceJoinMenu() {
+	const channels = await ForceJoinRepository.getAll();
+	const active = channels.filter((c) => c.isActive).length;
+	const text =
+		`📢 <b>جوین اجباری</b>\n\n` +
+		`کاربران قبل از استفاده از ربات باید در کانال‌های فعال زیر عضو شوند.\n\n` +
+		(channels.length === 0
+			? "هیچ کانالی ثبت نشده است."
+			: `تعداد کانال‌ها: <b>${channels.length}</b> (فعال: <b>${active}</b>)`);
+	return { text, keyboard: forceJoinListKeyboard(channels) };
 }
 
 async function adminsMenu() {
@@ -653,6 +674,74 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 		forumPrompt(ctx, "forum_payments", "آیدی تاپیک پرداخت‌ها"),
 	);
 
+	// ───────────────────────── جوین اجباری ────────────────────
+	bot.callbackQuery("set_forcejoin", async (ctx) => {
+		if (!(await ownerGate(ctx))) return;
+		const { text, keyboard } = await forceJoinMenu();
+		await ctx.editText(text, { parse_mode: "HTML", reply_markup: keyboard });
+	});
+
+	bot.callbackQuery(/^set_fj_view_(\d+)$/, async (ctx) => {
+		if (!(await ownerGate(ctx))) return;
+		const channel = await ForceJoinRepository.findById(Number(ctx.queryData[1]));
+		if (!channel) {
+			await ctx.answerCallbackQuery({
+				text: "کانال یافت نشد",
+				show_alert: true,
+			});
+			return;
+		}
+		const text =
+			`📢 <b>${channel.channelName}</b>\n\n` +
+			`شناسه: <code>${channel.channelId}</code>\n` +
+			`لینک: ${channel.channelUrl}\n` +
+			`وضعیت: <b>${channel.isActive ? "فعال 🟢" : "غیرفعال 🔴"}</b>`;
+		await ctx.editText(text, {
+			parse_mode: "HTML",
+			reply_markup: forceJoinManageKeyboard(channel),
+		});
+	});
+
+	bot.callbackQuery(/^set_fj_toggle_(\d+)$/, async (ctx) => {
+		if (!(await ownerGate(ctx))) return;
+		const id = Number(ctx.queryData[1]);
+		const channel = await ForceJoinRepository.findById(id);
+		if (!channel) {
+			await ctx.answerCallbackQuery({
+				text: "کانال یافت نشد",
+				show_alert: true,
+			});
+			return;
+		}
+		const updated = await ForceJoinRepository.setActive(id, !channel.isActive);
+		await ctx.editText(
+			`📢 <b>${updated.channelName}</b>\n\n` +
+				`وضعیت جدید: <b>${updated.isActive ? "فعال 🟢" : "غیرفعال 🔴"}</b>`,
+			{ parse_mode: "HTML", reply_markup: forceJoinManageKeyboard(updated) },
+		);
+	});
+
+	bot.callbackQuery(/^set_fj_del_(\d+)$/, async (ctx) => {
+		if (!(await ownerGate(ctx))) return;
+		await ForceJoinRepository.deleteChannel(Number(ctx.queryData[1]));
+		await ctx.answerCallbackQuery({ text: "✅ کانال حذف شد" });
+		const { text, keyboard } = await forceJoinMenu();
+		await ctx.editText(text, { parse_mode: "HTML", reply_markup: keyboard });
+	});
+
+	bot.callbackQuery("set_fj_add", async (ctx) => {
+		if (!(await ownerGate(ctx))) return;
+		settingsInput.set(ctx.from.id, { type: "add_forcejoin", step: "id" });
+		await ctx.editText(
+			`➕ <b>افزودن کانال جوین اجباری</b>\n\n` +
+				`<b>شناسه کانال</b> را بفرستید:\n` +
+				`• یوزرنیم عمومی (مثل <code>@my_channel</code>)\n` +
+				`• یا آیدی عددی (مثل <code>-1001234567890</code>)\n\n` +
+				`⚠️ ربات باید در آن کانال <b>ادمین</b> باشد تا بتواند عضویت را بررسی کند.`,
+			{ parse_mode: "HTML", reply_markup: cancelTo("set_forcejoin") },
+		);
+	});
+
 	// ───────────────────────── ورودی متنی ─────────────────────
 	bot.on("message", async (ctx, next) => {
 		const userId = ctx.from?.id;
@@ -776,6 +865,88 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 				});
 				const { text: menuText, keyboard } = await cardsMenu();
 				await ctx.send(`✅ کارت اضافه شد.\n\n${menuText}`, {
+					parse_mode: "HTML",
+					reply_markup: keyboard,
+				});
+				return;
+			}
+		}
+
+		// ── افزودن کانال جوین اجباری (چندمرحله‌ای) ────────────
+		if (state.type === "add_forcejoin") {
+			if (!text) return;
+
+			if (state.step === "id") {
+				const channelId = text.replace(/\s+/g, "");
+				const isUsername = /^@[A-Za-z0-9_]{4,}$/.test(channelId);
+				const isNumeric = /^-100\d{6,}$/.test(channelId);
+				if (!isUsername && !isNumeric) {
+					await ctx.send(
+						"❌ شناسه نامعتبر است. یک یوزرنیم (مثل <code>@my_channel</code>) یا آیدی عددی (مثل <code>-1001234567890</code>) بفرستید.",
+						{ parse_mode: "HTML" },
+					);
+					return;
+				}
+				settingsInput.set(userId, {
+					type: "add_forcejoin",
+					step: "url",
+					channelId,
+				});
+				const hint = isUsername
+					? "برای استفاده از لینک عمومی کانال، عبارت <code>-</code> را بفرستید."
+					: "برای این کانال حتماً لینک را دستی بفرستید.";
+				await ctx.send(
+					`🔗 <b>لینک عضویت کانال</b> را بفرستید:\n` +
+						`مثال: <code>https://t.me/my_channel</code>\n${hint}`,
+					{ parse_mode: "HTML" },
+				);
+				return;
+			}
+
+			if (state.step === "url") {
+				const isUsername = state.channelId!.startsWith("@");
+				let channelUrl: string;
+				if (text === "-") {
+					if (!isUsername) {
+						await ctx.send(
+							"❌ برای کانال با آیدی عددی امکان ساخت خودکار لینک نیست. لینک را دستی بفرستید.",
+						);
+						return;
+					}
+					channelUrl = `https://t.me/${state.channelId!.slice(1)}`;
+				} else {
+					if (!/^https?:\/\/\S+$/.test(text)) {
+						await ctx.send(
+							"❌ لینک نامعتبر است. یک لینک معتبر (شروع با http/https) بفرستید.",
+						);
+						return;
+					}
+					channelUrl = text;
+				}
+				settingsInput.set(userId, {
+					type: "add_forcejoin",
+					step: "name",
+					channelId: state.channelId,
+					channelUrl,
+				});
+				await ctx.send(
+					"🏷 <b>نام نمایشی کانال</b> را بفرستید (روی دکمه به کاربر نشان داده می‌شود):\n" +
+						"برای استفاده از شناسه کانال، عبارت <code>-</code> را بفرستید.",
+					{ parse_mode: "HTML" },
+				);
+				return;
+			}
+
+			if (state.step === "name") {
+				const channelName = text === "-" ? state.channelId! : text;
+				settingsInput.delete(userId);
+				await ForceJoinRepository.addChannel({
+					channelId: state.channelId!,
+					channelUrl: state.channelUrl!,
+					channelName,
+				});
+				const { text: menuText, keyboard } = await forceJoinMenu();
+				await ctx.send(`✅ کانال اضافه شد.\n\n${menuText}`, {
 					parse_mode: "HTML",
 					reply_markup: keyboard,
 				});

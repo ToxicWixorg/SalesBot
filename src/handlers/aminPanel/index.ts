@@ -15,8 +15,11 @@ import {
   adminCreateProductCallback,
   adminCreatePlanCallback,
   adminEditCategoryCallback,
+  adminEditCategoryEmojiCallback,
   adminEditProductCallback,
+  adminEditProductEmojiCallback,
   adminEditPlanCallback,
+  adminEditPlanEmojiCallback,
   adminEditPlanPriceCallback,
   adminDeleteCategoryCallback,
   adminDeleteProductCallback,
@@ -83,14 +86,23 @@ export const adminPanelComposer = new Composer()
   .callbackQuery(/^admin_edit_category_(\d+)$/, async (context) => {
     return await adminEditCategoryCallback(context);
   })
+  .callbackQuery(/^admin_edit_category_emoji_(\d+)$/, async (context) => {
+    return await adminEditCategoryEmojiCallback(context);
+  })
   .callbackQuery(/^admin_edit_product_(\d+)$/, async (context) => {
     return await adminEditProductCallback(context);
+  })
+  .callbackQuery(/^admin_edit_product_emoji_(\d+)$/, async (context) => {
+    return await adminEditProductEmojiCallback(context);
   })
   .callbackQuery(/^admin_edit_plan_price_(\d+)$/, async (context) => {
     return await adminEditPlanPriceCallback(context);
   })
   .callbackQuery(/^admin_edit_plan_(\d+)$/, async (context) => {
     return await adminEditPlanCallback(context);
+  })
+  .callbackQuery(/^admin_edit_plan_emoji_(\d+)$/, async (context) => {
+    return await adminEditPlanEmojiCallback(context);
   })
   .callbackQuery(/^admin_delete_category_(\d+)$/, async (context) => {
     return await adminDeleteCategoryCallback(context);
@@ -101,9 +113,12 @@ export const adminPanelComposer = new Composer()
   .callbackQuery(/^admin_delete_plan_(\d+)$/, async (context) => {
     return await adminDeletePlanCallback(context);
   })
-  .callbackQuery(/^admin_plan_setdelivery_(\d+)_([a-z_]+)$/, async (context) => {
-    return await adminPlanSetDeliveryCallback(context);
-  })
+  .callbackQuery(
+    /^admin_plan_setdelivery_(\d+)_([a-z_]+)$/,
+    async (context) => {
+      return await adminPlanSetDeliveryCallback(context);
+    },
+  )
   .callbackQuery(/^admin_plan_delivery_(\d+)$/, async (context) => {
     return await adminPlanDeliveryCallback(context);
   })
@@ -146,8 +161,6 @@ export const adminPanelComposer = new Composer()
   .callbackQuery(/^admin_inv_del_(\d+)_(\d+)$/, async (context) => {
     return await adminInventoryDeleteItemCallback(context);
   });
-  
-
 
 //   .callbackQuery("admin_panel", async (context) => {
 //   if (!context.from) {

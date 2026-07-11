@@ -35,7 +35,9 @@ export function adminPanelCategoriesKeyboard(
       category,
       languageCode,
     )}`.trim();
-    const opts = safeEmojiId ? { icon_custom_emoji_id: safeEmojiId } : undefined;
+    const opts = safeEmojiId
+      ? { icon_custom_emoji_id: safeEmojiId }
+      : undefined;
 
     keyboard.text(label, `admin_category_${category.id}`, opts);
     if (index % 2 === 1 && index !== categories.length - 1) {
@@ -71,6 +73,10 @@ export function adminPanelCategoryKeyboard(
     .text(t("btnEdit"), `admin_edit_category_${categoryId}`, {
       style: "primary",
     })
+    .text(t("btnEditEmoji"), `admin_edit_category_emoji_${categoryId}`, {
+      style: "primary",
+    })
+    .row()
     .text(t("btnDelete"), `admin_delete_category_${categoryId}`, {
       style: "danger",
     })
@@ -102,7 +108,9 @@ export function adminPanelProductsListKeyboard(
     const prefix = product.isActive === false ? "🚫 " : "";
     const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
     const label = `${prefix}${getLocalizedName(product, languageCode)}`;
-    const opts = safeEmojiId ? { icon_custom_emoji_id: safeEmojiId } : undefined;
+    const opts = safeEmojiId
+      ? { icon_custom_emoji_id: safeEmojiId }
+      : undefined;
 
     keyboard.text(label, `admin_product_${product.id}`, opts);
     if (index % 2 === 1 && index !== products.length - 1) {
@@ -138,6 +146,10 @@ export function adminPanelProductDetailsKeyboard(
     .text(t("btnEdit"), `admin_edit_product_${productId}`, {
       style: "primary",
     })
+    .text(t("btnEditEmoji"), `admin_edit_product_emoji_${productId}`, {
+      style: "primary",
+    })
+    .row()
     .text(t("btnDelete"), `admin_delete_product_${productId}`, {
       style: "danger",
     })
@@ -169,7 +181,9 @@ export function adminPanelProductPlansKeyboard(
     const prefix = plan.isActive === false ? "🚫 " : "";
     const safeEmojiId = normalizeCustomEmojiId(plan.customEmojiId);
     const label = `${prefix}${getLocalizedName(plan, languageCode)}`;
-    const opts = safeEmojiId ? { icon_custom_emoji_id: safeEmojiId } : undefined;
+    const opts = safeEmojiId
+      ? { icon_custom_emoji_id: safeEmojiId }
+      : undefined;
 
     keyboard.text(label, `admin_plan_${plan.id}`, opts);
     if (index % 2 === 1 && index !== plans.length - 1) {
@@ -190,7 +204,11 @@ export function adminPanelProductPlansKeyboard(
 }
 
 /** Delivery types the order flow can actually fulfil. */
-export const DELIVERY_TYPES = ["automatic", "manual", "custom_schedule"] as const;
+export const DELIVERY_TYPES = [
+  "automatic",
+  "manual",
+  "custom_schedule",
+] as const;
 
 /** Human-readable label for a delivery type. */
 export function deliveryTypeLabel(t: TFunction, type: string | null): string {
@@ -215,12 +233,16 @@ export function adminPanelPlanKeyboard(
     plan.isActive === false ? t("btnPlanActivate") : t("btnPlanDeactivate");
 
   const keyboard = new InlineKeyboard()
-    .text(t("btnPlanEditName"), `admin_edit_plan_${planId}`, { style: "primary" })
+    .text(t("btnPlanEditName"), `admin_edit_plan_${planId}`, {
+      style: "primary",
+    })
     .text(t("btnEditPrice"), `admin_edit_plan_price_${planId}`, {
       style: "primary",
     })
     .row()
-    .text(t("btnPlanEditDesc"), `admin_plan_desc_${planId}`, { style: "primary" })
+    .text(t("btnPlanEditDesc"), `admin_plan_desc_${planId}`, {
+      style: "primary",
+    })
     .text(t("btnPlanEditDuration"), `admin_plan_duration_${planId}`, {
       style: "primary",
     })
@@ -250,6 +272,10 @@ export function adminPanelPlanKeyboard(
     .text(activeLabel, `admin_plan_toggleactive_${planId}`, {
       style: plan.isActive === false ? "success" : "danger",
     })
+    .text(t("btnEditEmoji"), `admin_edit_plan_emoji_${planId}`, {
+      style: "primary",
+    })
+    .row()
     .text(t("btnDelete"), `admin_delete_plan_${planId}`, { style: "danger" })
     .row()
     .text(t("btnBack"), `admin_product_plans_${plan.productId}`, {
@@ -327,7 +353,10 @@ export function adminPlanItemsListKeyboard(
 
   if (totalPages > 1) {
     if (current > 1) {
-      keyboard.text(t("previous"), `admin_plan_items_${plan.id}_${current - 1}`);
+      keyboard.text(
+        t("previous"),
+        `admin_plan_items_${plan.id}_${current - 1}`,
+      );
     }
     keyboard.text(`${current}/${totalPages}`, "noop");
     if (current < totalPages) {

@@ -10,6 +10,7 @@ export type PaymentSummaryData = {
   durationUnit: string | null | undefined;
   collected: Record<string, string>;
   originalPrice: number;
+  originalPriceLabel?: string;
   discountCode?: string;
   discountAmount?: number;
   finalPrice: number;
@@ -46,7 +47,10 @@ export function buildPaymentSummaryText(
   if (data.collected.email) text += `📧 ${data.collected.email}\n`;
   if (data.collected.region) text += `🌍 ${data.collected.region}\n`;
   text += `\n`;
-  text += `${t("paymentOriginalPrice")}: ${data.originalPrice.toLocaleString()} ${t("currency")}\n`;
+  const originalPriceLabel =
+    data.originalPriceLabel ??
+    `${data.originalPrice.toLocaleString()} ${t("currency")}`;
+  text += `${t("paymentOriginalPrice")}: ${originalPriceLabel}\n`;
   if (data.discountCode && data.discountAmount) {
     text += `${t("paymentDiscount")}: -${data.discountAmount.toLocaleString()} ${t("currency")} (${data.discountCode})\n`;
   }

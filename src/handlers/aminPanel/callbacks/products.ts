@@ -32,7 +32,10 @@ import {
   getLocalizedName,
   getLocalizedDescription,
 } from "../../../shared/utils/localizedFields.ts";
-import { normalizeCustomEmojiId } from "../../../shared/utils/customEmoji.ts";
+import {
+  normalizeCustomEmojiId,
+  extractCustomEmojiIds,
+} from "../../../shared/utils/customEmoji.ts";
 
 async function getT(context: any) {
   if (!context.from) return;
@@ -104,9 +107,13 @@ export async function adminCategoryCallback(context: any) {
   const message =
     `${prefix}<b>${categoryName}</b>
 ` +
-    `${categoryDescription ? `${categoryDescription}
+    `${
+      categoryDescription
+        ? `${categoryDescription}
 
-` : ""}` +
+`
+        : ""
+    }` +
     `${t("adminCategoryStatus", status)}`;
 
   await context.editText(message, {
@@ -168,7 +175,7 @@ export async function adminProductCallback(context: any) {
 
   const category =
     product.categoryId &&
-      (await PremiumCategoryRepository.findById(product.categoryId));
+    (await PremiumCategoryRepository.findById(product.categoryId));
   const categoryName = category
     ? getLocalizedName(category, context.from.languageCode)
     : "-";
@@ -181,9 +188,13 @@ export async function adminProductCallback(context: any) {
   const message =
     `${icon}<b>${productName}</b>
 ` +
-    `${productDescription ? `${productDescription}
+    `${
+      productDescription
+        ? `${productDescription}
 
-` : ""}` +
+`
+        : ""
+    }` +
     `${t("adminProductStatus", status)}
 ` +
     `${t("adminProductCategory", categoryName)}`;
@@ -259,14 +270,20 @@ export async function adminPlanCallback(context: any) {
         ? `$${usd} (≈ ${usdToTomanWithRate(usd, rate).toLocaleString()} ${t("currency")})`
         : `$${usd}`;
   }
-  const duration = plan.duration ? `${plan.duration} ${plan.durationUnit ?? "days"}` : t("oneTime");
+  const duration = plan.duration
+    ? `${plan.duration} ${plan.durationUnit ?? "days"}`
+    : t("oneTime");
 
   const message =
     `<b>${planName}</b>
 ` +
-    `${planDescription ? `${planDescription}
+    `${
+      planDescription
+        ? `${planDescription}
 
-` : ""}` +
+`
+        : ""
+    }` +
     `${t("adminPlanStatus", status)}
 ` +
     `${t("priceLabel", price)}
@@ -469,6 +486,100 @@ export async function adminEditPlanCallback(context: any) {
   });
 }
 
+export async function adminEditCategoryEmojiCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const categoryId = Number.parseInt(context.queryData[1]!);
+  const category = await PremiumCategoryRepository.findById(categoryId);
+  if (!category) {
+    await context.answerCallbackQuery({
+      text: t("categoryNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  editCategoryEmojiState.set(context.from.id, { categoryId });
+  await context.editText(t("adminEmojiEditPrompt"), {
+    parse_mode: "HTML",
+    reply_markup: adminPanelCategoryKeyboard(t, categoryId),
+  });
+}
+
+export async function adminEditProductEmojiCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const productId = Number.parseInt(context.queryData[1]!);
+  const product = await ProductRepository.findById(productId);
+  if (!product) {
+    await context.answerCallbackQuery({
+      text: t("productNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  editProductEmojiState.set(context.from.id, { productId });
+  await context.editText(t("adminEmojiEditPrompt"), {
+    parse_mode: "HTML",
+    reply_markup: adminPanelProductDetailsKeyboard(
+      t,
+      productId,
+      product.categoryId ?? 0,
+    ),
+  });
+}
+
+export async function adminEditPlanEmojiCallback(context: any) {
+  if (!context.from || !context.queryData) return;
+  const t = await getT(context);
+  if (!t) return;
+
+  if (!(await requireProductAccess(context))) {
+    await context.answerCallbackQuery({
+      text: t("noPermission"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  const planId = Number.parseInt(context.queryData[1]!);
+  const plan = await ProductPlanRepository.findById(planId);
+  if (!plan) {
+    await context.answerCallbackQuery({
+      text: t("planNotFound"),
+      show_alert: true,
+    });
+    return;
+  }
+
+  editPlanEmojiState.set(context.from.id, { planId });
+  await context.editText(t("adminEmojiEditPrompt"), {
+    parse_mode: "HTML",
+    reply_markup: adminPanelPlanKeyboard(t, plan),
+  });
+}
+
 export async function adminDeleteCategoryCallback(context: any) {
   if (!context.from || !context.queryData) return;
   const t = await getT(context);
@@ -539,15 +650,18 @@ export async function adminDeleteProductCallback(context: any) {
   }
 
   const products = await ProductRepository.findAllByCategory(categoryId);
-  await context.editText(`${t("adminProductDeleted")}\n\n<b>${name}</b>${note}`, {
-    parse_mode: "HTML",
-    reply_markup: adminPanelProductsListKeyboard(
-      t,
-      products,
-      categoryId,
-      context.from.languageCode ?? "fa",
-    ),
-  });
+  await context.editText(
+    `${t("adminProductDeleted")}\n\n<b>${name}</b>${note}`,
+    {
+      parse_mode: "HTML",
+      reply_markup: adminPanelProductsListKeyboard(
+        t,
+        products,
+        categoryId,
+        context.from.languageCode ?? "fa",
+      ),
+    },
+  );
 }
 
 export async function adminDeletePlanCallback(context: any) {
@@ -816,7 +930,9 @@ export async function adminPlanItemsCallback(context: any) {
   }
 
   const planId = Number.parseInt(context.queryData[1]!);
-  const page = context.queryData[2] ? Number.parseInt(context.queryData[2]!) : 1;
+  const page = context.queryData[2]
+    ? Number.parseInt(context.queryData[2]!)
+    : 1;
 
   const plan = await ProductPlanRepository.findById(planId);
   if (!plan) {
@@ -1349,6 +1465,22 @@ interface EditProductState {
 /** adminUserId → in-progress product being edited */
 const editProductState = new Map<number, EditProductState>();
 
+interface EditCategoryEmojiState {
+  categoryId: number;
+}
+
+interface EditProductEmojiState {
+  productId: number;
+}
+
+interface EditPlanEmojiState {
+  planId: number;
+}
+
+const editCategoryEmojiState = new Map<number, EditCategoryEmojiState>();
+const editProductEmojiState = new Map<number, EditProductEmojiState>();
+const editPlanEmojiState = new Map<number, EditPlanEmojiState>();
+
 type CreatePlanStep = "nameFA" | "nameEN" | "nameRU" | "price";
 
 interface CreatePlanState {
@@ -1439,7 +1571,7 @@ async function uniqueCategorySlug(base: string): Promise<string> {
 export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
   bot.on("message", async (ctx, next) => {
     const userId = ctx.from?.id;
-    if (!userId || !ctx.text) return next?.();
+    if (!userId) return next?.();
 
     const state = createCategoryState.get(userId);
     const editState = editCategoryState.get(userId);
@@ -1447,11 +1579,38 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
     const editProdState = editProductState.get(userId);
     const planState = createPlanState.get(userId);
     const editPlState = editPlanState.get(userId);
+    const editCategoryEmoji = editCategoryEmojiState.get(userId);
+    const editProductEmoji = editProductEmojiState.get(userId);
+    const editPlanEmoji = editPlanEmojiState.get(userId);
     const planDescState = editPlanDescState.get(userId);
     const planDurationId = editPlanDurationState.get(userId);
     const planOrderId = editPlanOrderState.get(userId);
     const addFieldState = addPlanFieldState.get(userId);
     const addStockState = addPlanStockState.get(userId);
+    if (
+      !ctx.text &&
+      !state &&
+      !editState &&
+      !productState &&
+      !editProdState &&
+      !planState &&
+      !editPlState &&
+      !editCategoryEmoji &&
+      !editProductEmoji &&
+      !editPlanEmoji &&
+      !planDescState &&
+      planDurationId === undefined &&
+      planOrderId === undefined &&
+      !addFieldState &&
+      !addStockState
+    )
+      return next?.();
+
+    // Don't swallow input meant for an active scene.
+    if ((ctx as any).scene?.current) return next?.();
+
+    const t = i18n.buildT(ctx.from?.languageCode ?? "fa");
+    const text = ctx.text?.trim() ?? "";
     if (
       !state &&
       !editState &&
@@ -1459,6 +1618,9 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
       !editProdState &&
       !planState &&
       !editPlState &&
+      !editCategoryEmoji &&
+      !editProductEmoji &&
+      !editPlanEmoji &&
       !planDescState &&
       planDurationId === undefined &&
       planOrderId === undefined &&
@@ -1641,9 +1803,12 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
       editProductState.delete(userId);
 
       const update: { nameFA?: string; nameEN?: string; nameRU?: string } = {};
-      if (editProdState.nameFA !== undefined) update.nameFA = editProdState.nameFA;
-      if (editProdState.nameEN !== undefined) update.nameEN = editProdState.nameEN;
-      if (editProdState.nameRU !== undefined) update.nameRU = editProdState.nameRU;
+      if (editProdState.nameFA !== undefined)
+        update.nameFA = editProdState.nameFA;
+      if (editProdState.nameEN !== undefined)
+        update.nameEN = editProdState.nameEN;
+      if (editProdState.nameRU !== undefined)
+        update.nameRU = editProdState.nameRU;
 
       let product = await ProductRepository.findById(editProdState.productId);
       if (!product) {
@@ -1651,7 +1816,10 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
         return;
       }
       if (Object.keys(update).length > 0) {
-        product = await ProductRepository.update(editProdState.productId, update);
+        product = await ProductRepository.update(
+          editProdState.productId,
+          update,
+        );
       }
 
       await ctx.send(
@@ -1671,6 +1839,78 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
     }
 
     // ── CREATE PLAN FLOW (Persian → English → Russian name → USD price) ────
+    if (editCategoryEmoji || editProductEmoji || editPlanEmoji) {
+      if (text === "/cancel") {
+        editCategoryEmojiState.delete(userId);
+        editProductEmojiState.delete(userId);
+        editPlanEmojiState.delete(userId);
+        await ctx.send(t("adminEmojiCancelled"), { parse_mode: "HTML" });
+        return;
+      }
+
+      const message =
+        (ctx.update as any).message ?? (ctx.update as any).edited_message;
+      const ids = extractCustomEmojiIds(message ?? {});
+      if (ids.length === 0) {
+        await ctx.send(t("adminpanelEmojiParserNoEmoji"), {
+          parse_mode: "HTML",
+        });
+        return;
+      }
+
+      const emojiId = normalizeCustomEmojiId(ids[0]);
+      if (!emojiId) {
+        await ctx.send(t("adminpanelEmojiParserNoEmoji"), {
+          parse_mode: "HTML",
+        });
+        return;
+      }
+
+      if (editCategoryEmoji) {
+        const category = await PremiumCategoryRepository.update(
+          editCategoryEmoji.categoryId,
+          { customEmojiId: emojiId },
+        );
+        editCategoryEmojiState.delete(userId);
+        await ctx.send(t("adminEmojiUpdated"), {
+          parse_mode: "HTML",
+          reply_markup: adminPanelCategoryKeyboard(t, category.id),
+        });
+        return;
+      }
+
+      if (editProductEmoji) {
+        const product = await ProductRepository.update(
+          editProductEmoji.productId,
+          {
+            customEmojiId: emojiId,
+          },
+        );
+        editProductEmojiState.delete(userId);
+        await ctx.send(t("adminEmojiUpdated"), {
+          parse_mode: "HTML",
+          reply_markup: adminPanelProductDetailsKeyboard(
+            t,
+            product.id,
+            product.categoryId ?? 0,
+          ),
+        });
+        return;
+      }
+
+      if (editPlanEmoji) {
+        const plan = await ProductPlanRepository.update(editPlanEmoji.planId, {
+          customEmojiId: emojiId,
+        });
+        editPlanEmojiState.delete(userId);
+        await ctx.send(t("adminEmojiUpdated"), {
+          parse_mode: "HTML",
+          reply_markup: adminPanelPlanKeyboard(t, plan),
+        });
+        return;
+      }
+    }
+
     if (planState) {
       if (text === "/cancel") {
         createPlanState.delete(userId);
@@ -1702,7 +1942,9 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
       // step === "price" — final step: validate price and create the plan.
       const usd = Number.parseFloat(normalizeDigits(text));
       if (!Number.isFinite(usd) || usd <= 0) {
-        await ctx.send(t("adminCreatePlanPriceInvalid"), { parse_mode: "HTML" });
+        await ctx.send(t("adminCreatePlanPriceInvalid"), {
+          parse_mode: "HTML",
+        });
         return;
       }
       createPlanState.delete(userId);
@@ -1807,7 +2049,9 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
         planDescState.step = "nameEN";
         const plan = await ProductPlanRepository.findById(planDescState.planId);
         await ctx.send(
-          t("adminEditPlanDescPromptEN", { current: plan?.descriptionEN ?? "-" }),
+          t("adminEditPlanDescPromptEN", {
+            current: plan?.descriptionEN ?? "-",
+          }),
           { parse_mode: "HTML" },
         );
         return;
@@ -1818,7 +2062,9 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
         planDescState.step = "nameRU";
         const plan = await ProductPlanRepository.findById(planDescState.planId);
         await ctx.send(
-          t("adminEditPlanDescPromptRU", { current: plan?.descriptionRU ?? "-" }),
+          t("adminEditPlanDescPromptRU", {
+            current: plan?.descriptionRU ?? "-",
+          }),
           { parse_mode: "HTML" },
         );
         return;
@@ -1872,10 +2118,13 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
           duration: null,
           durationUnit: null,
         });
-        await ctx.send(t("adminPlanDurationUpdated", { duration: t("oneTime") }), {
-          parse_mode: "HTML",
-          reply_markup: adminPanelPlanKeyboard(t, plan),
-        });
+        await ctx.send(
+          t("adminPlanDurationUpdated", { duration: t("oneTime") }),
+          {
+            parse_mode: "HTML",
+            reply_markup: adminPanelPlanKeyboard(t, plan),
+          },
+        );
         return;
       }
 
@@ -2062,7 +2311,9 @@ export function setupAdminCreateCategoryHandler(bot: AnyBot): void {
     state.nameRU = text;
     createCategoryState.delete(userId);
 
-    const slug = await uniqueCategorySlug(slugify(state.nameEN ?? state.nameFA ?? "category"));
+    const slug = await uniqueCategorySlug(
+      slugify(state.nameEN ?? state.nameFA ?? "category"),
+    );
 
     await PremiumCategoryRepository.create({
       nameFA: state.nameFA!,

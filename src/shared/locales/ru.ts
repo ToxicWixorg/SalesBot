@@ -770,24 +770,25 @@ export const ru = {
   langRussian: `${e.flag_ru} Русский`,
   ticketWaitingAdmin: `❌ Ожидание ответа администратора на ваше последнее сообщение`,
   youCannotReplyToThisTicket: `❌ Вы не можете ответить на этот тикет прямо сейчас.`,
-  
+
   // Admin Panel
   adminPanelMainMessage: `${e.admin} <b>пнл управления</b>\n\nчто бы вы хотели сделать?`,
-  
-  panelProducts : "Products",
-  panelOrders : "Orders",
-  panelUsers : "Users",
-  panelWallet : "Wallet",
-  panelDiscounts : "Discounts",
-  panelSchedules : "Schedules",
-  panelBroadcast : "Broadcast",
-  panelSetting : "Settings",
+
+  panelProducts: "Products",
+  panelOrders: "Orders",
+  panelUsers: "Users",
+  panelWallet: "Wallet",
+  panelDiscounts: "Discounts",
+  panelSchedules: "Schedules",
+  panelBroadcast: "Broadcast",
+  panelSetting: "Settings",
 
   adminProductsTitle: "Управление категориями товаров",
   active: "Активен",
   inactive: "Неактивен",
   adminCategoryStatus: (status: string) => `Статус: <b>${status}</b>`,
-  adminCategoryProductsTitle: (category: string) => `Товары в категории «${category}»`,
+  adminCategoryProductsTitle: (category: string) =>
+    `Товары в категории «${category}»`,
   adminProductPlansTitle: (product: string) => `Тарифы для «${product}»`,
   adminProductStatus: (status: string) => `Статус товара: <b>${status}</b>\n`,
   adminProductCategory: (category: string) => `Категория: <b>${category}</b>`,
@@ -802,8 +803,13 @@ export const ru = {
   btnProductsInCategory: "Показать товары категории",
   btnViewPlans: "Показать тарифы",
   btnDelete: "Удалить",
-  btnEdit : "Редактировать",
+  btnEdit: "Редактировать",
   btnEditPrice: "💰 Изменить цену (USD)",
+  btnEditEmoji: "🪪 Эмодзи",
+  adminEmojiEditPrompt:
+    "Пожалуйста, отправьте сообщение с премиум-эмодзи, чтобы сохранить его ID для этого элемента.",
+  adminEmojiUpdated: "✅ Премиум-эмодзи сохранено.",
+  adminEmojiCancelled: "❌ Редактирование эмодзи отменено.",
   noPermission: "У вас нет доступа к этому разделу.",
   priceRateUnavailable:
     "❌ Курс валюты сейчас недоступен. Пожалуйста, попробуйте через мгновение.",
@@ -841,8 +847,10 @@ export const ru = {
     `\n\n⚠️ ${count} товар(ов) этой категории теперь без категории.`,
   adminCreateProductPromptFA:
     "🆕 Создание нового товара.\n\nОтправьте название товара на <b>персидском</b>.\n\nОтправьте /cancel для отмены.",
-  adminCreateProductPromptEN: "Теперь отправьте название товара на <b>английском</b>.",
-  adminCreateProductPromptRU: "Теперь отправьте название товара на <b>русском</b>.",
+  adminCreateProductPromptEN:
+    "Теперь отправьте название товара на <b>английском</b>.",
+  adminCreateProductPromptRU:
+    "Теперь отправьте название товара на <b>русском</b>.",
   adminCreateProductCancelled: "❌ Создание товара отменено.",
   adminProductCreated: ({ name }: { name: string }) =>
     `✅ Товар «<b>${name}</b>» успешно создан.\nТеперь вы можете добавить к нему тарифы.`,
@@ -859,8 +867,10 @@ export const ru = {
     `✅ Товар «<b>${name}</b>» успешно обновлён.`,
   adminCreatePlanPromptFA:
     "🆕 Создание нового тарифа.\n\nОтправьте название тарифа на <b>персидском</b>.\n\nОтправьте /cancel для отмены.",
-  adminCreatePlanPromptEN: "Теперь отправьте название тарифа на <b>английском</b>.",
-  adminCreatePlanPromptRU: "Теперь отправьте название тарифа на <b>русском</b>.",
+  adminCreatePlanPromptEN:
+    "Теперь отправьте название тарифа на <b>английском</b>.",
+  adminCreatePlanPromptRU:
+    "Теперь отправьте название тарифа на <b>русском</b>.",
   adminCreatePlanPromptPrice:
     "Теперь введите цену тарифа в <b>долларах</b>.\nНапример <code>12.5</code> для $12.5.",
   adminCreatePlanPriceInvalid:
@@ -893,8 +903,10 @@ export const ru = {
   btnPlanAddField: "➕ Добавить поле",
   adminPlanAddFieldPromptFA:
     "➕ Добавление нового поля ввода.\n\nОтправьте текст поля на <b>персидском</b> (вопрос, задаваемый покупателю).\n/cancel — отмена.",
-  adminPlanAddFieldPromptEN: "Теперь отправьте тот же текст поля на <b>английском</b>.",
-  adminPlanAddFieldPromptRU: "Теперь отправьте тот же текст поля на <b>русском</b>.",
+  adminPlanAddFieldPromptEN:
+    "Теперь отправьте тот же текст поля на <b>английском</b>.",
+  adminPlanAddFieldPromptRU:
+    "Теперь отправьте тот же текст поля на <b>русском</b>.",
   adminPlanAddFieldCancelled: "❌ Добавление поля отменено.",
   adminPlanFieldAdded: "✅ Новое поле ввода добавлено.",
   adminPlanFieldDeleted: "✅ Поле ввода удалено.",
@@ -949,20 +961,37 @@ export const ru = {
     "Текст каждой строки выдаётся покупателю при автоматической покупке " +
     "(например <code>email:password</code> или любой контент).\n\n" +
     "Отправьте /cancel для отмены.",
-  adminPlanAddStockEmpty: "❌ Товары не найдены. Отправьте хотя бы одну строку.",
+  adminPlanAddStockEmpty:
+    "❌ Товары не найдены. Отправьте хотя бы одну строку.",
   adminPlanAddStockCancelled: "❌ Добавление товаров отменено.",
   adminPlanStockAdded: ({ count }: { count: number }) =>
     `✅ Добавлено товаров: ${count}.`,
   adminPlanStockCleared: ({ count }: { count: number }) =>
     `🗑 Удалено доступных товаров: ${count}.`,
   btnPlanManageItems: "🔧 Управлять товарами по одному",
-  adminPlanItemsTitle: ({ count, page, pages }: { count: number; page: number; pages: number }) =>
+  adminPlanItemsTitle: ({
+    count,
+    page,
+    pages,
+  }: {
+    count: number;
+    page: number;
+    pages: number;
+  }) =>
     `🔧 <b>Управление доступными товарами</b>\n\n` +
     `Доступно: <b>${count}</b>\n` +
     `Страница ${page} из ${pages}\n\n` +
     `Нажмите на товар, чтобы посмотреть содержимое или удалить его.`,
   adminPlanItemsEmpty: "📭 Нет доступных товаров для управления.",
-  adminInventoryItemTitle: ({ id, status, content }: { id: number; status: string; content: string }) =>
+  adminInventoryItemTitle: ({
+    id,
+    status,
+    content,
+  }: {
+    id: number;
+    status: string;
+    content: string;
+  }) =>
     `🔖 <b>Товар #${id}</b>\n` +
     `Статус: <b>${status}</b>\n\n` +
     `Содержимое:\n<code>${content}</code>`,
@@ -976,5 +1005,4 @@ export const ru = {
   priceLabel: (price: string) => `Цена: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `Длительность: <b>${duration}</b>\n`,
   notAvailable: "Недоступно",
-
 } satisfies ShouldFollowLanguageStrict<typeof fa>;

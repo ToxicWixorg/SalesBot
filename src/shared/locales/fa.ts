@@ -448,8 +448,7 @@ ${payload.ids}`,
   orderReportPrompt:
     "📝 لطفاً مشکل خود درباره این سفارش را بنویسید تا برای پشتیبانی ارسال شود.\n\n(برای لغو /cancel را بفرستید)",
   orderReportCancelled: "❌ ارسال گزارش لغو شد.",
-  orderReportSent:
-    "✅ گزارش شما برای پشتیبانی ارسال شد. به‌زودی بررسی می‌شود.",
+  orderReportSent: "✅ گزارش شما برای پشتیبانی ارسال شد. به‌زودی بررسی می‌شود.",
   errorFetchingOrders: `❌ خطا در دریافت سفارشات`,
   errorFetchingOrderDetails: `❌ خطا در دریافت جزئیات سفارش`,
   errorReschedulingOrder: `❌ خطا در تغییر زمان`,
@@ -841,20 +840,21 @@ ${payload.ids}`,
 
   adminPanelMainMessage: `${e.admin} <b>پنل مدیریت</b>\n\nچه کاری می‌خوای انجام بدی؟`,
 
-  panelProducts : "محصولات",
-  panelOrders : "سفارشات",
-  panelUsers : "کاربران",
-  panelWallet : "کیف پول",
-  panelDiscounts : "تخفیف‌ها",
-  panelSchedules : "زمان‌بندی‌ها",
-  panelBroadcast : "ارسال پیام جمعی",
-  panelSetting : "تنظیمات",
+  panelProducts: "محصولات",
+  panelOrders: "سفارشات",
+  panelUsers: "کاربران",
+  panelWallet: "کیف پول",
+  panelDiscounts: "تخفیف‌ها",
+  panelSchedules: "زمان‌بندی‌ها",
+  panelBroadcast: "ارسال پیام جمعی",
+  panelSetting: "تنظیمات",
 
   adminProductsTitle: "مدیریت دسته‌بندی‌های محصولات",
   active: "فعال",
   inactive: "غیرفعال",
   adminCategoryStatus: (status: string) => `وضعیت: <b>${status}</b>`,
-  adminCategoryProductsTitle: (category: string) => `محصولات دسته «${category}»`,
+  adminCategoryProductsTitle: (category: string) =>
+    `محصولات دسته «${category}»`,
   adminProductPlansTitle: (product: string) => `پلن‌های محصول «${product}»`,
   adminProductStatus: (status: string) => `وضعیت محصول: <b>${status}</b>\n`,
   adminProductCategory: (category: string) => `دسته‌بندی: <b>${category}</b>`,
@@ -869,8 +869,13 @@ ${payload.ids}`,
   btnProductsInCategory: "نمایش محصولات دسته",
   btnViewPlans: "پلن‌ها",
   btnDelete: "حذف",
-  btnEdit : "ویرایش",
+  btnEdit: "ویرایش",
   btnEditPrice: "💰 ویرایش قیمت (دلار)",
+  btnEditEmoji: "🪪 ایموجی",
+  adminEmojiEditPrompt:
+    "لطفاً یک پیام شامل ایموجی پرمیوم بفرستید تا شناسه آن برای این مورد ذخیره شود.",
+  adminEmojiUpdated: "✅ ایموجی پرمیوم ذخیره شد.",
+  adminEmojiCancelled: "❌ ویرایش ایموجی لغو شد.",
   noPermission: "شما اجازه دسترسی به این بخش را ندارید.",
   priceRateUnavailable:
     "❌ نرخ لحظه‌ای ارز در دسترس نیست. لطفاً چند لحظه دیگر دوباره تلاش کنید.",
@@ -1021,13 +1026,29 @@ ${payload.ids}`,
   adminPlanStockCleared: ({ count }: { count: number }) =>
     `🗑 ${count} آیتم آماده حذف شد.`,
   btnPlanManageItems: "🔧 مدیریت تک‌تک آیتم‌ها",
-  adminPlanItemsTitle: ({ count, page, pages }: { count: number; page: number; pages: number }) =>
+  adminPlanItemsTitle: ({
+    count,
+    page,
+    pages,
+  }: {
+    count: number;
+    page: number;
+    pages: number;
+  }) =>
     `🔧 <b>مدیریت آیتم‌های آماده</b>\n\n` +
     `تعداد آماده: <b>${count}</b>\n` +
     `صفحه ${page} از ${pages}\n\n` +
     `روی هر آیتم بزنید تا محتوایش را ببینید یا آن را حذف کنید.`,
   adminPlanItemsEmpty: "📭 هیچ آیتم آماده‌ای برای مدیریت نیست.",
-  adminInventoryItemTitle: ({ id, status, content }: { id: number; status: string; content: string }) =>
+  adminInventoryItemTitle: ({
+    id,
+    status,
+    content,
+  }: {
+    id: number;
+    status: string;
+    content: string;
+  }) =>
     `🔖 <b>آیتم #${id}</b>\n` +
     `وضعیت: <b>${status}</b>\n\n` +
     `محتوا:\n<code>${content}</code>`,
@@ -1041,5 +1062,4 @@ ${payload.ids}`,
   priceLabel: (price: string) => `قیمت: <b>${price}</b>\n`,
   durationLabel: (duration: string) => `مدت زمان: <b>${duration}</b>\n`,
   notAvailable: "موجود نیست",
-
 } satisfies LanguageMap;

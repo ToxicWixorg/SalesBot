@@ -15,10 +15,8 @@ import {
 } from "../../../shared/keyboards/index.ts";
 import { regionSelectionKeyboard } from "../../../shared/keyboards/products/regionSelect.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
-import {
-  getUsdtRate,
-  usdToTomanWithRate,
-} from "../../../services/tetherland/index.ts";
+import { getUsdtRate } from "../../../services/tetherland/index.ts";
+import { formatPriceLabel } from "../../../shared/utils/currency.ts";
 
 export async function SelectPlanCallback(context: Context<any>) {
   if (!context.from || !context.queryData) return;
@@ -48,11 +46,6 @@ export async function SelectPlanCallback(context: Context<any>) {
     return;
   }
 
-  preSelectedRegionState.delete(userId);
-  const productName = getLocalizedName(product, user.languageCode);
-  const planName = getLocalizedName(plan, user.languageCode);
-
-  // Prices are stored in USD; we need the live USDT→Toman rate to show/charge.
   const usdtRate = await getUsdtRate();
   if (usdtRate === null) {
     await context.answerCallbackQuery({
@@ -61,6 +54,13 @@ export async function SelectPlanCallback(context: Context<any>) {
     });
     return;
   }
+
+  preSelectedRegionState.delete(userId);
+  const productName = getLocalizedName(product, user.languageCode);
+  const planName = getLocalizedName(plan, user.languageCode);
+
+  // Prices are stored in USD; prepare a user-facing label (Toman for FA,
+  // USD + approximate Toman for others) using the live rate.
 
   if (plan.deliveryType === "automatic") {
     const available = await InventoryRepository.countAvailable(product.id);
@@ -77,19 +77,31 @@ export async function SelectPlanCallback(context: Context<any>) {
     enterQuantityState.delete(userId);
     const qty = 1;
 
-    const unitPrice = usdToTomanWithRate(
+    const priceInfo = formatPriceLabel(
+      user.languageCode,
       parseFloat(plan.price as string),
+      t,
       usdtRate,
     );
+    if (priceInfo.toman === undefined) {
+      await context.answerCallbackQuery({
+        text: t("priceRateUnavailable"),
+        show_alert: true,
+      });
+      return;
+    }
+    const unitPrice = priceInfo.toman;
     const discount = appliedDiscountState.get(userId);
     const hasDiscount = discount && discount.planId === planId;
-    const finalTotal = hasDiscount ? discount.finalPrice * qty : unitPrice * qty;
+    const finalTotal = hasDiscount
+      ? discount.finalPrice * qty
+      : unitPrice * qty;
 
     await context.editText(
       t("inventoryOrderSummary", {
         productName,
         qty,
-        unitPrice: unitPrice.toLocaleString(),
+        unitPrice: priceInfo.label,
         total: finalTotal.toLocaleString(),
         currency: t("currency"),
       }),
@@ -109,12 +121,30 @@ export async function SelectPlanCallback(context: Context<any>) {
     if (regions.length > 0) {
       await context.editText(t("selectRegion"), {
         parse_mode: "HTML",
-        reply_markup: regionSelectionKeyboard(t, planId, regions, usdtRate),
+        reply_markup: regionSelectionKeyboard(
+          t,
+          planId,
+          regions,
+          user.languageCode,
+          usdtRate,
+        ),
       });
       return;
     }
 
-    const price = usdToTomanWithRate(parseFloat(plan.price as string), usdtRate);
+    const priceInfo = formatPriceLabel(
+      user.languageCode,
+      parseFloat(plan.price as string),
+      t,
+      usdtRate,
+    );
+    if (priceInfo.toman === undefined) {
+      await context.answerCallbackQuery({
+        text: t("priceRateUnavailable"),
+        show_alert: true,
+      });
+      return;
+    }
     let duration = t("oneTime");
     if (plan.duration) {
       const unitKey = plan.durationUnit ?? "day";
@@ -128,7 +158,7 @@ export async function SelectPlanCallback(context: Context<any>) {
     let message = `${t("orderSummary")}\n\n`;
     message += `📦 ${productName}\n`;
     message += `📋 ${planName} — ${duration}\n`;
-    message += `\n${t("total")} <b>${price.toLocaleString()}</b> ${t("currency")}`;
+    message += `\n${t("total")} <b>${priceInfo.label}</b>`;
 
     await context.editText(message, {
       parse_mode: "HTML",
@@ -144,12 +174,30 @@ export async function SelectPlanCallback(context: Context<any>) {
     if (regions.length > 0) {
       await context.editText(t("selectRegion"), {
         parse_mode: "HTML",
-        reply_markup: regionSelectionKeyboard(t, planId, regions, usdtRate),
+        reply_markup: regionSelectionKeyboard(
+          t,
+          planId,
+          regions,
+          user.languageCode,
+          usdtRate,
+        ),
       });
       return;
     }
 
-    const price = usdToTomanWithRate(parseFloat(plan.price as string), usdtRate);
+    const priceInfo = formatPriceLabel(
+      user.languageCode,
+      parseFloat(plan.price as string),
+      t,
+      usdtRate,
+    );
+    if (priceInfo.toman === undefined) {
+      await context.answerCallbackQuery({
+        text: t("priceRateUnavailable"),
+        show_alert: true,
+      });
+      return;
+    }
     let duration = t("oneTime");
     if (plan.duration) {
       const unitKey = plan.durationUnit ?? "day";
@@ -163,7 +211,7 @@ export async function SelectPlanCallback(context: Context<any>) {
     let message = `${t("orderSummary")}\n\n`;
     message += `📦 ${productName}\n`;
     message += `📋 ${planName} — ${duration}\n`;
-    message += `\n${t("total")} <b>${price.toLocaleString()}</b> ${t("currency")}`;
+    message += `\n${t("total")} <b>${priceInfo.label}</b>`;
 
     await context.editText(message, {
       parse_mode: "HTML",
@@ -179,12 +227,30 @@ export async function SelectPlanCallback(context: Context<any>) {
     if (regions.length > 0) {
       await context.editText(t("selectRegion"), {
         parse_mode: "HTML",
-        reply_markup: regionSelectionKeyboard(t, planId, regions, usdtRate),
+        reply_markup: regionSelectionKeyboard(
+          t,
+          planId,
+          regions,
+          user.languageCode,
+          usdtRate,
+        ),
       });
       return;
     }
 
-    const price = usdToTomanWithRate(parseFloat(plan.price as string), usdtRate);
+    const priceInfo = formatPriceLabel(
+      user.languageCode,
+      parseFloat(plan.price as string),
+      t,
+      usdtRate,
+    );
+    if (priceInfo.toman === undefined) {
+      await context.answerCallbackQuery({
+        text: t("priceRateUnavailable"),
+        show_alert: true,
+      });
+      return;
+    }
     let duration = t("oneTime");
     if (plan.duration) {
       const unitKey = plan.durationUnit ?? "day";
@@ -198,7 +264,7 @@ export async function SelectPlanCallback(context: Context<any>) {
     let message = `${t("orderSummary")}\n\n`;
     message += `📦 ${productName}\n`;
     message += `📋 ${planName} — ${duration}\n`;
-    message += `\n${t("total")} <b>${price.toLocaleString()}</b> ${t("currency")}`;
+    message += `\n${t("total")} <b>${priceInfo.label}</b>`;
 
     await context.editText(message, {
       parse_mode: "HTML",

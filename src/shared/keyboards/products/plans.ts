@@ -4,7 +4,7 @@ import type { ProductPlan } from "../../../db/schema.ts";
 import { emojiIds } from "../../locales/emojies.ts";
 import { normalizeCustomEmojiId } from "../../utils/customEmoji.ts";
 import { getLocalizedName } from "../../utils/localizedFields.ts";
-import { usdToTomanWithRate } from "../../../services/tetherland/index.ts";
+import { formatPriceLabel } from "../../utils/currency.ts";
 
 export function productPlansKeyboard(
   t: TFunction,
@@ -38,10 +38,7 @@ export function productPlansKeyboard(
     // Price is stored in USD; show it converted to Toman with the live rate.
     // If the rate is unavailable, fall back to a USD ($) label.
     const usd = Number.parseFloat(plan.price as string);
-    const priceLabel =
-      usdtRate !== null
-        ? `${usdToTomanWithRate(usd, usdtRate).toLocaleString()} ${t("currency")}`
-        : `$${usd}`;
+    const priceLabel = formatPriceLabel(languageCode, usd, t, usdtRate).label;
 
     keyboard.text(
       `${getLocalizedName(plan, languageCode)} - ${priceLabel} (${duration})`,
