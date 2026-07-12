@@ -4,6 +4,7 @@ import {
 	UserRepository,
 	WalletRepository,
 } from "../../repositories/index.ts";
+import { formatUsd } from "../../shared/utils/currency.ts";
 
 // Minimal shape of the Telegram API we need — keeps this service decoupled from
 // the concrete Bot type so both the forum handlers and the admin panel can use it.
@@ -99,7 +100,7 @@ export async function cancelRefundOrderAction(
 		Number(order.userId),
 		`❌ سفارش شما (#${orderId}) لغو شد.` +
 			(refunded
-				? `\n💰 مبلغ ${refund.toLocaleString()} تومان به کیف پول شما بازگردانده شد.`
+				? `\n💰 مبلغ ${formatUsd(refund)} به کیف پول شما بازگردانده شد.`
 				: ""),
 	);
 	return {

@@ -6,6 +6,7 @@ import { pendingPaymentState } from "../../../../handlers/products/pendingPaymen
 import { PaymentRepository } from "../../../../repositories/PaymentRepository";
 import { notifyAdminNewOrder } from "../../Helpers/notifyAdminNewOrder";
 import { emojiIds } from "../../../../shared/locales/emojies";
+import { getUsdtRate } from "../../../../services/tetherland";
 
 export async function VerifyZarinpalOrderCallback(
   ctx: Context,
@@ -31,13 +32,22 @@ export async function VerifyZarinpalOrderCallback(
     ? "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"
     : "https://api.zarinpal.com/pg/v4/payment/verify.json";
 
+  // The stored amount is USD; Zarinpal was charged in Rial. Recompute the same
+  // Rial amount with the live USD→Toman rate. Abort if the rate is unavailable.
+  const usdtRate = await getUsdtRate();
+  if (usdtRate === null || !(usdtRate > 0)) {
+    await ctx.reply(t("priceRateUnavailable"), { parse_mode: "HTML" });
+    return;
+  }
+  const amountRial = Math.round(payState.finalPrice * usdtRate) * 10;
+
   try {
     const resp = await fetch(verifyUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         merchant_id: settings.zarinpalMerchantId,
-        amount: Math.round(payState.finalPrice) * 10,
+        amount: amountRial,
         authority: payState.zarinpalAuthority,
       }),
       signal: AbortSignal.timeout(10_000),
@@ -79,7 +89,7 @@ export async function VerifyZarinpalOrderCallback(
       });
 
       await ctx.editText(
-        t("rechargeZarinpalSuccess", result.finalPrice.toLocaleString()),
+        t("rechargeZarinpalSuccess", result.finalPrice.toFixed(2)),
         {
           parse_mode: "HTML",
           reply_markup: new InlineKeyboard()

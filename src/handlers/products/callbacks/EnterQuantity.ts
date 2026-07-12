@@ -15,11 +15,11 @@ import { inventoryOrderSummaryKeyboard } from "../../../shared/keyboards/index.t
 import { appliedDiscountState } from "../discountOrderState.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 import { sendNewOrderNotification } from "../../../services/bot/notifications/newOrder.ts";
+import { getUsdtRate } from "../../../services/tetherland/index.ts";
 import {
-  getUsdtRate,
-  usdToTomanWithRate,
-} from "../../../services/tetherland/index.ts";
-import { formatPriceLabel } from "../../../shared/utils/currency.ts";
+  formatPriceLabel,
+  formatUsd,
+} from "../../../shared/utils/currency.ts";
 
 /**
  * Per-user state tracking which product/plan the user is entering a quantity for.
@@ -84,22 +84,11 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
       return;
     }
 
-    // Plan price is stored in USD → compute Toman using the live rate and format for display.
+    // Plan price is stored in USD → keep it in USD; the live rate only feeds
+    // the approximate-Toman courtesy label for fa users.
     const usdtRate = await getUsdtRate();
-    const priceInfo = formatPriceLabel(
-      user?.languageCode,
-      parseFloat(plan.price as string),
-      t,
-      usdtRate,
-    );
-    if (
-      !priceInfo ||
-      (priceInfo.toman === undefined && user?.languageCode === "fa")
-    ) {
-      await ctx.send(t("priceRateUnavailable"), { parse_mode: "HTML" });
-      return;
-    }
-    const unitPrice = priceInfo.toman ?? parseFloat(plan.price as string);
+    const unitPrice = parseFloat(plan.price as string);
+    const priceInfo = formatPriceLabel(user?.languageCode, unitPrice, t, usdtRate);
     const discount = appliedDiscountState.get(userId);
     const hasDiscount = discount && discount.planId === state.planId;
     const finalTotal = hasDiscount
@@ -114,8 +103,8 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
         productName,
         qty,
         unitPrice: priceInfo.label,
-        total: finalTotal.toLocaleString(),
-        currency: t("currency"),
+        total: formatUsd(finalTotal),
+        currency: "",
       }),
       {
         parse_mode: "HTML",
@@ -179,16 +168,8 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
 
     const discount = appliedDiscountState.get(userId);
     const hasDiscount = discount && discount.planId === planId;
-    // Plan price is stored in USD → convert to Toman with the live rate.
-    const usdtRate = await getUsdtRate();
-    if (usdtRate === null) {
-      await ctx.editText(t("priceRateUnavailable"), { parse_mode: "HTML" });
-      return;
-    }
-    const unitPrice = usdToTomanWithRate(
-      parseFloat(plan.price as string),
-      usdtRate,
-    );
+    // Plan price is stored (and kept) in USD — no rate conversion for money math.
+    const unitPrice = parseFloat(plan.price as string);
     const totalPrice = unitPrice * qty;
     const discountAmount = hasDiscount ? discount.discountAmount * qty : 0;
     const finalPrice = hasDiscount ? discount.finalPrice * qty : totalPrice;
@@ -198,8 +179,8 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
     if (walletBalance < finalPrice) {
       await ctx.editText(
         t("insufficientBalance", {
-          required: finalPrice.toFixed(0),
-          current: walletBalance.toFixed(0),
+          required: finalPrice.toFixed(2),
+          current: walletBalance.toFixed(2),
         }),
         {
           parse_mode: "HTML",
@@ -221,10 +202,10 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
       planId: plan.id,
       status: "paid",
       quantity: qty,
-      totalPrice: totalPrice.toString() as any,
-      discountAmount: discountAmount.toString() as any,
-      walletUsed: finalPrice.toString() as any,
-      finalPrice: finalPrice.toString() as any,
+      totalPrice: totalPrice.toFixed(2) as any,
+      discountAmount: discountAmount.toFixed(2) as any,
+      walletUsed: finalPrice.toFixed(2) as any,
+      finalPrice: finalPrice.toFixed(2) as any,
       paymentMethod: "wallet",
       discountCodeId: hasDiscount ? discount.discountCodeId : undefined,
     });
@@ -309,9 +290,9 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
       orderId: order.id,
       productName,
       qty,
-      total: finalPrice.toLocaleString(),
-      remainingBalance: newBalance.toLocaleString(),
-      currency: t("currency"),
+      total: formatUsd(finalPrice),
+      remainingBalance: formatUsd(newBalance),
+      currency: "",
     });
 
     const deliveryMsg =

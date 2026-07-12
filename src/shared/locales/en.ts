@@ -31,7 +31,7 @@ export const en = {
     `Custom emoji IDs in order:\n${payload.ids}`,
   adminpanelEmojiParserNoEmoji:
     "No premium custom emoji IDs were found in your message.",
-  Toman: "Toman",
+  Toman: "USD",
   // Greeting & Welcome
   greeting: (name: string) => `Hello <b>${name}</b>! ${e.sparkles}`,
   welcome: (name: string) =>
@@ -103,7 +103,7 @@ export const en = {
   selectPlan: `${e.clipboard} Select your preferred plan:`,
   orderSummary: `${e.clipboard} Order Summary:`,
   total: `${e.wallet} Total:`,
-  currency: "Toman",
+  currency: "USD",
   oneTime: "One-time",
   duration_day: "Day",
   duration_month: "Month",
@@ -111,7 +111,7 @@ export const en = {
 
   walletTitle: `${e.wallet} Wallet`,
   walletBalance: (balance: string) =>
-    `Balance: <b>${balance}</b> Toman ` + e.Toman,
+    `Balance: <b>$${balance}</b> ` + e.Toman,
   walletEmpty: `${e.wallet} Your wallet is currently empty ${e.sparkles} Top it up and get started!`,
   btnRechargeWallet: ` Top Up Wallet`,
   btnTransactionHistory: ` Transaction History`,
@@ -125,14 +125,14 @@ export const en = {
 
   rechargeEnterAmount: `${e.wallet} Enter top-up amount:`,
   rechargeMinAmount: (amount: string) =>
-    `Minimum top-up amount: <b>${amount}</b> Toman ` + e.Toman,
+    `Minimum top-up amount: <b>$${amount}</b> ` + e.Toman,
   rechargeMaxAmount: (amount: string) =>
-    `Maximum top-up amount: <b>${amount}</b> Toman ` + e.Toman,
+    `Maximum top-up amount: <b>$${amount}</b> ` + e.Toman,
   rechargeInvalidAmount: `${e.reject} Invalid amount entered`,
   rechargeTooLow: (min: string) =>
-    `${e.reject} Top-up amount must be at least <b>${min}</b> Toman ` + e.Toman,
+    `${e.reject} Top-up amount must be at least <b>$${min}</b> ` + e.Toman,
   rechargeTooHigh: (max: string) =>
-    `${e.reject} Top-up amount cannot be more than <b>${max}</b> Toman ` +
+    `${e.reject} Top-up amount cannot be more than <b>$${max}</b> ` +
     e.Toman,
 
   // Crypto Payment
@@ -149,18 +149,18 @@ export const en = {
   rechargeCryptoSendTxId: `Send TxID (transaction hash):`,
   rechargeCryptoTxIdReceived: `${e.checkBold} Transaction ID received\n\n${e.time} Verifying payment...\nThis process may take up to 30 minutes.`,
   rechargeCryptoVerified: (amount: string) =>
-    `${e.party} <b>Payment confirmed!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
+    `${e.party} <b>Payment confirmed!</b>\n\n${e.diamond} <b>$${amount}</b> has been added to your wallet.`,
   rechargeCryptoFailed: `${e.reject} Payment verification failed. Please contact support.`,
 
   // Card/Zarinpal Payment
   rechargeCardTitle: `${e.card} Card Payment`,
   rechargeZarinpalTitle: `${e.wallet} Zarinpal Gateway`,
   rechargePaymentLink: (amount: string) =>
-    `Amount: <b>${amount}</b> Toman\n\nClick the button below to continue to the payment gateway:`,
+    `Amount: <b>$${amount}</b>\n\nClick the button below to continue to the payment gateway:`,
   btnPayNow: `Pay`,
   rechargePaymentPending: `${e.time} Waiting for payment...\n\nPlease complete the payment in your browser.`,
   rechargePaymentSuccess: (amount: string) =>
-    `${e.party} <b>Payment successful!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
+    `${e.party} <b>Payment successful!</b>\n\n${e.diamond} <b>$${amount}</b> has been added to your wallet.`,
   rechargePaymentFailed: `❌ Payment failed. Please try again.`,
   rechargePaymentCancelled: `⚠️ Payment cancelled.`,
 
@@ -187,31 +187,31 @@ export const en = {
 
   // ── کلیدهای جدید شارژ کیف پول ──────────────────────────
   rechargeAmount: (amount: string) =>
-    `${e.wallet} Amount: <b>${amount}</b> Toman ` + e.Toman,
+    `${e.wallet} Amount: <b>$${amount}</b> ` + e.Toman,
   rechargeMethodSelectTitle: (amount: string) =>
-    `${e.wallet} Amount <b>${amount}</b> Toman ${e.Toman}\n\nSelect a payment method:`,
+    `${e.wallet} Amount <b>$${amount}</b> ${e.Toman}\n\nSelect a payment method:`,
   rechargeCardNumbers: `Card Numbers`,
   rechargeCardSendReceipt: `After transferring the amount, send your payment receipt image here.`,
   rechargeCardExpectPhoto: `${e.reject} Please send a photo of the payment receipt (image only, not text).`,
   rechargePendingApproval: `${e.checkBold} Your request has been registered!\n\n${e.time} Please wait for admin approval — usually under 30 minutes.`,
   rechargeApproved: (amount: string) =>
-    `${e.party} <b>Top-up approved!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
+    `${e.party} <b>Top-up approved!</b>\n\n${e.diamond} <b>$${amount}</b> has been added to your wallet.`,
   walletAdminCredited: (amount: string, balance: string) =>
-    `${e.diamond} <b>${amount}</b> Toman has been added to your wallet.\n${e.wallet} Current balance: <b>${balance}</b> Toman`,
+    `${e.diamond} <b>$${amount}</b> has been added to your wallet.\n${e.wallet} Current balance: <b>$${balance}</b>`,
   walletAdminDebited: (amount: string, balance: string) =>
-    `${e.reject} <b>${amount}</b> Toman has been deducted from your wallet.\n${e.wallet} Current balance: <b>${balance}</b> Toman`,
+    `${e.reject} <b>$${amount}</b> has been deducted from your wallet.\n${e.wallet} Current balance: <b>$${balance}</b>`,
   rechargeRejected: `${e.reject} <b>Top-up request rejected.</b>\n\nContact support if needed.`,
   rechargeSessionExpired: `⚠️ Session expired. Please start again from wallet section.`,
   rechargeMethodDisabled: `❌ This payment method is currently disabled.`,
   rechargeNoMethodAvailable: `❌ No payment method is currently available. Please try again later.`,
-  rechargeUsdtRate: (rate: string) => `📈 Live rate: <b>${rate}</b> Toman/USDT`,
+  rechargeUsdtRate: (rate: string) => `📈 Live rate: <b>${rate}</b> USD/USDT`,
   rechargeRateUnavailable: `❌ Live USDT rate is unavailable. Please wait and try again.`,
   rechargeCryptoInvalidTxId: `❌ Invalid TxID (must be at least 10 characters). Please send it again.`,
   rechargeZarinpalInstructions: `${e.clipboard} Click "Pay", complete the payment, then click "Verify Payment".`,
   btnVerifyPayment: `Verify Payment`,
   rechargeZarinpalVerifying: `⌛ Verifying payment...`,
   rechargeZarinpalSuccess: (amount: string) =>
-    `${e.party} <b>Payment confirmed!</b>\n\n${e.diamond} <b>${amount}</b> Toman has been added to your wallet.`,
+    `${e.party} <b>Payment confirmed!</b>\n\n${e.diamond} <b>$${amount}</b> has been added to your wallet.`,
   rechargeZarinpalFailed: `${e.reject} Payment is not confirmed or has not been recorded yet.`,
   rechargeZarinpalRetry: `Try paying again or verify again.`,
 
@@ -228,14 +228,14 @@ export const en = {
   }) =>
     `${e.crown} <b>Invite friends and earn rewards!</b>\n\n` +
     `${e.user} Successful referrals: <b>${data.totalReferrals}</b>\n` +
-    `${e.diamond} Total rewards: <b>${data.totalRewards}</b> Toman\n\n` +
+    `${e.diamond} Total rewards: <b>$${data.totalRewards}</b>\n\n` +
     `🔗 <b>Your personal link:</b>\n` +
     `<code>${data.referralLink}</code>\n\n` +
     `${e.sparkles} <b>How it works:</b>\n` +
     `1. Send your link to your friends\n` +
     `2. When they join, you earn rewards\n` +
     `3. Rewards are added directly to your wallet\n\n` +
-    `${e.diamond} Reward per referral: <b>10,000</b> Toman`,
+    `${e.diamond} Reward per referral: <b>$0.25</b>`,
   btnShareInviteLink: ` Share Link`,
   btnCopyLink: ` Copy Link`,
   btnViewReferrals: ` Referred Users`,
@@ -247,7 +247,7 @@ export const en = {
   andMore: (count: number) => `and <b>${count}</b> more...`,
   referralRewardNotification: (data: { userName: string; amount: string }) =>
     `${e.party} A new user (<b>${data.userName}</b>) joined via your referral link!\n` +
-    `${e.diamond} <b>${data.amount}</b> Toman has been added to your wallet.`,
+    `${e.diamond} <b>$${data.amount}</b> has been added to your wallet.`,
 
   // Discount Codes
   discountCodeInfo:
@@ -308,7 +308,7 @@ export const en = {
     `${e.date} Joined: ${data.joinDate}\n\n` +
     `${e.chart} <b>Stats:</b>\n` +
     `${e.bag} Orders: <b>${data.totalOrders}</b>\n` +
-    `${e.diamond} Total spent: <b>${data.totalSpent}</b> Toman\n` +
+    `${e.diamond} Total spent: <b>$${data.totalSpent}</b>\n` +
     `${e.user} Referrals: <b>${data.totalReferrals}</b>`,
 
   // Notification Settings
@@ -461,7 +461,7 @@ export const en = {
     `${e.confirm} <b>Renewal completed successfully!</b>\n\n` +
     `${e.bag} ${data.productName}\n` +
     `${e.ticket} Order number: #${data.orderId}\n\n` +
-    `${e.wallet} Remaining balance: ${data.remainingBalance} Toman`,
+    `${e.wallet} Remaining balance: $${data.remainingBalance}`,
   errorOpeningTicket: `❌ Error opening ticket`,
   errorReportingProblem: `❌ Error reporting problem`,
 
@@ -555,7 +555,7 @@ export const en = {
 
   // Purchase / Order Completion
   insufficientBalance: (data: { required: string; current: string }) =>
-    `${e.failed} Insufficient balance\n\nRequired: ${data.required} Toman\nYour balance: ${data.current} Toman\n\nTop up your wallet and try again.`,
+    `${e.failed} Insufficient balance\n\nRequired: $${data.required}\nYour balance: $${data.current}\n\nTop up your wallet and try again.`,
   noConfigAvailable: `${e.reject} VPN config is not currently available for this plan. Please contact support.`,
   orderSuccess: (data: {
     orderId: number;
@@ -567,8 +567,8 @@ export const en = {
     `${e.party} <b>Purchase successful!</b>\n\n` +
     `${e.bag} Product: ${data.productName}\n` +
     `${e.clipboard} Plan: ${data.planName}\n` +
-    `${e.diamond} Amount: <b>${data.amount}</b> Toman\n` +
-    `${e.wallet} Remaining balance: <b>${data.remainingBalance}</b> Toman\n` +
+    `${e.diamond} Amount: <b>$${data.amount}</b>\n` +
+    `${e.wallet} Remaining balance: <b>$${data.remainingBalance}</b>\n` +
     `${e.id} Order: #${data.orderId}`,
   vpnConfigMessage: (data: { configData: string; label?: string }) =>
     `${e.key} <b>Your VPN Config</b>${data.label ? ` (${data.label})` : ""}\n\n` +
@@ -588,8 +588,8 @@ export const en = {
   }) =>
     `${e.checkBold} <b>Discount code applied!</b>\n\n` +
     `${e.ticket} Code: <code>${data.code}</code>\n` +
-    `${e.diamond} Discount: -<b>${data.discountAmount}</b> Toman\n` +
-    `${e.wallet} New amount: <b>${data.finalPrice}</b> Toman`,
+    `${e.diamond} Discount: -<b>$${data.discountAmount}</b>\n` +
+    `${e.wallet} New amount: <b>$${data.finalPrice}</b>`,
   orderSummaryWithDiscount: (data: {
     productName: string;
     planName: string;
@@ -603,15 +603,15 @@ export const en = {
     `${e.bag} Product: ${data.productName}\n` +
     `${e.tag} Plan: ${data.planName}\n` +
     (data.duration ? `${e.clock} Duration: ${data.duration}\n` : "") +
-    `\n${e.wallet} Original price: <b>${data.originalPrice}</b> Toman\n` +
-    `${e.ticket} Discount (${data.code}): -<b>${data.discountAmount}</b> Toman\n` +
-    `${e.checkBold} Final price: <b>${data.finalPrice}</b> Toman`,
+    `\n${e.wallet} Original price: <b>$${data.originalPrice}</b>\n` +
+    `${e.ticket} Discount (${data.code}): -<b>$${data.discountAmount}</b>\n` +
+    `${e.checkBold} Final price: <b>$${data.finalPrice}</b>`,
   discountNotApplicableForProduct: `${e.reject} This discount code is not valid for this product.`,
   discountInsufficientBalanceWithDiscount: (data: {
     required: string;
     current: string;
   }) =>
-    `${e.reject} <b>Insufficient balance</b>\n\nRequired (after discount): <b>${data.required}</b> Toman\nYour balance: <b>${data.current}</b> Toman\n\nTop up your wallet.`,
+    `${e.reject} <b>Insufficient balance</b>\n\nRequired (after discount): <b>$${data.required}</b>\nYour balance: <b>$${data.current}</b>\n\nTop up your wallet.`,
 
   // Force Join Channels/Groups
   joinChannelRequired: `${e.flag_ir} <b>Required Membership</b>\n\nTo use this bot, first join the following channels/groups:`,
@@ -652,7 +652,7 @@ export const en = {
   btnPayCrypto: `Pay with USDT (Crypto)`,
   payCardInstructions: (amount: string) =>
     `${e.card} <b>Card Payment</b>\n\n` +
-    `${e.wallet} Amount: <b>${amount}</b> Toman\n\n` +
+    `${e.wallet} Amount: <b>$${amount}</b>\n\n` +
     `Copy one of the card numbers below and transfer the amount:`,
   payCardConfirmNote: `After transferring, click "${e.confirm} I Have Paid".`,
   btnConfirmCardPayment: `I Have Paid`,
@@ -680,8 +680,8 @@ export const en = {
     `${e.checkBold} <b>Order placed!</b>\n\n` +
     `${e.bag} Product: ${data.productName}\n` +
     `${e.clipboard} Plan: ${data.planName}\n` +
-    `${e.diamond} Amount: <b>${data.amount}</b> Toman\n` +
-    `${e.wallet} Remaining balance: <b>${data.remainingBalance}</b> Toman\n` +
+    `${e.diamond} Amount: <b>$${data.amount}</b>\n` +
+    `${e.wallet} Remaining balance: <b>$${data.remainingBalance}</b>\n` +
     `${e.id} Order: #${data.orderId}\n\n` +
     `${e.time} Your order has reached our team.\n` +
     `It will be processed and updated within <b>1 to 24 hours</b>.`,
@@ -719,8 +719,8 @@ export const en = {
     `${e.clipboard} Plan: ${data.planName}\n` +
     `${e.date} Date: <b>${data.date}</b>\n` +
     `${e.clock} Time: <b>${data.timeSlot}</b>\n` +
-    `${e.diamond} Amount: <b>${data.amount}</b> Toman\n` +
-    `${e.wallet} Remaining balance: <b>${data.remainingBalance}</b> Toman\n` +
+    `${e.diamond} Amount: <b>$${data.amount}</b>\n` +
+    `${e.wallet} Remaining balance: <b>$${data.remainingBalance}</b>\n` +
     `${e.id} Order: #${data.orderId}\n\n` +
     `${e.bell} <b>${e.clock} 15 minutes</b> before start, I’ll send you a reminder.\n` +
     `Track session status in <b>My Orders</b>.`,
@@ -829,7 +829,7 @@ export const en = {
   ) =>
     `${e.Toman} <b>Wallet Top-up Request</b>\n\n` +
     `${e.user} User: ${userLabel} (<code>${opts.userId}</code>)\n` +
-    `${e.wallet} Amount: <b>${formatNum(opts.amount)}</b> Toman\n` +
+    `${e.wallet} Amount: <b>$${formatNum(opts.amount)}</b>\n` +
     `${e.key} Method: ${methodLabel}\n`,
   regionNotFound: "Region not found ❌",
   rechargeCardSaveFailed: e.warning + "Failed to save file",
@@ -881,7 +881,7 @@ export const en = {
     "❌ The live exchange rate is unavailable. Please try again in a moment.",
   adminEditPlanPricePrompt: ({ planName }: { planName: string }) =>
     `${e.wallet} Enter the new price for plan "<b>${planName}</b>" in <b>USD</b>.\n\n` +
-    `For example <code>12.5</code> for $12.5.\nThe price is automatically converted to Toman at the live rate when shown.`,
+    `For example <code>12.5</code> for $12.5.\nThe price is shown in USD.`,
   adminPlanPriceInvalid:
     "❌ Invalid amount. Enter a valid USD number greater than zero (e.g. 12.5).",
   adminPlanPriceUpdated: ({

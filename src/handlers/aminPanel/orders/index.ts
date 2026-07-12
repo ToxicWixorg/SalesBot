@@ -12,6 +12,7 @@ import {
 	deliverOrderAction,
 	messageBuyerAction,
 } from "../../../services/bot/orderActions.ts";
+import { formatUsd } from "../../../shared/utils/currency.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 import {
 	ORDER_CODE_TO_STATUS,
@@ -43,10 +44,6 @@ async function gate(ctx: any): Promise<boolean> {
 		return false;
 	}
 	return true;
-}
-
-function formatMoney(v: string | number | null | undefined): string {
-	return Number.parseFloat(String(v ?? "0")).toLocaleString("en-US");
 }
 
 function shortDate(d: Date | null | undefined): string {
@@ -144,9 +141,9 @@ async function renderOrder(ctx: any, filterCode: string, orderId: number) {
 		`🛍️ محصول: <b>${productName}</b>\n` +
 		`📋 پلن: <b>${planName}</b>\n` +
 		`🔢 تعداد: <b>${order.quantity ?? 1}</b>\n\n` +
-		`💵 مبلغ کل: <b>${formatMoney(order.totalPrice)}</b>\n` +
-		`🎟 تخفیف: <b>${formatMoney(order.discountAmount)}</b>\n` +
-		`💳 مبلغ نهایی: <b>${formatMoney(order.finalPrice)}</b>\n` +
+		`💵 مبلغ کل: <b>${formatUsd(order.totalPrice)}</b>\n` +
+		`🎟 تخفیف: <b>${formatUsd(order.discountAmount)}</b>\n` +
+		`💳 مبلغ نهایی: <b>${formatUsd(order.finalPrice)}</b>\n` +
 		`💰 روش پرداخت: <b>${order.paymentMethod ?? "—"}</b>\n\n` +
 		`📅 ثبت: ${shortDate(order.createdAt)}\n` +
 		`📤 تحویل: ${shortDate(order.deliveredAt)}` +

@@ -64,12 +64,11 @@ async function createPendingPaymentOrder(
   const productName = getLocalizedName(product, user?.languageCode);
   const planName = getLocalizedName(plan, user?.languageCode);
 
-  // Price must be stored in Toman (like every other order). `basePriceToman` is
-  // the Toman value already resolved on the payment screen; fall back to the
-  // region price (also Toman). The raw `plan.price` is USD and must never be
-  // stored directly — that was the card/crypto/zarinpal price bug.
+  // Price is stored in USD (like every other order). `basePriceUsd` is the USD
+  // value already resolved on the payment screen; fall back to the region price
+  // (also USD) or the raw USD `plan.price`.
   const originalPrice =
-    state.basePriceToman ?? state.regionPrice ?? parseFloat(plan.price as string);
+    state.basePriceUsd ?? state.regionPrice ?? parseFloat(plan.price as string);
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
   const hasDiscount =
     pendingDiscount !== undefined && pendingDiscount.planId === state.planId;
@@ -88,10 +87,10 @@ async function createPendingPaymentOrder(
     planId: plan.id,
     status: "pending_payment",
     quantity: 1,
-    totalPrice: originalPrice.toString() as any,
-    discountAmount: discountAmount.toString() as any,
-    walletUsed: "0" as any,
-    finalPrice: finalPrice.toString() as any,
+    totalPrice: originalPrice.toFixed(2) as any,
+    discountAmount: discountAmount.toFixed(2) as any,
+    walletUsed: "0.00" as any,
+    finalPrice: finalPrice.toFixed(2) as any,
     paymentMethod,
     paymentId: paymentId ?? null,
     discountCodeId: hasDiscount ? pendingDiscount.discountCodeId : undefined,

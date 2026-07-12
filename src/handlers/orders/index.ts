@@ -12,6 +12,7 @@ import { OrderRescheduleCallback } from "./callbacks/OrderReschedule.ts";
 import { OrderReportPeroblemCallback } from "./callbacks/OrderReportProblem.ts";
 import { e } from "../../shared/locales/emojies.ts";
 import type { TFunction } from "../../shared/locales/index.ts";
+import { formatUsd } from "../../shared/utils/currency.ts";
 
 function getOrderStatusInfo(status: string, t: TFunction) {
   const statusMap: Record<
@@ -130,7 +131,8 @@ function formatDate(date: Date | string): string {
 }
 
 function formatPrice(price: string | number): string {
-  return Number(price).toLocaleString("fa-IR");
+  // Order amounts are stored in USD — display as "$X.XX".
+  return formatUsd(price);
 }
 
 export const ordersComposer = new Composer()

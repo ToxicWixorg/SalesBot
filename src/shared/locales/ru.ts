@@ -13,7 +13,7 @@ export const ru = {
     `${e.checkBold} Язык изменён на <b>${lang}</b>`,
 
   btnAdminPanel: "َAdmin panel",
-  Toman: "Toman",
+  Toman: "USD",
 
   btnReportBug: "Report a bot issue",
 
@@ -95,7 +95,7 @@ export const ru = {
   selectPlan: `${e.clipboard} Выберите тариф:`,
   orderSummary: `${e.clipboard} Сводка заказа:`,
   total: `${e.wallet} Итого:`,
-  currency: "Томан",
+  currency: "USD",
   oneTime: "Разово",
   duration_day: "День",
   duration_month: "Месяц",
@@ -104,7 +104,7 @@ export const ru = {
   // Wallet
   walletTitle: `${e.wallet} Кошелёк`,
   walletBalance: (balance: string) =>
-    `Баланс: <b>${balance}</b> Toman ` + e.Toman,
+    `Баланс: <b>$${balance}</b> ` + e.Toman,
   walletEmpty: `${e.wallet} Ваш кошелёк пуст ${e.sparkles} Пополните его и начните!`,
   btnRechargeWallet: ` Пополнить кошелёк`,
   btnTransactionHistory: ` История транзакций`,
@@ -117,14 +117,14 @@ export const ru = {
   btnRechargeZarinpal: ` Шлюз Zarinpal`,
   rechargeEnterAmount: `${e.wallet} Введите сумму пополнения:`,
   rechargeMinAmount: (amount: string) =>
-    `Минимальная сумма пополнения: <b>${amount}</b> Toman ` + e.Toman,
+    `Минимальная сумма пополнения: <b>$${amount}</b> ` + e.Toman,
   rechargeMaxAmount: (amount: string) =>
-    `Максимальная сумма пополнения: <b>${amount}</b> Toman ` + e.Toman,
+    `Максимальная сумма пополнения: <b>$${amount}</b> ` + e.Toman,
   rechargeInvalidAmount: `${e.reject} Неверная сумма`,
   rechargeTooLow: (min: string) =>
-    `${e.reject} Сумма должна быть не менее <b>${min}</b> Toman ${e.Toman}`,
+    `${e.reject} Сумма должна быть не менее <b>$${min}</b> ${e.Toman}`,
   rechargeTooHigh: (max: string) =>
-    `${e.reject} Сумма не может превышать <b>${max}</b> Toman ${e.Toman}`,
+    `${e.reject} Сумма не может превышать <b>$${max}</b> ${e.Toman}`,
 
   rechargeCryptoTitle: `${e.wallet} Крипто-оплата`,
   rechargeCryptoAddress: (address: string) =>
@@ -139,7 +139,7 @@ export const ru = {
   rechargeCryptoSendTxId: `Отправьте TxID (хэш транзакции):`,
   rechargeCryptoTxIdReceived: `${e.checkBold} TxID получен\n\n${e.time} Проверяем оплату...\nЭто может занять до 30 минут.`,
   rechargeCryptoVerified: (amount: string) =>
-    `${e.party} <b>Оплата подтверждена!</b>\n\n${e.diamond} <b>${amount}</b> томан добавлено в ваш кошелёк.`,
+    `${e.party} <b>Оплата подтверждена!</b>\n\n${e.diamond} <b>$${amount}</b> добавлено в ваш кошелёк.`,
   rechargeCryptoFailed: `${e.reject} Не удалось подтвердить оплату. Обратитесь в поддержку.`,
 
   rechargeCardTitle: `${e.card} Оплата картой`,
@@ -147,7 +147,7 @@ export const ru = {
   btnPayNow: `Оплатить`,
   rechargePaymentPending: `${e.time} Ожидание оплаты...\n\nПожалуйста, завершите оплату в браузере.`,
   rechargePaymentSuccess: (amount: string) =>
-    `${e.party} <b>Оплата успешна!</b>\n\n${e.diamond} <b>${amount}</b> томан добавлено в ваш кошелёк.`,
+    `${e.party} <b>Оплата успешна!</b>\n\n${e.diamond} <b>$${amount}</b> добавлено в ваш кошелёк.`,
   rechargePaymentFailed: `❌ Ошибка оплаты. Попробуйте снова.`,
   rechargePaymentCancelled: `⚠️ Оплата отменена.`,
 
@@ -224,34 +224,34 @@ export const ru = {
   txSourcePerk: `${e.target} Бонус Perk`,
 
   rechargeAmount: (amount: string) =>
-    `${e.wallet} Сумма: <b>${amount}</b> Toman ` + e.Toman,
+    `${e.wallet} Сумма: <b>$${amount}</b> ` + e.Toman,
   rechargeMethodSelectTitle: (amount: string) =>
-    `${e.wallet} Сумма <b>${amount}</b> Toman ${e.Toman}\n\nВыберите способ оплаты:`,
+    `${e.wallet} Сумма <b>$${amount}</b> ${e.Toman}\n\nВыберите способ оплаты:`,
   rechargeCardNumbers: `Номера карт`,
   rechargeCardSendReceipt: `После перевода отправьте сюда фото чека оплаты.`,
   rechargeCardExpectPhoto: `${e.reject} Пожалуйста, отправьте фото чека (изображение, не текст).`,
   rechargePendingApproval: `${e.checkBold} Ваш запрос принят!\n\n${e.time} Дождитесь подтверждения админа — обычно до 30 минут.`,
   rechargeApproved: (amount: string) =>
-    `${e.party} <b>Пополнение подтверждено!</b>\n\n${e.diamond} <b>${amount}</b> томан добавлено в ваш кошелёк.`,
+    `${e.party} <b>Пополнение подтверждено!</b>\n\n${e.diamond} <b>$${amount}</b> добавлено в ваш кошелёк.`,
   walletAdminCredited: (amount: string, balance: string) =>
-    `${e.diamond} <b>${amount}</b> томан добавлено в ваш кошелёк.\n${e.wallet} Текущий баланс: <b>${balance}</b> томан`,
+    `${e.diamond} <b>$${amount}</b> добавлено в ваш кошелёк.\n${e.wallet} Текущий баланс: <b>$${balance}</b>`,
   walletAdminDebited: (amount: string, balance: string) =>
-    `${e.reject} <b>${amount}</b> томан списано с вашего кошелька.\n${e.wallet} Текущий баланс: <b>${balance}</b> томан`,
+    `${e.reject} <b>$${amount}</b> списано с вашего кошелька.\n${e.wallet} Текущий баланс: <b>$${balance}</b>`,
   rechargeRejected: `${e.reject} <b>Запрос на пополнение отклонён.</b>\n\nПри необходимости обратитесь в поддержку.`,
   rechargeSessionExpired: `⚠️Сессия истекла. Начните снова из раздела кошелька.`,
   rechargeMethodDisabled: `❌ Этот способ оплаты сейчас недоступен.`,
   rechargeNoMethodAvailable: `❌ Сейчас нет активных способов оплаты. Попробуйте позже.`,
   rechargeUsdtRate: (rate: string) =>
-    `📈 Актуальный курс: <b>${rate}</b> томан/USDT`,
+    `📈 Актуальный курс: <b>${rate}</b> USD/USDT`,
   rechargeRateUnavailable: `❌ Актуальный курс USDT недоступен. Подождите и попробуйте снова.`,
   rechargeCryptoInvalidTxId: `❌ Неверный TxID (минимум 10 символов). Отправьте ещё раз.`,
   rechargePaymentLink: (amount: string) =>
-    `Сумма: <b>${amount}</b> томан\n\nНажмите кнопку ниже, чтобы перейти к оплате:`,
+    `Сумма: <b>$${amount}</b>\n\nНажмите кнопку ниже, чтобы перейти к оплате:`,
   rechargeZarinpalInstructions: `${e.clipboard} Нажмите «Оплатить», завершите оплату, затем нажмите «Проверить оплату».`,
   btnVerifyPayment: `Проверить оплату`,
   rechargeZarinpalVerifying: `⌛ Проверяем оплату...`,
   rechargeZarinpalSuccess: (amount: string) =>
-    `${e.party} <b>Оплата подтверждена!</b>\n\n${e.diamond} <b>${amount}</b> томан добавлено в ваш кошелёк.`,
+    `${e.party} <b>Оплата подтверждена!</b>\n\n${e.diamond} <b>$${amount}</b> добавлено в ваш кошелёк.`,
   rechargeZarinpalFailed: `${e.reject} Оплата не подтверждена или ещё не зарегистрирована.`,
   rechargeZarinpalRetry: `Попробуйте оплатить снова или выполнить повторную проверку.`,
   rechargeCardSaveFailed: e.warning + "Ошибка сохранения файла",
@@ -263,14 +263,14 @@ export const ru = {
   }) =>
     `${e.crown} <b>Приглашайте друзей и зарабатывайте!</b>\n\n` +
     `${e.user} Успешных приглашений: <b>${data.totalReferrals}</b>\n` +
-    `${e.diamond} Всего бонусов: <b>${data.totalRewards}</b> томан\n\n` +
+    `${e.diamond} Всего бонусов: <b>$${data.totalRewards}</b>\n\n` +
     `🔗 <b>Ваша персональная ссылка:</b>\n` +
     `<code>${data.referralLink}</code>\n\n` +
     `${e.sparkles} <b>Как это работает:</b>\n` +
     `1. Отправьте ссылку друзьям\n` +
     `2. Когда они присоединятся — вы получите бонус\n` +
     `3. Бонус автоматически зачисляется в кошелёк\n\n` +
-    `${e.diamond} Награда за приглашение: <b>10,000</b> томан`,
+    `${e.diamond} Награда за приглашение: <b>$0.25</b>`,
   btnShareInviteLink: ` Поделиться ссылкой`,
   btnCopyLink: ` Копировать ссылку`,
   btnViewReferrals: ` Список приглашённых`,
@@ -282,7 +282,7 @@ export const ru = {
   andMore: (count: number) => `и ещё <b>${count}</b>...`,
   referralRewardNotification: (data: { userName: string; amount: string }) =>
     `${e.party} Новый пользователь (<b>${data.userName}</b>) зарегистрировался по вашей ссылке!\n` +
-    `${e.diamond} <b>${data.amount}</b> томан добавлено в ваш баланс.`,
+    `${e.diamond} <b>$${data.amount}</b> добавлено в ваш баланс.`,
 
   discountCodeInfo:
     `${e.gift} <b>Промокод</b>\n\n` +
@@ -321,8 +321,8 @@ export const ru = {
   }) =>
     `${e.checkBold} <b>Промокод применён!</b>\n\n` +
     `${e.ticket} Код: <code>${data.code}</code>\n` +
-    `${e.diamond} Скидка: -<b>${data.discountAmount}</b> томан\n` +
-    `${e.wallet} Новая сумма: <b>${data.finalPrice}</b> томан`,
+    `${e.diamond} Скидка: -<b>$${data.discountAmount}</b>\n` +
+    `${e.wallet} Новая сумма: <b>$${data.finalPrice}</b>`,
   orderSummaryWithDiscount: (data: {
     productName: string;
     planName: string;
@@ -336,15 +336,15 @@ export const ru = {
     `${e.bag} Товар: ${data.productName}\n` +
     `${e.tag} Тариф: ${data.planName}\n` +
     (data.duration ? `${e.clock} Срок: ${data.duration}\n` : "") +
-    `\n${e.wallet} Исходная цена: <b>${data.originalPrice}</b> томан\n` +
-    `${e.ticket} Скидка (${data.code}): -<b>${data.discountAmount}</b> томан\n` +
-    `${e.checkBold} Итоговая цена: <b>${data.finalPrice}</b> томан`,
+    `\n${e.wallet} Исходная цена: <b>$${data.originalPrice}</b>\n` +
+    `${e.ticket} Скидка (${data.code}): -<b>$${data.discountAmount}</b>\n` +
+    `${e.checkBold} Итоговая цена: <b>$${data.finalPrice}</b>`,
   discountNotApplicableForProduct: `${e.reject} Этот промокод не подходит для данного товара.`,
   discountInsufficientBalanceWithDiscount: (data: {
     required: string;
     current: string;
   }) =>
-    `${e.reject} <b>Недостаточно средств</b>\n\nТребуется (после скидки): <b>${data.required}</b> томан\nВаш баланс: <b>${data.current}</b> томан\n\nПополните кошелёк.`,
+    `${e.reject} <b>Недостаточно средств</b>\n\nТребуется (после скидки): <b>$${data.required}</b>\nВаш баланс: <b>$${data.current}</b>\n\nПополните кошелёк.`,
 
   userNotFound: `❌Пользователь не найден`,
   userIdentificationError: `❌ Ошибка идентификации пользователя`,
@@ -365,7 +365,7 @@ export const ru = {
     `${e.date} Дата регистрации: ${data.joinDate}\n\n` +
     `${e.chart} <b>Статистика:</b>\n` +
     `${e.bag} Заказы: <b>${data.totalOrders}</b>\n` +
-    `${e.diamond} Потрачено: <b>${data.totalSpent}</b> томан\n` +
+    `${e.diamond} Потрачено: <b>$${data.totalSpent}</b>\n` +
     `${e.user} Приглашения: <b>${data.totalReferrals}</b>`,
   notificationSettingsTitle: `${e.bell} Настройки уведомлений`,
   notificationSettingsDescription: `${e.info} Выберите, какие уведомления получать:`,
@@ -494,7 +494,7 @@ export const ru = {
     `${e.confirm} <b>Продление выполнено успешно!</b>\n\n` +
     `${e.bag} ${data.productName}\n` +
     `${e.ticket} Номер заказа: #${data.orderId}\n\n` +
-    `${e.wallet} Остаток: ${data.remainingBalance} томан`,
+    `${e.wallet} Остаток: $${data.remainingBalance}`,
   errorOpeningTicket: `❌ Ошибка открытия тикета`,
   errorReportingProblem: `❌ Ошибка отправки отчёта о проблеме`,
   btnBackToMain: `Главное меню`,
@@ -545,7 +545,7 @@ export const ru = {
   support: "Поддержка",
 
   insufficientBalance: (data: { required: string; current: string }) =>
-    `${e.failed} Недостаточно средств\n\nТребуется: ${data.required} томан\nВаш баланс: ${data.current} томан\n\nПополните кошелёк и попробуйте снова.`,
+    `${e.failed} Недостаточно средств\n\nТребуется: $${data.required}\nВаш баланс: $${data.current}\n\nПополните кошелёк и попробуйте снова.`,
   noConfigAvailable: `${e.reject} Для этого тарифа сейчас нет доступной VPN-конфигурации. Обратитесь в поддержку.`,
   orderSuccess: (data: {
     orderId: number;
@@ -557,8 +557,8 @@ export const ru = {
     `${e.party} <b>Покупка успешно оформлена!</b>\n\n` +
     `${e.bag} Товар: ${data.productName}\n` +
     `${e.clipboard} Тариф: ${data.planName}\n` +
-    `${e.diamond} Сумма: <b>${data.amount}</b> томан\n` +
-    `${e.wallet} Остаток: <b>${data.remainingBalance}</b> томан\n` +
+    `${e.diamond} Сумма: <b>$${data.amount}</b>\n` +
+    `${e.wallet} Остаток: <b>$${data.remainingBalance}</b>\n` +
     `${e.id} Заказ: #${data.orderId}`,
   vpnConfigMessage: (data: { configData: string; label?: string }) =>
     `${e.key} <b>Ваш VPN-конфиг</b>${data.label ? ` (${data.label})` : ""}\n\n` +
@@ -596,7 +596,7 @@ export const ru = {
   paymentWalletBalance: "Баланс кошелька",
   payCardInstructions: (amount: string) =>
     `💳 <b>Оплата банковской картой</b>\n\n` +
-    `💰 Сумма: <b>${amount}</b> томан\n\n` +
+    `💰 Сумма: <b>$${amount}</b>\n\n` +
     `Скопируйте номер карты ниже и переведите сумму:`,
   payCardConfirmNote: `После перевода нажмите «✅ Я оплатил».`,
   payCardPending: (orderId: string) =>
@@ -621,8 +621,8 @@ export const ru = {
     `${e.checkBold} <b>Заказ оформлен!</b>\n\n` +
     `${e.bag} Товар: ${data.productName}\n` +
     `${e.clipboard} Тариф: ${data.planName}\n` +
-    `${e.diamond} Сумма: <b>${data.amount}</b> томан\n` +
-    `${e.wallet} Остаток: <b>${data.remainingBalance}</b> томан\n` +
+    `${e.diamond} Сумма: <b>$${data.amount}</b>\n` +
+    `${e.wallet} Остаток: <b>$${data.remainingBalance}</b>\n` +
     `${e.id} Заказ: #${data.orderId}\n\n` +
     `${e.time} Ваш заказ передан нашей команде.\n` +
     `Мы обработаем его в течение <b>1–24 часов</b>.`,
@@ -659,8 +659,8 @@ export const ru = {
     `${e.clipboard} Тариф: ${data.planName}\n` +
     `${e.date} Дата: <b>${data.date}</b>\n` +
     `${e.clock} Время: <b>${data.timeSlot}</b>\n` +
-    `${e.diamond} Сумма: <b>${data.amount}</b> томан\n` +
-    `${e.wallet} Остаток: <b>${data.remainingBalance}</b> томан\n` +
+    `${e.diamond} Сумма: <b>$${data.amount}</b>\n` +
+    `${e.wallet} Остаток: <b>$${data.remainingBalance}</b>\n` +
     `${e.id} Заказ: #${data.orderId}\n\n` +
     `${e.bell} <b>${e.clock} За 15 минут</b> до начала я отправлю напоминание.\n` +
     `Статус сессии можно отслеживать в <b>Мои заказы</b>.`,
@@ -761,7 +761,7 @@ export const ru = {
   ) =>
     `💵 <b>Запрос на пополнение кошелька</b>\n\n` +
     `👤 Пользователь: ${userLabel} (<code>${opts.userId}</code>)\n` +
-    `💰 Сумма: <b>${formatNum(opts.amount)}</b> томан\n` +
+    `💰 Сумма: <b>$${formatNum(opts.amount)}</b>\n` +
     `🔑 Способ: ${methodLabel}\n`,
   regionNotFound: "Регион не найден ❌",
 
@@ -815,7 +815,7 @@ export const ru = {
     "❌ Курс валюты сейчас недоступен. Пожалуйста, попробуйте через мгновение.",
   adminEditPlanPricePrompt: ({ planName }: { planName: string }) =>
     `${e.wallet} Введите новую цену тарифа «<b>${planName}</b>» в <b>долларах</b>.\n\n` +
-    `Например <code>12.5</code> для $12.5.\nЦена автоматически конвертируется в томаны по текущему курсу при показе.`,
+    `Например <code>12.5</code> для $12.5.\nЦена отображается в долларах США.`,
   adminPlanPriceInvalid:
     "❌ Неверная сумма. Введите корректное число в долларах больше нуля (например 12.5).",
   adminPlanPriceUpdated: ({

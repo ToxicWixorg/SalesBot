@@ -8,10 +8,8 @@ import {
 import { preSelectedRegionState } from "../preSelectedRegionState.ts";
 import { orderConfirmationKeyboard } from "../../../shared/keyboards/index.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
-import {
-  getUsdtRate,
-  usdToTomanWithRate,
-} from "../../../services/tetherland/index.ts";
+import { getUsdtRate } from "../../../services/tetherland/index.ts";
+import { formatPriceLabel } from "../../../shared/utils/currency.ts";
 
 export async function SelectRegionCallback(context: Context) {
   if (!context.from || !context.queryData) return;
@@ -48,19 +46,11 @@ export async function SelectRegionCallback(context: Context) {
     return;
   }
 
-  // Prices (region + plan) are stored in USD → convert to Toman with live rate.
+  // Prices (region + plan) are stored in USD. Keep them in USD; fetch the live
+  // rate only to build the approximate-Toman courtesy label for fa users.
   const usdtRate = await getUsdtRate();
-  if (usdtRate === null) {
-    await context.answerCallbackQuery({
-      text: t("priceRateUnavailable"),
-      show_alert: true,
-    });
-    return;
-  }
 
-  const regionPrice = region.price
-    ? usdToTomanWithRate(parseFloat(region.price), usdtRate)
-    : undefined;
+  const regionPrice = region.price ? parseFloat(region.price) : undefined;
   preSelectedRegionState.set(userId, {
     planId,
     flag: region.flag,
@@ -68,9 +58,7 @@ export async function SelectRegionCallback(context: Context) {
     price: regionPrice,
   });
 
-  const effectivePrice =
-    regionPrice ??
-    usdToTomanWithRate(parseFloat(plan.price as string), usdtRate);
+  const effectivePrice = regionPrice ?? parseFloat(plan.price as string);
   const productName = getLocalizedName(product, user.languageCode);
   const planName = getLocalizedName(plan, user.languageCode);
 
@@ -84,11 +72,18 @@ export async function SelectRegionCallback(context: Context) {
     duration = `${plan.duration} ${unitLabel}`;
   }
 
+  const priceLabel = formatPriceLabel(
+    user.languageCode,
+    effectivePrice,
+    t,
+    usdtRate,
+  ).label;
+
   let message = `${t("orderSummary")}\n\n`;
   message += `📦 ${productName}\n`;
   message += `📋 ${planName} — ${duration}\n`;
   message += `🌍 ${t("selectedRegion")}: ${region.flag} ${region.name}\n`;
-  message += `\n${t("total")} <b>${effectivePrice.toLocaleString()}</b> ${t("currency")}`;
+  message += `\n${t("total")} <b>${priceLabel}</b>`;
 
   await context.editText(message, {
     parse_mode: "HTML",

@@ -1,6 +1,7 @@
 import { InlineKeyboard } from "gramio";
 import { getForumConfig } from "../../forumConfig.ts";
 import type { Order, User } from "../../../db/schema.ts";
+import { formatUsd } from "../../../shared/utils/currency.ts";
 
 type BotApi = any;
 
@@ -48,8 +49,8 @@ export async function sendNewOrderNotification(
     [user.firstName, user.lastName].filter(Boolean).join(" ") || "—";
   const username = user.username ? `@${user.username}` : "—";
 
-  const finalPrice = Number(order.finalPrice ?? 0).toLocaleString();
-  const totalPrice = Number(order.totalPrice ?? 0).toLocaleString();
+  const finalPrice = formatUsd(order.finalPrice ?? 0);
+  const totalPrice = formatUsd(order.totalPrice ?? 0);
   const discount = Number(order.discountAmount ?? 0);
 
   let message =
@@ -63,11 +64,11 @@ export async function sendNewOrderNotification(
 
   if (data.planName) message += `📋 <b>Plan:</b> ${data.planName}\n`;
   message += `🔢 <b>Quantity:</b> ${order.quantity ?? 1}\n`;
-  message += `💵 <b>Total:</b> ${totalPrice} ${"تومان"}\n`;
+  message += `💵 <b>Total:</b> ${totalPrice}\n`;
   if (discount > 0) {
-    message += `🎁 <b>Discount:</b> ${discount.toLocaleString()} تومان\n`;
+    message += `🎁 <b>Discount:</b> ${formatUsd(discount)}\n`;
   }
-  message += `💰 <b>Final:</b> ${finalPrice} تومان\n`;
+  message += `💰 <b>Final:</b> ${finalPrice}\n`;
   if (order.paymentMethod) {
     message += `💳 <b>Payment:</b> ${order.paymentMethod}\n`;
   }

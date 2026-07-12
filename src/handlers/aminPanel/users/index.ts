@@ -20,6 +20,7 @@ import {
 	usersMenuKeyboard,
 } from "../../../shared/keyboards/adminPanel/users.ts";
 import { i18n } from "../../../shared/locales/index.ts";
+import { formatUsd } from "../../../shared/utils/currency.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 
 // ─────────────────────────────────────────────────────────────
@@ -64,12 +65,8 @@ function digits(s: string): string {
 }
 
 function parseAmount(text: string): number | null {
-	const n = Number.parseInt(digits(text).replace(/[,،٬\s]/g, ""), 10);
+	const n = Number.parseFloat(digits(text).replace(/[,،٬\s]/g, ""));
 	return Number.isNaN(n) || n <= 0 ? null : n;
-}
-
-function formatMoney(v: string | number | null | undefined): string {
-	return Number.parseFloat(String(v ?? "0")).toLocaleString("en-US");
 }
 
 function shortDate(d: Date | null | undefined): string {
@@ -99,8 +96,8 @@ async function notifyBalanceChange(
 ) {
 	if (user.notifyWallet === false) return;
 	const t = i18n.buildT(user.languageCode || "fa");
-	const amt = formatMoney(amount);
-	const balance = formatMoney(user.walletBalance);
+	const amt = formatUsd(amount);
+	const balance = formatUsd(user.walletBalance);
 	const text =
 		type === "credit"
 			? t("walletAdminCredited", amt, balance)
@@ -140,9 +137,9 @@ export async function renderUserProfile(
 		`🆔 <code>${user.id}</code>\n` +
 		`📅 عضویت: ${shortDate(user.createdAt)}\n` +
 		`🚦 وضعیت: ${status}\n` +
-		`💰 موجودی: <b>${formatMoney(user.walletBalance)}</b> تومان\n` +
+		`💰 موجودی: <b>${formatUsd(user.walletBalance)}</b>\n` +
 		`🛍 تعداد خرید: <b>${purchases}</b>\n` +
-		`💳 مجموع پرداختی: <b>${formatMoney(totalPaid)}</b> تومان\n` +
+		`💳 مجموع پرداختی: <b>${formatUsd(totalPaid)}</b>\n` +
 		`👥 رفرال‌ها: <b>${referrals}</b>`;
 
 	return { text, keyboard: userProfileKeyboard(user, backTo) };
@@ -240,7 +237,7 @@ export function setupAdminUsersHandlers(bot: AnyBot) {
 					: "محصول حذف‌شده";
 				text +=
 					`• <b>${productName}</b> — #${r.orderId}\n` +
-					`  💵 ${formatMoney(r.finalPrice)} تومان | ${r.status} | ${shortDate(r.createdAt)}\n`;
+					`  💵 ${formatUsd(r.finalPrice)} | ${r.status} | ${shortDate(r.createdAt)}\n`;
 			}
 		}
 
@@ -263,7 +260,7 @@ export function setupAdminUsersHandlers(bot: AnyBot) {
 			for (const tx of txs) {
 				const sign = tx.type === "credit" ? "➕" : "➖";
 				text +=
-					`${sign} <b>${formatMoney(tx.amount)}</b> | ${tx.source}\n` +
+					`${sign} <b>${formatUsd(tx.amount)}</b> | ${tx.source}\n` +
 					`  ${tx.description ?? "—"} | ${shortDate(tx.createdAt)}\n`;
 			}
 		}
@@ -292,8 +289,8 @@ export function setupAdminUsersHandlers(bot: AnyBot) {
 		usersInput.set(ctx.from.id, { type: "baladd", targetId: id });
 		await ctx.editText(
 			`➕ <b>افزایش موجودی</b>\n\n` +
-				`موجودی فعلی: <b>${formatMoney(user?.walletBalance)}</b> تومان\n\n` +
-				`مبلغ افزایش (تومان) را بفرستید:`,
+				`موجودی فعلی: <b>${formatUsd(user?.walletBalance)}</b>\n\n` +
+				`مبلغ افزایش (دلار) را بفرستید:`,
 			{ parse_mode: "HTML", reply_markup: cancelTo(`usr_view_${id}`) },
 		);
 	});
@@ -305,8 +302,8 @@ export function setupAdminUsersHandlers(bot: AnyBot) {
 		usersInput.set(ctx.from.id, { type: "balsub", targetId: id });
 		await ctx.editText(
 			`➖ <b>کاهش موجودی</b>\n\n` +
-				`موجودی فعلی: <b>${formatMoney(user?.walletBalance)}</b> تومان\n\n` +
-				`مبلغ کاهش (تومان) را بفرستید:`,
+				`موجودی فعلی: <b>${formatUsd(user?.walletBalance)}</b>\n\n` +
+				`مبلغ کاهش (دلار) را بفرستید:`,
 			{ parse_mode: "HTML", reply_markup: cancelTo(`usr_view_${id}`) },
 		);
 	});
@@ -375,7 +372,7 @@ export function setupAdminUsersHandlers(bot: AnyBot) {
 	bot.callbackQuery("usr_bulk_add", async (ctx) => {
 		if (!(await gate(ctx))) return;
 		usersInput.set(ctx.from.id, { type: "bulk_add" });
-		await ctx.editText("➕ مبلغ افزایش موجودی <b>همه</b> (تومان) را بفرستید:", {
+		await ctx.editText("➕ مبلغ افزایش موجودی <b>همه</b> (دلار) را بفرستید:", {
 			parse_mode: "HTML",
 			reply_markup: cancelTo("usr_bulk"),
 		});
@@ -384,7 +381,7 @@ export function setupAdminUsersHandlers(bot: AnyBot) {
 	bot.callbackQuery("usr_bulk_sub", async (ctx) => {
 		if (!(await gate(ctx))) return;
 		usersInput.set(ctx.from.id, { type: "bulk_sub" });
-		await ctx.editText("➖ مبلغ کاهش موجودی <b>همه</b> (تومان) را بفرستید:", {
+		await ctx.editText("➖ مبلغ کاهش موجودی <b>همه</b> (دلار) را بفرستید:", {
 			parse_mode: "HTML",
 			reply_markup: cancelTo("usr_bulk"),
 		});
@@ -556,7 +553,7 @@ export function setupAdminUsersHandlers(bot: AnyBot) {
 					: await UserAdminRepository.subtractBalanceAll(amount);
 			const verb = state.type === "bulk_add" ? "افزوده شد به" : "کم شد از";
 			await ctx.send(
-				`✅ مبلغ ${formatMoney(amount)} تومان ${verb} موجودی ${affected} کاربر.`,
+				`✅ مبلغ ${formatUsd(amount)} ${verb} موجودی ${affected} کاربر.`,
 				{ parse_mode: "HTML", reply_markup: bulkMenuKeyboard() },
 			);
 			return;

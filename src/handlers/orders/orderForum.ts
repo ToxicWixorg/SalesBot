@@ -6,6 +6,7 @@ import {
   deliverOrderAction,
   messageBuyerAction,
 } from "../../services/bot/orderActions.ts";
+import { formatUsd } from "../../shared/utils/currency.ts";
 
 /**
  * Pending "message buyer" state, keyed by the staff member's Telegram id.
@@ -87,14 +88,14 @@ export function setupOrderForumHandlers(bot: AnyBot): void {
     const fullName =
       [user.firstName, user.lastName].filter(Boolean).join(" ") || "—";
     const username = user.username ? `@${user.username}` : "—";
-    const balance = Number(user.walletBalance ?? 0).toLocaleString();
+    const balance = formatUsd(user.walletBalance ?? 0);
 
     await ctx.answerCallbackQuery({
       text:
         `👤 ${fullName}\n` +
         `🔖 ${username}\n` +
         `🆔 ${user.id}\n` +
-        `💰 موجودی: ${balance} تومان`,
+        `💰 موجودی: ${balance}`,
       show_alert: true,
     });
   });

@@ -6,6 +6,7 @@ export interface RenewalPendingInfo {
   originalOrderId: number;
   planId: number;
   productId: number;
+  /** Final renewal price in USD */
   finalPrice: number;
   delivery: Record<string, string>;
   zarinpalAuthority?: string;

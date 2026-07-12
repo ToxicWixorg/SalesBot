@@ -17,6 +17,8 @@ import { i18n } from "../../../shared/locales/index.ts";
 import { renewalPendingState } from "../renewState.ts";
 import { emojiIds } from "../../../shared/locales/emojies.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
+import { formatUsd } from "../../../shared/utils/currency.ts";
+import { getUsdtRate } from "../../../services/tetherland/index.ts";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: create a new renewal order from state
@@ -38,15 +40,15 @@ async function createRenewalOrder(
     planId: info.planId,
     status,
     quantity: 1,
-    // info.finalPrice is the Toman price snapshotted when the renewal screen
-    // was shown (USD plan price → Toman); renewals have no discount.
-    totalPrice: info.finalPrice.toString() as any,
+    // info.finalPrice is the USD plan price snapshotted when the renewal screen
+    // was shown; renewals have no discount. Stored as USD with 2 decimals.
+    totalPrice: info.finalPrice.toFixed(2) as any,
     discountAmount: "0" as any,
     walletUsed:
       paymentMethod === "wallet"
-        ? (info.finalPrice.toString() as any)
+        ? (info.finalPrice.toFixed(2) as any)
         : ("0" as any),
-    finalPrice: info.finalPrice.toString() as any,
+    finalPrice: info.finalPrice.toFixed(2) as any,
     paymentMethod,
     paymentId: paymentId ?? null,
     delivery: info.delivery,
@@ -85,7 +87,7 @@ async function notifyAdminRenewal(
     `👤 User: ${userLabel} (${data.userId})\n` +
     `📦 Product: ${data.productName}\n` +
     `📋 Plan: ${data.planName}\n` +
-    `💰 Amount: ${data.finalPrice.toLocaleString()} Toman\n` +
+    `💰 Amount: ${formatUsd(data.finalPrice)}\n` +
     `💳 Payment: ${data.paymentMethod}\n` +
     (deliveryLines ? `\n📋 Delivery Info:\n${deliveryLines}` : "") +
     `\n\n⏰ ${new Date().toLocaleString("en-GB")}`;
@@ -126,8 +128,8 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
     if (walletBalance < info.finalPrice) {
       await ctx.editText(
         t("insufficientBalance", {
-          required: info.finalPrice.toFixed(0),
-          current: walletBalance.toFixed(0),
+          required: info.finalPrice.toFixed(2),
+          current: walletBalance.toFixed(2),
         }),
         {
           parse_mode: "HTML",
@@ -190,7 +192,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
         {
           orderId: result.order.id,
           productName,
-          remainingBalance: newBalance.toFixed(0),
+          remainingBalance: newBalance.toFixed(2),
         } as any,
       ),
       {
@@ -229,7 +231,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       return;
     }
 
-    let msg = `💳 <b>${t("rechargeCardTitle")}</b>\n\n💰 ${info.finalPrice.toLocaleString()} ${t("currency")}\n\n`;
+    let msg = `💳 <b>${t("rechargeCardTitle")}</b>\n\n💰 ${formatUsd(info.finalPrice)}\n\n`;
     for (const card of cards) {
       msg += `🏦 ${card.bankName ?? ""} — ${card.holderName}\n`;
       msg += `<code>${card.cardNumber}</code>\n\n`;
@@ -328,6 +330,22 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       return;
     }
 
+    // ZarinPal charges in Rial. info.finalPrice is USD → convert at gateway time
+    // using the live USD→Toman rate (Rial = Toman × 10).
+    const zpRate = await getUsdtRate();
+    if (zpRate === null || !(zpRate > 0)) {
+      await ctx.editText(t("rechargeZarinpalFailed"), {
+        parse_mode: "HTML",
+        reply_markup: new InlineKeyboard().text(
+          t("btnBackToOrders"),
+          `order_${orderId}`,
+          { icon_custom_emoji_id: emojiIds.bag },
+        ),
+      });
+      return;
+    }
+    const amountRial = Math.round(info.finalPrice * zpRate) * 10;
+
     const apiUrl = settings.zarinpalSandbox
       ? "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
       : "https://api.zarinpal.com/pg/v4/payment/request.json";
@@ -339,7 +357,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           merchant_id: settings.zarinpalMerchantId,
-          amount: Math.round(info.finalPrice) * 10,
+          amount: amountRial,
           description: `تمدید اشتراک - کاربر ${userId}`,
           callback_url: `https://t.me/${botInfo.username}`,
         }),
@@ -363,7 +381,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       });
 
       await ctx.editText(
-        `${t("rechargeZarinpalTitle")}\n\n${t("rechargeAmount", info.finalPrice.toLocaleString())}\n\n${t("rechargeZarinpalInstructions")}`,
+        `${t("rechargeZarinpalTitle")}\n\n${t("rechargeAmount", info.finalPrice.toFixed(2))}\n\n${t("rechargeZarinpalInstructions")}`,
         {
           parse_mode: "HTML",
           reply_markup: new InlineKeyboard()
@@ -407,6 +425,21 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
     const settings = await PaymentRepository.getSettings();
     if (!settings?.zarinpalMerchantId) return;
 
+    // Recompute the Rial amount from the USD price at verify time (must match
+    // the amount that was requested from the gateway).
+    const zpRate = await getUsdtRate();
+    if (zpRate === null || !(zpRate > 0)) {
+      await ctx.editText(t("rechargeZarinpalFailed"), {
+        parse_mode: "HTML",
+        reply_markup: new InlineKeyboard().text(
+          t("btnBackToOrders"),
+          `order_${orderId}`,
+        ),
+      });
+      return;
+    }
+    const amountRial = Math.round(info.finalPrice * zpRate) * 10;
+
     const verifyUrl = settings.zarinpalSandbox
       ? "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"
       : "https://api.zarinpal.com/pg/v4/payment/verify.json";
@@ -417,7 +450,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           merchant_id: settings.zarinpalMerchantId,
-          amount: Math.round(info.finalPrice) * 10,
+          amount: amountRial,
           authority: info.zarinpalAuthority,
         }),
         signal: AbortSignal.timeout(10_000),
@@ -458,7 +491,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
         });
 
         await ctx.editText(
-          t("rechargeZarinpalSuccess", info.finalPrice.toLocaleString()),
+          t("rechargeZarinpalSuccess", info.finalPrice.toFixed(2)),
           {
             parse_mode: "HTML",
             reply_markup: new InlineKeyboard()
@@ -513,8 +546,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
     if (
       !settings?.nowpaymentsEnabled ||
       !settings.nowpaymentsApiKey ||
-      !settings.nowpaymentsIpnCallbackUrl ||
-      (settings.cryptoExchangeRate ?? 0) <= 0
+      !settings.nowpaymentsIpnCallbackUrl
     ) {
       await ctx.answerCallbackQuery({
         text: t("rechargeMethodDisabled"),
@@ -532,9 +564,9 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
           ? "usdtbsc"
           : "usdttrc20";
 
-    const usdtAmount = (info.finalPrice / settings.cryptoExchangeRate).toFixed(
-      4,
-    );
+    // NOWPayments prices in USD (price_currency: "usd"), so the plan's USD
+    // price is sent directly — no exchange-rate division.
+    const usdAmount = Number(info.finalPrice.toFixed(2));
 
     const nowpaymentsOrderId = `renew-${userId}-${orderId}-${Date.now()}`;
 
@@ -551,7 +583,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
           "x-api-key": settings.nowpaymentsApiKey,
         },
         body: JSON.stringify({
-          price_amount: Number(usdtAmount),
+          price_amount: usdAmount,
           price_currency: "usd",
           pay_currency: payCurrency,
           ipn_callback_url: ipnUrl.toString(),
@@ -569,7 +601,9 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       const payAddress =
         data.pay_address !== undefined ? String(data.pay_address) : "-";
       const payAmount =
-        data.pay_amount !== undefined ? String(data.pay_amount) : usdtAmount;
+        data.pay_amount !== undefined
+          ? String(data.pay_amount)
+          : String(usdAmount);
       const payUrl =
         data.invoice_url !== undefined
           ? String(data.invoice_url)
@@ -714,7 +748,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       });
 
       await ctx.editText(
-        t("rechargeZarinpalSuccess", info.finalPrice.toLocaleString()),
+        t("rechargeZarinpalSuccess", formatUsd(info.finalPrice)),
         {
           parse_mode: "HTML",
           reply_markup: new InlineKeyboard()

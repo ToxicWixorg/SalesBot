@@ -3,10 +3,7 @@ import { i18n } from "../../../shared/locales/index.ts";
 import { AdminService } from "../../../services/bot/admin/Service.ts";
 import { AdminSections } from "../../../services/bot/admin/Admin/Section.ts";
 import { UserRepository } from "../../../repositories/UserRepository.ts";
-import {
-  getUsdtRate,
-  usdToTomanWithRate,
-} from "../../../services/tetherland/index.ts";
+import { formatUsd } from "../../../shared/utils/currency.ts";
 import {
   ProductRepository,
   ProductPlanRepository,
@@ -261,15 +258,11 @@ export async function adminPlanCallback(context: any) {
   );
   const status = plan.isActive ? t("active") : t("inactive");
 
-  // Prices are stored in USD; show the dollar value plus the live Toman value.
+  // Prices are stored in USD; show the dollar value.
   let price = t("notAvailable");
   if (plan.price) {
     const usd = Number.parseFloat(plan.price as string);
-    const rate = await getUsdtRate();
-    price =
-      rate !== null
-        ? `$${usd} (≈ ${usdToTomanWithRate(usd, rate).toLocaleString()} ${t("currency")})`
-        : `$${usd}`;
+    price = formatUsd(usd);
   }
   const duration = plan.duration
     ? `${plan.duration} ${plan.durationUnit ?? "days"}`
@@ -1398,17 +1391,11 @@ export function setupAdminPlanPriceHandler(bot: AnyBot): void {
     const usdValue = usd.toFixed(2);
     await ProductPlanRepository.update(planId, { price: usdValue });
 
-    const rate = await getUsdtRate();
-    const tomanLine =
-      rate !== null
-        ? `\n≈ ${usdToTomanWithRate(usd, rate).toLocaleString()} ${t("currency")}`
-        : "";
-
     await ctx.send(
       t("adminPlanPriceUpdated", {
         planName: getLocalizedName(plan, ctx.from?.languageCode),
         usd: usdValue,
-      }) + tomanLine,
+      }),
       {
         parse_mode: "HTML",
         reply_markup: adminPanelPlanKeyboard(t, plan),

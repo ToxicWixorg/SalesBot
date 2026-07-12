@@ -12,6 +12,7 @@ import {
 	walletAdminMenuKeyboard,
 } from "../../../shared/keyboards/adminPanel/wallet.ts";
 import { i18n } from "../../../shared/locales/index.ts";
+import { formatUsd } from "../../../shared/utils/currency.ts";
 
 const PAGE = 8;
 
@@ -272,13 +273,13 @@ export function setupAdminWalletHandlers(bot: AnyBot) {
 
 		const text =
 			`📊 <b>آمار کیف پول</b>\n\n` +
-			`💰 مجموع موجودی کاربران: <b>${formatMoney(totalBalance)}</b> تومان\n\n` +
+			`💰 مجموع موجودی کاربران: <b>${formatUsd(totalBalance)}</b>\n\n` +
 			`🧾 <b>درخواست‌های شارژ</b>\n` +
 			`• در انتظار: <b>${pendingCount}</b> (${formatMoney(pendingSum)} تومان)\n` +
 			`• تأییدشده: <b>${approvedCount}</b> (${formatMoney(approvedSum)} تومان)\n` +
 			`• ردشده: <b>${rejectedCount}</b>\n\n` +
-			`📥 مجموع اعتبار: <b>${formatMoney(totalCredit)}</b> تومان\n` +
-			`📤 مجموع برداشت: <b>${formatMoney(totalDebit)}</b> تومان`;
+			`📥 مجموع اعتبار: <b>${formatUsd(totalCredit)}</b>\n` +
+			`📤 مجموع برداشت: <b>${formatUsd(totalDebit)}</b>`;
 
 		await show(
 			bot,
@@ -300,7 +301,7 @@ export function setupAdminWalletHandlers(bot: AnyBot) {
 			for (const tx of txs) {
 				const sign = tx.type === "credit" ? "➕" : "➖";
 				text +=
-					`${sign} <b>${formatMoney(tx.amount)}</b> | 🆔 <code>${tx.userId}</code>\n` +
+					`${sign} <b>${formatUsd(tx.amount)}</b> | 🆔 <code>${tx.userId}</code>\n` +
 					`   ${tx.source}${tx.description ? ` — ${tx.description}` : ""} | ${shortDate(tx.createdAt)}\n`;
 			}
 		}

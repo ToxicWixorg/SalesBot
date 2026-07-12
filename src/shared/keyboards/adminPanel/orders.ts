@@ -1,6 +1,7 @@
 import { InlineKeyboard } from "gramio";
 import type { Order } from "../../../db/schema.ts";
 import { emojiIds } from "../../locales/emojies.ts";
+import { formatUsd } from "../../utils/currency.ts";
 
 // Order statuses (see ordersTable.status). Short codes are used in callback data
 // because the raw status strings contain underscores, which would clash with the
@@ -81,7 +82,7 @@ export function ordersListKeyboard(
 	for (const order of orders) {
 		const label =
 			`#${order.id} • ${statusLabel(order.status)} • ` +
-			`${Number.parseFloat(String(order.finalPrice ?? "0")).toLocaleString("en-US")}`;
+			`${formatUsd(order.finalPrice)}`;
 		keyboard.text(label, `oadm_view_${filterCode}_${order.id}`).row();
 	}
 

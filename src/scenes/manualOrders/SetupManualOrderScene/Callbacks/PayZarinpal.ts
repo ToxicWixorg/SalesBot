@@ -9,6 +9,7 @@ import { PaymentRepository } from "../../../../repositories/PaymentRepository";
 import { appliedDiscountState } from "../../../../handlers/products/discountOrderState";
 import { pendingPaymentState } from "../../../../handlers/products/pendingPaymentState";
 import { emojiIds } from "../../../../shared/locales/emojies";
+import { getUsdtRate } from "../../../../services/tetherland";
 
 export async function PayZarinpalCallback(ctx: Context, bot: AnyBot) {
   await ctx.answerCallbackQuery();
@@ -36,9 +37,25 @@ export async function PayZarinpalCallback(ctx: Context, bot: AnyBot) {
     pendingDiscount && pendingDiscount.planId === state.planId;
   const finalPrice = hasDiscount
     ? pendingDiscount.finalPrice
-    : (state.basePriceToman ??
+    : (state.basePriceUsd ??
       state.regionPrice ??
       parseFloat((plan?.price as string) ?? "0"));
+
+  // Zarinpal charges in Iranian Rial, but the order amount is USD. Convert at
+  // gateway time using the live USD→Toman rate. If the rate is unavailable,
+  // abort rather than sending a wrong amount.
+  const usdtRate = await getUsdtRate();
+  if (usdtRate === null || !(usdtRate > 0)) {
+    await ctx.editText(t("priceRateUnavailable"), {
+      parse_mode: "HTML",
+      reply_markup: new InlineKeyboard().text(
+        t("btnCancelManualOrder"),
+        "cancel_manual_order",
+      ),
+    });
+    return;
+  }
+  const amountRial = Math.round(finalPrice * usdtRate) * 10;
 
   const apiUrl = settings.zarinpalSandbox
     ? "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
@@ -51,7 +68,7 @@ export async function PayZarinpalCallback(ctx: Context, bot: AnyBot) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         merchant_id: settings.zarinpalMerchantId,
-        amount: Math.round(finalPrice) * 10, // Toman → Rial
+        amount: amountRial, // USD → Rial at live rate
         description: `سفارش اشتراک - کاربر ${userId}`,
         callback_url: `https://t.me/${botInfo.username}`,
       }),
@@ -76,7 +93,7 @@ export async function PayZarinpalCallback(ctx: Context, bot: AnyBot) {
     });
 
     await ctx.editText(
-      `${t("rechargeZarinpalTitle")}\n\n${t("rechargeAmount", finalPrice.toLocaleString())}\n\n${t("rechargeZarinpalInstructions")}`,
+      `${t("rechargeZarinpalTitle")}\n\n${t("rechargeAmount", finalPrice.toFixed(2))}\n\n${t("rechargeZarinpalInstructions")}`,
       {
         parse_mode: "HTML",
         reply_markup: new InlineKeyboard()

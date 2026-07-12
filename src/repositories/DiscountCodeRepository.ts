@@ -8,6 +8,7 @@ import {
 	type InsertDiscountCode,
 	InsertDiscountUsage,
 } from "../db/schema.ts";
+import { formatUsd } from "../shared/utils/currency.ts";
 
 export class DiscountCodeRepository {
 	// ─── مدیریت ادمین ─────────────────────────────────────────
@@ -100,7 +101,7 @@ export class DiscountCodeRepository {
 		) {
 			return {
 				valid: false,
-				message: `حداقل مبلغ سفارش برای این کد: ${discountCode.minOrderAmount} تومان`,
+				message: `حداقل مبلغ سفارش برای این کد: ${formatUsd(discountCode.minOrderAmount)}`,
 			};
 		}
 
@@ -166,7 +167,7 @@ export class DiscountCodeRepository {
 			codeId,
 			userId,
 			orderId,
-			discountAmount: discountAmount.toString(),
+			discountAmount: discountAmount.toFixed(2),
 		});
 
 		await db

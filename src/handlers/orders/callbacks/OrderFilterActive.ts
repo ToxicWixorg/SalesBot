@@ -55,7 +55,7 @@ export async function OrderFilterActiveCallback(
       message += `📦 ${product?.name || t("ordersProductFallback")}\n`;
       message += `${statusInfo.emoji} ${statusInfo.text}\n`;
       message += `📅 ${formatDate(order.createdAt)}\n`;
-      message += `💰 ${formatPrice(order.finalPrice)} ${t("currency")}\n`;
+      message += `💰 ${formatPrice(order.finalPrice)}\n`;
       message += `\n`;
     }
 

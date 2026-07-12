@@ -27,7 +27,7 @@ export async function PayCryptoCallback(ctx: any) {
     !!settings.nowpaymentsApiKey &&
     !!settings.nowpaymentsIpnCallbackUrl;
 
-  if (!nowpaymentsReady || (settings.cryptoExchangeRate ?? 0) <= 0) {
+  if (!nowpaymentsReady) {
     await ctx.answerCallbackQuery({
       text: t("rechargeMethodDisabled"),
       show_alert: true,
@@ -41,11 +41,13 @@ export async function PayCryptoCallback(ctx: any) {
     pendingDiscount && pendingDiscount.planId === state.planId;
   const finalPrice = hasDiscount
     ? pendingDiscount.finalPrice
-    : (state.basePriceToman ??
+    : (state.basePriceUsd ??
       state.regionPrice ??
       parseFloat((plan?.price as string) ?? "0"));
 
-  const usdtAmount = finalPrice / settings.cryptoExchangeRate!;
+  // NOWPayments charges directly in USD (price_currency: "usd"), and USDT is
+  // ~1:1 with USD, so the "USDT amount" is just the USD price.
+  const usdtAmount = finalPrice;
 
   const network = (settings.cryptoNetwork ?? "TRC20").toUpperCase();
   const payCurrency = settings.nowpaymentsPayCurrency?.trim()
@@ -71,7 +73,7 @@ export async function PayCryptoCallback(ctx: any) {
         "x-api-key": settings.nowpaymentsApiKey!,
       },
       body: JSON.stringify({
-        price_amount: Number(usdtAmount.toFixed(4)),
+        price_amount: Number(finalPrice.toFixed(2)),
         price_currency: "usd",
         pay_currency: payCurrency,
         ipn_callback_url: ipnUrl.toString(),
@@ -125,7 +127,7 @@ export async function PayCryptoCallback(ctx: any) {
 
     await ctx.editText(
       `${t("rechargeCryptoTitle")}\n\n` +
-        `${t("rechargeAmount", finalPrice.toLocaleString())}\n\n` +
+        `${t("rechargeAmount", finalPrice.toFixed(2))}\n\n` +
         `${t("rechargeCryptoAddress", payAddress)}\n\n` +
         `${t("rechargeCryptoAmount", Number(payAmount).toFixed(6))}\n` +
         `${t("rechargeCryptoNetwork", settings.cryptoNetwork ?? "TRC20")}\n\n` +

@@ -36,9 +36,9 @@ export async function finishManualOrderWithSlot(
     return;
   }
 
-  // Toman base price resolved on the payment screen (USD → Toman).
+  // USD base price resolved on the payment screen.
   const originalPrice =
-    state.basePriceToman ??
+    state.basePriceUsd ??
     state.regionPrice ??
     parseFloat(plan.price as string);
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
@@ -61,8 +61,8 @@ export async function finishManualOrderWithSlot(
       });
     await sendFn(
       t("insufficientBalance", {
-        required: finalPrice.toFixed(0),
-        current: currentBalance.toFixed(0),
+        required: finalPrice.toFixed(2),
+        current: currentBalance.toFixed(2),
       }),
       { parse_mode: "HTML", reply_markup: keyboard },
     );
@@ -82,10 +82,10 @@ export async function finishManualOrderWithSlot(
     planId: plan.id,
     status: "scheduled",
     quantity: 1,
-    totalPrice: originalPrice.toString() as any,
-    discountAmount: discountAmount.toString() as any,
-    walletUsed: finalPrice.toString() as any,
-    finalPrice: finalPrice.toString() as any,
+    totalPrice: originalPrice.toFixed(2) as any,
+    discountAmount: discountAmount.toFixed(2) as any,
+    walletUsed: finalPrice.toFixed(2) as any,
+    finalPrice: finalPrice.toFixed(2) as any,
     paymentMethod: "wallet",
     discountCodeId: hasDiscount ? pendingDiscount.discountCodeId : undefined,
     delivery,
@@ -158,8 +158,8 @@ export async function finishManualOrderWithSlot(
       planName: plan.name,
       timeSlot: slot.timeSlot,
       date: slot.date,
-      amount: finalPrice.toFixed(0),
-      remainingBalance: newBalance.toFixed(0),
+      amount: finalPrice.toFixed(2),
+      remainingBalance: newBalance.toFixed(2),
     }),
     { parse_mode: "HTML", reply_markup: keyboard },
   );

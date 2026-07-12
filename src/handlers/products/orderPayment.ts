@@ -2,6 +2,7 @@ import { InlineKeyboard } from "gramio";
 import type { TFunction } from "../../shared/locales/index.ts";
 import type { PaymentSettings, PaymentCardNumber } from "../../db/schema.ts";
 import { emojiIds } from "../../shared/locales/emojies.ts";
+import { formatUsd } from "../../shared/utils/currency.ts";
 
 export type PaymentSummaryData = {
   productName: string;
@@ -22,6 +23,7 @@ export type PaymentKeyboardOptions = {
   cards: PaymentCardNumber[];
   walletBalance: number;
   finalPrice: number;
+  languageCode?: string;
 };
 
 /**
@@ -48,14 +50,13 @@ export function buildPaymentSummaryText(
   if (data.collected.region) text += `🌍 ${data.collected.region}\n`;
   text += `\n`;
   const originalPriceLabel =
-    data.originalPriceLabel ??
-    `${data.originalPrice.toLocaleString()} ${t("currency")}`;
+    data.originalPriceLabel ?? formatUsd(data.originalPrice);
   text += `${t("paymentOriginalPrice")}: ${originalPriceLabel}\n`;
   if (data.discountCode && data.discountAmount) {
-    text += `${t("paymentDiscount")}: -${data.discountAmount.toLocaleString()} ${t("currency")} (${data.discountCode})\n`;
+    text += `${t("paymentDiscount")}: -${formatUsd(data.discountAmount)} (${data.discountCode})\n`;
   }
-  text += `${t("paymentFinalPrice")}: <b>${data.finalPrice.toLocaleString()}</b> ${t("currency")}\n`;
-  text += `${t("paymentWalletBalance")}: ${data.walletBalance.toLocaleString()} ${t("currency")}\n`;
+  text += `${t("paymentFinalPrice")}: <b>${formatUsd(data.finalPrice)}</b>\n`;
+  text += `${t("paymentWalletBalance")}: ${formatUsd(data.walletBalance)}\n`;
   text += `\n${t("paymentPrompt")}`;
 
   return text;
@@ -72,6 +73,7 @@ export function paymentKeyboard(
 ): InlineKeyboard {
   const kb = new InlineKeyboard();
   const canPayWallet = opts.walletBalance >= opts.finalPrice;
+  const isPersian = opts.languageCode === "fa";
 
   if (canPayWallet) {
     kb.text(t("btnPayWallet"), `pay_wallet_${planId}`, {
@@ -80,14 +82,18 @@ export function paymentKeyboard(
     }).row();
   }
 
-  if (opts.settings?.cardEnabled && opts.cards.length > 0) {
+  if (isPersian && opts.settings?.cardEnabled && opts.cards.length > 0) {
     kb.text(t("btnPayCard"), `pay_card_${planId}`, {
       icon_custom_emoji_id: emojiIds.card,
       style: "success",
     }).row();
   }
 
-  if (opts.settings?.zarinpalEnabled && opts.settings.zarinpalMerchantId) {
+  if (
+    isPersian &&
+    opts.settings?.zarinpalEnabled &&
+    opts.settings.zarinpalMerchantId
+  ) {
     kb.text(t("btnPayZarinpal"), `pay_zarinpal_${planId}`, {
       icon_custom_emoji_id: emojiIds.zarinpal,
       style: "success",
@@ -97,8 +103,7 @@ export function paymentKeyboard(
   if (
     opts.settings?.nowpaymentsEnabled &&
     opts.settings.nowpaymentsApiKey &&
-    opts.settings.nowpaymentsIpnCallbackUrl &&
-    (opts.settings.cryptoExchangeRate ?? 0) > 0
+    opts.settings.nowpaymentsIpnCallbackUrl
   ) {
     kb.text(t("btnPayCrypto"), `pay_crypto_${planId}`, {
       icon_custom_emoji_id: emojiIds.usdt,

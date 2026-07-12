@@ -6,6 +6,7 @@ import {
 import { AnyBot } from "gramio";
 import { i18n } from "../../../shared/locales";
 import { getForumConfig } from "../../../services/forumConfig";
+import { formatUsd } from "../../../shared/utils/currency";
 
 export async function notifyAdminNewOrder(
   bot: AnyBot,
@@ -36,7 +37,7 @@ export async function notifyAdminNewOrder(
     `📦 Product: ${data.productName}\n` +
     `📋 Plan: ${data.planName}\n` +
     `🚚 Delivery: ${data.deliveryType}\n` +
-    `💰 Amount: ${data.finalPrice.toLocaleString()} Toman\n`;
+    `💰 Amount: ${formatUsd(data.finalPrice)}\n`;
 
   if (data.paymentMethod)
     description += `${t("adminOrderPayment")}: ${data.paymentMethod}\n`;
@@ -75,7 +76,7 @@ export async function notifyAdminNewOrder(
         `🎫 <b>Ticket:</b> <code>${ticket.ticketNumber}</code>\n` +
         `🆔 <b>Order:</b> #${data.orderId}\n` +
         `👤 <b>User:</b> ${userLabel} (<code>${data.userId}</code>)\n` +
-        `💰 <b>Amount:</b> ${data.finalPrice.toLocaleString()} Toman`;
+        `💰 <b>Amount:</b> ${formatUsd(data.finalPrice)}`;
 
       await (bot.api as any).sendPhoto({
         chat_id: Number(forum.groupId),

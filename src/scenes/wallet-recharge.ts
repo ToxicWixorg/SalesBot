@@ -22,6 +22,7 @@ import {
 import { cancelKeyboard } from "../shared/keyboards/back.ts";
 import { topupManageKeyboard } from "../shared/keyboards/adminPanel/wallet.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
+import { formatUsd } from "../shared/utils/currency.ts";
 
 // ─────────────────────────────────────────────────────────
 // State Management
@@ -56,11 +57,19 @@ export function clearRechargeState(userId: number) {
 // Helpers
 // ─────────────────────────────────────────────────────────
 
-const MIN_AMOUNT = 10_000;
-const MAX_AMOUNT = 50_000_000;
+// Recharge bounds are now in USD (the canonical money unit).
+const MIN_AMOUNT = 1;
+const MAX_AMOUNT = 1000;
 
+/**
+ * Format a USD money amount for the money-display locale keys.
+ * NOTE: the recharge/wallet locale keys already prepend a literal `$`
+ * (e.g. `Balance: $${amount}`), so this returns a plain 2-decimal number
+ * string — passing `formatUsd()` here would double the dollar sign.
+ * For any money string built directly in this file, use `formatUsd()`.
+ */
 function formatNum(n: number): string {
-  return n.toLocaleString("fa-IR");
+  return n.toFixed(2);
 }
 
 function normalizeZarinpalCallbackUrl(url: string | null | undefined) {
@@ -408,15 +417,18 @@ async function markZarinpalWalletPaymentVerified(
 async function verifyZarinpalWalletAuthority(opts: {
   settings: PaymentSettings;
   amount: number;
+  rate: number;
   authority: string;
 }) {
   const { verifyUrl } = buildZarinpalGatewayUrls(opts.settings);
+  // opts.amount is USD; convert to Rial at the live rate (Toman * 10).
+  const amountRial = Math.round(opts.amount * opts.rate) * 10;
   const resp = await fetch(verifyUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       merchant_id: opts.settings.zarinpalMerchantId,
-      amount: Math.round(opts.amount) * 10,
+      amount: amountRial,
       authority: opts.authority,
     }),
     signal: AbortSignal.timeout(10_000),
@@ -834,6 +846,21 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     await ctx.answerCallbackQuery();
 
+    // ZarinPal settles in Iranian Rial. The stored amount is USD, so convert
+    // to Rial at the live USD→Toman rate at gateway time.
+    let rate = await fetchUsdtRate();
+    if (!rate && (settings.cryptoExchangeRate ?? 0) > 0) {
+      rate = settings.cryptoExchangeRate!;
+    }
+    if (!rate) {
+      await ctx.editText(t("rechargeRateUnavailable"), {
+        reply_markup: new InlineKeyboard().text(t("btnCancel"), "wallet"),
+        parse_mode: "HTML",
+      });
+      return;
+    }
+    const amountRial = Math.round(state.amount * rate) * 10;
+
     const { requestUrl, startPayUrl } = buildZarinpalGatewayUrls(settings);
     let walletPaymentId: number | null = null;
 
@@ -854,7 +881,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           merchant_id: settings.zarinpalMerchantId,
-          amount: state.amount * 10, // تومان به ریال
+          amount: amountRial, // USD → ریال با نرخ لحظه‌ای
           description: `شارژ کیف پول - کاربر ${userId}`,
           callback_url: callbackUrl,
         }),
@@ -945,21 +972,8 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     await ctx.answerCallbackQuery();
 
-    // قیمت لحظه‌ای — اگه API کار نکرد از نرخ دستی استفاده می‌کنیم
-    let rate = await fetchUsdtRate();
-    if (!rate && (settings.cryptoExchangeRate ?? 0) > 0) {
-      rate = settings.cryptoExchangeRate!;
-    }
-
-    if (!rate) {
-      await ctx.editText(t("rechargeRateUnavailable"), {
-        reply_markup: new InlineKeyboard().text(t("btnCancel"), "wallet"),
-        parse_mode: "HTML",
-      });
-      return;
-    }
-
-    const usdtAmount = state.amount / rate;
+    // NOWPayments is priced directly in USD — the amount the user entered.
+    const usdAmount = state.amount;
 
     const payCurrency = normalizeNowpaymentsPayCurrency(settings);
     let walletPaymentId: number | null = null;
@@ -984,7 +998,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
           "x-api-key": settings.nowpaymentsApiKey!,
         },
         body: JSON.stringify({
-          price_amount: Number(usdtAmount.toFixed(4)),
+          price_amount: Number(usdAmount.toFixed(2)),
           price_currency: "usd",
           pay_currency: payCurrency,
           ipn_callback_url: ipnUrl,
@@ -1036,7 +1050,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
         : "";
       const payAmountLine = payAmount
         ? `${t("rechargeCryptoAmount", Number(payAmount).toFixed(6))}\n`
-        : `${t("rechargeCryptoAmount", usdtAmount.toFixed(4))}\n`;
+        : `${t("rechargeCryptoAmount", usdAmount.toFixed(2))}\n`;
 
       const keyboard = new InlineKeyboard();
       if (paymentUrl) {
@@ -1057,8 +1071,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
           `${t("rechargeAmount", formatNum(state.amount))}\n\n` +
           paymentBlock +
           payAmountLine +
-          `${t("rechargeCryptoNetwork", settings.cryptoNetwork ?? "TRC20")}\n` +
-          `${t("rechargeUsdtRate", formatNum(Math.round(rate)))}\n\n` +
+          `${t("rechargeCryptoNetwork", settings.cryptoNetwork ?? "TRC20")}\n\n` +
           `${t("rechargeCryptoInstructions")}`,
         {
           reply_markup: keyboard,
@@ -1239,9 +1252,22 @@ export function setupWalletRechargeScene(bot: AnyBot) {
           throw new Error("ZarinPal authority is missing for wallet payment");
         }
 
+        // Recompute the Rial amount at the live rate for verification.
+        let rate = await fetchUsdtRate();
+        if (!rate && (settings.cryptoExchangeRate ?? 0) > 0) {
+          rate = settings.cryptoExchangeRate!;
+        }
+        if (!rate) {
+          await ctx.reply(t("rechargeRateUnavailable"), {
+            parse_mode: "HTML",
+          });
+          return;
+        }
+
         const result = await verifyZarinpalWalletAuthority({
           settings,
           amount: parseFloat(String(payment.amount ?? "0")),
+          rate,
           authority: payment.authority,
         });
 
@@ -1414,10 +1440,14 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       const text = ctx.text;
       if (!text) return;
 
+      // Normalize Persian/Arabic digits + decimal separators, then parse a
+      // USD amount (decimals allowed, e.g. 5 or 12.5).
       const normalized = text
-        .replace(/[,،٬\s]/g, "")
-        .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776));
-      const amount = parseInt(normalized, 10);
+        .replace(/[,،٬\s]/g, "") // strip thousands separators / spaces
+        .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776)) // Persian
+        .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632)) // Arabic
+        .replace(/[٫،]/g, "."); // Persian/Arabic decimal separator → dot
+      const amount = parseFloat(normalized);
 
       if (isNaN(amount) || amount <= 0) {
         await ctx.reply(t("rechargeInvalidAmount"), { parse_mode: "HTML" });
@@ -1444,7 +1474,10 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       const keyboard = new InlineKeyboard();
       let hasMethod = false;
 
-      if (settings?.cardEnabled && cards.length > 0) {
+      // Card & Zarinpal settle in IRR/Toman — only offer them to Persian users.
+      const isFa = user?.languageCode === "fa";
+
+      if (isFa && settings?.cardEnabled && cards.length > 0) {
         keyboard
           .text(t("btnRechargeCard"), "recharge_card", {
             icon_custom_emoji_id: emojiIds.card,
@@ -1453,6 +1486,7 @@ export function setupWalletRechargeScene(bot: AnyBot) {
         hasMethod = true;
       }
       if (
+        isFa &&
         settings?.zarinpalEnabled &&
         settings.zarinpalMerchantId &&
         normalizeZarinpalCallbackUrl(settings.zarinpalCallbackUrl)

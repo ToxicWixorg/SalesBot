@@ -18,10 +18,6 @@ import {
   createManualOrderDirect,
   showPaymentScreen,
 } from "../../../scenes/manualOrders/index.ts";
-import {
-  getUsdtRate,
-  usdToTomanWithRate,
-} from "../../../services/tetherland/index.ts";
 
 const LEGACY_STEPS: Record<string, RequiredInputField> = {
   email: {
@@ -165,20 +161,9 @@ export async function ConfirmOrderCallback(context: any): Promise<void> {
   const regionPrice = regionForThisPlan?.price;
 
   // ── Resolve price (region override > plan base) ────────────────────────────
-  // `regionPrice` (from preSelectedRegionState) is already in Toman. The plan
-  // base price is stored in USD, so convert it with the live rate.
-  let basePrice = regionPrice;
-  if (basePrice === undefined) {
-    const usdtRate = await getUsdtRate();
-    if (usdtRate === null) {
-      await context.answerCallbackQuery({
-        text: t("priceRateUnavailable"),
-        show_alert: true,
-      });
-      return;
-    }
-    basePrice = usdToTomanWithRate(parseFloat(plan.price as string), usdtRate);
-  }
+  // Both `regionPrice` (from preSelectedRegionState) and the plan base price
+  // are stored in USD — keep everything in USD.
+  const basePrice = regionPrice ?? parseFloat(plan.price as string);
   const discount = appliedDiscountState.get(userId);
   const hasDiscount = discount && discount.planId === planId;
   const finalPrice = hasDiscount ? discount.finalPrice : basePrice;

@@ -1,13 +1,14 @@
 import { InlineKeyboard } from "gramio";
 import type { DiscountCode } from "../../../db/schema.ts";
 import { emojiIds } from "../../locales/emojies.ts";
+import { formatUsd } from "../../utils/currency.ts";
 
 function codeLabel(c: DiscountCode): string {
 	const status = c.isActive ? "" : "🚫 ";
 	const value =
 		c.type === "percentage"
 			? `${Number.parseFloat(c.value)}٪`
-			: `${Number.parseFloat(c.value).toLocaleString("en-US")}ت`;
+			: formatUsd(c.value);
 	return `${status}${c.code} — ${value}`;
 }
 

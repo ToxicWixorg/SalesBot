@@ -11,9 +11,9 @@ import { renewalPendingState } from "../renewState.ts";
 import { emojiIds } from "../../../shared/locales/emojies.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 import {
-  getUsdtRate,
-  usdToTomanWithRate,
-} from "../../../services/tetherland/index.ts";
+  formatUsd,
+  formatPriceForUser,
+} from "../../../shared/utils/currency.ts";
 
 export async function OrderRenewCallback(context: any) {
   await context.answerCallbackQuery();
@@ -54,19 +54,8 @@ export async function OrderRenewCallback(context: any) {
       return;
     }
 
-    // Plan price is stored in USD → convert to Toman with the live rate.
-    const usdtRate = await getUsdtRate();
-    if (usdtRate === null) {
-      await context.answerCallbackQuery({
-        text: t("priceRateUnavailable"),
-        show_alert: true,
-      });
-      return;
-    }
-    const finalPrice = usdToTomanWithRate(
-      parseFloat(plan.price as string),
-      usdtRate,
-    );
+    // Plan price is already stored in USD — this is the canonical amount.
+    const finalPrice = parseFloat(plan.price as string);
     const walletBalance = parseFloat(user.walletBalance ?? "0");
     const productName = getLocalizedName(product, user.languageCode);
     const planName = getLocalizedName(plan, user.languageCode);
@@ -94,6 +83,13 @@ export async function OrderRenewCallback(context: any) {
       .map(([k, v]) => `• <b>${k}</b>: <code>${v}</code>`)
       .join("\n");
 
+    // USD-first price label (fa users additionally see an approx Toman value).
+    const priceLabel = await formatPriceForUser(
+      user.languageCode,
+      finalPrice,
+      t,
+    );
+
     const summaryText =
       `🔄 <b>${t("renewScreenTitle" as any)}</b>\n\n` +
       `📦 ${productName}\n` +
@@ -101,8 +97,8 @@ export async function OrderRenewCallback(context: any) {
       (delivery && Object.keys(delivery).length > 0
         ? `\n${deliveryLines}\n`
         : "") +
-      `\n💰 ${finalPrice.toLocaleString()} ${t("currency")}\n` +
-      `👛 ${t("paymentWalletBalance")}: ${walletBalance.toLocaleString()} ${t("currency")}\n\n` +
+      `\n💰 ${priceLabel.label}\n` +
+      `👛 ${t("paymentWalletBalance")}: ${formatUsd(walletBalance)}\n\n` +
       t("paymentPrompt");
 
     // Build payment keyboard (renew_ prefix)
@@ -114,23 +110,33 @@ export async function OrderRenewCallback(context: any) {
         style: "success",
       }).row();
     }
-    if (settings?.cardEnabled && (cards?.length ?? 0) > 0) {
+    // Card-to-card ("کارت به کارت") is a Persian-only payment method.
+    if (
+      user.languageCode === "fa" &&
+      settings?.cardEnabled &&
+      (cards?.length ?? 0) > 0
+    ) {
       kb.text(t("btnPayCard"), `renew_card_${orderId}`, {
         icon_custom_emoji_id: emojiIds.card,
         style: "success",
       }).row();
     }
-    if (settings?.zarinpalEnabled && settings.zarinpalMerchantId) {
+    // ZarinPal is a Persian-only gateway.
+    if (
+      user.languageCode === "fa" &&
+      settings?.zarinpalEnabled &&
+      settings.zarinpalMerchantId
+    ) {
       kb.text(t("btnPayZarinpal"), `renew_zarinpal_${orderId}`, {
         icon_custom_emoji_id: emojiIds.zarinpal,
         style: "success",
       }).row();
     }
+    // Crypto (NOWPayments) is available to all languages and prices in USD.
     if (
       settings?.nowpaymentsEnabled &&
       settings.nowpaymentsApiKey &&
-      settings.nowpaymentsIpnCallbackUrl &&
-      (settings.cryptoExchangeRate ?? 0) > 0
+      settings.nowpaymentsIpnCallbackUrl
     ) {
       kb.text(t("btnPayCrypto"), `renew_crypto_${orderId}`, {
         icon_custom_emoji_id: emojiIds.usdt,

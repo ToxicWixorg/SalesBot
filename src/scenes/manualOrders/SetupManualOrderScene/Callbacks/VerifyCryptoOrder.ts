@@ -81,7 +81,7 @@ export async function VerifyCryptoOrderCallback(
       });
 
       await ctx.editText(
-        t("rechargeZarinpalSuccess", result.finalPrice.toLocaleString()),
+        t("rechargeZarinpalSuccess", result.finalPrice.toFixed(2)),
         {
           parse_mode: "HTML",
           reply_markup: new InlineKeyboard()

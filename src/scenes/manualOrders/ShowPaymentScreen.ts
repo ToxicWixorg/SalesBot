@@ -13,7 +13,6 @@ import { PaymentRepository } from "../../repositories/PaymentRepository";
 import { i18n } from "../../shared/locales";
 import { getLocalizedName } from "../../shared/utils/localizedFields";
 import { formatPriceForUser } from "../../shared/utils/currency";
-import { getUsdtRate, usdToTomanWithRate } from "../../services/tetherland";
 
 export async function showPaymentScreen(
   sendFn: (text: string, opts?: any) => Promise<any>,
@@ -29,21 +28,11 @@ export async function showPaymentScreen(
   const product = await ProductRepository.findById(plan.productId);
   if (!product) return;
 
-  // `state.regionPrice` is already Toman. The plan base price is stored in USD,
-  // so convert it once here and cache it on the state for downstream handlers.
-  let originalPrice = state.regionPrice;
-  if (originalPrice === undefined) {
-    const usdtRate = await getUsdtRate();
-    if (usdtRate === null) {
-      await sendFn(t("priceRateUnavailable"), { parse_mode: "HTML" });
-      return;
-    }
-    originalPrice = usdToTomanWithRate(
-      parseFloat(plan.price as string),
-      usdtRate,
-    );
-  }
-  state.basePriceToman = originalPrice;
+  // Both `state.regionPrice` and the plan base price are stored in USD.
+  // Resolve the base USD price once here and cache it for downstream handlers.
+  const originalPrice =
+    state.regionPrice ?? parseFloat(plan.price as string);
+  state.basePriceUsd = originalPrice;
   const priceInfo = await formatPriceForUser(
     user.languageCode || "en",
     parseFloat(plan.price as string),
@@ -87,6 +76,7 @@ export async function showPaymentScreen(
         cards: activeCards,
         walletBalance,
         finalPrice,
+        languageCode: user.languageCode || "en",
       }),
     },
   );

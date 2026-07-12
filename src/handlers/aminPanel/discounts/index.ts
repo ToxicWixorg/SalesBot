@@ -3,6 +3,7 @@ import { InlineKeyboard } from "gramio";
 import type { DiscountCode } from "../../../db/schema.ts";
 import { DiscountCodeRepository } from "../../../repositories/index.ts";
 import { AdminService } from "../../../services/bot/admin/Service.ts";
+import { formatUsd } from "../../../shared/utils/currency.ts";
 import {
 	discountManageKeyboard,
 	discountsMenuKeyboard,
@@ -69,10 +70,6 @@ function parseNum(text: string): number | null {
 	return Number.isNaN(n) || n <= 0 ? null : n;
 }
 
-function money(v: string | number | null | undefined): string {
-	return Number.parseFloat(String(v ?? "0")).toLocaleString("en-US");
-}
-
 function shortDate(d: Date | null | undefined): string {
 	if (!d) return "—";
 	const date = new Date(d);
@@ -84,9 +81,9 @@ function renderCode(c: DiscountCode): string {
 		c.type === "percentage"
 			? `نوع: <b>درصدی</b> — <b>${Number.parseFloat(c.value)}٪</b>` +
 				(c.maxDiscount
-					? `\n🔝 سقف تخفیف: <b>${money(c.maxDiscount)}</b> تومان`
+					? `\n🔝 سقف تخفیف: <b>${formatUsd(c.maxDiscount)}</b>`
 					: "")
-			: `نوع: <b>مبلغی</b> — <b>${money(c.value)}</b> تومان`;
+			: `نوع: <b>مبلغی</b> — <b>${formatUsd(c.value)}</b>`;
 
 	const uses = c.maxUses
 		? `${c.currentUses ?? 0} / ${c.maxUses}`
@@ -96,7 +93,7 @@ function renderCode(c: DiscountCode): string {
 		`🎁 <b>${c.code}</b>\n\n` +
 		`${typeLine}\n` +
 		(c.minOrderAmount
-			? `🛒 حداقل سفارش: <b>${money(c.minOrderAmount)}</b> تومان\n`
+			? `🛒 حداقل سفارش: <b>${formatUsd(c.minOrderAmount)}</b>\n`
 			: "") +
 		`🔁 استفاده: <b>${uses}</b>\n` +
 		`👤 هر کاربر: <b>${c.maxUsesPerUser ?? 1}</b> بار\n` +
@@ -231,7 +228,7 @@ export function setupAdminDiscountsHandlers(bot: AnyBot) {
 			await ctx.send(
 				draft.type === "percentage"
 					? "٪ <b>درصد تخفیف</b> را بفرستید (۱ تا ۱۰۰):"
-					: "💵 <b>مبلغ تخفیف</b> (تومان) را بفرستید:",
+					: "💵 <b>مبلغ تخفیف</b> (دلار) را بفرستید:",
 				{ parse_mode: "HTML" },
 			);
 			return;
@@ -253,13 +250,13 @@ export function setupAdminDiscountsHandlers(bot: AnyBot) {
 			if (draft.type === "percentage") {
 				discInput.set(userId, { step: "maxDiscount", draft });
 				await ctx.send(
-					"🔝 <b>سقف مبلغ تخفیف</b> (تومان) را بفرستید، یا «-» برای بدون سقف:",
+					"🔝 <b>سقف مبلغ تخفیف</b> (دلار) را بفرستید، یا «-» برای بدون سقف:",
 					{ parse_mode: "HTML" },
 				);
 			} else {
 				discInput.set(userId, { step: "minOrder", draft });
 				await ctx.send(
-					"🛒 <b>حداقل مبلغ سفارش</b> (تومان) را بفرستید، یا «-» برای بدون حداقل:",
+					"🛒 <b>حداقل مبلغ سفارش</b> (دلار) را بفرستید، یا «-» برای بدون حداقل:",
 					{ parse_mode: "HTML" },
 				);
 			}
@@ -275,7 +272,7 @@ export function setupAdminDiscountsHandlers(bot: AnyBot) {
 			}
 			discInput.set(userId, { step: "minOrder", draft });
 			await ctx.send(
-				"🛒 <b>حداقل مبلغ سفارش</b> (تومان) را بفرستید، یا «-» برای بدون حداقل:",
+				"🛒 <b>حداقل مبلغ سفارش</b> (دلار) را بفرستید، یا «-» برای بدون حداقل:",
 				{ parse_mode: "HTML" },
 			);
 			return;

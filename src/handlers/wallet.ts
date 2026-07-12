@@ -3,7 +3,7 @@ import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { walletKeyboard, walletHistoryKeyboard } from "../shared/keyboards";
-import { e } from "../shared/locales/emojies.ts";
+import { formatUsd } from "../shared/utils/currency.ts";
 
 export function setupWalletHandlers(bot: AnyBot) {
   // ── نمایش کیف پول ────────────────────────────────────
@@ -20,11 +20,14 @@ export function setupWalletHandlers(bot: AnyBot) {
       return;
     }
 
-    const balance = user.walletBalance || "0";
+    const rawBalance = user.walletBalance || "0";
+    const balanceNum = Number.parseFloat(rawBalance);
+    const balance = (Number.isFinite(balanceNum) ? balanceNum : 0).toFixed(2);
+    const isEmpty = !(balanceNum > 0);
 
     await ctx.editText(
       `${t("walletTitle")}\n\n${t("walletBalance", balance)}` +
-        (balance === "0" ? `\n\n${t("walletEmpty")}` : ""),
+        (isEmpty ? `\n\n${t("walletEmpty")}` : ""),
       { reply_markup: walletKeyboard(t), parse_mode: "HTML" },
     );
     await ctx.answerCallbackQuery();
@@ -89,7 +92,7 @@ export function setupWalletHandlers(bot: AnyBot) {
 
       msg += `━━━━━━━━━━━━━━━\n`;
       msg += `${typeLabel} ${sourceLabel}\n`;
-      msg += `${t("transactionAmount")} ${sign}${tx.amount} ${t("Toman")} ${e.Toman}\n`;
+      msg += `${t("transactionAmount")} ${sign}${formatUsd(tx.amount)}\n`;
       msg += `${t("transactionDate")} ${new Date(tx.createdAt || "").toLocaleDateString("fa-IR")}\n`;
       if (tx.description) {
         msg += `${t("transactionDescription")} ${tx.description}\n`;

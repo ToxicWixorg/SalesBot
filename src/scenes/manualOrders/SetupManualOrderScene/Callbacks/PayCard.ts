@@ -8,6 +8,7 @@ import { appliedDiscountState } from "../../../../handlers/products/discountOrde
 import { PaymentRepository } from "../../../../repositories/PaymentRepository";
 import { pendingOrderInfoState } from "../../../../handlers/products/pendingOrderInfoState";
 import { pendingPaymentState } from "../../../../handlers/products/pendingPaymentState";
+import { formatUsd } from "../../../../shared/utils/currency";
 
 export async function PayCardCallback(ctx: Context) {
   const userId = ctx.from?.id;
@@ -44,12 +45,12 @@ export async function PayCardCallback(ctx: Context) {
     pendingDiscount && pendingDiscount.planId === state.planId;
   const finalPrice = hasDiscount
     ? pendingDiscount.finalPrice
-    : (state.basePriceToman ??
+    : (state.basePriceUsd ??
       state.regionPrice ??
       parseFloat((plan?.price as string) ?? "0"));
 
   // Build card instructions — show all active cards
-  let msg = `💳 <b>${t("paymentSummaryTitle" as any)}</b>\n\n💰 ${finalPrice.toLocaleString()} ${t("currency")}\n\n`;
+  let msg = `💳 <b>${t("paymentSummaryTitle" as any)}</b>\n\n💰 ${formatUsd(finalPrice)}\n\n`;
   for (const card of cards) {
     msg += `🏦 ${card.bankName ?? ""} — ${card.holderName}\n`;
     msg += `<code>${card.cardNumber}</code>\n\n`;

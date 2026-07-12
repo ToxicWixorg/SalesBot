@@ -55,17 +55,17 @@ export async function OrderCallback(
     message += `${t("orderProduct")}: ${product?.name || "-"}\n`;
     message += `${statusInfo.color} ${t("orderStatus")}: ${statusInfo.emoji} ${statusInfo.text}\n`;
     message += `\n`;
-    message += `${t("orderTotalPrice")}: ${formatPrice(order.totalPrice)} ${t("currency")}\n`;
+    message += `${t("orderTotalPrice")}: ${formatPrice(order.totalPrice)}\n`;
 
     if (Number(order.discountAmount) > 0) {
-      message += `${t("orderDiscount")}: ${formatPrice(order.discountAmount)} ${t("currency")}\n`;
+      message += `${t("orderDiscount")}: ${formatPrice(order.discountAmount)}\n`;
     }
 
     if (Number(order.walletUsed) > 0) {
-      message += `${t("orderWalletUsed")}: ${formatPrice(order.walletUsed)} ${t("currency")}\n`;
+      message += `${t("orderWalletUsed")}: ${formatPrice(order.walletUsed)}\n`;
     }
 
-    message += `${t("orderFinalPrice")}: ${formatPrice(order.finalPrice)} ${t("currency")}\n`;
+    message += `${t("orderFinalPrice")}: ${formatPrice(order.finalPrice)}\n`;
     message += `\n`;
     message += `${t("orderCreatedAt")}: ${formatDate(order.createdAt)}\n`;
 

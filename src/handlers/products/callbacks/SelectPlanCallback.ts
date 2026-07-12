@@ -16,7 +16,10 @@ import {
 import { regionSelectionKeyboard } from "../../../shared/keyboards/products/regionSelect.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 import { getUsdtRate } from "../../../services/tetherland/index.ts";
-import { formatPriceLabel } from "../../../shared/utils/currency.ts";
+import {
+  formatPriceLabel,
+  formatUsd,
+} from "../../../shared/utils/currency.ts";
 
 export async function SelectPlanCallback(context: Context<any>) {
   if (!context.from || !context.queryData) return;
@@ -46,14 +49,9 @@ export async function SelectPlanCallback(context: Context<any>) {
     return;
   }
 
+  // Prices are canonical in USD. The live rate is only used to append an
+  // approximate Toman value for fa users, so a missing rate is non-fatal.
   const usdtRate = await getUsdtRate();
-  if (usdtRate === null) {
-    await context.answerCallbackQuery({
-      text: t("priceRateUnavailable"),
-      show_alert: true,
-    });
-    return;
-  }
 
   preSelectedRegionState.delete(userId);
   const productName = getLocalizedName(product, user.languageCode);
@@ -77,33 +75,26 @@ export async function SelectPlanCallback(context: Context<any>) {
     enterQuantityState.delete(userId);
     const qty = 1;
 
+    const unitPriceUsd = parseFloat(plan.price as string);
     const priceInfo = formatPriceLabel(
       user.languageCode,
-      parseFloat(plan.price as string),
+      unitPriceUsd,
       t,
       usdtRate,
     );
-    if (priceInfo.toman === undefined) {
-      await context.answerCallbackQuery({
-        text: t("priceRateUnavailable"),
-        show_alert: true,
-      });
-      return;
-    }
-    const unitPrice = priceInfo.toman;
     const discount = appliedDiscountState.get(userId);
     const hasDiscount = discount && discount.planId === planId;
     const finalTotal = hasDiscount
       ? discount.finalPrice * qty
-      : unitPrice * qty;
+      : unitPriceUsd * qty;
 
     await context.editText(
       t("inventoryOrderSummary", {
         productName,
         qty,
         unitPrice: priceInfo.label,
-        total: finalTotal.toLocaleString(),
-        currency: t("currency"),
+        total: formatUsd(finalTotal),
+        currency: "",
       }),
       {
         parse_mode: "HTML",
@@ -138,13 +129,6 @@ export async function SelectPlanCallback(context: Context<any>) {
       t,
       usdtRate,
     );
-    if (priceInfo.toman === undefined) {
-      await context.answerCallbackQuery({
-        text: t("priceRateUnavailable"),
-        show_alert: true,
-      });
-      return;
-    }
     let duration = t("oneTime");
     if (plan.duration) {
       const unitKey = plan.durationUnit ?? "day";
@@ -191,13 +175,6 @@ export async function SelectPlanCallback(context: Context<any>) {
       t,
       usdtRate,
     );
-    if (priceInfo.toman === undefined) {
-      await context.answerCallbackQuery({
-        text: t("priceRateUnavailable"),
-        show_alert: true,
-      });
-      return;
-    }
     let duration = t("oneTime");
     if (plan.duration) {
       const unitKey = plan.durationUnit ?? "day";
@@ -244,13 +221,6 @@ export async function SelectPlanCallback(context: Context<any>) {
       t,
       usdtRate,
     );
-    if (priceInfo.toman === undefined) {
-      await context.answerCallbackQuery({
-        text: t("priceRateUnavailable"),
-        show_alert: true,
-      });
-      return;
-    }
     let duration = t("oneTime");
     if (plan.duration) {
       const unitKey = plan.durationUnit ?? "day";

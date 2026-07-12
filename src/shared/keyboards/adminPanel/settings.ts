@@ -69,9 +69,7 @@ export function forceJoinManageKeyboard(
 }
 
 // ─── گروه فروم (گروه پشتیبانی و تاپیک‌ها) ─────────────────────
-export function forumSettingsKeyboard(
-	settings: ForumSettings,
-): InlineKeyboard {
+export function forumSettingsKeyboard(settings: ForumSettings): InlineKeyboard {
 	const topic = (v: number | null | undefined) =>
 		v == null ? "پیش‌فرض" : String(v);
 
@@ -170,6 +168,14 @@ export function botSettingsKeyboard(settings: BotSettings): InlineKeyboard {
 		.text(`🛒 فروشگاه: ${onOff(settings.shopEnabled)}`, "set_bot_shop")
 		.row()
 		.text(`🎁 ریفرال: ${onOff(settings.referralEnabled)}`, "set_bot_referral")
+		.row()
+		.text(
+			`💵 مبلغ پاداش ریفرال: $${Number.parseFloat(
+				String(settings.referralRewardAmount ?? "1"),
+			).toFixed(2)}`,
+			"set_bot_referral_amount",
+			{ style: "primary" },
+		)
 		.row()
 		.text("بازگشت", "panel_setting", { icon_custom_emoji_id: emojiIds.back });
 }

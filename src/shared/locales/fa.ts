@@ -10,7 +10,7 @@ export const fa = {
   languageSelected: (lang: string) =>
     `${e.checkBold} زبان به <b>${lang}</b> تغییر یافت`,
 
-  Toman: "Toman",
+  Toman: "دلار",
 
   btnAdminPanel: "پنل ادمین",
 
@@ -107,7 +107,7 @@ ${payload.ids}`,
   selectPlan: `${e.clipboard} پلن مورد نظرت رو انتخاب کن:`,
   orderSummary: `${e.clipboard} خلاصه سفارش:`,
   total: `${e.wallet} جمع کل:`,
-  currency: "تومان",
+  currency: "دلار",
   oneTime: "یک‌بار",
   duration_day: "روز",
   duration_month: "ماه",
@@ -115,7 +115,7 @@ ${payload.ids}`,
 
   walletTitle: `${e.wallet} کیف پول`,
   walletBalance: (balance: string) =>
-    `موجودی: <b>${balance}</b> تومان ` + e.Toman,
+    `موجودی: <b>$${balance}</b> ` + e.Toman,
   walletEmpty: `${e.wallet} کیف پولت فعلاً خالیه ${e.sparkles} شارژش کن و شروع کن!`,
   btnRechargeWallet: ` شارژ کیف پول`,
   btnTransactionHistory: ` تاریخچه تراکنش‌ها`,
@@ -129,14 +129,14 @@ ${payload.ids}`,
 
   rechargeEnterAmount: `${e.wallet} مبلغ شارژ رو وارد کن:`,
   rechargeMinAmount: (amount: string) =>
-    `حداقل مبلغ شارژ: <b>${amount}</b> تومان ` + e.Toman,
+    `حداقل مبلغ شارژ: <b>$${amount}</b> ` + e.Toman,
   rechargeMaxAmount: (amount: string) =>
-    `حداکثر مبلغ شارژ: <b>${amount}</b> تومان ` + e.Toman,
+    `حداکثر مبلغ شارژ: <b>$${amount}</b> ` + e.Toman,
   rechargeInvalidAmount: `${e.reject} مبلغ وارد شده نامعتبره`,
   rechargeTooLow: (min: string) =>
-    `${e.reject} مبلغ شارژ باید حداقل <b>${min}</b> تومان ${e.Toman} باشه`,
+    `${e.reject} مبلغ شارژ باید حداقل <b>$${min}</b> ${e.Toman} باشه`,
   rechargeTooHigh: (max: string) =>
-    `${e.reject} مبلغ شارژ نمی‌تونه بیشتر از <b>${max}</b> تومان  ${e.Toman} باشه`,
+    `${e.reject} مبلغ شارژ نمی‌تونه بیشتر از <b>$${max}</b> ${e.Toman} باشه`,
 
   // Crypto Payment
   rechargeCryptoTitle: `${e.wallet} پرداخت کریپتو`,
@@ -152,18 +152,18 @@ ${payload.ids}`,
   rechargeCryptoSendTxId: `TxID (شناسه تراکنش) رو ارسال کن:`,
   rechargeCryptoTxIdReceived: `${e.checkBold} شناسه تراکنش دریافت شد\n\n${e.time} در حال بررسی پرداخت...\nاین فرآیند ممکنه تا ۳۰ دقیقه طول بکشه.`,
   rechargeCryptoVerified: (amount: string) =>
-    `${e.party} <b>پرداخت تأیید شد!</b>\n\n${e.diamond} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
+    `${e.party} <b>پرداخت تأیید شد!</b>\n\n${e.diamond} <b>$${amount}</b> به کیف پولت اضافه شد.`,
   rechargeCryptoFailed: `${e.reject} پرداخت تأیید نشد. لطفاً با پشتیبانی تماس بگیر.`,
 
   // Card/Zarinpal Payment
   rechargeCardTitle: `${e.card} پرداخت با کارت`,
   rechargeZarinpalTitle: `${e.wallet} درگاه زرین‌پال`,
   rechargePaymentLink: (amount: string) =>
-    `مبلغ: <b>${amount}</b> تومان\n\nروی دکمه زیر کلیک کن تا به درگاه پرداخت بری:`,
+    `مبلغ: <b>$${amount}</b>\n\nروی دکمه زیر کلیک کن تا به درگاه پرداخت بری:`,
   btnPayNow: `پرداخت`,
   rechargePaymentPending: `${e.time} در انتظار پرداخت...\n\nلطفاً پرداخت رو در مرورگر کامل کن.`,
   rechargePaymentSuccess: (amount: string) =>
-    `${e.party} <b>پرداخت موفق!</b>\n\n${e.diamond} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
+    `${e.party} <b>پرداخت موفق!</b>\n\n${e.diamond} <b>$${amount}</b> به کیف پولت اضافه شد.`,
   rechargePaymentFailed: `❌ پرداخت ناموفق بود. دوباره تلاش کن.`,
   rechargePaymentCancelled: `⚠️ پرداخت لغو شد.`,
 
@@ -190,32 +190,32 @@ ${payload.ids}`,
 
   // ── کلیدهای جدید شارژ کیف پول ──────────────────────────
   rechargeAmount: (amount: string) =>
-    `${e.wallet} مبلغ: <b>${amount}</b> تومان ` + e.Toman,
+    `${e.wallet} مبلغ: <b>$${amount}</b> ` + e.Toman,
   rechargeMethodSelectTitle: (amount: string) =>
-    `${e.wallet} مبلغ <b>${amount}</b> تومان ${e.Toman}\n\nروش پرداخت رو انتخاب کن:`,
+    `${e.wallet} مبلغ <b>$${amount}</b> ${e.Toman}\n\nروش پرداخت رو انتخاب کن:`,
   rechargeCardNumbers: `شماره کارت‌ها`,
   rechargeCardSendReceipt: `بعد از واریز مبلغ، رسید پرداخت (عکس) رو اینجا بفرست.`,
   rechargeCardExpectPhoto: `${e.reject} لطفاً عکس رسید پرداخت رو بفرست (تصویر باشه نه متن).`,
   rechargePendingApproval: `${e.checkBold} درخواستت ثبت شد!\n\n${e.time} منتظر تأیید ادمین باش — معمولاً زیر ۳۰ دقیقه.`,
   rechargeApproved: (amount: string) =>
-    `${e.party} <b>شارژ تأیید شد!</b>\n\n${e.diamond} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
+    `${e.party} <b>شارژ تأیید شد!</b>\n\n${e.diamond} <b>$${amount}</b> به کیف پولت اضافه شد.`,
   walletAdminCredited: (amount: string, balance: string) =>
-    `${e.diamond} <b>${amount}</b> تومان به کیف پولت اضافه شد.\n${e.wallet} موجودی فعلی: <b>${balance}</b> تومان`,
+    `${e.diamond} <b>$${amount}</b> به کیف پولت اضافه شد.\n${e.wallet} موجودی فعلی: <b>$${balance}</b>`,
   walletAdminDebited: (amount: string, balance: string) =>
-    `${e.reject} <b>${amount}</b> تومان از کیف پولت کسر شد.\n${e.wallet} موجودی فعلی: <b>${balance}</b> تومان`,
+    `${e.reject} <b>$${amount}</b> از کیف پولت کسر شد.\n${e.wallet} موجودی فعلی: <b>$${balance}</b>`,
   rechargeRejected: `${e.reject} <b>درخواست شارژ رد شد.</b>\n\nدر صورت نیاز با پشتیبانی تماس بگیر.`,
   rechargeSessionExpired: `⚠️ جلسه منقضی شده. دوباره از کیف پول شروع کن.`,
   rechargeMethodDisabled: `❌ این روش پرداخت فعلاً غیرفعاله.`,
   rechargeNoMethodAvailable: `❌ در حال حاضر هیچ روش پرداختی فعال نیست. بعداً امتحان کن.`,
   rechargeUsdtRate: (rate: string) =>
-    `📈 نرخ لحظه‌ای: <b>${rate}</b> تومان/USDT`,
+    `📈 نرخ لحظه‌ای: <b>${rate}</b> USD/USDT`,
   rechargeRateUnavailable: `❌ قیمت لحظه‌ای USDT در دسترس نیست. کمی صبر کن و دوباره تلاش کن.`,
   rechargeCryptoInvalidTxId: `❌ TxID نامعتبره (باید حداقل ۱۰ کاراکتر باشه). دوباره بفرست.`,
   rechargeZarinpalInstructions: `${e.clipboard} روی دکمه «پرداخت» بزن، مبلغ رو پرداخت کن، بعد دکمه «بررسی پرداخت» رو بزن.`,
   btnVerifyPayment: `بررسی پرداخت`,
   rechargeZarinpalVerifying: `⌛ در حال بررسی پرداخت...`,
   rechargeZarinpalSuccess: (amount: string) =>
-    `${e.party} <b>پرداخت تأیید شد!</b>\n\n${e.diamond} <b>${amount}</b> تومان به کیف پولت اضافه شد.`,
+    `${e.party} <b>پرداخت تأیید شد!</b>\n\n${e.diamond} <b>$${amount}</b> به کیف پولت اضافه شد.`,
   rechargeZarinpalFailed: `${e.reject} پرداخت تأیید نشد یا هنوز ثبت نشده.`,
   rechargeZarinpalRetry: `دوباره پرداخت کن یا دوباره بررسی کن.`,
 
@@ -232,14 +232,14 @@ ${payload.ids}`,
   }) =>
     `${e.crown} <b>دوستاتو دعوت کن، درآمد داشته باش!</b>\n\n` +
     `${e.user} دعوت‌های موفق: <b>${data.totalReferrals}</b>\n` +
-    `${e.diamond} مجموع پاداش‌ها: <b>${data.totalRewards}</b> تومان\n\n` +
+    `${e.diamond} مجموع پاداش‌ها: <b>$${data.totalRewards}</b>\n\n` +
     `🔗 <b>لینک اختصاصی تو:</b>\n` +
     `<code>${data.referralLink}</code>\n\n` +
     `${e.sparkles} <b>چطور کار می‌کنه؟</b>\n` +
     `۱. لینکت رو برای دوستات بفرست\n` +
     `۲. وقتی عضو شدن، پاداش می‌گیری\n` +
     `۳. پاداش مستقیم به کیف پولت واریز می‌شه\n\n` +
-    `${e.diamond} پاداش هر دعوت: <b>۱۰٬۰۰۰</b> تومان`,
+    `${e.diamond} پاداش هر دعوت: <b>$0.25</b>`,
   btnShareInviteLink: ` اشتراک‌گذاری لینک`,
   btnCopyLink: ` کپی لینک`,
   btnViewReferrals: ` لیست دعوت‌شدگان`,
@@ -251,7 +251,7 @@ ${payload.ids}`,
   andMore: (count: number) => `و <b>${count}</b> نفر دیگه...`,
   referralRewardNotification: (data: { userName: string; amount: string }) =>
     `${e.party} کاربر جدیدی (<b>${data.userName}</b>) از لینک دعوت تو پیوست!\n` +
-    `${e.diamond} <b>${data.amount}</b> تومان به حسابت اضافه شد.`,
+    `${e.diamond} <b>$${data.amount}</b> به حسابت اضافه شد.`,
 
   // Discount Codes
   discountCodeInfo:
@@ -312,7 +312,7 @@ ${payload.ids}`,
     `${e.date} عضویت: ${data.joinDate}\n\n` +
     `${e.chart} <b>آمار:</b>\n` +
     `${e.bag} خریدها: <b>${data.totalOrders}</b>\n` +
-    `${e.diamond} مجموع خرید: <b>${data.totalSpent}</b> تومان\n` +
+    `${e.diamond} مجموع خرید: <b>$${data.totalSpent}</b>\n` +
     `${e.user} دعوت‌ها: <b>${data.totalReferrals}</b>`,
 
   // Notification Settings
@@ -462,7 +462,7 @@ ${payload.ids}`,
     `${e.confirm} <b>تمدید با موفقیت انجام شد!</b>\n\n` +
     `${e.bag} ${data.productName}\n` +
     `${e.ticket} شماره سفارش: #${data.orderId}\n\n` +
-    `${e.wallet} موجودی باقی‌مانده: ${data.remainingBalance} تومان`,
+    `${e.wallet} موجودی باقی‌مانده: $${data.remainingBalance}`,
   errorOpeningTicket: `❌ خطا در باز کردن تیکت`,
   errorReportingProblem: `❌ خطا در گزارش مشکل`,
 
@@ -556,7 +556,7 @@ ${payload.ids}`,
 
   // Purchase / Order Completion
   insufficientBalance: (data: { required: string; current: string }) =>
-    `${e.failed} موجودی کافی نیست\n\nنیاز: ${data.required} تومان\nموجودی تو: ${data.current} تومان\n\nکیف پولت رو شارژ کن و دوباره تلاش کن.`,
+    `${e.failed} موجودی کافی نیست\n\nنیاز: $${data.required}\nموجودی تو: $${data.current}\n\nکیف پولت رو شارژ کن و دوباره تلاش کن.`,
   noConfigAvailable: `${e.reject} در حال حاضر کانفیگ VPN برای این پلن موجود نیست. با پشتیبانی تماس بگیر.`,
   orderSuccess: (data: {
     orderId: number;
@@ -568,8 +568,8 @@ ${payload.ids}`,
     `${e.party} <b>خرید موفق بود!</b>\n\n` +
     `${e.bag} محصول: ${data.productName}\n` +
     `${e.clipboard} پلن: ${data.planName}\n` +
-    `${e.diamond} مبلغ: <b>${data.amount}</b> تومان\n` +
-    `${e.wallet} موجودی باقی: <b>${data.remainingBalance}</b> تومان\n` +
+    `${e.diamond} مبلغ: <b>$${data.amount}</b>\n` +
+    `${e.wallet} موجودی باقی: <b>$${data.remainingBalance}</b>\n` +
     `${e.id} سفارش: #${data.orderId}`,
   vpnConfigMessage: (data: { configData: string; label?: string }) =>
     `${e.key} <b>کانفیگ VPN تو</b>${data.label ? ` (${data.label})` : ""}\n\n` +
@@ -589,8 +589,8 @@ ${payload.ids}`,
   }) =>
     `${e.checkBold} <b>کد تخفیف اعمال شد!</b>\n\n` +
     `${e.ticket} کد: <code>${data.code}</code>\n` +
-    `${e.diamond} تخفیف: -<b>${data.discountAmount}</b> تومان\n` +
-    `${e.wallet} مبلغ جدید: <b>${data.finalPrice}</b> تومان`,
+    `${e.diamond} تخفیف: -<b>$${data.discountAmount}</b>\n` +
+    `${e.wallet} مبلغ جدید: <b>$${data.finalPrice}</b>`,
   orderSummaryWithDiscount: (data: {
     productName: string;
     planName: string;
@@ -604,15 +604,15 @@ ${payload.ids}`,
     `${e.bag} محصول: ${data.productName}\n` +
     `${e.tag} پلن: ${data.planName}\n` +
     (data.duration ? `${e.clock} مدت: ${data.duration}\n` : "") +
-    `\n${e.wallet} قیمت اصلی: <b>${data.originalPrice}</b> تومان\n` +
-    `${e.ticket} تخفیف (${data.code}): -<b>${data.discountAmount}</b> تومان\n` +
-    `${e.checkBold} قیمت نهایی: <b>${data.finalPrice}</b> تومان`,
+    `\n${e.wallet} قیمت اصلی: <b>$${data.originalPrice}</b>\n` +
+    `${e.ticket} تخفیف (${data.code}): -<b>$${data.discountAmount}</b>\n` +
+    `${e.checkBold} قیمت نهایی: <b>$${data.finalPrice}</b>`,
   discountNotApplicableForProduct: `${e.reject} این کد تخفیف برای این محصول معتبر نیست.`,
   discountInsufficientBalanceWithDiscount: (data: {
     required: string;
     current: string;
   }) =>
-    `${e.reject} <b>موجودی کافی نیست</b>\n\nنیاز (بعد تخفیف): <b>${data.required}</b> تومان\nموجودی تو: <b>${data.current}</b> تومان\n\nکیف پولت رو شارژ کن.`,
+    `${e.reject} <b>موجودی کافی نیست</b>\n\nنیاز (بعد تخفیف): <b>$${data.required}</b>\nموجودی تو: <b>$${data.current}</b>\n\nکیف پولت رو شارژ کن.`,
 
   // Force Join Channels/Groups
   joinChannelRequired: `${e.flag_ir} <b>عضویت الزامی</b>\n\nبرای استفاده از ربات، اول توی کانال‌ها/گروه‌های زیر عضو بشو:`,
@@ -653,7 +653,7 @@ ${payload.ids}`,
   btnPayCrypto: `پرداخت با USDT (کریپتو)`,
   payCardInstructions: (amount: string) =>
     `${e.card} <b>پرداخت با کارت بانکی</b>\n\n` +
-    `${e.wallet} مبلغ: <b>${amount}</b> تومان\n\n` +
+    `${e.wallet} مبلغ: <b>$${amount}</b>\n\n` +
     `شماره کارت‌های زیر رو کپی کن و مبلغ رو واریز کن:`,
   payCardConfirmNote: `پس از واریز، دکمه «${e.confirm} واریز کردم» رو بزن.`,
   btnConfirmCardPayment: `واریز کردم`,
@@ -681,8 +681,8 @@ ${payload.ids}`,
     `${e.checkBold} <b>سفارش ثبت شد!</b>\n\n` +
     `${e.bag} محصول: ${data.productName}\n` +
     `${e.clipboard} پلن: ${data.planName}\n` +
-    `${e.diamond} مبلغ: <b>${data.amount}</b> تومان\n` +
-    `${e.wallet} موجودی باقی: <b>${data.remainingBalance}</b> تومان\n` +
+    `${e.diamond} مبلغ: <b>$${data.amount}</b>\n` +
+    `${e.wallet} موجودی باقی: <b>$${data.remainingBalance}</b>\n` +
     `${e.id} سفارش: #${data.orderId}\n\n` +
     `${e.time} سفارشت به تیم ما رسید.\n` +
     `ظرف <b>۱ تا ۲۴ ساعت</b> پردازش و بهت اطلاع داده می‌شه.`,
@@ -720,8 +720,8 @@ ${payload.ids}`,
     `${e.clipboard} پلن: ${data.planName}\n` +
     `${e.date} تاریخ: <b>${data.date}</b>\n` +
     `${e.clock} ساعت: <b>${data.timeSlot}</b>\n` +
-    `${e.diamond} مبلغ: <b>${data.amount}</b> تومان\n` +
-    `${e.wallet} موجودی باقی: <b>${data.remainingBalance}</b> تومان\n` +
+    `${e.diamond} مبلغ: <b>$${data.amount}</b>\n` +
+    `${e.wallet} موجودی باقی: <b>$${data.remainingBalance}</b>\n` +
     `${e.id} سفارش: #${data.orderId}\n\n` +
     `${e.bell} <b>${e.clock} ۱۵ دقیقه</b> قبل از شروع بهت یادآوری می‌کنم.\n` +
     `وضعیت جلسه رو توی <b>سفارشات من</b> پیگیری کن.`,
@@ -829,7 +829,7 @@ ${payload.ids}`,
   ) =>
     `${e.Toman} <b>درخواست شارژ کیف پول</b>\n\n` +
     `${e.user} کاربر: ${userLabel} (<code>${opts.userId}</code>)\n` +
-    `${e.wallet} مبلغ: <b>${formatNum(opts.amount)}</b> تومان\n` +
+    `${e.wallet} مبلغ: <b>$${formatNum(opts.amount)}</b>\n` +
     `${e.key} روش: ${methodLabel}\n`,
   regionNotFound: "ریجن پیدا نشد ❌",
   rechargeCardSaveFailed: e.warning + "خطا در ذخیره فایل",
@@ -881,7 +881,7 @@ ${payload.ids}`,
     "❌ نرخ لحظه‌ای ارز در دسترس نیست. لطفاً چند لحظه دیگر دوباره تلاش کنید.",
   adminEditPlanPricePrompt: ({ planName }: { planName: string }) =>
     `${e.wallet} قیمت جدید پلن «<b>${planName}</b>» را به <b>دلار</b> وارد کنید.\n\n` +
-    `مثلاً <code>12.5</code> برای ۱۲٫۵ دلار.\nقیمت موقع نمایش به‌صورت خودکار با نرخ لحظه‌ای به تومان تبدیل می‌شود.`,
+    `مثلاً <code>12.5</code> برای ۱۲٫۵ دلار.\nقیمت به دلار نمایش داده می‌شود (برای کاربران ایرانی معادل تقریبی تومانی هم نشان داده می‌شود).`,
   adminPlanPriceInvalid:
     "❌ مبلغ نامعتبر است. یک عدد دلاری معتبر بزرگ‌تر از صفر وارد کنید (مثلاً 12.5).",
   adminPlanPriceUpdated: ({

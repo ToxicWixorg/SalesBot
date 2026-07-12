@@ -50,6 +50,7 @@ type SettingsInput =
 			cardNumber?: string;
 			holderName?: string;
 	  }
+	| { type: "referral_amount" }
 	| { type: "zp_merchant" }
 	| { type: "zp_callback" }
 	| { type: "cr_address" }
@@ -374,6 +375,22 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 		await ctx.editText(text, { parse_mode: "HTML", reply_markup: keyboard });
 	});
 
+	bot.callbackQuery("set_bot_referral_amount", async (ctx) => {
+		if (!(await ownerGate(ctx))) return;
+		const s = await BotSettingsRepository.getOrCreate();
+		const current = Number.parseFloat(
+			String(s.referralRewardAmount ?? "1"),
+		).toFixed(2);
+		settingsInput.set(ctx.from.id, { type: "referral_amount" });
+		await ctx.editText(
+			`💵 <b>مبلغ پاداش ریفرال</b>\n\n` +
+				`مبلغ فعلی: <b>$${current}</b>\n\n` +
+				`مبلغ جدید را به <b>دلار</b> بفرستید (مثلاً <code>1</code> یا <code>0.5</code>).\n` +
+				`برای غیرفعال کردن پاداش، <code>0</code> بفرستید.`,
+			{ parse_mode: "HTML", reply_markup: cancelTo("set_bot") },
+		);
+	});
+
 	// ───────────────────────── پرداخت/ولت ─────────────────────
 	bot.callbackQuery("set_wallet", async (ctx) => {
 		if (!(await ownerGate(ctx))) return;
@@ -683,7 +700,9 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 
 	bot.callbackQuery(/^set_fj_view_(\d+)$/, async (ctx) => {
 		if (!(await ownerGate(ctx))) return;
-		const channel = await ForceJoinRepository.findById(Number(ctx.queryData[1]));
+		const channel = await ForceJoinRepository.findById(
+			Number(ctx.queryData[1]),
+		);
 		if (!channel) {
 			await ctx.answerCallbackQuery({
 				text: "کانال یافت نشد",
@@ -1025,6 +1044,31 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 					parse_mode: "HTML",
 					reply_markup: keyboard,
 				},
+			);
+			return;
+		}
+
+		// ── مبلغ پاداش ریفرال (دلار) ───────────────────────────
+		if (state.type === "referral_amount") {
+			const normalized = digits(text)
+				.replace(/[,،٬\s]/g, "")
+				.replace(/٫/g, ".");
+			const amount = Number.parseFloat(normalized);
+			if (Number.isNaN(amount) || amount < 0 || amount > 10000) {
+				settingsInput.set(userId, { type: "referral_amount" });
+				await ctx.send(
+					"❌ مبلغ نامعتبر است. یک عدد دلاری بین 0 تا 10000 بفرستید (مثلاً 1 یا 0.5).",
+				);
+				return;
+			}
+			settingsInput.delete(userId);
+			await BotSettingsRepository.update({
+				referralRewardAmount: amount.toFixed(2),
+			});
+			const { text: m, keyboard } = await botMenu();
+			await ctx.send(
+				`✅ مبلغ پاداش ریفرال روی <b>$${amount.toFixed(2)}</b> تنظیم شد.\n\n${m}`,
+				{ parse_mode: "HTML", reply_markup: keyboard },
 			);
 			return;
 		}

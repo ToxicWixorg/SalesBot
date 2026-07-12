@@ -3,6 +3,7 @@ import { UserRepository } from "../../../repositories/UserRepository.ts";
 import { DiscountCodeRepository } from "../../../repositories/DiscountCodeRepository.ts";
 import { i18n } from "../../../shared/locales/index.ts";
 import { discountHistoryKeyboard } from "../../../shared/keyboards/index.ts";
+import { formatUsd } from "../../../shared/utils/currency.ts";
 
 export async function DiscountHistoryCallback(context: Context) {
   if (!context.from) {
@@ -39,10 +40,10 @@ export async function DiscountHistoryCallback(context: Context) {
   for (let i = 0; i < usageHistory.length && i < 10; i++) {
     const usage = usageHistory[i];
     const date = new Date(usage.usedAt!).toLocaleDateString("fa-IR");
-    const amount = Number(usage.discountAmount).toLocaleString("fa-IR");
+    const amount = formatUsd(usage.discountAmount);
 
     message += `${i + 1}. ${date}\n`;
-    message += `   💰 ${t("discountAmount")}: ${amount} ${t("currency")}\n`;
+    message += `   💰 ${t("discountAmount")}: ${amount}\n`;
     message += `   📦 ${t("orderId")}: #${usage.orderId}\n\n`;
   }
 
