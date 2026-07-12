@@ -17,7 +17,10 @@ import {
 } from "../../../../shared/utils/localizedFields.ts";
 import { getUsdtRate } from "../../../../services/tetherland/index.ts";
 
-export async function PremiumProductCallback(context: any, getEffectiveStock: any) {
+export async function PremiumProductCallback(
+  context: any,
+  getEffectiveStock: any,
+) {
   if (!context.from || !context.queryData) return;
 
   const productId = Number.parseInt(context.queryData[1]!);
@@ -39,8 +42,6 @@ export async function PremiumProductCallback(context: any, getEffectiveStock: an
   // `stock` field. This is informational only — it must NOT hide the plans,
   // since manual/scheduled plans don't depend on inventory and automatic plans
   // enforce their own stock check at selection time (SelectPlanCallback).
-  const effectiveStock = await getEffectiveStock(product);
-  const hasStock = effectiveStock > 0;
 
   const safeEmojiId = normalizeCustomEmojiId(product.customEmojiId);
 
@@ -56,8 +57,6 @@ export async function PremiumProductCallback(context: any, getEffectiveStock: an
 
   message += `<b>${productName}</b>\n\n`;
   if (productDescription) message += `${productDescription}\n\n`;
-
-  message += `${t("stock")} ${hasStock ? t("available") : t("outOfStock")}\n`;
 
   if (product.warrantyDays && product.warrantyDays > 0) {
     message += `\n${t("warrantyDays", { days: product.warrantyDays })}`;
@@ -86,7 +85,9 @@ export async function PremiumProductCallback(context: any, getEffectiveStock: an
     parse_mode: "HTML",
     reply_markup: backKeyboard(
       t,
-      product.categoryId != null ? `category_${product.categoryId}` : `categories`,
+      product.categoryId != null
+        ? `category_${product.categoryId}`
+        : `categories`,
     ),
   });
 }
