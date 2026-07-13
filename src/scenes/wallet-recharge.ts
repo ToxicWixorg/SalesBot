@@ -22,7 +22,12 @@ import {
 import { cancelKeyboard } from "../shared/keyboards/back.ts";
 import { topupManageKeyboard } from "../shared/keyboards/adminPanel/wallet.ts";
 import { emojiIds } from "../shared/locales/emojies.ts";
-import { formatUsd } from "../shared/utils/currency.ts";
+import {
+  formatPriceForUser,
+  formatToman,
+  formatUsd,
+  getCardTomanAmount,
+} from "../shared/utils/currency.ts";
 
 // ─────────────────────────────────────────────────────────
 // State Management
@@ -33,7 +38,14 @@ type RechargeMethod = "card" | "zarinpal" | "crypto";
 type RechargeState =
   | { step: "enter_amount" }
   | { step: "select_method"; amount: number }
-  | { step: "waiting_receipt"; amount: number }
+  | {
+      step: "waiting_receipt";
+      amount: number;
+      // Card-to-card is paid in Toman; snapshot the figure shown to the user and
+      // the rate used, so admin review matches exactly. `amount` stays USD.
+      tomanAmount: number;
+      usdtRate: number;
+    }
   | {
       step: "waiting_nowpayments";
       amount: number;
@@ -655,6 +667,8 @@ async function notifyAdmin(
 async function createPendingCardTopup(opts: {
   userId: number;
   amount: number;
+  tomanAmount: number;
+  usdtRate: number;
   receiptFileId: string;
 }) {
   const [topup] = await db
@@ -663,6 +677,8 @@ async function createPendingCardTopup(opts: {
       userId: opts.userId,
       amount: opts.amount.toString() as any,
       currency: "IRR",
+      tomanAmount: Math.round(opts.tomanAmount).toString() as any,
+      usdtRate: opts.usdtRate.toString() as any,
       receiptPath: `telegram-file-id:${opts.receiptFileId}`,
       status: "pending",
     })
@@ -691,16 +707,17 @@ async function notifyCardTopupToForum(
   const name =
     [opts.firstName, opts.lastName].filter(Boolean).join(" ") || "کاربر";
   const userLabel = opts.username ? `${name} (@${opts.username})` : name;
-  const amount = Number.parseFloat(
-    String(opts.topup.amount ?? "0"),
-  ).toLocaleString("en-US");
+  // Card-to-card is reviewed in Toman: show the Toman the user was told to pay.
+  const tomanAmount = formatToman(
+    opts.topup.tomanAmount ?? opts.topup.amount ?? "0",
+  );
   const fileId = opts.topup.receiptPath.replace(/^telegram-file-id:/, "");
 
   const caption =
     `🧾 <b>درخواست شارژ کیف پول #${opts.topup.id}</b>\n\n` +
     `👤 ${userLabel}\n` +
     `🆔 <code>${opts.topup.userId}</code>\n` +
-    `💵 مبلغ: <b>${amount}</b> تومان\n` +
+    `💵 مبلغ: <b>${tomanAmount}</b> تومان\n` +
     `💳 روش: کارت‌به‌کارت\n` +
     `⏰ ${new Date().toLocaleString("en-GB")}`;
 
@@ -788,6 +805,17 @@ export function setupWalletRechargeScene(bot: AnyBot) {
       return;
     }
 
+    // Card-to-card is a Toman transfer. Convert the canonical USD amount to Toman
+    // (snapshotting the rate) so the user pays — and the admin reviews — in Toman.
+    const converted = await getCardTomanAmount(state.amount);
+    if (!converted) {
+      await ctx.answerCallbackQuery({
+        text: t("rateUnavailable"),
+        show_alert: true,
+      });
+      return;
+    }
+
     let cardsText = "";
     for (const c of cards) {
       cardsText += `\n<code>${c.cardNumber}</code>\n👤 ${c.holderName}`;
@@ -798,11 +826,13 @@ export function setupWalletRechargeScene(bot: AnyBot) {
     rechargeState.set(userId, {
       step: "waiting_receipt",
       amount: state.amount,
+      tomanAmount: converted.toman,
+      usdtRate: converted.rate,
     });
 
     await ctx.editText(
       `${t("rechargeCardTitle")}\n\n` +
-        `${t("rechargeAmount", formatNum(state.amount))}\n\n` +
+        `${t("rechargeCardAmount", formatToman(converted.toman))}\n\n` +
         `💳 <b>${t("rechargeCardNumbers")}</b>\n${cardsText}\n` +
         `📸 ${t("rechargeCardSendReceipt")}`,
       {
@@ -1335,11 +1365,16 @@ export function setupWalletRechargeScene(bot: AnyBot) {
 
     const user = await UserRepository.findById(userId);
     const t = i18n.buildT(user?.languageCode || "fa");
-    const balance = user?.walletBalance ?? "0";
+    const balanceNum = Number.parseFloat(user?.walletBalance ?? "0");
+    const safeBalance = Number.isFinite(balanceNum) ? balanceNum : 0;
+    // fa users see the balance in Toman (Tetherland rate); others see USD.
+    const balanceLabel = (
+      await formatPriceForUser(user?.languageCode ?? undefined, safeBalance, t)
+    ).label;
 
     await ctx.editText(
-      `${t("walletTitle")}\n\n${t("walletBalance", balance)}` +
-        (balance === "0" ? `\n\n${t("walletEmpty")}` : ""),
+      `${t("walletTitle")}\n\n${t("walletBalance", balanceLabel)}` +
+        (safeBalance > 0 ? "" : `\n\n${t("walletEmpty")}`),
       {
         reply_markup: new InlineKeyboard()
           .text(t("btnRechargeWallet"), "wallet_recharge")
@@ -1547,6 +1582,8 @@ export function setupWalletRechargeScene(bot: AnyBot) {
         topup = await createPendingCardTopup({
           userId,
           amount: state.amount,
+          tomanAmount: state.tomanAmount,
+          usdtRate: state.usdtRate,
           receiptFileId: fileId,
         });
       } catch (err) {

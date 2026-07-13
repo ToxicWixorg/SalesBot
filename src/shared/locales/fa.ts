@@ -114,7 +114,7 @@ ${payload.ids}`,
 	duration_year: "سال",
 
 	walletTitle: `${e.wallet} کیف پول`,
-	walletBalance: (balance: string) => `موجودی: <b>$${balance}</b> ` + e.Toman,
+	walletBalance: (balance: string) => `موجودی: <b>${balance}</b> ` + e.Toman,
 	walletEmpty: `${e.wallet} کیف پولت فعلاً خالیه ${e.sparkles} شارژش کن و شروع کن!`,
 	btnRechargeWallet: ` شارژ کیف پول`,
 	btnTransactionHistory: ` تاریخچه تراکنش‌ها`,
@@ -206,11 +206,16 @@ ${payload.ids}`,
 	rechargeMethodSelectTitle: (amount: string) =>
 		`${e.wallet} مبلغ <b>$${amount}</b> ${e.Toman}\n\nروش پرداخت رو انتخاب کن:`,
 	rechargeCardNumbers: `شماره کارت‌ها`,
+	rechargeCardAmount: (toman: string) =>
+		`${e.wallet} مبلغ قابل پرداخت: <b>${toman}</b> تومان`,
+	rateUnavailable: `${e.reject} نرخ لحظه‌ای تتر در دسترس نیست. چند لحظه دیگه دوباره تلاش کن.`,
 	rechargeCardSendReceipt: `بعد از واریز مبلغ، رسید پرداخت (عکس) رو اینجا بفرست.`,
 	rechargeCardExpectPhoto: `${e.reject} لطفاً عکس رسید پرداخت رو بفرست (تصویر باشه نه متن).`,
 	rechargePendingApproval: `${e.checkBold} درخواستت ثبت شد!\n\n${e.time} منتظر تأیید ادمین باش — معمولاً زیر ۳۰ دقیقه.`,
 	rechargeApproved: (amount: string) =>
 		`${e.party} <b>شارژ تأیید شد!</b>\n\n${e.diamond} <b>$${amount}</b> به کیف پولت اضافه شد.`,
+	rechargeApprovedCard: (toman: string) =>
+		`${e.party} <b>شارژ تأیید شد!</b>\n\n${e.diamond} مبلغ <b>${toman}</b> تومان دریافت و کیف پولت شارژ شد.`,
 	walletAdminCredited: (amount: string, balance: string) =>
 		`${e.diamond} <b>$${amount}</b> به کیف پولت اضافه شد.\n${e.wallet} موجودی فعلی: <b>$${balance}</b>`,
 	walletAdminDebited: (amount: string, balance: string) =>

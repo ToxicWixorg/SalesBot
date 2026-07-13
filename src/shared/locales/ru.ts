@@ -102,7 +102,7 @@ export const ru = {
 
 	// Wallet
 	walletTitle: `${e.wallet} Кошелёк`,
-	walletBalance: (balance: string) => `Баланс: <b>$${balance}</b> ` + e.Toman,
+	walletBalance: (balance: string) => `Баланс: <b>${balance}</b> ` + e.Toman,
 	walletEmpty: `${e.wallet} Ваш кошелёк пуст ${e.sparkles} Пополните его и начните!`,
 	btnRechargeWallet: ` Пополнить кошелёк`,
 	btnTransactionHistory: ` История транзакций`,
@@ -239,11 +239,16 @@ export const ru = {
 	rechargeMethodSelectTitle: (amount: string) =>
 		`${e.wallet} Сумма <b>$${amount}</b> ${e.Toman}\n\nВыберите способ оплаты:`,
 	rechargeCardNumbers: `Номера карт`,
+	rechargeCardAmount: (toman: string) =>
+		`${e.wallet} Сумма к оплате: <b>${toman}</b> Toman`,
+	rateUnavailable: `${e.reject} Актуальный курс Tether недоступен. Попробуйте через минуту.`,
 	rechargeCardSendReceipt: `После перевода отправьте сюда фото чека оплаты.`,
 	rechargeCardExpectPhoto: `${e.reject} Пожалуйста, отправьте фото чека (изображение, не текст).`,
 	rechargePendingApproval: `${e.checkBold} Ваш запрос принят!\n\n${e.time} Дождитесь подтверждения админа — обычно до 30 минут.`,
 	rechargeApproved: (amount: string) =>
 		`${e.party} <b>Пополнение подтверждено!</b>\n\n${e.diamond} <b>$${amount}</b> добавлено в ваш кошелёк.`,
+	rechargeApprovedCard: (toman: string) =>
+		`${e.party} <b>Пополнение подтверждено!</b>\n\n${e.diamond} Получено <b>${toman}</b> Toman — кошелёк пополнен.`,
 	walletAdminCredited: (amount: string, balance: string) =>
 		`${e.diamond} <b>$${amount}</b> добавлено в ваш кошелёк.\n${e.wallet} Текущий баланс: <b>$${balance}</b>`,
 	walletAdminDebited: (amount: string, balance: string) =>

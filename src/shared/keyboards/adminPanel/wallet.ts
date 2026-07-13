@@ -26,7 +26,10 @@ export function topupsListKeyboard(
 	const keyboard = new InlineKeyboard();
 
 	for (const t of topups) {
-		const amount = Number.parseFloat(t.amount ?? "0").toLocaleString("en-US");
+		// Card-to-card list is shown in Toman (snapshot; fall back for legacy rows).
+		const amount = Number.parseFloat(
+			t.tomanAmount ?? t.amount ?? "0",
+		).toLocaleString("en-US");
 		keyboard.text(`#${t.id} — ${amount} تومان`, `wtopup_view_${t.id}`).row();
 	}
 

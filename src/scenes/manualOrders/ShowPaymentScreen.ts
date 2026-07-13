@@ -48,6 +48,7 @@ export async function showPaymentScreen(
     user.languageCode || "en",
     parseFloat(plan.price as string),
     t,
+    { showUsd: true },
   );
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
   const hasDiscount = pricing.hasDiscount;

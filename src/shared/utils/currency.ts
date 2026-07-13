@@ -24,6 +24,35 @@ export function formatUsd(amount: number | string | null | undefined): string {
 }
 
 /**
+ * Format a Toman amount as a grouped integer string (no unit), e.g. `1,500,000`.
+ * Append the "تومان" unit at the call site, matching existing card/admin copy.
+ */
+export function formatToman(
+	amount: number | string | null | undefined,
+): string {
+	const n =
+		typeof amount === "number"
+			? amount
+			: Number.parseFloat(String(amount ?? "0"));
+	return (Number.isFinite(n) ? Math.round(n) : 0).toLocaleString("en-US");
+}
+
+/**
+ * Card-to-card is a Toman-only transfer. Convert a canonical USD amount to the
+ * Toman figure the user must transfer, snapshotting the live Tetherland rate so
+ * the SAME amount can be shown to the user and later to the admin at review.
+ * Returns `null` when the rate is unavailable — callers MUST block the card flow
+ * in that case (we can't ask the user to pay an unknown Toman amount).
+ */
+export async function getCardTomanAmount(
+	usdAmount: number,
+): Promise<{ toman: number; rate: number } | null> {
+	const rate = await getUsdtRate();
+	if (rate === null || !(rate > 0)) return null;
+	return { toman: usdToTomanWithRate(usdAmount, rate), rate };
+}
+
+/**
  * Build a display label for a USD amount.
  * - Persian (`fa`) users see the price converted to Toman via the live
  *   Tetherland rate, with NO dollar figure (e.g. `1,500,000 تومان`). This is the
@@ -71,15 +100,18 @@ export function formatPriceLabel(
 }
 
 /**
- * Format a USD price for display to a user according to language.
- * Always USD-first; Persian users additionally get an approximate Toman value.
+ * Format a USD price for display to a user according to language, fetching the
+ * live Tetherland rate for fa users.
+ * - By default fa users see the Toman-only label (no dollar figure).
+ * - Pass `{ showUsd: true }` to keep the USD amount visible (USD-first + Toman
+ *   estimate) — used by the payment/renew screens.
  */
 export async function formatPriceForUser(
 	languageCode: string | undefined,
 	usdAmount: number,
 	t: TFunction,
+	options?: { showUsd?: boolean },
 ): Promise<PriceLabel> {
 	const rate = languageCode === "fa" ? await getUsdtRate() : null;
-	// Payment/renew screens keep the USD amount visible (USD-first + Toman est.).
-	return formatPriceLabel(languageCode, usdAmount, t, rate, { showUsd: true });
+	return formatPriceLabel(languageCode, usdAmount, t, rate, options);
 }

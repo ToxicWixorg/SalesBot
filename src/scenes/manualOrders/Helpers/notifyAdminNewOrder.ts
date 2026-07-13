@@ -6,7 +6,7 @@ import type {
 import { TicketService } from "../../../services/bot";
 import { getForumConfig } from "../../../services/forumConfig";
 import { i18n } from "../../../shared/locales";
-import { formatUsd } from "../../../shared/utils/currency";
+import { formatToman, formatUsd } from "../../../shared/utils/currency";
 
 export async function notifyAdminNewOrder(
 	bot: AnyBot,
@@ -18,6 +18,12 @@ export async function notifyAdminNewOrder(
 		productName: string;
 		planName: string;
 		finalPrice: number;
+		/**
+		 * For card-to-card ("card") orders: the Toman amount the user was told to
+		 * transfer. When present, the admin review shows Toman (card is a Toman
+		 * transfer); `finalPrice` remains the canonical USD amount.
+		 */
+		tomanAmount?: number;
 		/** Units purchased (manual products); shown when > 1 */
 		quantity?: number;
 		collected: Record<InfoStep, string>;
@@ -35,6 +41,12 @@ export async function notifyAdminNewOrder(
 		? `@${data.username}`
 		: data.firstName || "User";
 
+	// Card-to-card is verified in Toman; other methods keep the canonical USD.
+	const amountLabel =
+		data.paymentMethod === "card" && data.tomanAmount != null
+			? `${formatToman(data.tomanAmount)} تومان`
+			: formatUsd(data.finalPrice);
+
 	let description =
 		`🆔 Order: #${data.orderId}\n` +
 		`👤 User: ${userLabel} (${data.userId})\n` +
@@ -44,7 +56,7 @@ export async function notifyAdminNewOrder(
 			? `🔢 Quantity: ${data.quantity}\n`
 			: "") +
 		`🚚 Delivery: ${data.deliveryType}\n` +
-		`💰 Amount: ${formatUsd(data.finalPrice)}\n`;
+		`💰 Amount: ${amountLabel}\n`;
 
 	if (data.paymentMethod)
 		description += `${t("adminOrderPayment")}: ${data.paymentMethod}\n`;
@@ -98,7 +110,7 @@ export async function notifyAdminNewOrder(
 				`🎫 <b>Ticket:</b> <code>${ticket.ticketNumber}</code>\n` +
 				`🆔 <b>Order:</b> #${data.orderId}\n` +
 				`👤 <b>User:</b> ${userLabel} (<code>${data.userId}</code>)\n` +
-				`💰 <b>Amount:</b> ${formatUsd(data.finalPrice)}`;
+				`💰 <b>Amount:</b> ${amountLabel}`;
 			if (data.paymentHash)
 				caption += `\n🔗 <b>TxID/Ref:</b> <code>${data.paymentHash}</code>`;
 

@@ -88,6 +88,7 @@ export async function OrderRenewCallback(context: any) {
       user.languageCode,
       finalPrice,
       t,
+      { showUsd: true },
     );
 
     const summaryText =

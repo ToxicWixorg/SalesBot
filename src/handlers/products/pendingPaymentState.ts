@@ -9,6 +9,13 @@ export type PendingPaymentInfo = {
 	finalPrice: number;
 	/** User is in card-to-card flow and must send receipt photo */
 	awaitingCardReceipt?: boolean;
+	/**
+	 * Card-to-card is paid in Toman. Snapshot of the Toman figure shown to the
+	 * user for the card transfer and the USDT→Toman rate used, set when the card
+	 * screen is rendered. `finalPrice` stays the canonical USD amount.
+	 */
+	cardTomanAmount?: number;
+	cardUsdtRate?: number;
 	/** Telegram file id of uploaded card receipt photo */
 	cardReceiptFileId?: string;
 	/**

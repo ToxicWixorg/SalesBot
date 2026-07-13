@@ -19,6 +19,7 @@ import {
 import { ScheduleRepository } from "../../../repositories/ScheduleRepository";
 import { i18n } from "../../../shared/locales";
 import { emojiIds } from "../../../shared/locales/emojies";
+import { getCardTomanAmount } from "../../../shared/utils/currency.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 import { finishManualOrder } from "../Helpers/finishManualOrder";
 import { finishManualOrderWithSlot } from "../Helpers/finishManualOrderWithSlot";
@@ -107,12 +108,16 @@ async function createPendingOrderCardTopup(opts: {
 	userId: number;
 	orderId: number;
 	amount: number;
+	tomanAmount: number;
+	usdtRate: number;
 	receiptFileId: string;
 }) {
 	await db.insert(walletTopupsTable).values({
 		userId: opts.userId,
 		amount: opts.amount.toString() as any,
 		currency: "IRR",
+		tomanAmount: Math.round(opts.tomanAmount).toString() as any,
+		usdtRate: opts.usdtRate.toString() as any,
 		receiptPath: `telegram-file-id:${opts.receiptFileId}`,
 		status: "pending",
 		notes: `order_payment:${opts.orderId}`,
@@ -175,11 +180,28 @@ export function setupManualOrderScene(bot: AnyBot) {
 				return;
 			}
 
+			// Card-to-card is reviewed/paid in Toman. Prefer the snapshot taken when
+			// the card screen was shown; fall back to a fresh conversion if absent.
+			const cardConversion =
+				paymentState.cardTomanAmount != null &&
+				paymentState.cardUsdtRate != null
+					? {
+							toman: paymentState.cardTomanAmount,
+							rate: paymentState.cardUsdtRate,
+						}
+					: await getCardTomanAmount(result.finalPrice);
+			if (!cardConversion) {
+				await ctx.reply(t("rateUnavailable" as any), { parse_mode: "HTML" });
+				return;
+			}
+
 			try {
 				await createPendingOrderCardTopup({
 					userId,
 					orderId: result.orderId,
 					amount: result.finalPrice,
+					tomanAmount: cardConversion.toman,
+					usdtRate: cardConversion.rate,
 					receiptFileId,
 				});
 			} catch (err) {
@@ -201,6 +223,7 @@ export function setupManualOrderScene(bot: AnyBot) {
 				productName: result.productName,
 				planName: result.planName,
 				finalPrice: result.finalPrice,
+				tomanAmount: cardConversion.toman,
 				quantity: state.quantity,
 				collected: state.collected,
 				steps: state.steps,

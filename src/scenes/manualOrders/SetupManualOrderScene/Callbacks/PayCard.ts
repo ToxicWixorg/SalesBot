@@ -7,7 +7,10 @@ import { i18n } from "../../../../shared/locales";
 import { PaymentRepository } from "../../../../repositories/PaymentRepository";
 import { pendingOrderInfoState } from "../../../../handlers/products/pendingOrderInfoState";
 import { pendingPaymentState } from "../../../../handlers/products/pendingPaymentState";
-import { formatUsd } from "../../../../shared/utils/currency";
+import {
+  formatToman,
+  getCardTomanAmount,
+} from "../../../../shared/utils/currency";
 import { resolveOrderPricing } from "../../Helpers/orderPricing";
 
 export async function PayCardCallback(ctx: Context) {
@@ -46,8 +49,19 @@ export async function PayCardCallback(ctx: Context) {
     parseFloat((plan?.price as string) ?? "0"),
   ).totalFinal;
 
+  // Card-to-card is a Toman transfer — convert the canonical USD total to Toman
+  // (snapshotting the rate) so the user pays and the admin reviews in Toman.
+  const converted = await getCardTomanAmount(finalPrice);
+  if (!converted) {
+    await ctx.answerCallbackQuery({
+      text: t("rateUnavailable"),
+      show_alert: true,
+    });
+    return;
+  }
+
   // Build card instructions — show all active cards
-  let msg = `💳 <b>${t("paymentSummaryTitle" as any)}</b>\n\n💰 ${formatUsd(finalPrice)}\n\n`;
+  let msg = `💳 <b>${t("paymentSummaryTitle" as any)}</b>\n\n💰 ${formatToman(converted.toman)} تومان\n\n`;
   for (const card of cards) {
     msg += `🏦 ${card.bankName ?? ""} — ${card.holderName}\n`;
     msg += `<code>${card.cardNumber}</code>\n\n`;
@@ -58,6 +72,8 @@ export async function PayCardCallback(ctx: Context) {
     planId: state.planId,
     finalPrice,
     awaitingCardReceipt: true,
+    cardTomanAmount: converted.toman,
+    cardUsdtRate: converted.rate,
   });
 
   await ctx.editText(msg, {

@@ -218,6 +218,13 @@
       "when": 1783889317635,
       "tag": "0030_add_referral_reward_amount",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1783954312818,
+      "tag": "0031_tiny_killmonger",
+      "breakpoints": true
     }
   ]
 }

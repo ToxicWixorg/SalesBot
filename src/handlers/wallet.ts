@@ -3,7 +3,7 @@ import { UserRepository } from "../repositories/UserRepository.ts";
 import { WalletRepository } from "../repositories/WalletRepository.ts";
 import { i18n } from "../shared/locales/index.ts";
 import { walletKeyboard, walletHistoryKeyboard } from "../shared/keyboards";
-import { formatUsd } from "../shared/utils/currency.ts";
+import { formatPriceForUser, formatUsd } from "../shared/utils/currency.ts";
 
 export function setupWalletHandlers(bot: AnyBot) {
   // ── نمایش کیف پول ────────────────────────────────────
@@ -22,11 +22,15 @@ export function setupWalletHandlers(bot: AnyBot) {
 
     const rawBalance = user.walletBalance || "0";
     const balanceNum = Number.parseFloat(rawBalance);
-    const balance = (Number.isFinite(balanceNum) ? balanceNum : 0).toFixed(2);
-    const isEmpty = !(balanceNum > 0);
+    const safeBalance = Number.isFinite(balanceNum) ? balanceNum : 0;
+    const isEmpty = !(safeBalance > 0);
+    // fa users see the balance in Toman (Tetherland rate); others see USD.
+    const balanceLabel = (
+      await formatPriceForUser(user.languageCode ?? undefined, safeBalance, t)
+    ).label;
 
     await ctx.editText(
-      `${t("walletTitle")}\n\n${t("walletBalance", balance)}` +
+      `${t("walletTitle")}\n\n${t("walletBalance", balanceLabel)}` +
         (isEmpty ? `\n\n${t("walletEmpty")}` : ""),
       { reply_markup: walletKeyboard(t), parse_mode: "HTML" },
     );

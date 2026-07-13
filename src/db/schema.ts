@@ -372,8 +372,13 @@ export const walletTopupsTable = pgTable(
 		userId: bigint("user_id", { mode: "number" })
 			.notNull()
 			.references(() => usersTable.id, { onDelete: "cascade" }),
-		amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+		amount: decimal("amount", { precision: 15, scale: 2 }).notNull(), // canonical USD (credited on approval)
 		currency: text("currency").default("IRR"),
+		// Card-to-card is paid in Toman. Snapshot the Toman figure the user was told
+		// to transfer + the USDT→Toman rate at that moment, so admin review shows the
+		// exact amount the user paid. `amount` (USD) is still what gets credited.
+		tomanAmount: decimal("toman_amount", { precision: 15, scale: 0 }),
+		usdtRate: decimal("usdt_rate", { precision: 15, scale: 2 }),
 		receiptPath: text("receipt_path").notNull(), // telegram file id / local path / URL
 		status: text("status").default("pending"), // pending | approved | rejected
 		notes: text("notes"),

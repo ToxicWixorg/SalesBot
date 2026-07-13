@@ -140,11 +140,13 @@ export function setupAdminWalletHandlers(bot: AnyBot) {
 			? `\n🛒 مربوط به سفارش #${topup.notes.split(":")[1]}`
 			: "";
 
+		// Card-to-card is reviewed in Toman: show the snapshotted Toman amount
+		// (fall back to the stored value for legacy rows without a snapshot).
 		const caption =
 			`🧾 <b>درخواست شارژ #${topup.id}</b>\n\n` +
 			`👤 ${userLabel}\n` +
 			`🆔 <code>${topup.userId}</code>\n` +
-			`💵 مبلغ: <b>${formatMoney(topup.amount)}</b> تومان\n` +
+			`💵 مبلغ: <b>${formatMoney(topup.tomanAmount ?? topup.amount)}</b> تومان\n` +
 			`📅 ${shortDate(topup.createdAt)}${orderNote}`;
 
 		const fileId = topup.receiptPath.replace(/^telegram-file-id:/, "");
@@ -183,7 +185,10 @@ export function setupAdminWalletHandlers(bot: AnyBot) {
 		}
 
 		const targetId = Number(topup.userId);
+		// The confirmed amount is stored/credited in USD (canonical). The Toman
+		// snapshot is display-only, for the Toman-denominated card review.
 		const amount = Number.parseFloat(topup.amount ?? "0");
+		const tomanDisplay = formatMoney(topup.tomanAmount ?? topup.amount);
 
 		await UserRepository.updateWalletBalance(targetId, amount, "add");
 		await WalletRepository.addCredit(
@@ -202,7 +207,9 @@ export function setupAdminWalletHandlers(bot: AnyBot) {
 			try {
 				await (bot.api as any).sendMessage({
 					chat_id: targetId,
-					text: t("rechargeApproved", formatMoney(amount)),
+					text: topup.tomanAmount
+						? t("rechargeApprovedCard", tomanDisplay)
+						: t("rechargeApproved", formatMoney(amount)),
 					parse_mode: "HTML",
 					reply_markup: new InlineKeyboard().text(t("btnWallet"), "wallet"),
 				});
@@ -210,7 +217,7 @@ export function setupAdminWalletHandlers(bot: AnyBot) {
 		}
 
 		await ctx.answerCallbackQuery({
-			text: `✅ ${formatMoney(amount)} تومان شارژ شد.`,
+			text: `✅ ${tomanDisplay} تومان تأیید شد.`,
 			show_alert: true,
 		});
 		await renderPending(bot, ctx, 0);

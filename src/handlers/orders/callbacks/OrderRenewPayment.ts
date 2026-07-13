@@ -17,7 +17,11 @@ import { i18n } from "../../../shared/locales/index.ts";
 import { renewalPendingState } from "../renewState.ts";
 import { emojiIds } from "../../../shared/locales/emojies.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
-import { formatUsd } from "../../../shared/utils/currency.ts";
+import {
+  formatToman,
+  formatUsd,
+  getCardTomanAmount,
+} from "../../../shared/utils/currency.ts";
 import { getUsdtRate } from "../../../services/tetherland/index.ts";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -71,6 +75,8 @@ async function notifyAdminRenewal(
     productName: string;
     planName: string;
     finalPrice: number;
+    /** Toman figure for card-to-card renewals; admin reviews card in Toman. */
+    tomanAmount?: number;
     paymentMethod: string;
     delivery: Record<string, string>;
   },
@@ -82,12 +88,18 @@ async function notifyAdminRenewal(
     .map(([k, v]) => `• ${k}: ${v}`)
     .join("\n");
 
+  // Card-to-card is verified in Toman; other methods keep the canonical USD.
+  const amountLabel =
+    data.paymentMethod === "card" && data.tomanAmount != null
+      ? `${formatToman(data.tomanAmount)} تومان`
+      : formatUsd(data.finalPrice);
+
   const description =
     `🔄 Renewal of Order #${data.originalOrderId}\n\n` +
     `👤 User: ${userLabel} (${data.userId})\n` +
     `📦 Product: ${data.productName}\n` +
     `📋 Plan: ${data.planName}\n` +
-    `💰 Amount: ${formatUsd(data.finalPrice)}\n` +
+    `💰 Amount: ${amountLabel}\n` +
     `💳 Payment: ${data.paymentMethod}\n` +
     (deliveryLines ? `\n📋 Delivery Info:\n${deliveryLines}` : "") +
     `\n\n⏰ ${new Date().toLocaleString("en-GB")}`;
@@ -231,7 +243,23 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       return;
     }
 
-    let msg = `💳 <b>${t("rechargeCardTitle")}</b>\n\n💰 ${formatUsd(info.finalPrice)}\n\n`;
+    // Card-to-card is a Toman transfer — convert the canonical USD renewal price
+    // to Toman (snapshotting the rate) for both display and admin review.
+    const converted = await getCardTomanAmount(info.finalPrice);
+    if (!converted) {
+      await ctx.answerCallbackQuery({
+        text: t("rateUnavailable"),
+        show_alert: true,
+      });
+      return;
+    }
+    renewalPendingState.set(userId, {
+      ...info,
+      cardTomanAmount: converted.toman,
+      cardUsdtRate: converted.rate,
+    });
+
+    let msg = `💳 <b>${t("rechargeCardTitle")}</b>\n\n💰 ${formatToman(converted.toman)} تومان\n\n`;
     for (const card of cards) {
       msg += `🏦 ${card.bankName ?? ""} — ${card.holderName}\n`;
       msg += `<code>${card.cardNumber}</code>\n\n`;
@@ -280,6 +308,12 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
     const productName = getLocalizedName(result.product, user?.languageCode);
     const planName = getLocalizedName(result.plan, user?.languageCode);
 
+    // Prefer the Toman snapshot taken on the card screen; recompute if missing.
+    const cardConversion =
+      info.cardTomanAmount != null && info.cardUsdtRate != null
+        ? { toman: info.cardTomanAmount, rate: info.cardUsdtRate }
+        : await getCardTomanAmount(info.finalPrice);
+
     renewalPendingState.delete(userId);
 
     await notifyAdminRenewal(bot, {
@@ -291,6 +325,7 @@ export function setupRenewalPaymentCallbacks(bot: AnyBot) {
       productName,
       planName,
       finalPrice: info.finalPrice,
+      tomanAmount: cardConversion?.toman,
       paymentMethod: "card",
       delivery: info.delivery,
     });

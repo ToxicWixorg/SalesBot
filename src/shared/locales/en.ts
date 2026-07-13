@@ -110,7 +110,7 @@ export const en = {
 	duration_year: "Year",
 
 	walletTitle: `${e.wallet} Wallet`,
-	walletBalance: (balance: string) => `Balance: <b>$${balance}</b> ` + e.Toman,
+	walletBalance: (balance: string) => `Balance: <b>${balance}</b> ` + e.Toman,
 	walletEmpty: `${e.wallet} Your wallet is currently empty ${e.sparkles} Top it up and get started!`,
 	btnRechargeWallet: ` Top Up Wallet`,
 	btnTransactionHistory: ` Transaction History`,
@@ -202,11 +202,16 @@ export const en = {
 	rechargeMethodSelectTitle: (amount: string) =>
 		`${e.wallet} Amount <b>$${amount}</b> ${e.Toman}\n\nSelect a payment method:`,
 	rechargeCardNumbers: `Card Numbers`,
+	rechargeCardAmount: (toman: string) =>
+		`${e.wallet} Amount to pay: <b>${toman}</b> Toman`,
+	rateUnavailable: `${e.reject} The live Tether rate is unavailable. Please try again in a moment.`,
 	rechargeCardSendReceipt: `After transferring the amount, send your payment receipt image here.`,
 	rechargeCardExpectPhoto: `${e.reject} Please send a photo of the payment receipt (image only, not text).`,
 	rechargePendingApproval: `${e.checkBold} Your request has been registered!\n\n${e.time} Please wait for admin approval — usually under 30 minutes.`,
 	rechargeApproved: (amount: string) =>
 		`${e.party} <b>Top-up approved!</b>\n\n${e.diamond} <b>$${amount}</b> has been added to your wallet.`,
+	rechargeApprovedCard: (toman: string) =>
+		`${e.party} <b>Top-up approved!</b>\n\n${e.diamond} <b>${toman}</b> Toman received — your wallet has been topped up.`,
 	walletAdminCredited: (amount: string, balance: string) =>
 		`${e.diamond} <b>$${amount}</b> has been added to your wallet.\n${e.wallet} Current balance: <b>$${balance}</b>`,
 	walletAdminDebited: (amount: string, balance: string) =>

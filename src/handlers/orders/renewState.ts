@@ -8,6 +8,12 @@ export interface RenewalPendingInfo {
   productId: number;
   /** Final renewal price in USD */
   finalPrice: number;
+  /**
+   * Card-to-card renewal is paid in Toman. Snapshot of the Toman figure shown on
+   * the card screen and the USDT→Toman rate used. `finalPrice` stays USD.
+   */
+  cardTomanAmount?: number;
+  cardUsdtRate?: number;
   delivery: Record<string, string>;
   zarinpalAuthority?: string;
   zarinpalPayUrl?: string;
