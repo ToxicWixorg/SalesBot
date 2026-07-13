@@ -81,7 +81,37 @@ install_prereqs() {
     else
         ok "Docker Compose already installed: $(docker-compose --version)"
     fi
-    
+
+    # pg_dump is required by the in-bot database backup feature (BackupService).
+    # It runs on the HOST (bot runs via PM2/Bun), so the client must be on the
+    # host — not inside the Postgres container. The DB is Postgres 16, and
+    # pg_dump refuses to dump a newer server, so we need client >= 16 from PGDG.
+    need_pgclient=1
+    if command -v pg_dump &> /dev/null; then
+        pg_major=$(pg_dump --version | grep -oE '[0-9]+' | head -1)
+        if [[ -n "$pg_major" && "$pg_major" -ge 16 ]]; then
+            need_pgclient=0
+            ok "pg_dump already installed: $(pg_dump --version)"
+        else
+            info "pg_dump found but too old (v$pg_major); backups need v16+."
+        fi
+    fi
+    if [[ "$need_pgclient" -eq 1 ]]; then
+        info "Installing PostgreSQL 16 client (pg_dump) for database backups..."
+        apt-get install -y curl ca-certificates gnupg
+        install -d /usr/share/postgresql-common/pgdg
+        curl -fsSL -o /etc/apt/trusted.gpg.d/pgdg.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+        echo "deb http://apt.postgresql.org/pub/repos/apt $(. /etc/os-release && echo "$VERSION_CODENAME")-pgdg main" \
+            > /etc/apt/sources.list.d/pgdg.list
+        apt-get update
+        apt-get install -y postgresql-client-16
+        if command -v pg_dump &> /dev/null; then
+            ok "pg_dump installed: $(pg_dump --version)"
+        else
+            err "Failed to install pg_dump — database backups will not work."
+        fi
+    fi
+
     ok "Prerequisites installed successfully."
     sleep 2
 }
@@ -110,9 +140,9 @@ install_bot() {
         info "Creating .env file..."
         cat > .env << 'EOF'
 BOT_TOKEN=
-DATABASE_URL="postgresql://bot:991fa522db6ddb9935c7d9b1@localhost:5433/bot"
+DATABASE_URL="postgresql://bot:991fa522db6ddb9935c7d9b1@localhost:5432/bot"
 REDIS_HOST=localhost
-REDIS_PORT=6380
+REDIS_PORT=6379
 
 # Support Forum Group (Telegram Forum/Supergroup ID)
 SUPPORT_GROUP_ID=

@@ -43,6 +43,15 @@ export async function PayCardCallback(ctx: Context) {
   }
 
   const plan = await ProductPlanRepository.findById(state.planId);
+  // Scheduled products are wallet-only (their slot picker runs on the wallet
+  // path). Guard against a stale card button from an old payment screen.
+  if (plan?.deliveryType === "custom_schedule") {
+    await ctx.answerCallbackQuery({
+      text: "⛔ این محصول زمان‌بندی‌شده است و فقط با کیف پول قابل پرداخت است.",
+      show_alert: true,
+    });
+    return;
+  }
   const finalPrice = resolveOrderPricing(
     userId,
     state,

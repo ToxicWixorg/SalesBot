@@ -37,6 +37,9 @@ export async function PayCryptoCallback(ctx: any) {
 	}
 
 	const plan = await ProductPlanRepository.findById(state.planId);
+	// Scheduled products are wallet-only — the payment keyboard hides this method
+	// for them, so no scheduled order can reach here.
+	if (plan?.deliveryType === "custom_schedule") return;
 	const finalPrice = resolveOrderPricing(
 		userId,
 		state,

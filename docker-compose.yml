@@ -1,21 +1,8 @@
+# The bot itself runs on the host via PM2/Bun (see manager.sh + ecosystem.config.cjs).
+# Docker only provides the datastores (Postgres + Redis). Do NOT add a "bot"
+# service here — running it in Docker AND under PM2 would start two instances on
+# the same token and Telegram would return 409 Conflict.
 services:
-  bot:
-    container_name: bot-bot
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=production
-    env_file:
-      - path: ./.env
-        required: false
-      - path: ./.env.production
-        required: false
-    depends_on:
-      - postgres
-      - redis
-
   postgres:
     container_name: bot-postgres
     image: postgres:16-alpine

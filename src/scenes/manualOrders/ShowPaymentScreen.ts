@@ -93,6 +93,7 @@ export async function showPaymentScreen(
         walletBalance,
         finalPrice,
         languageCode: user.languageCode || "en",
+        deliveryType: plan.deliveryType,
       }),
     },
   );

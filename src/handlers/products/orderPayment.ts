@@ -33,6 +33,14 @@ export type PaymentKeyboardOptions = {
 	walletBalance: number;
 	finalPrice: number;
 	languageCode?: string;
+	/**
+	 * Plan delivery type. Scheduled (`custom_schedule`) orders must be paid from
+	 * the wallet: their time-slot picker only runs on the wallet path, so the
+	 * receipt-based methods (card / ZarinPal / crypto) are hidden to avoid an
+	 * order that can never get its slot. Users can top up the wallet via
+	 * card-to-card first, then pay.
+	 */
+	deliveryType?: string | null;
 };
 
 /**
@@ -92,6 +100,8 @@ export function paymentKeyboard(
 	const kb = new InlineKeyboard();
 	const canPayWallet = opts.walletBalance >= opts.finalPrice;
 	const isPersian = opts.languageCode === "fa";
+	// Scheduled products are wallet-only (see PaymentKeyboardOptions.deliveryType).
+	const walletOnly = opts.deliveryType === "custom_schedule";
 
 	if (canPayWallet) {
 		kb.text(t("btnPayWallet"), `pay_wallet_${planId}`, {
@@ -100,7 +110,12 @@ export function paymentKeyboard(
 		}).row();
 	}
 
-	if (isPersian && opts.settings?.cardEnabled && opts.cards.length > 0) {
+	if (
+		!walletOnly &&
+		isPersian &&
+		opts.settings?.cardEnabled &&
+		opts.cards.length > 0
+	) {
 		kb.text(t("btnPayCard"), `pay_card_${planId}`, {
 			icon_custom_emoji_id: emojiIds.card,
 			style: "success",
@@ -108,6 +123,7 @@ export function paymentKeyboard(
 	}
 
 	if (
+		!walletOnly &&
 		isPersian &&
 		opts.settings?.zarinpalEnabled &&
 		opts.settings.zarinpalMerchantId
@@ -119,6 +135,7 @@ export function paymentKeyboard(
 	}
 
 	if (
+		!walletOnly &&
 		opts.settings?.nowpaymentsEnabled &&
 		opts.settings.cryptoAddress?.trim()
 	) {

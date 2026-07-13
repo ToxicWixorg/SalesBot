@@ -1,4 +1,4 @@
-import { count, desc, eq, sql } from "drizzle-orm";
+import { and, count, desc, eq, sql } from "drizzle-orm";
 import { db } from "../db/index.ts";
 import {
 	usersTable,
@@ -7,6 +7,14 @@ import {
 	walletTopupsTable,
 	walletTransactionsTable,
 } from "../db/schema.ts";
+
+/**
+ * Topups created to pay for a specific order carry `notes: "order_payment:<id>"`.
+ * Those are NOT wallet recharges — they must be handled from the Orders panel and
+ * must never appear in (or be counted by) the wallet "recharge requests" section.
+ * This condition keeps the wallet admin views to genuine recharges only.
+ */
+const isRechargeTopup = sql`(${walletTopupsTable.notes} IS NULL OR ${walletTopupsTable.notes} NOT LIKE 'order_payment:%')`;
 
 /**
  * WalletTopupRepository — مدیریت درخواست‌های شارژ کارت‌به‌کارت (در انتظار تأیید) و آمار کیف پول.
@@ -20,7 +28,7 @@ export class WalletTopupRepository {
 		return db
 			.select()
 			.from(walletTopupsTable)
-			.where(eq(walletTopupsTable.status, "pending"))
+			.where(and(eq(walletTopupsTable.status, "pending"), isRechargeTopup))
 			.orderBy(desc(walletTopupsTable.createdAt))
 			.limit(limit)
 			.offset(offset);
@@ -30,7 +38,7 @@ export class WalletTopupRepository {
 		const [r] = await db
 			.select({ c: count() })
 			.from(walletTopupsTable)
-			.where(eq(walletTopupsTable.status, status));
+			.where(and(eq(walletTopupsTable.status, status), isRechargeTopup));
 		return r?.c ?? 0;
 	}
 
@@ -75,7 +83,7 @@ export class WalletTopupRepository {
 				s: sql<string>`coalesce(sum(${walletTopupsTable.amount}::numeric), 0)`,
 			})
 			.from(walletTopupsTable)
-			.where(eq(walletTopupsTable.status, status));
+			.where(and(eq(walletTopupsTable.status, status), isRechargeTopup));
 		return Number.parseFloat(r?.s ?? "0");
 	}
 
