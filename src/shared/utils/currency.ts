@@ -25,16 +25,23 @@ export function formatUsd(amount: number | string | null | undefined): string {
 
 /**
  * Build a display label for a USD amount.
- * - Persian (`fa`) users additionally see an approximate Toman value in parens
- *   (e.g. `$5.00 (≈ 1,500,000 تومان)`) when the live rate is available.
- * - Other languages see the plain USD label.
- * The dollar value is always the source of truth; Toman is a courtesy estimate.
+ * - Persian (`fa`) users see the price converted to Toman via the live
+ *   Tetherland rate, with NO dollar figure (e.g. `1,500,000 تومان`). This is the
+ *   product price display shown to fa users.
+ * - When `options.showUsd` is set, fa users instead see the dollar value first
+ *   with the Toman value in parens (e.g. `$5.00 (≈ 1,500,000 تومان)`). Used by
+ *   the payment/renew screens where the USD amount must stay visible.
+ * - Other languages always see the plain USD label.
+ * - If the live rate is unavailable for a fa user, we fall back to the USD label
+ *   (a degraded state; Toman cannot be computed without a rate).
+ * The dollar value is always the source of truth; Toman is a display estimate.
  */
 export function formatPriceLabel(
 	languageCode: string | undefined,
 	usdAmount: number,
 	t: TFunction,
 	usdtRate: number | null | undefined,
+	options?: { showUsd?: boolean },
 ): PriceLabel {
 	const usdLabel = formatUsd(usdAmount);
 
@@ -48,8 +55,17 @@ export function formatPriceLabel(
 
 	if (approxToman === null) return { label: usdLabel };
 
+	if (options?.showUsd) {
+		return {
+			label: `${usdLabel} (≈ ${approxToman.toLocaleString()} ${t("currency")})`,
+			toman: approxToman,
+		};
+	}
+
+	// fa product display: Toman only, no dollar figure. This branch is fa-only,
+	// so the Toman unit word is literal (t("currency") is "دلار" post USD-migration).
 	return {
-		label: `${usdLabel} (≈ ${approxToman.toLocaleString()} ${t("currency")})`,
+		label: `${approxToman.toLocaleString()} تومان`,
 		toman: approxToman,
 	};
 }
@@ -64,5 +80,6 @@ export async function formatPriceForUser(
 	t: TFunction,
 ): Promise<PriceLabel> {
 	const rate = languageCode === "fa" ? await getUsdtRate() : null;
-	return formatPriceLabel(languageCode, usdAmount, t, rate);
+	// Payment/renew screens keep the USD amount visible (USD-first + Toman est.).
+	return formatPriceLabel(languageCode, usdAmount, t, rate, { showUsd: true });
 }

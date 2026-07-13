@@ -12,7 +12,8 @@ import {
 import { PaymentRepository } from "../../repositories/PaymentRepository";
 import { i18n } from "../../shared/locales";
 import { getLocalizedName } from "../../shared/utils/localizedFields";
-import { formatPriceForUser } from "../../shared/utils/currency";
+import { formatPriceForUser, formatUsd } from "../../shared/utils/currency";
+import { resolveOrderPricing } from "./Helpers/orderPricing";
 
 export async function showPaymentScreen(
   sendFn: (text: string, opts?: any) => Promise<any>,
@@ -29,22 +30,31 @@ export async function showPaymentScreen(
   if (!product) return;
 
   // Both `state.regionPrice` and the plan base price are stored in USD.
-  // Resolve the base USD price once here and cache it for downstream handlers.
-  const originalPrice =
+  // Resolve the per-unit base USD price once here and cache it for downstream
+  // handlers (they read `basePriceUsd` as the per-unit price).
+  const unitOriginal =
     state.regionPrice ?? parseFloat(plan.price as string);
-  state.basePriceUsd = originalPrice;
+  state.basePriceUsd = unitOriginal;
+
+  // Quantity-aware totals — single source of truth shared with every pay path.
+  const pricing = resolveOrderPricing(
+    userId,
+    state,
+    parseFloat(plan.price as string),
+  );
+  const quantity = pricing.quantity;
+
   const priceInfo = await formatPriceForUser(
     user.languageCode || "en",
     parseFloat(plan.price as string),
     t,
   );
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
-  const hasDiscount =
-    pendingDiscount !== undefined && pendingDiscount.planId === state.planId;
+  const hasDiscount = pricing.hasDiscount;
   const productName = getLocalizedName(product, user.languageCode);
   const planName = getLocalizedName(plan, user.languageCode);
 
-  const finalPrice = hasDiscount ? pendingDiscount.finalPrice : originalPrice;
+  const finalPrice = pricing.totalFinal;
   const walletBalance = parseFloat(user.walletBalance ?? "0");
 
   // Fetch payment settings and active cards for dynamic keyboard
@@ -62,10 +72,13 @@ export async function showPaymentScreen(
       duration: plan.duration,
       durationUnit: plan.durationUnit,
       collected: state.collected,
-      originalPrice,
-      originalPriceLabel: priceInfo.label,
-      discountCode: hasDiscount ? pendingDiscount.code : undefined,
-      discountAmount: hasDiscount ? pendingDiscount.discountAmount : undefined,
+      quantity,
+      unitPriceLabel: priceInfo.label,
+      originalPrice: pricing.totalOriginal,
+      originalPriceLabel:
+        quantity > 1 ? formatUsd(pricing.totalOriginal) : priceInfo.label,
+      discountCode: hasDiscount ? pendingDiscount!.code : undefined,
+      discountAmount: hasDiscount ? pricing.totalDiscount : undefined,
       finalPrice,
       walletBalance,
     }),

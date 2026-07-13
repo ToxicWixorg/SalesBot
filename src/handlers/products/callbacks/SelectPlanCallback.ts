@@ -16,10 +16,7 @@ import {
 import { regionSelectionKeyboard } from "../../../shared/keyboards/products/regionSelect.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 import { getUsdtRate } from "../../../services/tetherland/index.ts";
-import {
-  formatPriceLabel,
-  formatUsd,
-} from "../../../shared/utils/currency.ts";
+import { formatPriceLabel } from "../../../shared/utils/currency.ts";
 
 export async function SelectPlanCallback(context: Context<any>) {
   if (!context.from || !context.queryData) return;
@@ -93,7 +90,8 @@ export async function SelectPlanCallback(context: Context<any>) {
         productName,
         qty,
         unitPrice: priceInfo.label,
-        total: formatUsd(finalTotal),
+        total: formatPriceLabel(user.languageCode, finalTotal, t, usdtRate)
+          .label,
         currency: "",
       }),
       {

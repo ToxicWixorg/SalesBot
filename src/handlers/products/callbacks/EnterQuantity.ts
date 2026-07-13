@@ -103,7 +103,8 @@ export function setupEnterQuantityHandler(bot: AnyBot): void {
         productName,
         qty,
         unitPrice: priceInfo.label,
-        total: formatUsd(finalTotal),
+        total: formatPriceLabel(user?.languageCode, finalTotal, t, usdtRate)
+          .label,
         currency: "",
       }),
       {

@@ -12,6 +12,7 @@ import {
 import { i18n } from "../../../shared/locales";
 import { emojiIds } from "../../../shared/locales/emojies";
 import { notifyAdminNewOrder } from "./notifyAdminNewOrder";
+import { resolveOrderPricing } from "./orderPricing";
 
 export async function finishManualOrder(
   bot: AnyBot,
@@ -37,19 +38,17 @@ export async function finishManualOrder(
     return;
   }
 
-  // USD base price resolved on the payment screen.
-  const originalPrice =
-    state.basePriceUsd ??
-    state.regionPrice ??
-    parseFloat(plan.price as string);
-
-  // Re-check discount state (or use forwarded discount)
+  // Quantity-aware totals (USD). `basePriceUsd` was resolved on the payment
+  // screen; the pricing helper scales the per-unit discount by quantity.
+  const pricing = resolveOrderPricing(
+    userId,
+    state,
+    parseFloat(plan.price as string),
+  );
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
-  const hasDiscount =
-    pendingDiscount !== undefined && pendingDiscount.planId === state.planId;
-
-  const discountAmount = hasDiscount ? pendingDiscount.discountAmount : 0;
-  const finalPrice = hasDiscount ? pendingDiscount.finalPrice : originalPrice;
+  const hasDiscount = pricing.hasDiscount;
+  const discountAmount = pricing.totalDiscount;
+  const finalPrice = pricing.totalFinal;
 
   // Re-validate wallet balance
   const freshUser = await UserRepository.findById(userId);
@@ -86,8 +85,8 @@ export async function finishManualOrder(
     productId: plan.productId,
     planId: plan.id,
     status: "pending_admin",
-    quantity: 1,
-    totalPrice: originalPrice.toFixed(2) as any,
+    quantity: pricing.quantity,
+    totalPrice: pricing.totalOriginal.toFixed(2) as any,
     discountAmount: discountAmount.toFixed(2) as any,
     walletUsed: finalPrice.toFixed(2) as any,
     finalPrice: finalPrice.toFixed(2) as any,
@@ -121,13 +120,13 @@ export async function finishManualOrder(
     `خرید ${productName} - ${planName}`,
   );
 
-  // Record discount usage
+  // Record discount usage (total across all units)
   if (hasDiscount && pendingDiscount) {
     await DiscountCodeRepository.recordUsage(
       pendingDiscount.discountCodeId,
       userId,
       order.id,
-      pendingDiscount.discountAmount,
+      discountAmount,
     );
     appliedDiscountState.delete(userId);
   }
@@ -145,6 +144,7 @@ export async function finishManualOrder(
     productName: productName,
     planName: planName,
     finalPrice,
+    quantity: pricing.quantity,
     collected: state.collected,
     steps: state.steps,
     deliveryType: plan.deliveryType,

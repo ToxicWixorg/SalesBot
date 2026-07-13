@@ -4,11 +4,11 @@ import {
   UserRepository,
 } from "../../../../repositories";
 import { i18n } from "../../../../shared/locales";
-import { appliedDiscountState } from "../../../../handlers/products/discountOrderState";
 import { PaymentRepository } from "../../../../repositories/PaymentRepository";
 import { pendingOrderInfoState } from "../../../../handlers/products/pendingOrderInfoState";
 import { pendingPaymentState } from "../../../../handlers/products/pendingPaymentState";
 import { formatUsd } from "../../../../shared/utils/currency";
+import { resolveOrderPricing } from "../../Helpers/orderPricing";
 
 export async function PayCardCallback(ctx: Context) {
   const userId = ctx.from?.id;
@@ -40,14 +40,11 @@ export async function PayCardCallback(ctx: Context) {
   }
 
   const plan = await ProductPlanRepository.findById(state.planId);
-  const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
-  const hasDiscount =
-    pendingDiscount && pendingDiscount.planId === state.planId;
-  const finalPrice = hasDiscount
-    ? pendingDiscount.finalPrice
-    : (state.basePriceUsd ??
-      state.regionPrice ??
-      parseFloat((plan?.price as string) ?? "0"));
+  const finalPrice = resolveOrderPricing(
+    userId,
+    state,
+    parseFloat((plan?.price as string) ?? "0"),
+  ).totalFinal;
 
   // Build card instructions — show all active cards
   let msg = `💳 <b>${t("paymentSummaryTitle" as any)}</b>\n\n💰 ${formatUsd(finalPrice)}\n\n`;

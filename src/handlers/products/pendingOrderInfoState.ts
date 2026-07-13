@@ -24,8 +24,10 @@ export type RequiredInputField = {
  *  "payment" → "info" → "review" → "day" → "slot" → done
  *
  * Phases for non-scheduled products:
- *  "info" → "review" → "payment" → done
+ *  "quantity" → "info" → "review" → "payment" → done
+ *  (manual products ask "quantity" first; other types skip it)
  *
+ *  - "quantity" → asking how many units (manual products only)
  *  - "payment" → choosing payment method and paying
  *  - "info"    → collecting required info (email, password, region, …)
  *  - "review"  → showing collected info for confirmation
@@ -35,10 +37,15 @@ export type RequiredInputField = {
 export type PendingOrderInfo = {
   planId: number;
   deliveryType: string;
-  phase: "info" | "review" | "payment" | "day" | "slot";
+  phase: "quantity" | "info" | "review" | "payment" | "day" | "slot";
   steps: RequiredInputField[];
   currentStep: number;
   collected: Record<InfoStep, string>;
+  /**
+   * How many units of a manual product the user is buying. Asked before info
+   * collection / payment for `manual` delivery; defaults to 1 elsewhere.
+   */
+  quantity?: number;
   /** Discount already validated and waiting to be applied */
   discount?: AppliedDiscount;
   /** Price override (USD) when the user selected a region with its own price */
