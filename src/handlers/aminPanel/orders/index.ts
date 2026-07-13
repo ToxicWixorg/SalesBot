@@ -5,6 +5,7 @@ import {
 	ProductRepository,
 	ProductPlanRepository,
 	UserRepository,
+	WalletTopupRepository,
 } from "../../../repositories/index.ts";
 import { AdminService } from "../../../services/bot/admin/Service.ts";
 import {
@@ -12,7 +13,7 @@ import {
 	deliverOrderAction,
 	messageBuyerAction,
 } from "../../../services/bot/orderActions.ts";
-import { formatUsd } from "../../../shared/utils/currency.ts";
+import { formatToman, formatUsd } from "../../../shared/utils/currency.ts";
 import { getLocalizedName } from "../../../shared/utils/localizedFields.ts";
 import {
 	ORDER_CODE_TO_STATUS,
@@ -106,6 +107,42 @@ async function renderList(ctx: any, filterCode: string, page: number) {
 	);
 }
 
+/**
+ * For a pending-payment card order, send the card receipt photo + payment info
+ * as its OWN message (the order details are shown separately by renderOrder).
+ * No-op for orders without a card receipt (wallet / crypto / zarinpal / non-pending).
+ */
+async function sendOrderReceipt(bot: AnyBot, ctx: any, orderId: number) {
+	const order = await OrderRepository.findById(orderId);
+	if (!order || order.status !== "pending_payment") return;
+
+	const topup = await WalletTopupRepository.findByOrderId(orderId);
+	if (!topup?.receiptPath) return;
+
+	const fileId = topup.receiptPath.replace(/^telegram-file-id:/, "");
+	// Card-to-card is reviewed in Toman (snapshot; fall back for legacy rows).
+	const toman = formatToman(topup.tomanAmount ?? topup.amount);
+	const caption =
+		`🧾 <b>رسید پرداخت سفارش #${orderId}</b>\n\n` +
+		`💵 مبلغ پرداختی: <b>${toman}</b> تومان\n` +
+		`💳 روش: کارت‌به‌کارت\n` +
+		`📅 ${shortDate(topup.createdAt)}`;
+
+	try {
+		await (bot.api as any).sendPhoto({
+			chat_id: ctx.from.id,
+			photo: fileId,
+			caption,
+			parse_mode: "HTML",
+		});
+	} catch {
+		// Receipt wasn't a photo / send failed — show the reference as text.
+		await ctx.send(`${caption}\n\n🧾 رسید: <code>${topup.receiptPath}</code>`, {
+			parse_mode: "HTML",
+		});
+	}
+}
+
 async function renderOrder(ctx: any, filterCode: string, orderId: number) {
 	const order = await OrderRepository.findById(orderId);
 	if (!order) {
@@ -175,6 +212,9 @@ export function setupAdminOrdersHandlers(bot: AnyBot) {
 	bot.callbackQuery(/^oadm_view_([a-z]+)_(\d+)$/, async (ctx) => {
 		if (!(await gate(ctx))) return;
 		const [, code, orderId] = ctx.queryData as [string, string, string];
+		// Pending-payment card orders: show the receipt + payment info as its own
+		// message, with the order details rendered separately below.
+		await sendOrderReceipt(bot, ctx, Number(orderId));
 		await renderOrder(ctx, code, Number(orderId));
 	});
 

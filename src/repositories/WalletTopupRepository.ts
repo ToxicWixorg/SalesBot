@@ -51,6 +51,23 @@ export class WalletTopupRepository {
 		return row;
 	}
 
+	/**
+	 * The card-to-card receipt topup created for a specific order
+	 * (`notes: "order_payment:<orderId>"`). Used by the Orders admin panel to
+	 * show the receipt + payment info alongside a pending-payment order.
+	 */
+	static async findByOrderId(
+		orderId: number,
+	): Promise<WalletTopup | undefined> {
+		const [row] = await db
+			.select()
+			.from(walletTopupsTable)
+			.where(eq(walletTopupsTable.notes, `order_payment:${orderId}`))
+			.orderBy(desc(walletTopupsTable.createdAt))
+			.limit(1);
+		return row;
+	}
+
 	/** تغییر وضعیت درخواست (approved | rejected) و ثبت تأییدکننده. */
 	static async setStatus(
 		id: number,
