@@ -8,7 +8,9 @@ import { formatUsd } from "../../shared/utils/currency.ts";
 
 // Minimal shape of the Telegram API we need — keeps this service decoupled from
 // the concrete Bot type so both the forum handlers and the admin panel can use it.
-type BotApiLike = { sendMessage: (args: Record<string, unknown>) => Promise<unknown> };
+type BotApiLike = {
+	sendMessage: (args: Record<string, unknown>) => Promise<unknown>;
+};
 
 export interface OrderActionResult {
 	ok: boolean;
@@ -54,6 +56,29 @@ export async function deliverOrderAction(
 		order: updated,
 		message: "✅ سفارش تحویل‌شده علامت‌گذاری شد",
 	};
+}
+
+/**
+ * Cancel an order WITHOUT refunding, set status "cancelled", notify the buyer.
+ * Use {@link cancelRefundOrderAction} when the wallet amount should be returned.
+ */
+export async function cancelOrderAction(
+	botApi: BotApiLike,
+	orderId: number,
+): Promise<OrderActionResult> {
+	const order = await OrderRepository.findById(orderId);
+	if (!order) return { ok: false, message: "❌ سفارش پیدا نشد" };
+	if (order.status === "cancelled" || order.status === "refunded") {
+		return { ok: false, order, message: "ℹ️ این سفارش قبلاً لغو شده است" };
+	}
+
+	const updated = await OrderRepository.updateStatus(orderId, "cancelled");
+	await notifyBuyer(
+		botApi,
+		Number(order.userId),
+		`❌ سفارش شما (#${orderId}) لغو شد.`,
+	);
+	return { ok: true, order: updated, message: "✅ سفارش لغو شد" };
 }
 
 /**

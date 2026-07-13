@@ -9,6 +9,7 @@ import {
 } from "../../../repositories/index.ts";
 import { AdminService } from "../../../services/bot/admin/Service.ts";
 import {
+	cancelOrderAction,
 	cancelRefundOrderAction,
 	deliverOrderAction,
 	messageBuyerAction,
@@ -97,8 +98,7 @@ async function renderList(ctx: any, filterCode: string, page: number) {
 			? await OrderRepository.getRecent(PAGE, safePage * PAGE)
 			: await OrderRepository.getByStatus(status ?? "", PAGE, safePage * PAGE);
 
-	const title =
-		filterCode === "all" ? "همه سفارش‌ها" : statusLabel(status);
+	const title = filterCode === "all" ? "همه سفارش‌ها" : statusLabel(status);
 
 	await show(
 		ctx,
@@ -160,7 +160,9 @@ async function renderOrder(ctx: any, filterCode: string, orderId: number) {
 		? `${[user.firstName, user.lastName].filter(Boolean).join(" ") || "—"}${user.username ? ` (@${user.username})` : ""}`
 		: "—";
 
-	const productName = product ? getLocalizedName(product, "fa") : `#${order.productId}`;
+	const productName = product
+		? getLocalizedName(product, "fa")
+		: `#${order.productId}`;
 	const planName = plan ? getLocalizedName(plan, "fa") : `#${order.planId}`;
 
 	// Delivery content (if any)
@@ -229,13 +231,19 @@ export function setupAdminOrdersHandlers(bot: AnyBot) {
 		];
 		const status = ORDER_CODE_TO_STATUS[stCode];
 		if (!status) {
-			await ctx.answerCallbackQuery({ text: "وضعیت نامعتبر", show_alert: true });
+			await ctx.answerCallbackQuery({
+				text: "وضعیت نامعتبر",
+				show_alert: true,
+			});
 			return;
 		}
 
 		const order = await OrderRepository.findById(Number(orderIdStr));
 		if (!order) {
-			await ctx.answerCallbackQuery({ text: "سفارش یافت نشد", show_alert: true });
+			await ctx.answerCallbackQuery({
+				text: "سفارش یافت نشد",
+				show_alert: true,
+			});
 			return;
 		}
 
@@ -249,16 +257,37 @@ export function setupAdminOrdersHandlers(bot: AnyBot) {
 	// ── ✅ تحویل شد (وضعیت + اعلان به کاربر) ───────────────────
 	bot.callbackQuery(/^oadm_deliver_([a-z]+)_(\d+)$/, async (ctx) => {
 		if (!(await gate(ctx))) return;
-		const [, filterCode, orderIdStr] = ctx.queryData as [string, string, string];
+		const [, filterCode, orderIdStr] = ctx.queryData as [
+			string,
+			string,
+			string,
+		];
 		const result = await deliverOrderAction(bot.api as any, Number(orderIdStr));
 		await ctx.answerCallbackQuery({ text: result.message, show_alert: true });
 		await renderOrder(ctx, filterCode, Number(orderIdStr));
 	});
 
-	// ── ❌ لغو و بازگشت وجه (بازپرداخت + اعلان به کاربر) ────────
+	// ── ❌ لغو (بدون بازگشت وجه) + اعلان به کاربر ──────────────
 	bot.callbackQuery(/^oadm_cancel_([a-z]+)_(\d+)$/, async (ctx) => {
 		if (!(await gate(ctx))) return;
-		const [, filterCode, orderIdStr] = ctx.queryData as [string, string, string];
+		const [, filterCode, orderIdStr] = ctx.queryData as [
+			string,
+			string,
+			string,
+		];
+		const result = await cancelOrderAction(bot.api as any, Number(orderIdStr));
+		await ctx.answerCallbackQuery({ text: result.message, show_alert: true });
+		await renderOrder(ctx, filterCode, Number(orderIdStr));
+	});
+
+	// ── ↩️ بازگشت وجه (بازپرداخت به کیف پول + اعلان به کاربر) ──
+	bot.callbackQuery(/^oadm_refund_([a-z]+)_(\d+)$/, async (ctx) => {
+		if (!(await gate(ctx))) return;
+		const [, filterCode, orderIdStr] = ctx.queryData as [
+			string,
+			string,
+			string,
+		];
 		const result = await cancelRefundOrderAction(
 			bot.api as any,
 			Number(orderIdStr),
@@ -270,10 +299,17 @@ export function setupAdminOrdersHandlers(bot: AnyBot) {
 	// ── ✉️ پیام به خریدار (شروع جریان) ─────────────────────────
 	bot.callbackQuery(/^oadm_msg_([a-z]+)_(\d+)$/, async (ctx) => {
 		if (!(await gate(ctx))) return;
-		const [, filterCode, orderIdStr] = ctx.queryData as [string, string, string];
+		const [, filterCode, orderIdStr] = ctx.queryData as [
+			string,
+			string,
+			string,
+		];
 		const order = await OrderRepository.findById(Number(orderIdStr));
 		if (!order) {
-			await ctx.answerCallbackQuery({ text: "سفارش یافت نشد", show_alert: true });
+			await ctx.answerCallbackQuery({
+				text: "سفارش یافت نشد",
+				show_alert: true,
+			});
 			return;
 		}
 		msgBuyerState.set(ctx.from.id, {

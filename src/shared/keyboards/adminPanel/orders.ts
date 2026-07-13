@@ -66,7 +66,9 @@ export function ordersAdminMenuKeyboard(
 	});
 
 	keyboard.row();
-	keyboard.text("بازگشت", "admin_panel", { icon_custom_emoji_id: emojiIds.back });
+	keyboard.text("بازگشت", "admin_panel", {
+		icon_custom_emoji_id: emojiIds.back,
+	});
 	return keyboard;
 }
 
@@ -123,7 +125,12 @@ export function orderManageKeyboard(
 			.text("✅ تحویل شد", `oadm_deliver_${filterCode}_${order.id}`, {
 				style: "success",
 			})
-			.text("❌ لغو و بازگشت وجه", `oadm_cancel_${filterCode}_${order.id}`, {
+			.row()
+			// Cancel (no refund) and refund-to-wallet are separate actions.
+			.text("❌ لغو", `oadm_cancel_${filterCode}_${order.id}`, {
+				style: "danger",
+			})
+			.text("↩️ بازگشت وجه", `oadm_refund_${filterCode}_${order.id}`, {
 				style: "danger",
 			})
 			.row();
@@ -143,7 +150,10 @@ export function orderManageKeyboard(
 	transitions
 		.filter((tr) => tr.code !== currentCode)
 		.forEach((tr) => {
-			keyboard.text(tr.label, `oadm_setst_${filterCode}_${order.id}_${tr.code}`);
+			keyboard.text(
+				tr.label,
+				`oadm_setst_${filterCode}_${order.id}_${tr.code}`,
+			);
 		});
 	keyboard.row();
 
