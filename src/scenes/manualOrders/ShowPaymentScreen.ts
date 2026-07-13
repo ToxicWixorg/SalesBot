@@ -12,7 +12,8 @@ import {
 import { PaymentRepository } from "../../repositories/PaymentRepository";
 import { i18n } from "../../shared/locales";
 import { getLocalizedName } from "../../shared/utils/localizedFields";
-import { formatPriceForUser, formatUsd } from "../../shared/utils/currency";
+import { formatPriceLabel } from "../../shared/utils/currency";
+import { getUsdtRate } from "../../services/tetherland/index.ts";
 import { resolveOrderPricing } from "./Helpers/orderPricing";
 
 export async function showPaymentScreen(
@@ -44,12 +45,12 @@ export async function showPaymentScreen(
   );
   const quantity = pricing.quantity;
 
-  const priceInfo = await formatPriceForUser(
-    user.languageCode || "en",
-    parseFloat(plan.price as string),
-    t,
-    { showUsd: true },
-  );
+  // fa users see every figure in Toman (no dollar); others see USD. Fetch the
+  // rate once and reuse it for all money on this screen.
+  const usdtRate = user.languageCode === "fa" ? await getUsdtRate() : null;
+  const money = (usd: number) =>
+    formatPriceLabel(user.languageCode, usd, t, usdtRate).label;
+  const unitPriceLabel = money(parseFloat(plan.price as string));
   const pendingDiscount = state.discount ?? appliedDiscountState.get(userId);
   const hasDiscount = pricing.hasDiscount;
   const productName = getLocalizedName(product, user.languageCode);
@@ -74,14 +75,15 @@ export async function showPaymentScreen(
       durationUnit: plan.durationUnit,
       collected: state.collected,
       quantity,
-      unitPriceLabel: priceInfo.label,
+      unitPriceLabel,
       originalPrice: pricing.totalOriginal,
       originalPriceLabel:
-        quantity > 1 ? formatUsd(pricing.totalOriginal) : priceInfo.label,
+        quantity > 1 ? money(pricing.totalOriginal) : unitPriceLabel,
       discountCode: hasDiscount ? pendingDiscount!.code : undefined,
       discountAmount: hasDiscount ? pricing.totalDiscount : undefined,
       finalPrice,
       walletBalance,
+      formatMoney: money,
     }),
     {
       parse_mode: "HTML",

@@ -20,6 +20,11 @@ export type PaymentSummaryData = {
 	discountAmount?: number;
 	finalPrice: number;
 	walletBalance: number;
+	/**
+	 * Money formatter for this user's language. fa users get Toman (no dollar),
+	 * others get USD. Defaults to {@link formatUsd} when omitted.
+	 */
+	formatMoney?: (usd: number) => string;
 };
 
 export type PaymentKeyboardOptions = {
@@ -47,6 +52,9 @@ export function buildPaymentSummaryText(
 		duration = `${data.duration} ${unitLabel}`;
 	}
 
+	// fa → Toman, others → USD (falls back to plain USD if no formatter given).
+	const money = data.formatMoney ?? formatUsd;
+
 	let text = `${t("paymentSummaryTitle")}\n\n`;
 	text += `📦 ${data.productName}\n`;
 	text += `📋 ${data.planName} — ${duration}\n`;
@@ -55,17 +63,18 @@ export function buildPaymentSummaryText(
 	text += `\n`;
 	const quantity = data.quantity ?? 1;
 	if (quantity > 1) {
-		const unitLabel = data.unitPriceLabel ?? formatUsd(data.originalPrice / quantity);
+		const unitLabel =
+			data.unitPriceLabel ?? money(data.originalPrice / quantity);
 		text += `${t("paymentQuantity")}: <b>${quantity}</b> × ${unitLabel}\n`;
 	}
 	const originalPriceLabel =
-		data.originalPriceLabel ?? formatUsd(data.originalPrice);
+		data.originalPriceLabel ?? money(data.originalPrice);
 	text += `${t("paymentOriginalPrice")}: ${originalPriceLabel}\n`;
 	if (data.discountCode && data.discountAmount) {
-		text += `${t("paymentDiscount")}: -${formatUsd(data.discountAmount)} (${data.discountCode})\n`;
+		text += `${t("paymentDiscount")}: -${money(data.discountAmount)} (${data.discountCode})\n`;
 	}
-	text += `${t("paymentFinalPrice")}: <b>${formatUsd(data.finalPrice)}</b>\n`;
-	text += `${t("paymentWalletBalance")}: ${formatUsd(data.walletBalance)}\n`;
+	text += `${t("paymentFinalPrice")}: <b>${money(data.finalPrice)}</b>\n`;
+	text += `${t("paymentWalletBalance")}: ${money(data.walletBalance)}\n`;
 	text += `\n${t("paymentPrompt")}`;
 
 	return text;

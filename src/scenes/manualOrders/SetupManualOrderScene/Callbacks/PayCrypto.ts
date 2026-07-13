@@ -6,6 +6,8 @@ import {
 	UserRepository,
 } from "../../../../repositories";
 import { PaymentRepository } from "../../../../repositories/PaymentRepository";
+import { getUsdtRate } from "../../../../services/tetherland";
+import { formatPriceLabel } from "../../../../shared/utils/currency";
 import { i18n } from "../../../../shared/locales";
 import { resolveOrderPricing } from "../../Helpers/orderPricing";
 
@@ -50,9 +52,19 @@ export async function PayCryptoCallback(ctx: any) {
 		awaitingCryptoProof: true,
 	});
 
+	// fa users see the price in Toman (no dollar). The USDT amount to actually
+	// send stays in USDT below — crypto is a dollar-denominated transfer.
+	const usdtRate = user?.languageCode === "fa" ? await getUsdtRate() : null;
+	const priceLabel = formatPriceLabel(
+		user?.languageCode,
+		finalPrice,
+		t,
+		usdtRate,
+	).label;
+
 	await ctx.editText(
 		`${t("rechargeCryptoTitle")}\n\n` +
-			`${t("rechargeAmount", finalPrice.toFixed(2))}\n\n` +
+			`💰 <b>${priceLabel}</b>\n\n` +
 			`${t("rechargeCryptoAddress", address)}\n\n` +
 			`${t("rechargeCryptoAmount", finalPrice.toFixed(2))}\n` +
 			`${t("rechargeCryptoNetwork", network)}\n\n` +

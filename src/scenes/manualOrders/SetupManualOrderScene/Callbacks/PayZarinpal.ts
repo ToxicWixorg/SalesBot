@@ -7,6 +7,7 @@ import {
 } from "../../../../repositories";
 import { PaymentRepository } from "../../../../repositories/PaymentRepository";
 import { getUsdtRate } from "../../../../services/tetherland";
+import { formatPriceLabel } from "../../../../shared/utils/currency";
 import { i18n } from "../../../../shared/locales";
 import { emojiIds } from "../../../../shared/locales/emojies";
 import { resolveOrderPricing } from "../../Helpers/orderPricing";
@@ -90,8 +91,16 @@ export async function PayZarinpalCallback(ctx: Context, bot: AnyBot) {
 			awaitingZarinpalProof: true,
 		});
 
+		// fa users see the amount in Toman (no dollar); the Rial charge above is
+		// derived from the same USD price + rate.
+		const priceLabel = formatPriceLabel(
+			user?.languageCode,
+			finalPrice,
+			t,
+			usdtRate,
+		).label;
 		await ctx.editText(
-			`${t("rechargeZarinpalTitle")}\n\n${t("rechargeAmount", finalPrice.toFixed(2))}\n\n${t("orderZarinpalProofInstructions")}`,
+			`${t("rechargeZarinpalTitle")}\n\n💰 <b>${priceLabel}</b>\n\n${t("orderZarinpalProofInstructions")}`,
 			{
 				parse_mode: "HTML",
 				reply_markup: new InlineKeyboard()
