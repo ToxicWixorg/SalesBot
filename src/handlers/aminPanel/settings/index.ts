@@ -1,6 +1,6 @@
 import type { AnyBot } from "gramio";
 import { InlineKeyboard } from "gramio";
-import { isOwner } from "../../../config.ts";
+import { config, isOwner } from "../../../config.ts";
 import {
 	AdminRepository,
 	BackupSettingsRepository,
@@ -17,7 +17,9 @@ import {
 import {
 	buildDailyCron,
 	parseBackupHour,
+	restoreDatabase,
 	runBackup,
+	TELEGRAM_MAX_DOWNLOAD_BYTES,
 } from "../../../services/BackupService.ts";
 import type { AdminRole } from "../../../services/bot/admin/Admin/Roles.ts";
 import { getRoleName } from "../../../services/bot/admin/getRoleName.ts";
@@ -57,6 +59,7 @@ type SettingsInput =
 	| { type: "cr_apikey" }
 	| { type: "bk_channel" }
 	| { type: "bk_hour" }
+	| { type: "bk_restore" }
 	| {
 			type: "add_forcejoin";
 			step: "id" | "url" | "name";
@@ -73,6 +76,13 @@ type SettingsInput =
 	| { type: "forum_payments" };
 
 const settingsInput = new Map<number, SettingsInput>();
+
+/**
+ * Backup file uploaded for restore, held between upload and the final confirm
+ * click (restore is destructive, so it never runs on upload alone). Keyed by
+ * owner userId. Cleared on confirm/cancel.
+ */
+const pendingRestore = new Map<number, { dump: Buffer; fileName?: string }>();
 
 // ─────────────────────────────────────────────────────────────
 // Helpers
@@ -623,6 +633,72 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 		await ctx.editText(text, { parse_mode: "HTML", reply_markup: keyboard });
 	});
 
+	bot.callbackQuery("set_bk_restore", async (ctx) => {
+		if (!(await ownerGate(ctx))) return;
+		// Exit any active scene first — otherwise the scenes plugin swallows the
+		// uploaded .sql document before the restore handler below can read it, and
+		// the settings message handler defers while `scene.current` is set.
+		try {
+			await (ctx as any).scene?.exit();
+		} catch {}
+		settingsInput.set(ctx.from.id, { type: "bk_restore" });
+		await ctx.editText(
+			`♻️ <b>بازیابی از فایل بکاپ</b>\n\n` +
+				`فایل بکاپ دیتابیس (<code>.sql</code>) را به‌صورت «فایل/سند» همین‌جا بفرستید.\n\n` +
+				`⚠️ <b>هشدار:</b> با این کار تمام داده‌های فعلی ربات پاک شده و با محتوای این فایل جایگزین می‌شود. این عمل برگشت‌ناپذیر است.\n` +
+				`پس از بازیابی موفق، ربات به‌صورت خودکار ری‌استارت می‌شود.`,
+			{ parse_mode: "HTML", reply_markup: cancelTo("set_backup") },
+		);
+	});
+
+	bot.callbackQuery("bk_restore_confirm", async (ctx) => {
+		if (!(await ownerGate(ctx))) return;
+		const pending = pendingRestore.get(ctx.from.id);
+		if (!pending) {
+			await ctx.answerCallbackQuery({
+				text: "فایلی برای بازیابی یافت نشد. دوباره فایل را بفرستید.",
+				show_alert: true,
+			});
+			return;
+		}
+		pendingRestore.delete(ctx.from.id);
+		await ctx.answerCallbackQuery({ text: "⏳ در حال بازیابی..." });
+		await ctx.editText(
+			"⏳ در حال بازیابی دیتابیس... چند لحظه صبر کنید و ربات را ری‌استارت نکنید.",
+			{ parse_mode: "HTML" },
+		);
+
+		const result = await restoreDatabase(pending.dump);
+		if (!result.ok) {
+			await ctx.send(
+				`❌ بازیابی ناموفق بود.\nخطا: ${result.error ?? "نامشخص"}`,
+				{
+					parse_mode: "HTML",
+				},
+			);
+			return;
+		}
+
+		await ctx.send(
+			`✅ بازیابی با موفقیت انجام شد (${((result.sizeBytes ?? 0) / 1024).toFixed(1)} KB).\n` +
+				`♻️ ربات برای اعمال کامل تغییرات ری‌استارت می‌شود...`,
+			{ parse_mode: "HTML" },
+		);
+		// Restart so the bot reconnects with fresh pooled connections against the
+		// restored schema (PM2/ecosystem autorestart brings it back up).
+		setTimeout(() => process.exit(0), 1500);
+	});
+
+	bot.callbackQuery("bk_restore_cancel", async (ctx) => {
+		if (!(await ownerGate(ctx))) return;
+		pendingRestore.delete(ctx.from.id);
+		const { text, keyboard } = await backupMenu();
+		await ctx.editText(`❌ بازیابی لغو شد.\n\n${text}`, {
+			parse_mode: "HTML",
+			reply_markup: keyboard,
+		});
+	});
+
 	// ───────────────────────── گروه فروم ──────────────────────
 	bot.callbackQuery("set_forum", async (ctx) => {
 		if (!(await ownerGate(ctx))) return;
@@ -971,6 +1047,86 @@ export function setupAdminSettingsHandlers(bot: AnyBot) {
 				});
 				return;
 			}
+		}
+
+		// ── بازیابی دیتابیس از فایل بکاپ (سند) ─────────────────
+		// این شاخه باید قبل از گارد `if (!text) return` بیاید، چون پیامِ سند
+		// (document) متن ندارد و در غیر این صورت بی‌صدا رد می‌شود.
+		if (state.type === "bk_restore") {
+			// Read the uploaded document robustly across GramIO shapes: the
+			// camelCase getter (`ctx.document.fileId`) AND the raw update
+			// (`update.message.document.file_id`). A Telegram document sent as a
+			// FILE also carries an image thumbnail whose `.photo` is empty, so we
+			// only look at `document`. Also accept a photo-mode upload as a hint.
+			const rawDoc: any =
+				(ctx as any).document ??
+				(ctx as any).message?.document ??
+				(ctx as any).update?.message?.document ??
+				(ctx as any).payload?.document;
+			const fileId: string | undefined = rawDoc?.fileId ?? rawDoc?.file_id;
+			const fileName: string | undefined =
+				rawDoc?.fileName ?? rawDoc?.file_name;
+			const fileSize: number | undefined =
+				rawDoc?.fileSize ?? rawDoc?.file_size;
+
+			if (!fileId) {
+				await ctx.send(
+					"❌ فایلی دریافت نشد. فایل بکاپ را به‌صورت «فایل/سند» بفرستید:\n\n" +
+						"📎 → <b>File/فایل</b> → فایل <code>.sql</code> را انتخاب کنید (نه به‌صورت عکس/گالری و بدون تیک Compress).",
+					{ parse_mode: "HTML" },
+				);
+				return;
+			}
+			if (fileSize && fileSize > TELEGRAM_MAX_DOWNLOAD_BYTES) {
+				settingsInput.delete(userId);
+				await ctx.send(
+					"❌ حجم فایل از حد مجاز دانلود بات (۲۰ مگابایت) بیشتر است. بکاپ کوچک‌تری بفرستید.",
+					{ parse_mode: "HTML" },
+				);
+				return;
+			}
+
+			settingsInput.delete(userId);
+			await ctx.send("⏳ در حال دریافت فایل...", { parse_mode: "HTML" });
+
+			// Download and HOLD the file — restore only runs after a final confirm
+			// click, since it wipes the current database.
+			try {
+				const file = await (bot.api as any).getFile({ file_id: fileId });
+				const filePath: string | undefined = file?.file_path;
+				if (!filePath) throw new Error("مسیر فایل از تلگرام دریافت نشد.");
+
+				const url = `https://api.telegram.org/file/bot${config.BOT_TOKEN}/${filePath}`;
+				const resp = await fetch(url);
+				if (!resp.ok) {
+					throw new Error(`دانلود فایل ناموفق بود (HTTP ${resp.status}).`);
+				}
+				const dump = Buffer.from(await resp.arrayBuffer());
+				if (dump.byteLength === 0) throw new Error("فایل دریافتی خالی است.");
+
+				pendingRestore.set(userId, { dump, fileName });
+
+				await ctx.send(
+					`⚠️ <b>تأیید نهایی بازیابی</b>\n\n` +
+						`فایل «<code>${fileName ?? "backup.sql"}</code>» (${(dump.byteLength / 1024).toFixed(1)} KB) دریافت شد.\n\n` +
+						`با تأیید، <b>تمام داده‌های فعلی ربات پاک</b> و با محتوای این فایل جایگزین می‌شود. این عمل برگشت‌ناپذیر است.`,
+					{
+						parse_mode: "HTML",
+						reply_markup: new InlineKeyboard()
+							.text("✅ بله، بازیابی کن", "bk_restore_confirm")
+							.row()
+							.text("لغو", "bk_restore_cancel"),
+					},
+				);
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : String(err);
+				console.error("[settings] restore download error:", msg);
+				pendingRestore.delete(userId);
+				await ctx.send(`❌ دریافت فایل ناموفق بود.\nخطا: ${msg}`, {
+					parse_mode: "HTML",
+				});
+			}
+			return;
 		}
 
 		// ── ورودی‌های تک‌مرحله‌ای ──────────────────────────────

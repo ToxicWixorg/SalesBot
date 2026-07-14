@@ -77,6 +77,85 @@ async function dumpDatabase(): Promise<Buffer> {
 	return Buffer.from(stdout);
 }
 
+/** حداکثر حجمی که یک بات می‌تواند از تلگرام دانلود کند (۲۰ مگابایت). */
+export const TELEGRAM_MAX_DOWNLOAD_BYTES = 20 * 1024 * 1024;
+
+/**
+ * Restore the database from a plain-format `pg_dump` SQL dump (the format
+ * produced by {@link runBackup}). The current `public` schema is DROPPED and
+ * recreated, then the dump is loaded — so this REPLACES all current data with
+ * the backup's contents. Runs in a single transaction: on any error nothing is
+ * changed. Requires the `psql` client on the host (postgresql-client).
+ *
+ * ⚠️ Destructive. After a successful restore the bot should be restarted so it
+ * reconnects with fresh state (stale pooled connections/prepared statements
+ * would otherwise point at dropped objects).
+ */
+export async function restoreDatabase(dump: Buffer): Promise<BackupResult> {
+	if (!Bun.which("psql")) {
+		return {
+			ok: false,
+			error:
+				"دستور psql یافت نشد. بسته‌ی postgresql-client را روی سرور نصب کنید.",
+		};
+	}
+	if (dump.byteLength === 0) {
+		return { ok: false, error: "فایل بکاپ خالی است." };
+	}
+
+	// Prepend a schema reset so the plain dump (CREATE + COPY, no DROPs) loads
+	// into a clean schema instead of colliding with existing objects. The dump
+	// also carries `CREATE SCHEMA drizzle;` (migrations bookkeeping), so that
+	// schema must be dropped too — it is recreated by the dump itself.
+	const reset = Buffer.from(
+		"DROP SCHEMA IF EXISTS public CASCADE;\n" +
+			"DROP SCHEMA IF EXISTS drizzle CASCADE;\n" +
+			"CREATE SCHEMA public;\n",
+		"utf8",
+	);
+	const payload = Buffer.concat([reset, dump]);
+
+	try {
+		const proc = Bun.spawn(
+			[
+				"psql",
+				config.DATABASE_URL,
+				"-v",
+				"ON_ERROR_STOP=1",
+				"--single-transaction",
+				"--quiet",
+			],
+			{ stdin: payload, stdout: "pipe", stderr: "pipe" },
+		);
+
+		const [stderr, exitCode] = await Promise.all([
+			new Response(proc.stderr).text(),
+			proc.exited,
+		]);
+
+		if (exitCode !== 0) {
+			// stderr با NOTICEهای بی‌ضرر «drop cascades» شروع می‌شود و خطای واقعی
+			// را از پنجره‌ی ۶۰۰ کاراکتری بیرون می‌راند — فقط خطوط خطا را نگه می‌داریم.
+			const noise = /^\s*(psql:)?\s*(NOTICE:|DETAIL:\s+drop cascades|drop cascades to)/;
+			const meaningful = stderr
+				.split("\n")
+				.filter((line) => !noise.test(line))
+				.join("\n")
+				.trim();
+			return {
+				ok: false,
+				error: `psql exited with code ${exitCode}: ${(meaningful || stderr).slice(0, 600)}`,
+			};
+		}
+
+		return { ok: true, sizeBytes: dump.byteLength };
+	} catch (err) {
+		const message = err instanceof Error ? err.message : String(err);
+		console.error("[BackupService] restoreDatabase error:", message);
+		return { ok: false, error: message };
+	}
+}
+
 /** یک‌بار بکاپ می‌گیرد و به کانال می‌فرستد. */
 export async function runBackup(bot: AnyBot): Promise<BackupResult> {
 	const settings = await BackupSettingsRepository.getOrCreate();

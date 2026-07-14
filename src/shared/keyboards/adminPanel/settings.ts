@@ -280,5 +280,7 @@ export function backupSettingsKeyboard(
 		.row()
 		.text("📤 بکاپ‌گیری همین حالا", "set_bk_now", { style: "success" })
 		.row()
+		.text("♻️ بازیابی از فایل", "set_bk_restore", { style: "danger" })
+		.row()
 		.text("بازگشت", "panel_setting", { icon_custom_emoji_id: emojiIds.back });
 }
