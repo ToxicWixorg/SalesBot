@@ -19,7 +19,18 @@ services:
   redis:
     container_name: bot-redis
     image: redis:7-alpine
-    command: ["redis-server", "--maxmemory-policy", "noeviction"]
+    command:
+      [
+        "redis-server",
+        "--maxmemory-policy",
+        "noeviction",
+        "--bind",
+        "0.0.0.0",
+        "--port",
+        "6379",
+        "--protected-mode",
+        "no",
+      ]
     restart: unless-stopped
     ports:
       - "6379:6379"
